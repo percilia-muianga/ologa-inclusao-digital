@@ -39,12 +39,12 @@ function RegistoPage() {
   const [genero, setGenero] = useState<Genero | "">("");
   const [nivel, setNivel] = useState<Nivel | "">("");
   const [defic, setDefic] = useState<Deficiencia | "">("");
-  const [apoios, setApoios] = useState<Set<string>>(new Set());
+  const [apoios, setApoios] = useState<Set<Apoio>>(new Set());
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
 
-  function toggleApoio(a: string) {
+  function toggleApoio(a: Apoio) {
     setApoios((prev) => {
       const n = new Set(prev);
       if (n.has(a)) n.delete(a);
