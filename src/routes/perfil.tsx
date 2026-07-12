@@ -30,7 +30,7 @@ function PerfilPage() {
   const [genero, setGenero] = useState<Genero | "">("");
   const [nivel, setNivel] = useState<Nivel | "">("");
   const [defic, setDefic] = useState<"sim" | "nao" | "prefere_nao_indicar" | "">("");
-  const [apoios, setApoios] = useState<Set<string>>(new Set());
+  const [apoios, setApoios] = useState<Set<Apoio>>(new Set());
   const [msg, setMsg] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -57,13 +57,13 @@ function PerfilPage() {
             ? "nao"
             : "",
         );
-        setApoios(new Set(perfil.apoios_acessibilidade ?? []));
+        setApoios(new Set((perfil.apoios_acessibilidade ?? []) as Apoio[]));
       }
       setCarregado(true);
     })();
   }, [navigate]);
 
-  function toggleApoio(a: string) {
+  function toggleApoio(a: Apoio) {
     setApoios((prev) => {
       const n = new Set(prev);
       if (n.has(a)) n.delete(a);
