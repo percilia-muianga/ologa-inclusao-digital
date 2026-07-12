@@ -186,7 +186,9 @@ export type Database = {
       }
       perfis: {
         Row: {
-          apoios_acessibilidade: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em: string
           email: string
           funcao: string | null
@@ -196,10 +198,12 @@ export type Database = {
           nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia: boolean
+          tem_deficiencia: boolean | null
         }
         Insert: {
-          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em?: string
           email: string
           funcao?: string | null
@@ -209,10 +213,12 @@ export type Database = {
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia?: boolean
+          tem_deficiencia?: boolean | null
         }
         Update: {
-          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em?: string
           email?: string
           funcao?: string | null
@@ -222,7 +228,7 @@ export type Database = {
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
           papel?: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia?: boolean
+          tem_deficiencia?: boolean | null
         }
         Relationships: [
           {
