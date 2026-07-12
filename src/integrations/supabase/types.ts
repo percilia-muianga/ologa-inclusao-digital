@@ -14,16 +14,440 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      certificados: {
+        Row: {
+          codigo_verificacao: string
+          emitido_em: string
+          id: string
+          modulo_id: string
+          nome_formando: string
+          nome_instituicao: string
+          perfil_id: string
+          titulo_modulo: string
+        }
+        Insert: {
+          codigo_verificacao: string
+          emitido_em?: string
+          id?: string
+          modulo_id: string
+          nome_formando: string
+          nome_instituicao: string
+          perfil_id: string
+          titulo_modulo: string
+        }
+        Update: {
+          codigo_verificacao?: string
+          emitido_em?: string
+          id?: string
+          modulo_id?: string
+          nome_formando?: string
+          nome_instituicao?: string
+          perfil_id?: string
+          titulo_modulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificados_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificados_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instituicoes: {
+        Row: {
+          codigo_inscricao: string
+          conectividade: Database["public"]["Enums"]["conectividade"] | null
+          criado_em: string
+          distrito: string | null
+          id: string
+          meio: Database["public"]["Enums"]["meio_instituicao"] | null
+          modalidade: Database["public"]["Enums"]["modalidade"] | null
+          natureza: Database["public"]["Enums"]["natureza_instituicao"]
+          nome: string
+          ponto_focal_email: string | null
+          ponto_focal_nome: string | null
+          provincia: string | null
+          setor: string | null
+        }
+        Insert: {
+          codigo_inscricao: string
+          conectividade?: Database["public"]["Enums"]["conectividade"] | null
+          criado_em?: string
+          distrito?: string | null
+          id?: string
+          meio?: Database["public"]["Enums"]["meio_instituicao"] | null
+          modalidade?: Database["public"]["Enums"]["modalidade"] | null
+          natureza: Database["public"]["Enums"]["natureza_instituicao"]
+          nome: string
+          ponto_focal_email?: string | null
+          ponto_focal_nome?: string | null
+          provincia?: string | null
+          setor?: string | null
+        }
+        Update: {
+          codigo_inscricao?: string
+          conectividade?: Database["public"]["Enums"]["conectividade"] | null
+          criado_em?: string
+          distrito?: string | null
+          id?: string
+          meio?: Database["public"]["Enums"]["meio_instituicao"] | null
+          modalidade?: Database["public"]["Enums"]["modalidade"] | null
+          natureza?: Database["public"]["Enums"]["natureza_instituicao"]
+          nome?: string
+          ponto_focal_email?: string | null
+          ponto_focal_nome?: string | null
+          provincia?: string | null
+          setor?: string | null
+        }
+        Relationships: []
+      }
+      licoes: {
+        Row: {
+          conteudo_elearning: string | null
+          duracao: string | null
+          guiao_formador: string | null
+          id: string
+          ilustracao_svg: string | null
+          modulo_id: string
+          ordem: number
+          titulo: string
+        }
+        Insert: {
+          conteudo_elearning?: string | null
+          duracao?: string | null
+          guiao_formador?: string | null
+          id?: string
+          ilustracao_svg?: string | null
+          modulo_id: string
+          ordem: number
+          titulo: string
+        }
+        Update: {
+          conteudo_elearning?: string | null
+          duracao?: string | null
+          guiao_formador?: string | null
+          id?: string
+          ilustracao_svg?: string | null
+          modulo_id?: string
+          ordem?: number
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licoes_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modulos: {
+        Row: {
+          descricao: string | null
+          desenho_universal: string | null
+          duracao: string | null
+          icone: string | null
+          id: string
+          nivel: Database["public"]["Enums"]["nivel_modulo"]
+          ordem: number
+          titulo: string
+        }
+        Insert: {
+          descricao?: string | null
+          desenho_universal?: string | null
+          duracao?: string | null
+          icone?: string | null
+          id?: string
+          nivel: Database["public"]["Enums"]["nivel_modulo"]
+          ordem: number
+          titulo: string
+        }
+        Update: {
+          descricao?: string | null
+          desenho_universal?: string | null
+          duracao?: string | null
+          icone?: string | null
+          id?: string
+          nivel?: Database["public"]["Enums"]["nivel_modulo"]
+          ordem?: number
+          titulo?: string
+        }
+        Relationships: []
+      }
+      perfis: {
+        Row: {
+          apoios_acessibilidade: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          criado_em: string
+          email: string
+          funcao: string | null
+          genero: Database["public"]["Enums"]["genero"] | null
+          id: string
+          instituicao_id: string | null
+          nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
+          nome: string
+          papel: Database["public"]["Enums"]["papel_utilizador"]
+          tem_deficiencia: boolean
+        }
+        Insert: {
+          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          criado_em?: string
+          email: string
+          funcao?: string | null
+          genero?: Database["public"]["Enums"]["genero"] | null
+          id: string
+          instituicao_id?: string | null
+          nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
+          nome: string
+          papel: Database["public"]["Enums"]["papel_utilizador"]
+          tem_deficiencia?: boolean
+        }
+        Update: {
+          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          criado_em?: string
+          email?: string
+          funcao?: string | null
+          genero?: Database["public"]["Enums"]["genero"] | null
+          id?: string
+          instituicao_id?: string | null
+          nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
+          nome?: string
+          papel?: Database["public"]["Enums"]["papel_utilizador"]
+          tem_deficiencia?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perfis_instituicao_id_fkey"
+            columns: ["instituicao_id"]
+            isOneToOne: false
+            referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      progresso_licoes: {
+        Row: {
+          concluida_em: string
+          licao_id: string
+          perfil_id: string
+        }
+        Insert: {
+          concluida_em?: string
+          licao_id: string
+          perfil_id: string
+        }
+        Update: {
+          concluida_em?: string
+          licao_id?: string
+          perfil_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progresso_licoes_licao_id_fkey"
+            columns: ["licao_id"]
+            isOneToOne: false
+            referencedRelation: "licoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progresso_licoes_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      progresso_quizzes: {
+        Row: {
+          id: string
+          modulo_id: string
+          perfil_id: string
+          pontuacao: number
+          tentado_em: string
+          total: number
+        }
+        Insert: {
+          id?: string
+          modulo_id: string
+          perfil_id: string
+          pontuacao: number
+          tentado_em?: string
+          total: number
+        }
+        Update: {
+          id?: string
+          modulo_id?: string
+          perfil_id?: string
+          pontuacao?: number
+          tentado_em?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progresso_quizzes_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progresso_quizzes_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_perguntas: {
+        Row: {
+          id: string
+          modulo_id: string
+          opcoes: Json
+          pergunta: string
+          resposta_correta_indice: number
+        }
+        Insert: {
+          id?: string
+          modulo_id: string
+          opcoes: Json
+          pergunta: string
+          resposta_correta_indice: number
+        }
+        Update: {
+          id?: string
+          modulo_id?: string
+          opcoes?: Json
+          pergunta?: string
+          resposta_correta_indice?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_perguntas_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      turma_formandos: {
+        Row: {
+          perfil_id: string
+          turma_id: string
+        }
+        Insert: {
+          perfil_id: string
+          turma_id: string
+        }
+        Update: {
+          perfil_id?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turma_formandos_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_formandos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      turmas: {
+        Row: {
+          data_fim: string | null
+          data_inicio: string | null
+          id: string
+          instituicao_id: string
+          modalidade: Database["public"]["Enums"]["modalidade"]
+          nome: string
+        }
+        Insert: {
+          data_fim?: string | null
+          data_inicio?: string | null
+          id?: string
+          instituicao_id: string
+          modalidade: Database["public"]["Enums"]["modalidade"]
+          nome: string
+        }
+        Update: {
+          data_fim?: string | null
+          data_inicio?: string | null
+          id?: string
+          instituicao_id?: string
+          modalidade?: Database["public"]["Enums"]["modalidade"]
+          nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turmas_instituicao_id_fkey"
+            columns: ["instituicao_id"]
+            isOneToOne: false
+            referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      esta_em_turma: {
+        Args: { _turma: string; _uid: string }
+        Returns: boolean
+      }
+      get_instituicao: { Args: { _uid: string }; Returns: string }
+      get_papel: {
+        Args: { _uid: string }
+        Returns: Database["public"]["Enums"]["papel_utilizador"]
+      }
+      is_admin: { Args: { _uid: string }; Returns: boolean }
+      is_gestor_de: {
+        Args: { _instituicao: string; _uid: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      apoio_acessibilidade:
+        | "lsm"
+        | "leitura_facil"
+        | "baixa_visao"
+        | "audiodescricao"
+        | "mobilidade"
+      conectividade: "boa" | "fraca" | "nenhuma"
+      genero: "feminino" | "masculino" | "prefere_nao_indicar"
+      meio_instituicao: "urbano" | "peri_urbano" | "rural"
+      modalidade: "presencial" | "virtual" | "misto"
+      natureza_instituicao:
+        | "orgao_central"
+        | "direcao_provincial"
+        | "administracao_distrital"
+        | "autarquia"
+        | "ong"
+        | "empresa"
+        | "outro"
+      nivel_modulo: "basico" | "intermedio" | "avancado"
+      nivel_partida: "nenhum" | "basico" | "intermedio"
+      papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +574,30 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      apoio_acessibilidade: [
+        "lsm",
+        "leitura_facil",
+        "baixa_visao",
+        "audiodescricao",
+        "mobilidade",
+      ],
+      conectividade: ["boa", "fraca", "nenhuma"],
+      genero: ["feminino", "masculino", "prefere_nao_indicar"],
+      meio_instituicao: ["urbano", "peri_urbano", "rural"],
+      modalidade: ["presencial", "virtual", "misto"],
+      natureza_instituicao: [
+        "orgao_central",
+        "direcao_provincial",
+        "administracao_distrital",
+        "autarquia",
+        "ong",
+        "empresa",
+        "outro",
+      ],
+      nivel_modulo: ["basico", "intermedio", "avancado"],
+      nivel_partida: ["nenhum", "basico", "intermedio"],
+      papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
+    },
   },
 } as const
