@@ -282,3 +282,205 @@ function Linha({ rot, val }: { rot: string; val: string }) {
     </div>
   );
 }
+
+type Gestor = { id: string; nome: string; email: string; criado_em: string };
+
+function SeccaoGestor({
+  instituicaoId,
+  emailPontoFocal,
+  nomePontoFocal,
+}: {
+  instituicaoId: string;
+  emailPontoFocal: string;
+  nomePontoFocal: string;
+}) {
+  const listar = useServerFn(listarGestoresInstituicao);
+  const criar = useServerFn(criarGestorInstituicao);
+  const [gestores, setGestores] = useState<Gestor[] | null>(null);
+  const [erroLista, setErroLista] = useState<string | null>(null);
+  const [aMostrarForm, setAMostrarForm] = useState(false);
+  const [nome, setNome] = useState(nomePontoFocal);
+  const [email, setEmail] = useState(emailPontoFocal);
+  const [aCriar, setACriar] = useState(false);
+  const [erroForm, setErroForm] = useState<string | null>(null);
+  const [linkGerado, setLinkGerado] = useState<{ email: string; link: string } | null>(null);
+
+  useEffect(() => {
+    let cancelado = false;
+    listar({ data: { instituicao_id: instituicaoId } }).then((res) => {
+      if (cancelado) return;
+      if (res.ok) setGestores(res.gestores);
+      else setErroLista(res.mensagem || "Erro ao carregar gestores.");
+    });
+    return () => {
+      cancelado = true;
+    };
+  }, [instituicaoId, listar]);
+
+  function abrirForm(reset: boolean) {
+    setErroForm(null);
+    setLinkGerado(null);
+    if (reset) {
+      setNome(nomePontoFocal);
+      setEmail(emailPontoFocal);
+    } else {
+      setNome("");
+      setEmail("");
+    }
+    setAMostrarForm(true);
+  }
+
+  async function onCriar(e: React.FormEvent) {
+    e.preventDefault();
+    setErroForm(null);
+    setLinkGerado(null);
+    setACriar(true);
+    const res = await criar({
+      data: {
+        instituicao_id: instituicaoId,
+        nome: nome.trim(),
+        email: email.trim(),
+        origin: window.location.origin,
+      },
+    });
+    setACriar(false);
+    if (res.ok) {
+      setLinkGerado({ email: res.gestor.email, link: res.link });
+      setAMostrarForm(false);
+      const atual = gestores ?? [];
+      setGestores([
+        ...atual,
+        {
+          id: res.gestor.id,
+          nome: res.gestor.nome,
+          email: res.gestor.email,
+          criado_em: new Date().toISOString(),
+        },
+      ]);
+    } else {
+      setErroForm(res.mensagem || "Não foi possível criar a conta.");
+    }
+  }
+
+  return (
+    <section className="mt-10">
+      <h2 className="text-xl font-bold text-ink">Gestor da instituição</h2>
+
+      {erroLista && (
+        <p role="alert" className="mt-3 rounded-md border border-brand/40 bg-brand/5 p-3 text-base text-ink">
+          {erroLista}
+        </p>
+      )}
+
+      {gestores === null && !erroLista && (
+        <p className="mt-3 text-sm text-foreground">A carregar…</p>
+      )}
+
+      {gestores && gestores.length > 0 && (
+        <ul className="mt-4 divide-y divide-ink/10 rounded-md border border-ink/10">
+          {gestores.map((g) => (
+            <li key={g.id} className="grid gap-1 px-4 py-3 sm:grid-cols-[1fr_1fr_auto] sm:gap-4">
+              <span className="text-base font-semibold text-ink">{g.nome}</span>
+              <span className="text-base text-ink">{g.email}</span>
+              <span className="text-sm text-ink/70">
+                Criado em {new Date(g.criado_em).toLocaleDateString("pt-PT")}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {linkGerado && (
+        <div className="mt-4 rounded-md border border-ink/20 bg-accent p-4">
+          <p className="text-sm font-semibold text-ink">
+            Link de definição de palavra-passe para {linkGerado.email}:
+          </p>
+          <p className="mt-2 break-all rounded-md border border-ink/20 bg-white p-3 font-mono text-sm text-ink">
+            {linkGerado.link}
+          </p>
+          <button
+            type="button"
+            onClick={() => navigator.clipboard.writeText(linkGerado.link)}
+            className="mt-3 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70"
+          >
+            Copiar link
+          </button>
+        </div>
+      )}
+
+      {!aMostrarForm && gestores && (
+        <div className="mt-4">
+          {gestores.length === 0 ? (
+            <button
+              type="button"
+              onClick={() => abrirForm(true)}
+              className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-white hover:bg-ink/90"
+            >
+              Criar conta de gestor
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => abrirForm(false)}
+              className="inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70"
+            >
+              Criar segundo gestor
+            </button>
+          )}
+        </div>
+      )}
+
+      {aMostrarForm && (
+        <form onSubmit={onCriar} className="mt-4 space-y-4 rounded-md border border-ink/20 bg-white p-4">
+          <div>
+            <label htmlFor="gestor-nome" className="block text-sm font-semibold text-ink">
+              Nome do gestor
+            </label>
+            <input
+              id="gestor-nome"
+              type="text"
+              required
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-ink/30 px-3 py-2 text-base text-ink"
+            />
+          </div>
+          <div>
+            <label htmlFor="gestor-email" className="block text-sm font-semibold text-ink">
+              Email do gestor
+            </label>
+            <input
+              id="gestor-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-ink/30 px-3 py-2 text-base text-ink"
+            />
+          </div>
+          {erroForm && (
+            <p role="alert" className="rounded-md border border-brand/40 bg-brand/5 p-3 text-sm text-ink">
+              {erroForm}
+            </p>
+          )}
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="submit"
+              disabled={aCriar}
+              className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-white hover:bg-ink/90 disabled:opacity-70"
+            >
+              {aCriar ? "A criar…" : "Confirmar e criar conta"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setAMostrarForm(false)}
+              className="inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
