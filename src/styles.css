@@ -180,6 +180,7 @@
   html {
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
+    font-size: calc(100% * var(--a11y-scale, 1));
   }
 
   body {
@@ -187,6 +188,29 @@
     color: var(--color-foreground);
     font-size: 1.0625rem; /* ~17px, tamanhos generosos */
     line-height: 1.6;
+  }
+
+  /* Alto contraste — ativado pela barra de acessibilidade */
+  html.high-contrast {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0 0 0);
+    --muted: oklch(1 0 0);
+    --muted-foreground: oklch(0 0 0);
+    --border: oklch(0 0 0);
+    --input: oklch(0 0 0);
+    --primary: oklch(0 0 0);
+    --primary-foreground: oklch(1 0 0);
+    --ink: oklch(0 0 0);
+    --ink-foreground: oklch(1 0 0);
+    --brand: oklch(0.48 0.24 27);
+    --brand-foreground: oklch(1 0 0);
+    --ring: oklch(0 0 0);
+  }
+  html.high-contrast * {
+    text-shadow: none !important;
+    box-shadow: none !important;
   }
 
   h1, h2, h3, h4 {
