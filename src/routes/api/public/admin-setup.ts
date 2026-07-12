@@ -24,7 +24,15 @@ export const Route = createFileRoute("/api/public/admin-setup")({
             options: { redirectTo: `${origin}/definir-palavra-passe` },
           });
           if (error) return Response.json({ ok: false, mensagem: error.message }, { status: 500 });
-          return Response.json({ ok: true, actionLink: link.properties?.action_link ?? null });
+          const hashed = link.properties?.hashed_token;
+          const direct = hashed
+            ? `${origin}/definir-palavra-passe?token_hash=${hashed}&type=recovery`
+            : null;
+          return Response.json({
+            ok: true,
+            actionLink: link.properties?.action_link ?? null,
+            directLink: direct,
+          });
         }
 
         // Refuse if any admin_ologa already exists.
