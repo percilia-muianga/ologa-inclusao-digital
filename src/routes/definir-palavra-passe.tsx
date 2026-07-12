@@ -9,6 +9,11 @@ export const Route = createFileRoute("/definir-palavra-passe")({
   component: DefinirPage,
 });
 
+type EstadoSessao =
+  | { estado: "a_verificar" }
+  | { estado: "ok" }
+  | { estado: "erro"; mensagem: string };
+
 function DefinirPage() {
   const navigate = useNavigate();
   const passId = useId();
@@ -16,22 +21,77 @@ function DefinirPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [sessao, setSessao] = useState<"a_verificar" | "ok" | "sem_sessao">("a_verificar");
+  const [sessao, setSessao] = useState<EstadoSessao>({ estado: "a_verificar" });
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      // Supabase processa o link (invite/recovery) automaticamente e cria a sessão.
+    let cancelado = false;
+
+    async function estabelecerSessao() {
+      const url = new URL(window.location.href);
+
+      // 1) Formato novo (query): ?token_hash=...&type=recovery|invite
+      const tokenHash = url.searchParams.get("token_hash");
+      const tipoQuery = url.searchParams.get("type");
+      if (tokenHash && (tipoQuery === "recovery" || tipoQuery === "invite")) {
+        const { error } = await supabase.auth.verifyOtp({
+          type: tipoQuery,
+          token_hash: tokenHash,
+        });
+        if (cancelado) return;
+        if (error) {
+          setSessao({ estado: "erro", mensagem: mensagemErro(error.message) });
+        } else {
+          // Limpa o token do endereço.
+          window.history.replaceState({}, "", url.pathname);
+          setSessao({ estado: "ok" });
+        }
+        return;
+      }
+
+      // 2) Formato antigo (fragmento): #access_token=...&refresh_token=...&type=recovery
+      //    ou erros: #error=...&error_description=...
+      if (url.hash && url.hash.length > 1) {
+        const hashParams = new URLSearchParams(url.hash.slice(1));
+        const erroHash = hashParams.get("error_description") || hashParams.get("error");
+        if (erroHash) {
+          setSessao({ estado: "erro", mensagem: mensagemErro(erroHash) });
+          return;
+        }
+        const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
+        if (accessToken && refreshToken) {
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (cancelado) return;
+          if (error) {
+            setSessao({ estado: "erro", mensagem: mensagemErro(error.message) });
+          } else {
+            window.history.replaceState({}, "", url.pathname);
+            setSessao({ estado: "ok" });
+          }
+          return;
+        }
+      }
+
+      // 3) Sem token no endereço — pode já haver sessão (detectSessionInUrl anterior).
       const { data } = await supabase.auth.getSession();
-      if (cancelled) return;
-      setSessao(data.session ? "ok" : "sem_sessao");
-    })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) setSessao("ok");
-    });
+      if (cancelado) return;
+      if (data.session) {
+        setSessao({ estado: "ok" });
+      } else {
+        setSessao({
+          estado: "erro",
+          mensagem: "Este link já foi utilizado ou é inválido. Peça um novo.",
+        });
+      }
+    }
+
+    estabelecerSessao();
+
     return () => {
-      cancelled = true;
-      sub.subscription.unsubscribe();
+      cancelado = true;
     };
   }, []);
 
@@ -40,25 +100,14 @@ function DefinirPage() {
     setErro(null);
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       setErro("Não foi possível definir a palavra-passe. Tente novamente.");
       return;
     }
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      navigate({ to: "/entrar" });
-      return;
-    }
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("papel")
-      .eq("id", userData.user.id)
-      .maybeSingle();
-    const papel = perfil?.papel;
-    if (papel === "admin_ologa") navigate({ to: "/ologa" });
-    else if (papel === "gestor_instituicao") navigate({ to: "/instituicao" });
-    else navigate({ to: "/formacao" });
+    await supabase.auth.signOut();
+    setLoading(false);
+    navigate({ to: "/entrar" });
   }
 
   return (
@@ -67,26 +116,29 @@ function DefinirPage() {
       <main id="conteudo" className="mx-auto max-w-md px-4 py-16 sm:px-6">
         <h1 className="text-3xl font-extrabold text-ink">Definir palavra-passe</h1>
 
-        {sessao === "a_verificar" && (
-          <p className="mt-4 text-base text-foreground" role="status" aria-live="polite">A verificar o link…</p>
+        {sessao.estado === "a_verificar" && (
+          <p className="mt-4 text-base text-foreground" role="status" aria-live="polite">
+            A verificar o link…
+          </p>
         )}
 
-        {sessao === "sem_sessao" && (
+        {sessao.estado === "erro" && (
           <div role="alert" className="mt-4 rounded-md border border-brand/40 bg-brand/5 p-4">
-            <p className="text-base text-ink">
-              Este link não é válido ou já foi utilizado. Peça um novo link para recuperar
-              a palavra-passe.
-            </p>
+            <p className="text-base text-ink">{sessao.mensagem}</p>
             <div className="mt-4">
-              <Link to="/recuperar" className="font-semibold text-ink underline">Pedir novo link</Link>
+              <Link to="/recuperar" className="font-semibold text-ink underline">
+                Pedir novo link
+              </Link>
             </div>
           </div>
         )}
 
-        {sessao === "ok" && (
+        {sessao.estado === "ok" && (
           <form onSubmit={onSubmit} noValidate className="mt-8 space-y-5" aria-describedby={erro ? errId : undefined}>
             <div>
-              <label htmlFor={passId} className="block text-base font-semibold text-ink">Nova palavra-passe</label>
+              <label htmlFor={passId} className="block text-base font-semibold text-ink">
+                Nova palavra-passe
+              </label>
               <input
                 id={passId}
                 type="password"
@@ -98,7 +150,9 @@ function DefinirPage() {
                 className="mt-1 block w-full rounded-md border border-ink/20 bg-white px-3 py-2 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ink"
                 aria-describedby={`${passId}-hint`}
               />
-              <p id={`${passId}-hint`} className="mt-1 text-sm text-muted-foreground">Mínimo 8 caracteres.</p>
+              <p id={`${passId}-hint`} className="mt-1 text-sm text-muted-foreground">
+                Mínimo 8 caracteres.
+              </p>
             </div>
             {erro && (
               <p id={errId} role="alert" className="rounded-md border border-brand/40 bg-brand/5 p-3 text-base text-ink">
@@ -117,4 +171,12 @@ function DefinirPage() {
       </main>
     </>
   );
+}
+
+function mensagemErro(bruto: string): string {
+  const m = bruto.toLowerCase();
+  if (m.includes("expired") || m.includes("expirad")) {
+    return "Este link expirou. Peça um novo.";
+  }
+  return "Este link já foi utilizado ou é inválido. Peça um novo.";
 }
