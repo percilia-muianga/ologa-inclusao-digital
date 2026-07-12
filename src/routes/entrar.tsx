@@ -1,4 +1,5 @@
-import { createFileRoute, Link, useNavigate, useServerFn } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState, useId } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { reenviarConfirmacao } from "@/lib/auth.functions";
