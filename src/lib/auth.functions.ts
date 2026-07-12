@@ -17,7 +17,11 @@ const registoSchema = z.object({
     .nullable()
     .optional(),
   tem_deficiencia: z.boolean().nullable().optional(),
-  apoios_acessibilidade: z.array(z.string().min(1).max(200)).max(20).nullable().optional(),
+  apoios_acessibilidade: z
+    .array(z.enum(["lsm", "leitura_facil", "baixa_visao", "audiodescricao", "mobilidade", "nenhum"]))
+    .max(20)
+    .nullable()
+    .optional(),
   origin: z.string().url(),
 });
 
