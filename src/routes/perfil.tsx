@@ -10,13 +10,15 @@ export const Route = createFileRoute("/perfil")({
 type Genero = "feminino" | "masculino" | "prefere_nao_indicar";
 type Nivel = "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar";
 
-const APOIOS: Array<string> = [
-  "Língua de Sinais Moçambicana",
-  "Leitura fácil / linguagem simples",
-  "Baixa visão / letra ampliada",
-  "Áudio / audiodescrição",
-  "Mobilidade / sala acessível",
-  "Nenhum apoio específico",
+type Apoio = "lsm" | "leitura_facil" | "baixa_visao" | "audiodescricao" | "mobilidade" | "nenhum";
+
+const APOIOS: Array<{ v: Apoio; l: string }> = [
+  { v: "lsm", l: "Língua de Sinais Moçambicana" },
+  { v: "leitura_facil", l: "Leitura fácil / linguagem simples" },
+  { v: "baixa_visao", l: "Baixa visão / letra ampliada" },
+  { v: "audiodescricao", l: "Áudio / audiodescrição" },
+  { v: "mobilidade", l: "Mobilidade / sala acessível" },
+  { v: "nenhum", l: "Nenhum apoio específico" },
 ];
 
 function PerfilPage() {
