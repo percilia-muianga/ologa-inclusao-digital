@@ -246,13 +246,13 @@ function RegistoPage() {
               <legend className="text-base font-semibold text-ink">Apoios de acessibilidade de que precisa (opcional)</legend>
               <div className="mt-2 flex flex-col gap-2">
                 {APOIOS.map((a) => (
-                  <label key={a} className="inline-flex items-center gap-2 text-base text-ink">
+                  <label key={a.v} className="inline-flex items-center gap-2 text-base text-ink">
                     <input
                       type="checkbox"
-                      checked={apoios.has(a)}
-                      onChange={() => toggleApoio(a)}
+                      checked={apoios.has(a.v)}
+                      onChange={() => toggleApoio(a.v)}
                     />
-                    {a}
+                    {a.l}
                   </label>
                 ))}
               </div>
