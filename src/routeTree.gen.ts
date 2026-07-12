@@ -20,6 +20,8 @@ import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirPalavraPasseRouteImport } from './routes/definir-palavra-passe'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
+import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
 
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
@@ -76,6 +78,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OlogaNovaInstituicaoRoute = OlogaNovaInstituicaoRouteImport.update({
+  id: '/nova-instituicao',
+  path: '/nova-instituicao',
+  getParentRoute: () => OlogaRoute,
+} as any)
+const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
+  id: '/instituicoes/$id',
+  path: '/instituicoes/$id',
+  getParentRoute: () => OlogaRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -84,11 +96,13 @@ export interface FileRoutesByFullPath {
   '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
-  '/ologa': typeof OlogaRoute
+  '/ologa': typeof OlogaRouteWithChildren
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
+  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -97,11 +111,13 @@ export interface FileRoutesByTo {
   '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
-  '/ologa': typeof OlogaRoute
+  '/ologa': typeof OlogaRouteWithChildren
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
+  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -111,11 +127,13 @@ export interface FileRoutesById {
   '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
-  '/ologa': typeof OlogaRoute
+  '/ologa': typeof OlogaRouteWithChildren
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
+  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +149,8 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/ologa/nova-instituicao'
+    | '/ologa/instituicoes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +164,8 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/ologa/nova-instituicao'
+    | '/ologa/instituicoes/$id'
   id:
     | '__root__'
     | '/'
@@ -157,6 +179,8 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/ologa/nova-instituicao'
+    | '/ologa/instituicoes/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -166,7 +190,7 @@ export interface RootRouteChildren {
   FormacaoRoute: typeof FormacaoRoute
   InscricaoRoute: typeof InscricaoRoute
   InstituicaoRoute: typeof InstituicaoRoute
-  OlogaRoute: typeof OlogaRoute
+  OlogaRoute: typeof OlogaRouteWithChildren
   PerfilRoute: typeof PerfilRoute
   RecuperarRoute: typeof RecuperarRoute
   RegistoRoute: typeof RegistoRoute
@@ -252,8 +276,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ologa/nova-instituicao': {
+      id: '/ologa/nova-instituicao'
+      path: '/nova-instituicao'
+      fullPath: '/ologa/nova-instituicao'
+      preLoaderRoute: typeof OlogaNovaInstituicaoRouteImport
+      parentRoute: typeof OlogaRoute
+    }
+    '/ologa/instituicoes/$id': {
+      id: '/ologa/instituicoes/$id'
+      path: '/instituicoes/$id'
+      fullPath: '/ologa/instituicoes/$id'
+      preLoaderRoute: typeof OlogaInstituicoesIdRouteImport
+      parentRoute: typeof OlogaRoute
+    }
   }
 }
+
+interface OlogaRouteChildren {
+  OlogaNovaInstituicaoRoute: typeof OlogaNovaInstituicaoRoute
+  OlogaInstituicoesIdRoute: typeof OlogaInstituicoesIdRoute
+}
+
+const OlogaRouteChildren: OlogaRouteChildren = {
+  OlogaNovaInstituicaoRoute: OlogaNovaInstituicaoRoute,
+  OlogaInstituicoesIdRoute: OlogaInstituicoesIdRoute,
+}
+
+const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -262,7 +312,7 @@ const rootRouteChildren: RootRouteChildren = {
   FormacaoRoute: FormacaoRoute,
   InscricaoRoute: InscricaoRoute,
   InstituicaoRoute: InstituicaoRoute,
-  OlogaRoute: OlogaRoute,
+  OlogaRoute: OlogaRouteWithChildren,
   PerfilRoute: PerfilRoute,
   RecuperarRoute: RecuperarRoute,
   RegistoRoute: RegistoRoute,
@@ -271,13 +321,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
