@@ -186,7 +186,9 @@ export type Database = {
       }
       perfis: {
         Row: {
-          apoios_acessibilidade: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em: string
           email: string
           funcao: string | null
@@ -196,10 +198,12 @@ export type Database = {
           nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia: boolean
+          tem_deficiencia: boolean | null
         }
         Insert: {
-          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em?: string
           email: string
           funcao?: string | null
@@ -209,10 +213,12 @@ export type Database = {
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia?: boolean
+          tem_deficiencia?: boolean | null
         }
         Update: {
-          apoios_acessibilidade?: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           criado_em?: string
           email?: string
           funcao?: string | null
@@ -222,7 +228,7 @@ export type Database = {
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
           papel?: Database["public"]["Enums"]["papel_utilizador"]
-          tem_deficiencia?: boolean
+          tem_deficiencia?: boolean | null
         }
         Relationships: [
           {
@@ -433,6 +439,7 @@ export type Database = {
         | "baixa_visao"
         | "audiodescricao"
         | "mobilidade"
+        | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
       genero: "feminino" | "masculino" | "prefere_nao_indicar"
       meio_instituicao: "urbano" | "peri_urbano" | "rural"
@@ -446,7 +453,7 @@ export type Database = {
         | "empresa"
         | "outro"
       nivel_modulo: "basico" | "intermedio" | "avancado"
-      nivel_partida: "nenhum" | "basico" | "intermedio"
+      nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
       papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
     }
     CompositeTypes: {
@@ -581,6 +588,7 @@ export const Constants = {
         "baixa_visao",
         "audiodescricao",
         "mobilidade",
+        "nenhum",
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
       genero: ["feminino", "masculino", "prefere_nao_indicar"],
@@ -596,7 +604,7 @@ export const Constants = {
         "outro",
       ],
       nivel_modulo: ["basico", "intermedio", "avancado"],
-      nivel_partida: ["nenhum", "basico", "intermedio"],
+      nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
       papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
     },
   },
