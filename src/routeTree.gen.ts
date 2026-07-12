@@ -10,8 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerificarRouteImport } from './routes/verificar'
+import { Route as RegistoRouteImport } from './routes/registo'
+import { Route as RecuperarRouteImport } from './routes/recuperar'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as OlogaRouteImport } from './routes/ologa'
+import { Route as InstituicaoRouteImport } from './routes/instituicao'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
+import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as DefinirPalavraPasseRouteImport } from './routes/definir-palavra-passe'
 import { Route as IndexRouteImport } from './routes/index'
 
 const VerificarRoute = VerificarRouteImport.update({
@@ -19,14 +26,49 @@ const VerificarRoute = VerificarRouteImport.update({
   path: '/verificar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegistoRoute = RegistoRouteImport.update({
+  id: '/registo',
+  path: '/registo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarRoute = RecuperarRouteImport.update({
+  id: '/recuperar',
+  path: '/recuperar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OlogaRoute = OlogaRouteImport.update({
+  id: '/ologa',
+  path: '/ologa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstituicaoRoute = InstituicaoRouteImport.update({
+  id: '/instituicao',
+  path: '/instituicao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InscricaoRoute = InscricaoRouteImport.update({
   id: '/inscricao',
   path: '/inscricao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormacaoRoute = FormacaoRouteImport.update({
+  id: '/formacao',
+  path: '/formacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DefinirPalavraPasseRoute = DefinirPalavraPasseRouteImport.update({
+  id: '/definir-palavra-passe',
+  path: '/definir-palavra-passe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,35 +79,97 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
+  '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
+  '/instituicao': typeof InstituicaoRoute
+  '/ologa': typeof OlogaRoute
+  '/perfil': typeof PerfilRoute
+  '/recuperar': typeof RecuperarRoute
+  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
+  '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
+  '/instituicao': typeof InstituicaoRoute
+  '/ologa': typeof OlogaRoute
+  '/perfil': typeof PerfilRoute
+  '/recuperar': typeof RecuperarRoute
+  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
+  '/formacao': typeof FormacaoRoute
   '/inscricao': typeof InscricaoRoute
+  '/instituicao': typeof InstituicaoRoute
+  '/ologa': typeof OlogaRoute
+  '/perfil': typeof PerfilRoute
+  '/recuperar': typeof RecuperarRoute
+  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/entrar' | '/inscricao' | '/verificar'
+  fullPaths:
+    | '/'
+    | '/definir-palavra-passe'
+    | '/entrar'
+    | '/formacao'
+    | '/inscricao'
+    | '/instituicao'
+    | '/ologa'
+    | '/perfil'
+    | '/recuperar'
+    | '/registo'
+    | '/verificar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/entrar' | '/inscricao' | '/verificar'
-  id: '__root__' | '/' | '/entrar' | '/inscricao' | '/verificar'
+  to:
+    | '/'
+    | '/definir-palavra-passe'
+    | '/entrar'
+    | '/formacao'
+    | '/inscricao'
+    | '/instituicao'
+    | '/ologa'
+    | '/perfil'
+    | '/recuperar'
+    | '/registo'
+    | '/verificar'
+  id:
+    | '__root__'
+    | '/'
+    | '/definir-palavra-passe'
+    | '/entrar'
+    | '/formacao'
+    | '/inscricao'
+    | '/instituicao'
+    | '/ologa'
+    | '/perfil'
+    | '/recuperar'
+    | '/registo'
+    | '/verificar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DefinirPalavraPasseRoute: typeof DefinirPalavraPasseRoute
   EntrarRoute: typeof EntrarRoute
+  FormacaoRoute: typeof FormacaoRoute
   InscricaoRoute: typeof InscricaoRoute
+  InstituicaoRoute: typeof InstituicaoRoute
+  OlogaRoute: typeof OlogaRoute
+  PerfilRoute: typeof PerfilRoute
+  RecuperarRoute: typeof RecuperarRoute
+  RegistoRoute: typeof RegistoRoute
   VerificarRoute: typeof VerificarRoute
 }
 
@@ -78,6 +182,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerificarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/registo': {
+      id: '/registo'
+      path: '/registo'
+      fullPath: '/registo'
+      preLoaderRoute: typeof RegistoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar': {
+      id: '/recuperar'
+      path: '/recuperar'
+      fullPath: '/recuperar'
+      preLoaderRoute: typeof RecuperarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ologa': {
+      id: '/ologa'
+      path: '/ologa'
+      fullPath: '/ologa'
+      preLoaderRoute: typeof OlogaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/instituicao': {
+      id: '/instituicao'
+      path: '/instituicao'
+      fullPath: '/instituicao'
+      preLoaderRoute: typeof InstituicaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/inscricao': {
       id: '/inscricao'
       path: '/inscricao'
@@ -85,11 +224,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscricaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formacao': {
+      id: '/formacao'
+      path: '/formacao'
+      fullPath: '/formacao'
+      preLoaderRoute: typeof FormacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrar': {
       id: '/entrar'
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/definir-palavra-passe': {
+      id: '/definir-palavra-passe'
+      path: '/definir-palavra-passe'
+      fullPath: '/definir-palavra-passe'
+      preLoaderRoute: typeof DefinirPalavraPasseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,8 +257,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DefinirPalavraPasseRoute: DefinirPalavraPasseRoute,
   EntrarRoute: EntrarRoute,
+  FormacaoRoute: FormacaoRoute,
   InscricaoRoute: InscricaoRoute,
+  InstituicaoRoute: InstituicaoRoute,
+  OlogaRoute: OlogaRoute,
+  PerfilRoute: PerfilRoute,
+  RecuperarRoute: RecuperarRoute,
+  RegistoRoute: RegistoRoute,
   VerificarRoute: VerificarRoute,
 }
 export const routeTree = rootRouteImport
