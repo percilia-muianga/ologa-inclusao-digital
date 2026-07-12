@@ -1,0 +1,1 @@
+ALTER TYPE public.apoio_acessibilidade ADD VALUE IF NOT EXISTS 'nenhum';

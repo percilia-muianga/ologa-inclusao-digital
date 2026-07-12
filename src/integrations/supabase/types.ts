@@ -439,6 +439,7 @@ export type Database = {
         | "baixa_visao"
         | "audiodescricao"
         | "mobilidade"
+        | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
       genero: "feminino" | "masculino" | "prefere_nao_indicar"
       meio_instituicao: "urbano" | "peri_urbano" | "rural"
@@ -587,6 +588,7 @@ export const Constants = {
         "baixa_visao",
         "audiodescricao",
         "mobilidade",
+        "nenhum",
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
       genero: ["feminino", "masculino", "prefere_nao_indicar"],
