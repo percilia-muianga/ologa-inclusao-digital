@@ -174,6 +174,14 @@ function FichaPage() {
           )}
         </div>
 
+        <SeccaoGestor
+          instituicaoId={inst.id}
+          emailPontoFocal={inst.ponto_focal_email ?? ""}
+          nomePontoFocal={inst.ponto_focal_nome ?? ""}
+        />
+
+
+
         <Seccao titulo="1. Identificação">
           <Linha rot="Nome" val={inst.nome} />
           <Linha rot="Natureza" val={rotulo(NATUREZA_OPCOES, inst.natureza)} />
