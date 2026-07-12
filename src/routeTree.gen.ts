@@ -20,7 +20,6 @@ import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirPalavraPasseRouteImport } from './routes/definir-palavra-passe'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiPublicAdminSetupRouteImport } from './routes/api/public/admin-setup'
 
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
@@ -77,11 +76,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicAdminSetupRoute = ApiPublicAdminSetupRouteImport.update({
-  id: '/api/public/admin-setup',
-  path: '/api/public/admin-setup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,7 +89,6 @@ export interface FileRoutesByFullPath {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
-  '/api/public/admin-setup': typeof ApiPublicAdminSetupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,7 +102,6 @@ export interface FileRoutesByTo {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
-  '/api/public/admin-setup': typeof ApiPublicAdminSetupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,7 +116,6 @@ export interface FileRoutesById {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
-  '/api/public/admin-setup': typeof ApiPublicAdminSetupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,7 +131,6 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
-    | '/api/public/admin-setup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,7 +144,6 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
-    | '/api/public/admin-setup'
   id:
     | '__root__'
     | '/'
@@ -168,7 +157,6 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
-    | '/api/public/admin-setup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,7 +171,6 @@ export interface RootRouteChildren {
   RecuperarRoute: typeof RecuperarRoute
   RegistoRoute: typeof RegistoRoute
   VerificarRoute: typeof VerificarRoute
-  ApiPublicAdminSetupRoute: typeof ApiPublicAdminSetupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,13 +252,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin-setup': {
-      id: '/api/public/admin-setup'
-      path: '/api/public/admin-setup'
-      fullPath: '/api/public/admin-setup'
-      preLoaderRoute: typeof ApiPublicAdminSetupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -287,7 +267,6 @@ const rootRouteChildren: RootRouteChildren = {
   RecuperarRoute: RecuperarRoute,
   RegistoRoute: RegistoRoute,
   VerificarRoute: VerificarRoute,
-  ApiPublicAdminSetupRoute: ApiPublicAdminSetupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
