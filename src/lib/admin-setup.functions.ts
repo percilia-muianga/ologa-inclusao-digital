@@ -4,20 +4,23 @@ import { z } from "zod";
 const schema = z.object({
   email: z.string().email(),
   origin: z.string().url(),
-  setupToken: z.string().min(10),
 });
 
 export const criarAdminOlogaUnico = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => schema.parse(d))
   .handler(async ({ data }) => {
-    const expected = process.env.ADMIN_SETUP_TOKEN;
-    if (!expected || data.setupToken !== expected) {
-      return { ok: false as const, erro: "token" as const };
-    }
-
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Random password (never revealed)
+    // Refuse if any admin_ologa already exists.
+    const { data: existentes, error: exErr } = await supabaseAdmin
+      .from("perfis")
+      .select("id, email")
+      .eq("papel", "admin_ologa");
+    if (exErr) return { ok: false as const, erro: "consulta", mensagem: exErr.message };
+    if (existentes && existentes.length > 0) {
+      return { ok: false as const, erro: "ja_existe", admins: existentes };
+    }
+
     const bytes = new Uint8Array(32);
     crypto.getRandomValues(bytes);
     const randomPassword =
@@ -33,7 +36,7 @@ export const criarAdminOlogaUnico = createServerFn({ method: "POST" })
     if (createErr || !created.user) {
       return {
         ok: false as const,
-        erro: "criar" as const,
+        erro: "criar",
         mensagem: createErr?.message ?? "sem utilizador",
       };
     }
@@ -48,11 +51,7 @@ export const criarAdminOlogaUnico = createServerFn({ method: "POST" })
 
     if (perfilErr) {
       await supabaseAdmin.auth.admin.deleteUser(created.user.id);
-      return {
-        ok: false as const,
-        erro: "perfil" as const,
-        mensagem: perfilErr.message,
-      };
+      return { ok: false as const, erro: "perfil", mensagem: perfilErr.message };
     }
 
     const { data: link, error: linkErr } =
@@ -63,12 +62,29 @@ export const criarAdminOlogaUnico = createServerFn({ method: "POST" })
       });
 
     if (linkErr) {
-      return { ok: false as const, erro: "link" as const, mensagem: linkErr.message };
+      return { ok: false as const, erro: "link", mensagem: linkErr.message };
     }
+
+    // Verify auth.users state
+    const { data: userRow } = await supabaseAdmin.auth.admin.getUserById(created.user.id);
 
     return {
       ok: true as const,
       actionLink: link.properties?.action_link ?? null,
       userId: created.user.id,
+      emailConfirmedAt: userRow.user?.email_confirmed_at ?? null,
     };
+  });
+
+export const gerarLinkReposicaoAdmin = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => schema.parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email: data.email,
+      options: { redirectTo: `${data.origin}/definir-palavra-passe` },
+    });
+    if (error) return { ok: false as const, mensagem: error.message };
+    return { ok: true as const, actionLink: link.properties?.action_link ?? null };
   });
