@@ -64,49 +64,103 @@ export type Database = {
       }
       instituicoes: {
         Row: {
+          apoios_acessibilidade:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           codigo_inscricao: string
           conectividade: Database["public"]["Enums"]["conectividade"] | null
+          consentimento: boolean
           criado_em: string
           distrito: string | null
           id: string
           meio: Database["public"]["Enums"]["meio_instituicao"] | null
           modalidade: Database["public"]["Enums"]["modalidade"] | null
+          modulos_interesse: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
+          nivel_literacia: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          num_colaboradores_total: number
+          num_computadores: number | null
+          num_homens: number | null
+          num_mulheres: number | null
+          num_pcd: number | null
+          observacoes: string | null
+          percurso: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email: string | null
           ponto_focal_nome: string | null
+          prazo: Database["public"]["Enums"]["prazo_pretendido"] | null
           provincia: string | null
-          setor: string | null
+          sala_disponivel:
+            | Database["public"]["Enums"]["sala_disponivel_opt"]
+            | null
+          setor: Database["public"]["Enums"]["setor_instituicao"] | null
+          setor_outro: string | null
         }
         Insert: {
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           codigo_inscricao: string
           conectividade?: Database["public"]["Enums"]["conectividade"] | null
+          consentimento?: boolean
           criado_em?: string
           distrito?: string | null
           id?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
+          modulos_interesse?: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
+          nivel_literacia?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          num_colaboradores_total?: number
+          num_computadores?: number | null
+          num_homens?: number | null
+          num_mulheres?: number | null
+          num_pcd?: number | null
+          observacoes?: string | null
+          percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
+          prazo?: Database["public"]["Enums"]["prazo_pretendido"] | null
           provincia?: string | null
-          setor?: string | null
+          sala_disponivel?:
+            | Database["public"]["Enums"]["sala_disponivel_opt"]
+            | null
+          setor?: Database["public"]["Enums"]["setor_instituicao"] | null
+          setor_outro?: string | null
         }
         Update: {
+          apoios_acessibilidade?:
+            | Database["public"]["Enums"]["apoio_acessibilidade"][]
+            | null
           codigo_inscricao?: string
           conectividade?: Database["public"]["Enums"]["conectividade"] | null
+          consentimento?: boolean
           criado_em?: string
           distrito?: string | null
           id?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
+          modulos_interesse?: string[] | null
           natureza?: Database["public"]["Enums"]["natureza_instituicao"]
+          nivel_literacia?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
+          num_colaboradores_total?: number
+          num_computadores?: number | null
+          num_homens?: number | null
+          num_mulheres?: number | null
+          num_pcd?: number | null
+          observacoes?: string | null
+          percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
+          prazo?: Database["public"]["Enums"]["prazo_pretendido"] | null
           provincia?: string | null
-          setor?: string | null
+          sala_disponivel?:
+            | Database["public"]["Enums"]["sala_disponivel_opt"]
+            | null
+          setor?: Database["public"]["Enums"]["setor_instituicao"] | null
+          setor_outro?: string | null
         }
         Relationships: []
       }
@@ -455,6 +509,28 @@ export type Database = {
       nivel_modulo: "basico" | "intermedio" | "avancado"
       nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
       papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
+      percurso: "completo" | "fundacao" | "intermedio" | "avancado" | "avulsos"
+      prazo_pretendido:
+        | "breve"
+        | "entre_1_3_meses"
+        | "entre_3_6_meses"
+        | "mais_6_meses"
+        | "nao_definido"
+      sala_disponivel_opt: "sim" | "nao" | "nao_sei"
+      setor_instituicao:
+        | "admin_publica_central"
+        | "admin_local"
+        | "educacao"
+        | "saude"
+        | "financas"
+        | "justica"
+        | "agricultura"
+        | "infraestruturas_transportes"
+        | "energia"
+        | "interior_seguranca"
+        | "sociedade_civil_ong"
+        | "setor_privado"
+        | "outro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -606,6 +682,30 @@ export const Constants = {
       nivel_modulo: ["basico", "intermedio", "avancado"],
       nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
       papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
+      percurso: ["completo", "fundacao", "intermedio", "avancado", "avulsos"],
+      prazo_pretendido: [
+        "breve",
+        "entre_1_3_meses",
+        "entre_3_6_meses",
+        "mais_6_meses",
+        "nao_definido",
+      ],
+      sala_disponivel_opt: ["sim", "nao", "nao_sei"],
+      setor_instituicao: [
+        "admin_publica_central",
+        "admin_local",
+        "educacao",
+        "saude",
+        "financas",
+        "justica",
+        "agricultura",
+        "infraestruturas_transportes",
+        "energia",
+        "interior_seguranca",
+        "sociedade_civil_ong",
+        "setor_privado",
+        "outro",
+      ],
     },
   },
 } as const
