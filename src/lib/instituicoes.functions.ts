@@ -165,3 +165,101 @@ export const listarModulosAdmin = createServerFn({ method: "GET" })
     if (error) return { ok: false as const, mensagem: error.message };
     return { ok: true as const, modulos: data ?? [] };
   });
+
+export const listarGestoresInstituicao = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ instituicao_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: gestores, error } = await supabaseAdmin
+      .from("perfis")
+      .select("id, nome, email, criado_em")
+      .eq("instituicao_id", data.instituicao_id)
+      .eq("papel", "gestor_instituicao")
+      .order("criado_em", { ascending: true });
+    if (error) return { ok: false as const, mensagem: error.message };
+    return { ok: true as const, gestores: gestores ?? [] };
+  });
+
+export const criarGestorInstituicao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        instituicao_id: z.string().uuid(),
+        nome: z.string().trim().min(2, "Nome obrigatório").max(200),
+        email: z.string().trim().toLowerCase().email("Email inválido"),
+        origin: z.string().url(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Confirmar que a instituição existe
+    const { data: inst, error: erroInst } = await supabaseAdmin
+      .from("instituicoes")
+      .select("id")
+      .eq("id", data.instituicao_id)
+      .maybeSingle();
+    if (erroInst) return { ok: false as const, mensagem: erroInst.message };
+    if (!inst) return { ok: false as const, mensagem: "instituicao_nao_encontrada" };
+
+    // Criar utilizador com email confirmado, sem palavra-passe
+    const { data: criado, error: erroUser } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      email_confirm: true,
+      user_metadata: { nome: data.nome },
+    });
+    if (erroUser || !criado?.user) {
+      return {
+        ok: false as const,
+        mensagem: erroUser?.message ?? "Não foi possível criar o utilizador.",
+      };
+    }
+    const novoId = criado.user.id;
+
+    // Criar perfil ligado à instituição, papel gestor_instituicao
+    const { error: erroPerfil } = await supabaseAdmin.from("perfis").insert({
+      id: novoId,
+      nome: data.nome,
+      email: data.email,
+      papel: "gestor_instituicao",
+      instituicao_id: data.instituicao_id,
+    });
+    if (erroPerfil) {
+      // Reverter utilizador para não deixar conta órfã
+      await supabaseAdmin.auth.admin.deleteUser(novoId);
+      return { ok: false as const, mensagem: erroPerfil.message };
+    }
+
+    // Gerar link de definição de palavra-passe (invite)
+    const redirectTo = `${data.origin.replace(/\/$/, "")}/definir-palavra-passe`;
+    const { data: linkData, error: erroLink } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email: data.email,
+      options: { redirectTo },
+    });
+    if (erroLink || !linkData?.properties?.action_link) {
+      return {
+        ok: false as const,
+        mensagem: erroLink?.message ?? "Conta criada, mas não foi possível gerar o link.",
+      };
+    }
+
+    return {
+      ok: true as const,
+      gestor: {
+        id: novoId,
+        nome: data.nome,
+        email: data.email,
+      },
+      link: linkData.properties.action_link,
+    };
+  });
