@@ -1,0 +1,1 @@
+ALTER TYPE public.nivel_partida ADD VALUE IF NOT EXISTS 'prefere_nao_indicar';

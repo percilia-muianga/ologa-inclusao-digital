@@ -452,7 +452,7 @@ export type Database = {
         | "empresa"
         | "outro"
       nivel_modulo: "basico" | "intermedio" | "avancado"
-      nivel_partida: "nenhum" | "basico" | "intermedio"
+      nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
       papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
     }
     CompositeTypes: {
@@ -602,7 +602,7 @@ export const Constants = {
         "outro",
       ],
       nivel_modulo: ["basico", "intermedio", "avancado"],
-      nivel_partida: ["nenhum", "basico", "intermedio"],
+      nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
       papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
     },
   },
