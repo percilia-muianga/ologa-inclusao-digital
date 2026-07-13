@@ -29,6 +29,10 @@ function DefinirPage() {
     async function estabelecerSessao() {
       const url = new URL(window.location.href);
 
+      // Evita que uma sessão pré-existente (ex.: admin na mesma janela) interfira
+      // com a sessão de recuperação/convite.
+      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+
       // 1) Formato novo (query): ?token_hash=...&type=recovery|invite
       const tokenHash = url.searchParams.get("token_hash");
       const tipoQuery = url.searchParams.get("type");
