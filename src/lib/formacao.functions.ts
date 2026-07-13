@@ -251,7 +251,7 @@ export const submeterQuiz = createServerFn({ method: "POST" })
       .eq("id", userId)
       .maybeSingle();
     if (perfil?.papel !== "formando") {
-      return { pontuacao, total, modo_pre_visualizacao: true };
+      return { pontuacao, total, modo_pre_visualizacao: true, _debug: { modulo_id: modulo.id, perguntas_len: lista.length, err: String(perguntasErr ?? "") } };
     }
 
     const { error } = await supabase.from("progresso_quizzes").insert({
