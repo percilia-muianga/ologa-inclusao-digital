@@ -107,7 +107,7 @@ function DefinirPage() {
     if (error) {
       setLoading(false);
       console.error("[definir-palavra-passe] updateUser falhou:", error);
-      setErro(traduzirErroPassword(error.message) + ` (detalhe: ${error.message})`);
+      setErro(traduzirErroPassword(error.message));
       return;
     }
     await supabase.auth.signOut();
