@@ -74,6 +74,7 @@ function HomePage() {
             <h1 className="mb-4 text-[42px] font-extrabold leading-[1.12] text-white sm:text-[42px]">
               {HERO_TITLE_A}
               <span className="text-gold">{HERO_TITLE_HIGHLIGHT}</span>
+              {HERO_TITLE_B}
             </h1>
             <p className="mb-7 max-w-[620px] text-[17.5px] text-[#d6dde4]">{HERO_DESC}</p>
 
