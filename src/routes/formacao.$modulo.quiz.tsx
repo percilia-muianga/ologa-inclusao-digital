@@ -23,7 +23,7 @@ function QuizPage() {
   const [erro, setErro] = useState<string | null>(null);
   const [respostas, setRespostas] = useState<Record<string, number>>({});
   const [aSubmeter, setASubmeter] = useState(false);
-  const [resultado, setResultado] = useState<{ pontuacao: number; total: number } | null>(null);
+  const [resultado, setResultado] = useState<Awaited<ReturnType<typeof submeterQuiz>> | null>(null);
 
   const ordem = Number.parseInt(moduloParam, 10);
 
@@ -106,9 +106,15 @@ function QuizPage() {
 
         {resultado ? (
           <section className="mt-6 rounded-lg border border-ink/10 bg-white p-6">
-            <p className="text-2xl font-extrabold text-ink">
-              {resultado.pontuacao} de {resultado.total} respostas corretas
-            </p>
+            {resultado.modo_pre_visualizacao ? (
+              <p className="text-lg font-semibold text-ink">
+                Está em modo de pré-visualização. As respostas não são pontuadas nem guardadas.
+              </p>
+            ) : (
+              <p className="text-2xl font-extrabold text-ink">
+                {resultado.pontuacao} de {resultado.total} respostas corretas
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap gap-3">
               <button
                 type="button"

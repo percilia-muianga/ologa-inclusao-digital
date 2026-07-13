@@ -225,6 +225,18 @@ export const submeterQuiz = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
+    // Verifica o papel primeiro. Em pré-visualização (admin/gestor) não pontua
+    // nem grava — devolve apenas a flag para a UI mostrar a mensagem.
+    const { data: perfil } = await supabase
+      .from("perfis")
+      .select("papel")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (perfil?.papel !== "formando") {
+      return { modo_pre_visualizacao: true as const };
+    }
+
     const { data: modulo } = await supabase
       .from("modulos")
       .select("id")
@@ -232,10 +244,15 @@ export const submeterQuiz = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!modulo) throw new Error("Módulo não encontrado");
 
-    const { data: perguntas } = await supabase
+    // A coluna `resposta_correta_indice` não está concedida ao papel
+    // `authenticated` (é intencional — esconde a resposta correta do cliente).
+    // A correção precisa do service_role para a ler.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: perguntas, error: perguntasErr } = await supabaseAdmin
       .from("quiz_perguntas")
       .select("id, resposta_correta_indice")
       .eq("modulo_id", modulo.id);
+    if (perguntasErr) throw perguntasErr;
 
     const lista = perguntas ?? [];
     let pontuacao = 0;
@@ -243,15 +260,6 @@ export const submeterQuiz = createServerFn({ method: "POST" })
       if (data.respostas[p.id] === p.resposta_correta_indice) pontuacao += 1;
     }
     const total = lista.length;
-
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("papel")
-      .eq("id", userId)
-      .maybeSingle();
-    if (perfil?.papel !== "formando") {
-      return { pontuacao, total, modo_pre_visualizacao: true };
-    }
 
     const { error } = await supabase.from("progresso_quizzes").insert({
       perfil_id: userId,
@@ -261,6 +269,6 @@ export const submeterQuiz = createServerFn({ method: "POST" })
     });
     if (error) throw error;
 
-    return { pontuacao, total, modo_pre_visualizacao: false };
+    return { modo_pre_visualizacao: false as const, pontuacao, total };
   });
 
