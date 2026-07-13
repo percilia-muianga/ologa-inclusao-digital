@@ -19,6 +19,7 @@ type EstadoSessao =
 
 function DefinirPage() {
   const navigate = useNavigate();
+  const marcar = useServerFn(marcarPasswordDefinida);
   const passId = useId();
   const errId = useId();
   const [password, setPassword] = useState("");
