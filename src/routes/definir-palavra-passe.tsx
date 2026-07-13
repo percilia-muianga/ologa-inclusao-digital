@@ -114,10 +114,16 @@ function DefinirPage() {
       setErro(traduzirErroPassword(error.message));
       return;
     }
+    try {
+      await marcar();
+    } catch (e) {
+      console.error("[definir-palavra-passe] marcarPasswordDefinida falhou:", e);
+    }
     await supabase.auth.signOut();
     setLoading(false);
     navigate({ to: "/entrar" });
   }
+
 
   return (
     <>
