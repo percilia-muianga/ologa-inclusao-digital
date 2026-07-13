@@ -2,7 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useId, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { marcarPasswordDefinida } from "@/lib/colaboradores.functions";
+import {
+  marcarPasswordDefinida,
+  verificarConvite,
+  definirPasswordViaConvite,
+} from "@/lib/colaboradores.functions";
 
 
 export const Route = createFileRoute("/definir-palavra-passe")({
@@ -14,12 +18,15 @@ export const Route = createFileRoute("/definir-palavra-passe")({
 
 type EstadoSessao =
   | { estado: "a_verificar" }
-  | { estado: "ok" }
+  | { estado: "ok_convite"; token: string; email: string }
+  | { estado: "ok_recovery" }
   | { estado: "erro"; mensagem: string };
 
 function DefinirPage() {
   const navigate = useNavigate();
   const marcar = useServerFn(marcarPasswordDefinida);
+  const verificar = useServerFn(verificarConvite);
+  const definirConvite = useServerFn(definirPasswordViaConvite);
   const passId = useId();
   const errId = useId();
   const [password, setPassword] = useState("");
@@ -30,14 +37,25 @@ function DefinirPage() {
   useEffect(() => {
     let cancelado = false;
 
-    async function estabelecerSessao() {
+    async function estabelecer() {
       const url = new URL(window.location.href);
 
-      // Evita que uma sessão pré-existente (ex.: admin na mesma janela) interfira
-      // com a sessão de recuperação/convite.
+      // FLUXO CONVITE: ?convite=<token>. Não usa sessão Supabase.
+      const convite = url.searchParams.get("convite");
+      if (convite) {
+        const res = await verificar({ data: { token: convite } });
+        if (cancelado) return;
+        if (!res.ok) {
+          setSessao({ estado: "erro", mensagem: mensagemConvite(res.motivo) });
+          return;
+        }
+        setSessao({ estado: "ok_convite", token: convite, email: res.email });
+        return;
+      }
+
+      // FLUXO RECOVERY normal (link Supabase de 1h). Estabelece sessão.
       await supabase.auth.signOut({ scope: "local" }).catch(() => {});
 
-      // 1) Formato novo (query): ?token_hash=...&type=recovery|invite
       const tokenHash = url.searchParams.get("token_hash");
       const tipoQuery = url.searchParams.get("type");
       if (tokenHash && (tipoQuery === "recovery" || tipoQuery === "invite")) {
@@ -49,15 +67,12 @@ function DefinirPage() {
         if (error) {
           setSessao({ estado: "erro", mensagem: mensagemErro(error.message) });
         } else {
-          // Limpa o token do endereço.
           window.history.replaceState({}, "", url.pathname);
-          setSessao({ estado: "ok" });
+          setSessao({ estado: "ok_recovery" });
         }
         return;
       }
 
-      // 2) Formato antigo (fragmento): #access_token=...&refresh_token=...&type=recovery
-      //    ou erros: #error=...&error_description=...
       if (url.hash && url.hash.length > 1) {
         const hashParams = new URLSearchParams(url.hash.slice(1));
         const erroHash = hashParams.get("error_description") || hashParams.get("error");
@@ -77,17 +92,16 @@ function DefinirPage() {
             setSessao({ estado: "erro", mensagem: mensagemErro(error.message) });
           } else {
             window.history.replaceState({}, "", url.pathname);
-            setSessao({ estado: "ok" });
+            setSessao({ estado: "ok_recovery" });
           }
           return;
         }
       }
 
-      // 3) Sem token no endereço — pode já haver sessão (detectSessionInUrl anterior).
       const { data } = await supabase.auth.getSession();
       if (cancelado) return;
       if (data.session) {
-        setSessao({ estado: "ok" });
+        setSessao({ estado: "ok_recovery" });
       } else {
         setSessao({
           estado: "erro",
@@ -96,34 +110,52 @@ function DefinirPage() {
       }
     }
 
-    estabelecerSessao();
+    estabelecer();
 
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [verificar]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErro(null);
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) {
+
+    if (sessao.estado === "ok_convite") {
+      const res = await definirConvite({ data: { token: sessao.token, password } });
       setLoading(false);
-      console.error("[definir-palavra-passe] updateUser falhou:", error);
-      setErro(traduzirErroPassword(error.message));
+      if (!res.ok) {
+        if (res.motivo === "password_invalida") {
+          setErro(traduzirErroPassword(res.mensagem ?? ""));
+        } else {
+          setErro(mensagemConvite(res.motivo));
+        }
+        return;
+      }
+      navigate({ to: "/entrar" });
       return;
     }
-    try {
-      await marcar();
-    } catch (e) {
-      console.error("[definir-palavra-passe] marcarPasswordDefinida falhou:", e);
+
+    if (sessao.estado === "ok_recovery") {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        setLoading(false);
+        setErro(traduzirErroPassword(error.message));
+        return;
+      }
+      try {
+        await marcar();
+      } catch (e) {
+        console.error("[definir-palavra-passe] marcarPasswordDefinida falhou:", e);
+      }
+      await supabase.auth.signOut();
+      setLoading(false);
+      navigate({ to: "/entrar" });
     }
-    await supabase.auth.signOut();
-    setLoading(false);
-    navigate({ to: "/entrar" });
   }
 
+  const emSessao = sessao.estado === "ok_convite" || sessao.estado === "ok_recovery";
 
   return (
     <>
@@ -148,8 +180,13 @@ function DefinirPage() {
           </div>
         )}
 
-        {sessao.estado === "ok" && (
+        {emSessao && (
           <form onSubmit={onSubmit} noValidate className="mt-8 space-y-5" aria-describedby={erro ? errId : undefined}>
+            {sessao.estado === "ok_convite" && (
+              <p className="text-base text-foreground">
+                Conta: <strong className="text-ink">{sessao.email}</strong>
+              </p>
+            )}
             <div>
               <label htmlFor={passId} className="block text-base font-semibold text-ink">
                 Nova palavra-passe
@@ -186,6 +223,21 @@ function DefinirPage() {
       </main>
     </>
   );
+}
+
+function mensagemConvite(motivo: string): string {
+  switch (motivo) {
+    case "expirado":
+      return "Este convite expirou (validade de 30 dias). Peça um novo link ao gestor da sua instituição.";
+    case "usado":
+      return "Este convite já foi utilizado. Se ainda não definiu a palavra-passe, peça um novo link.";
+    case "invalidado":
+      return "Este convite foi substituído por um mais recente. Use o link mais recente que recebeu.";
+    case "ja_ativada":
+      return "Esta conta já está ativada. Use a opção “Recuperar palavra-passe” para redefinir.";
+    default:
+      return "Este link é inválido. Peça um novo link ao gestor da sua instituição.";
+  }
 }
 
 function mensagemErro(bruto: string): string {
