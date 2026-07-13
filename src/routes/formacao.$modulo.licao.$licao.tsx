@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
+import { ListenButton, extrairFrasesDeHtml } from "@/components/listen-button";
 
 const licaoQuery = (licaoId: string) =>
   queryOptions({
@@ -19,12 +20,24 @@ export const Route = createFileRoute("/formacao/$modulo/licao/$licao")({
 
 type Aba = "elearning" | "guiao";
 
+function pararLeitura() {
+  if (typeof window !== "undefined" && "speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
 function LicaoView() {
   const { modulo: moduloId, licao: licaoId } = Route.useParams();
   const navigate = useNavigate();
   const { data: licao } = useSuspenseQuery(licaoQuery(licaoId));
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
   const [aba, setAba] = useState<Aba>("elearning");
+
+  // Paragem automática ao mudar de separador ou de lição
+  useEffect(() => {
+    pararLeitura();
+  }, [aba, licaoId]);
+  useEffect(() => pararLeitura, []);
 
   const indice = useMemo(
     () => mod.licoes.findIndex((l) => l.id === licaoId),
@@ -45,9 +58,39 @@ function LicaoView() {
     }
   }
 
+  function trocarAba(destino: Aba) {
+    if (destino !== aba) {
+      pararLeitura();
+      setAba(destino);
+    }
+  }
+
+  function teclaSeparador(e: React.KeyboardEvent<HTMLButtonElement>) {
+    if (!licao.guiao_formador) return;
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      trocarAba(aba === "elearning" ? "guiao" : "elearning");
+      // Devolver foco ao novo separador seleccionado
+      const alvo = document.getElementById(
+        aba === "elearning" ? "tab-guiao" : "tab-elearning",
+      );
+      alvo?.focus();
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      trocarAba("elearning");
+      document.getElementById("tab-elearning")?.focus();
+    } else if (e.key === "End") {
+      e.preventDefault();
+      trocarAba("guiao");
+      document.getElementById("tab-guiao")?.focus();
+    }
+  }
+
+  const temGuiao = !!licao.guiao_formador;
+
   return (
     <div>
-      <nav className="mb-3 text-sm">
+      <nav className="mb-3 text-sm" aria-label="Navegação da lição">
         <Link
           to="/formacao/$modulo"
           params={{ modulo: moduloId }}
@@ -56,22 +99,27 @@ function LicaoView() {
           ← Voltar ao módulo
         </Link>
       </nav>
-      <h2 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h2>
+      <h1 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h1>
 
       <ul className="selos-formato" aria-label="Formatos acessíveis assegurados nesta lição">
-        <li className="selo-formato"><span>Texto</span><span className="check" aria-hidden>✓</span></li>
-        <li className="selo-formato"><span>Leitura fácil</span><span className="check" aria-hidden>✓</span></li>
-        <li className="selo-formato"><span>Áudio</span><span className="check" aria-hidden>✓</span></li>
-        <li className="selo-formato"><span>Alto contraste</span><span className="check" aria-hidden>✓</span></li>
-        <li className="selo-formato"><span>Língua de Sinais Moçambicana</span><span className="check" aria-hidden>✓</span></li>
+        <li className="selo-formato"><span>Texto</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Leitura fácil</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Áudio</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Alto contraste</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Língua de Sinais Moçambicana</span><span className="check" aria-hidden="true">✓</span></li>
       </ul>
 
-      {licao.guiao_formador ? (
+      {temGuiao ? (
         <div role="tablist" aria-label="Vistas da lição" className="mb-4 flex gap-2 border-b border-line">
           <button
+            id="tab-elearning"
             role="tab"
+            type="button"
             aria-selected={aba === "elearning"}
-            onClick={() => setAba("elearning")}
+            aria-controls="painel-elearning"
+            tabIndex={aba === "elearning" ? 0 : -1}
+            onClick={() => trocarAba("elearning")}
+            onKeyDown={teclaSeparador}
             className={
               "border-b-2 px-3 py-2 text-sm font-semibold " +
               (aba === "elearning" ? "border-brand text-brand" : "border-transparent text-navy-2")
@@ -80,9 +128,14 @@ function LicaoView() {
             Conteúdo (e-learning)
           </button>
           <button
+            id="tab-guiao"
             role="tab"
+            type="button"
             aria-selected={aba === "guiao"}
-            onClick={() => setAba("guiao")}
+            aria-controls="painel-guiao"
+            tabIndex={aba === "guiao" ? 0 : -1}
+            onClick={() => trocarAba("guiao")}
+            onKeyDown={teclaSeparador}
             className={
               "border-b-2 px-3 py-2 text-sm font-semibold " +
               (aba === "guiao" ? "border-brand text-brand" : "border-transparent text-navy-2")
@@ -94,20 +147,61 @@ function LicaoView() {
       ) : null}
 
       {aba === "elearning" ? (
-        <article className="licao-prose max-w-none rounded-xl border border-line bg-white p-6">
-          {licao.ilustracao_svg ? (
-            <div
-              className="mb-4"
-              aria-hidden
-              dangerouslySetInnerHTML={{ __html: licao.ilustracao_svg }}
+        <section
+          id="painel-elearning"
+          role={temGuiao ? "tabpanel" : undefined}
+          aria-labelledby={temGuiao ? "tab-elearning" : undefined}
+          tabIndex={temGuiao ? 0 : undefined}
+        >
+          <div className="mb-3 flex justify-end">
+            <ListenButton
+              key={`elearning-${licaoId}`}
+              label="🔊 Ouvir esta página"
+              getSentences={() => {
+                const partes: string[] = [licao.titulo];
+                if (licao.conteudo_elearning) {
+                  partes.push(...extrairFrasesDeHtml(licao.conteudo_elearning));
+                }
+                return partes;
+              }}
             />
-          ) : null}
-          <div dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning ?? "" }} />
-        </article>
+          </div>
+          <article className="licao-prose max-w-none rounded-xl border border-line bg-white p-6">
+            {licao.ilustracao_svg ? (
+              // Os SVGs importados já trazem role="img" e aria-label descritivo.
+              // NÃO envolver com aria-hidden — isso apagaria a descrição.
+              <div
+                className="mb-4 ilustracao-licao"
+                dangerouslySetInnerHTML={{ __html: licao.ilustracao_svg }}
+              />
+            ) : null}
+            <div dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning ?? "" }} />
+          </article>
+        </section>
       ) : (
-        <article className="licao-prose max-w-none rounded-xl border border-line bg-page/60 p-6">
-          <div dangerouslySetInnerHTML={{ __html: licao.guiao_formador ?? "" }} />
-        </article>
+        <section
+          id="painel-guiao"
+          role="tabpanel"
+          aria-labelledby="tab-guiao"
+          tabIndex={0}
+        >
+          <div className="mb-3 flex justify-end">
+            <ListenButton
+              key={`guiao-${licaoId}`}
+              label="🔊 Ouvir o guião do formador"
+              getSentences={() => {
+                const partes: string[] = [`Guião do formador — ${licao.titulo}`];
+                if (licao.guiao_formador) {
+                  partes.push(...extrairFrasesDeHtml(licao.guiao_formador));
+                }
+                return partes;
+              }}
+            />
+          </div>
+          <article className="licao-prose max-w-none rounded-xl border border-line bg-page/60 p-6">
+            <div dangerouslySetInnerHTML={{ __html: licao.guiao_formador ?? "" }} />
+          </article>
+        </section>
       )}
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -122,7 +216,7 @@ function LicaoView() {
             </Link>
           ) : null}
         </div>
-        <button onClick={concluirEAvancar} className="btn-brand btn-brand-hover">
+        <button type="button" onClick={concluirEAvancar} className="btn-brand btn-brand-hover">
           {proxima ? "Marcar como feita e continuar" : "Marcar como feita e concluir"}
         </button>
       </div>
