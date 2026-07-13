@@ -365,13 +365,13 @@
 .licao-prose ul { list-style: disc outside; }
 .licao-prose ol { list-style: decimal outside; }
 .licao-prose li { margin: 0.35rem 0; padding-left: 0.25rem; }
-.licao-prose li::marker { color: var(--color-brand); }
+.licao-prose li::marker { color: var(--color-brand-dark); }
 .licao-prose a {
-  color: var(--color-brand);
+  color: var(--color-brand-dark);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.licao-prose a:hover { color: var(--color-brand-dark); }
+.licao-prose a:hover { color: #9a0300; }
 .licao-prose code {
   background: var(--color-page);
   padding: 0.1rem 0.35rem;
