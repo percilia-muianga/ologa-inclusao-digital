@@ -185,3 +185,20 @@ function mensagemErro(bruto: string): string {
   }
   return "Este link já foi utilizado ou é inválido. Peça um novo.";
 }
+
+function traduzirErroPassword(bruto: string): string {
+  const m = bruto.toLowerCase();
+  if (m.includes("same") && m.includes("password")) {
+    return "A nova palavra-passe tem de ser diferente da anterior.";
+  }
+  if (m.includes("weak") || m.includes("pwned") || m.includes("leaked") || m.includes("compromised")) {
+    return "Esta palavra-passe é demasiado fraca ou foi encontrada em fugas de dados conhecidas. Escolha outra.";
+  }
+  if (m.includes("at least") || m.includes("short") || m.includes("length")) {
+    return "A palavra-passe não cumpre os requisitos mínimos.";
+  }
+  if (m.includes("session") || m.includes("jwt") || m.includes("auth")) {
+    return "A sessão de recuperação expirou. Peça um novo link.";
+  }
+  return "Não foi possível definir a palavra-passe.";
+}
