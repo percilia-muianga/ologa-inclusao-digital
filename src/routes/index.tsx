@@ -87,7 +87,7 @@ function HomePage() {
               </a>
               <ListenButton
                 variant="dark"
-                sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}`, HERO_DESC]}
+                sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}${HERO_TITLE_B}`, HERO_DESC]}
               />
             </div>
           </div>
