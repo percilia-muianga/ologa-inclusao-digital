@@ -19,9 +19,10 @@ type Colaborador = {
   nome: string;
   email: string;
   funcao: string | null;
-  tem_password: boolean;
+  conta_ativada: boolean;
   ultimo_acesso: string | null;
 };
+
 
 type Instituicao = { id: string; nome: string; codigo_inscricao: string };
 
