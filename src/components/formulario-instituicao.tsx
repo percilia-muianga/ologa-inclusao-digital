@@ -195,6 +195,27 @@ export function FormularioInstituicao({
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.ponto_focal_email.trim());
       if (!emailOk) e.ponto_focal_email = "Email inválido.";
     }
+    const totStr = v.num_trabalhadores_total.trim();
+    if (!totStr) e.num_trabalhadores_total = "Indique o número total de trabalhadores.";
+    else {
+      const n = Number(totStr);
+      if (!Number.isInteger(n) || n < 1)
+        e.num_trabalhadores_total = "Deve ser um número inteiro maior ou igual a 1.";
+    }
+    const metaStr = v.meta_cobertura_pct.trim();
+    if (!metaStr) e.meta_cobertura_pct = "Indique a meta de cobertura em %.";
+    else {
+      const n = Number(metaStr);
+      if (!Number.isInteger(n) || n < 1 || n > 100)
+        e.meta_cobertura_pct = "A meta deve ser um inteiro entre 1 e 100.";
+    }
+    const prazoStr = v.prazo_meses.trim();
+    if (!prazoStr) e.prazo_meses = "Indique o prazo em meses.";
+    else {
+      const n = Number(prazoStr);
+      if (!Number.isInteger(n) || n < 1)
+        e.prazo_meses = "O prazo deve ser um inteiro maior ou igual a 1.";
+    }
     const totalStr = v.num_colaboradores_total.trim();
     if (!totalStr) e.num_colaboradores_total = "Indique o número total.";
     else {
