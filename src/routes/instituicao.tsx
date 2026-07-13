@@ -397,8 +397,62 @@ function InstituicaoPage() {
           </div>
         </div>
       )}
+
+      {resumoLote && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="lote-titulo"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4"
+        >
+          <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+            <h2 id="lote-titulo" className="text-2xl font-extrabold text-ink">
+              Convites gerados
+            </h2>
+            <p className="mt-2 text-base text-foreground">
+              Foram gerados <strong>{resumoLote.gerados}</strong> convite(s). A folha
+              <strong> convites-AAAA-MM-DD.xlsx</strong> foi descarregada. Os links estão apenas
+              nessa folha — entregue-os aos colaboradores pelo canal habitual.
+            </p>
+            {resumoLote.ignorados.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-semibold text-ink">
+                  Não foram gerados convites para {resumoLote.ignorados.length}:
+                </p>
+                <ul className="mt-2 max-h-48 overflow-auto text-sm text-foreground">
+                  {resumoLote.ignorados.map((i) => (
+                    <li key={i.email} className="border-t border-ink/5 py-1">
+                      {i.nome} — {motivoIgnorado(i.motivo)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => setResumoLote(null)}
+                className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
+}
+
+function motivoIgnorado(m: string): string {
+  switch (m) {
+    case "conta_ja_ativada":
+      return "conta já ativada";
+    case "acesso_negado":
+      return "sem acesso";
+    default:
+      return "não foi possível gerar";
+  }
 }
 
 function rotuloEstadoConvite(e: EstadoConvite) {
