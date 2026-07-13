@@ -82,14 +82,6 @@ export const PERCURSO_OPCOES = [
   ["avulsos", "Módulos avulsos (selecionar na lista de módulos)"],
 ] as const;
 
-export const PRAZO_OPCOES = [
-  ["breve", "O mais breve possível"],
-  ["entre_1_3_meses", "Dentro de 1 a 3 meses"],
-  ["entre_3_6_meses", "Dentro de 3 a 6 meses"],
-  ["mais_6_meses", "Mais de 6 meses"],
-  ["nao_definido", "Ainda não definido"],
-] as const;
-
 export const SALA_OPCOES = [
   ["sim", "Sim"],
   ["nao", "Não"],
