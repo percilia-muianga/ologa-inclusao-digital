@@ -23,7 +23,7 @@ function QuizPage() {
   const [erro, setErro] = useState<string | null>(null);
   const [respostas, setRespostas] = useState<Record<string, number>>({});
   const [aSubmeter, setASubmeter] = useState(false);
-  const [resultado, setResultado] = useState<{ pontuacao: number; total: number } | null>(null);
+  const [resultado, setResultado] = useState<Awaited<ReturnType<typeof submeterQuiz>> | null>(null);
 
   const ordem = Number.parseInt(moduloParam, 10);
 
