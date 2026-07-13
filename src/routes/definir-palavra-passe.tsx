@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useId, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { marcarPasswordDefinida } from "@/lib/colaboradores.functions";
+
 
 export const Route = createFileRoute("/definir-palavra-passe")({
   head: () => ({
