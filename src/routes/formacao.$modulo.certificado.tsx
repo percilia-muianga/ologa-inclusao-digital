@@ -1,21 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  emitirCertificado,
-  listarInstituicoesPublico,
-} from "@/lib/formacao.functions";
+import { emitirCertificado } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
 
-const instituicoesQuery = queryOptions({
-  queryKey: ["formacao", "instituicoes-publico"],
-  queryFn: () => listarInstituicoesPublico(),
-});
-
 export const Route = createFileRoute("/formacao/$modulo/certificado")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(instituicoesQuery),
   component: CertificadoView,
 });
 
@@ -42,7 +33,6 @@ function CertificadoView() {
   const { modulo: moduloId } = Route.useParams();
   const navigate = useNavigate();
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
-  const { data: instituicoes } = useSuspenseQuery(instituicoesQuery);
   const emitir = useServerFn(emitirCertificado);
 
   const [tokenExistente, setTokenExistente] = useState<string | null>(null);
@@ -52,7 +42,7 @@ function CertificadoView() {
   >(null);
 
   const [nome, setNome] = useState("");
-  const [instituicaoId, setInstituicaoId] = useState<string>("");
+  const [codigoInstituicao, setCodigoInstituicao] = useState<string>("");
   const [genero, setGenero] = useState<Genero | "">("");
   const [nivelPartida, setNivelPartida] = useState<Nivel | "">("");
   const [precisaApoio, setPrecisaApoio] = useState<"" | "sim" | "nao">("");
@@ -99,7 +89,7 @@ function CertificadoView() {
         moduloId: string;
         tokenPessoal: string | null;
         nome?: string;
-        instituicaoId?: string | null;
+        codigoInstituicao?: string | null;
         genero?: Genero | null;
         nivelPartida?: Nivel | null;
         precisaApoio?: boolean | null;
@@ -122,7 +112,7 @@ function CertificadoView() {
           return;
         }
         payload.nome = nome.trim();
-        payload.instituicaoId = instituicaoId || null;
+        payload.codigoInstituicao = codigoInstituicao.trim().toUpperCase() || null;
         payload.genero = (genero || null) as Genero | null;
         payload.nivelPartida = (nivelPartida || null) as Nivel | null;
         payload.precisaApoio =
@@ -156,6 +146,7 @@ function CertificadoView() {
           "A nota do teste ainda não chegou. Reveja as lições e repita o teste — sem limites.",
         TOKEN_INVALIDO: "O seu link pessoal já não é reconhecido.",
         NOME_OBRIGATORIO: "Escreva o seu nome.",
+        CODIGO_INVALIDO: "Código inválido.",
       };
       setErro(traducao[msg] ?? msg);
     } finally {
@@ -333,22 +324,24 @@ function CertificadoView() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-semibold text-navy" htmlFor="inst">
-                  Instituição (opcional)
+                <label className="mb-1 block text-sm font-semibold text-navy" htmlFor="codigo-inst">
+                  Código da instituição (opcional)
                 </label>
-                <select
-                  id="inst"
-                  value={instituicaoId}
-                  onChange={(e) => setInstituicaoId(e.target.value)}
-                  className="w-full rounded-md border border-line bg-white px-3 py-2 text-sm"
-                >
-                  <option value="">— Sem instituição —</option>
-                  {instituicoes.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.nome}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  id="codigo-inst"
+                  type="text"
+                  value={codigoInstituicao}
+                  onChange={(e) => setCodigoInstituicao(e.target.value.toUpperCase())}
+                  className="w-full rounded-md border border-line bg-white px-3 py-2 text-sm font-mono uppercase"
+                  placeholder="Ex.: MINEDH-2026"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Se a sua instituição está inscrita na Ologa, escreva o código
+                  que lhe foi dado. Se não tiver código, deixe em branco — o
+                  certificado é emitido só com o seu nome.
+                </p>
               </div>
 
               <fieldset>

@@ -17,17 +17,9 @@ export const listarModulos = createServerFn({ method: 'GET' }).handler(async () 
   return data
 })
 
-// Lista pública mínima de instituições (só id + nome). Serve para o formando
-// se poder associar à sua instituição no momento do certificado. Não expõe
-// qualquer outra coluna.
-export const listarInstituicoesPublico = createServerFn({ method: 'GET' }).handler(async () => {
-  const s = await admin()
-  const { data, error } = await s.from('instituicoes')
-    .select('id, nome')
-    .order('nome')
-  if (error) throw error
-  return data ?? []
-})
+// (Nenhum endpoint público devolve nomes/ids de instituições. A associação
+// é feita por código escrito pelo formando; a resolução vive dentro de
+// emitirCertificado.)
 
 export const obterModulo = createServerFn({ method: 'GET' })
   .inputValidator((i: { moduloId: string }) =>
@@ -125,7 +117,7 @@ const emitirSchema = z.object({
 
   // dados de perfil — obrigatórios só quando não há tokenPessoal
   nome: z.string().trim().min(2).max(120).optional(),
-  instituicaoId: z.string().uuid().nullable().optional(),
+  codigoInstituicao: z.string().trim().min(1).max(64).nullable().optional(),
   genero: z.enum(['feminino', 'masculino', 'prefere_nao_indicar']).nullable().optional(),
   nivelPartida: z.enum(['nenhum', 'basico', 'intermedio', 'prefere_nao_indicar']).nullable().optional(),
   precisaApoio: z.boolean().nullable().optional(),
@@ -205,16 +197,28 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       }
     } else {
       if (!data.nome) throw new Error('NOME_OBRIGATORIO')
+
+      // Resolver código escrito → instituicao_id. Erro genérico se inválido:
+      // não revela se a instituição existe.
+      let instituicaoIdResolvido: string | null = null
+      const codigo = data.codigoInstituicao?.trim().toUpperCase() || null
+      if (codigo) {
+        const { data: inst } = await s.from('instituicoes')
+          .select('id').eq('codigo_inscricao', codigo).maybeSingle()
+        if (!inst) throw new Error('CODIGO_INVALIDO')
+        instituicaoIdResolvido = inst.id
+      }
+
       const { data: novo, error } = await s.from('formandos').insert({
         nome: data.nome,
-        instituicao_id: data.instituicaoId ?? null,
+        instituicao_id: instituicaoIdResolvido,
         genero: data.genero ?? null,
         nivel_partida: data.nivelPartida ?? null,
         precisa_apoio: data.precisaApoio ?? null,
         apoios_acessibilidade: data.apoiosAcessibilidade ?? null,
         diagnostico_pontuacao: data.diagnostico?.pontuacao ?? null,
         diagnostico_total: data.diagnostico?.total ?? null,
-      }).select('id, token_pessoal').single()
+      }).select('id, token_pessoal, instituicao_id').single()
       if (error) throw error
       formandoId = novo.id
       tokenPessoal = novo.token_pessoal
@@ -241,24 +245,17 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       if (error) throw error
     }
 
-    // 5. buscar nome do módulo e da instituição (só quando formando novo, senão fica '')
+    // 5. buscar nome do módulo e da instituição (snapshot no certificado)
     const { data: modulo } = await s.from('modulos')
       .select('titulo').eq('id', data.moduloId).single()
 
     let nomeInstituicao = ''
-    let nomeFormando = data.nome ?? ''
-    if (data.tokenPessoal) {
-      const { data: f } = await s.from('formandos')
-        .select('nome, instituicao_id').eq('id', formandoId).single()
-      nomeFormando = f?.nome ?? ''
-      if (f?.instituicao_id) {
-        const { data: inst } = await s.from('instituicoes')
-          .select('nome').eq('id', f.instituicao_id).single()
-        nomeInstituicao = inst?.nome ?? ''
-      }
-    } else if (data.instituicaoId) {
+    const { data: f } = await s.from('formandos')
+      .select('nome, instituicao_id').eq('id', formandoId).single()
+    const nomeFormando = f?.nome ?? (data.nome ?? '')
+    if (f?.instituicao_id) {
       const { data: inst } = await s.from('instituicoes')
-        .select('nome').eq('id', data.instituicaoId).single()
+        .select('nome').eq('id', f.instituicao_id).single()
       nomeInstituicao = inst?.nome ?? ''
     }
 
