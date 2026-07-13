@@ -84,12 +84,20 @@ function OlogaPage() {
       <main id="conteudo" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-3xl font-extrabold text-ink">Ologa — Instituições</h1>
-          <Link
-            to="/ologa/nova-instituicao"
-            className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
-          >
-            Criar instituição manualmente
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/formacao"
+              className="inline-flex min-h-11 items-center rounded-md border border-ink/20 px-4 text-base font-semibold text-ink"
+            >
+              Ver cursos
+            </Link>
+            <Link
+              to="/ologa/nova-instituicao"
+              className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
+            >
+              Criar instituição manualmente
+            </Link>
+          </div>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-[2fr_1fr]">
