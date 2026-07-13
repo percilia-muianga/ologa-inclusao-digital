@@ -351,8 +351,10 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-brand);
+  color: var(--color-brand-dark);
 }
+.licao-prose li::marker { color: var(--color-brand-dark); }
+.licao-prose blockquote { border-left-color: var(--color-brand-dark); }
 .licao-prose p { margin: 0.75rem 0; }
 .licao-prose strong { color: var(--color-navy); font-weight: 700; }
 .licao-prose ul,

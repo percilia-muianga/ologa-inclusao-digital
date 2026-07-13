@@ -465,7 +465,7 @@ function HomePage() {
                     key={i}
                     className="grid grid-cols-1 gap-5 border-t border-line py-[18px] md:grid-cols-[200px_1fr]"
                   >
-                    <div className="text-[15px] font-extrabold text-brand">
+                    <div className="text-[15px] font-extrabold text-brand-dark">
                       {row.gap}
                       <small className="mt-1 block text-[12.5px] font-semibold text-muted-foreground">
                         {row.sub}
