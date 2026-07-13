@@ -249,7 +249,6 @@ function FichaPage() {
         </Seccao>
 
         <Seccao titulo="6. Logística">
-          <Linha rot="Prazo pretendido" val={rotulo(PRAZO_OPCOES, inst.prazo)} />
           <Linha
             rot="Sala disponível"
             val={rotulo(SALA_OPCOES, inst.sala_disponivel)}
