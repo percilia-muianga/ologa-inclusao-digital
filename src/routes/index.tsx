@@ -210,12 +210,7 @@ function HomePage() {
 
   const openSrc = (url: string, ref: string) => setSrc({ url, ref });
 
-  const semIndicadores =
-    !indicadores ||
-    (indicadores.instituicoesInscritas === 0 &&
-      indicadores.instituicoesComDeclaracao === 0 &&
-      indicadores.formandosCertificados === 0 &&
-      indicadores.distritosAbrangidos === 0);
+  const semInscricoes = !indicadores || indicadores.instituicoesInscritas === 0;
 
   return (
     <>
