@@ -7,11 +7,12 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AccessibilityBar } from "@/components/accessibility-bar";
+import { AUTH_BYPASS_ENABLED, ensureBypassSession } from "@/lib/auth-bypass";
 
 function NotFoundComponent() {
   return (
@@ -132,12 +133,38 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [bypassPronto, setBypassPronto] = useState(!AUTH_BYPASS_ENABLED);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!AUTH_BYPASS_ENABLED) return;
+    let cancelado = false;
+    ensureBypassSession().then(() => {
+      if (cancelado) return;
+      setBypassPronto(true);
+      router.invalidate();
+    });
+    return () => {
+      cancelado = true;
+    };
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <AccessibilityBar />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      {AUTH_BYPASS_ENABLED && (
+        <div className="bg-yellow-200 px-4 py-1 text-center text-sm font-semibold text-black">
+          Staging — autenticação contornada (VITE_AUTH_BYPASS). Não usar com dados reais.
+        </div>
+      )}
+      {bypassPronto ? (
+        // Required: nested routes render here. Removing <Outlet /> breaks all child routes.
+        <Outlet />
+      ) : (
+        <div className="flex min-h-[60vh] items-center justify-center text-base text-foreground">
+          A preparar sessão de demonstração…
+        </div>
+      )}
     </QueryClientProvider>
   );
 }
