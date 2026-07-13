@@ -290,7 +290,7 @@ function HomePage() {
 
             {/* Nota metodológica */}
             <div className="mt-5 rounded-xl border border-[#f0d9a8] bg-[#fff4e0] p-5 text-[13.5px] leading-[1.65] text-[#6b5310]">
-              <b className="mb-1 block text-[#8a6d1f]">
+              <b className="mb-1 block text-[#6b4f0c]">
                 Nota metodológica — este valor é um piso mínimo, não a dimensão real do
                 público.
               </b>
@@ -931,7 +931,7 @@ function HomePage() {
 
             {/* Nota amarela — fase seguinte */}
             <div className="mt-5 rounded-xl border border-[#f0d9a8] bg-[#fff4e0] p-5 text-[13px] leading-[1.6] text-[#6b5310]">
-              <b className="text-[#8a6d1f]">
+              <b className="text-[#6b4f0c]">
                 Fase seguinte — reconhecimento no sistema nacional.
               </b>{" "}
               O Certificado de Conclusão é hoje emitido pela Ologa e verificável em
