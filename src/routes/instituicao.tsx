@@ -77,9 +77,61 @@ function InstituicaoPage() {
         return;
       }
       setColabs(r2.colaboradores);
+      setSelecionados(new Set());
     },
     [obterInst, listar],
   );
+
+  function alternarSelecao(id: string) {
+    setSelecionados((prev) => {
+      const s = new Set(prev);
+      if (s.has(id)) s.delete(id);
+      else s.add(id);
+      return s;
+    });
+  }
+
+  function alternarTodos() {
+    setSelecionados((prev) => {
+      if (naoAtivados.every((c) => prev.has(c.id))) return new Set();
+      return new Set(naoAtivados.map((c) => c.id));
+    });
+  }
+
+  function selecionarTodosNaoAtivados() {
+    setSelecionados(new Set(naoAtivados.map((c) => c.id)));
+  }
+
+  async function gerarLote(ids: string[]) {
+    if (ids.length === 0) return;
+    setAGerarLote(true);
+    setResumoLote(null);
+    try {
+      const res = await regenerarLote({
+        data: { perfil_ids: ids, origin: window.location.origin },
+      });
+      if (!res.ok) {
+        alert("Não foi possível gerar os convites.");
+        return;
+      }
+      if (res.gerados.length > 0) {
+        const linhas = [
+          ["Nome", "Email", "Link"],
+          ...res.gerados.map((g) => [g.nome, g.email, g.link]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(linhas);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Convites");
+        const nome = `convites-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        XLSX.writeFile(wb, nome);
+      }
+      setResumoLote({ gerados: res.gerados.length, ignorados: res.ignorados });
+      setSelecionados(new Set());
+      await carregar(pesquisa.trim());
+    } finally {
+      setAGerarLote(false);
+    }
+  }
 
   useEffect(() => {
     if (guard.estado !== "ok") return;
