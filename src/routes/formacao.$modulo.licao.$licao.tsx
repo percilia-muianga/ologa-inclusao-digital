@@ -2,7 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { obterLicao, marcarLicaoConcluida } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao/$modulo/licao/$licao")({
   head: () => ({ meta: [{ title: "Lição — Ologa" }] }),
