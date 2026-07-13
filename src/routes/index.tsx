@@ -1108,7 +1108,9 @@ function KpiCard({ kpi }: { kpi: Kpi }) {
       >
         {catRotulo}
       </span>
-      <div className="mt-[9px] text-[30px] font-extrabold leading-none text-navy">
+      <div
+        className={`mt-[9px] font-extrabold leading-none text-navy ${/^[\d—]/.test(kpi.val) ? "text-[30px]" : "text-[15px] leading-snug text-muted-foreground"}`}
+      >
         {kpi.val}
       </div>
       <div className="mt-[6px] text-[12.5px] font-semibold text-muted-foreground">
