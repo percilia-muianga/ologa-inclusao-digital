@@ -111,10 +111,29 @@ type ModuloCatalogo = {
 };
 
 type Indicadores = {
-  instituicoesInscritas: number;
   instituicoesComDeclaracao: number;
-  formandosCertificados: number;
+  mulheresPct: number | null;
+  ruraisPct: number | null;
   distritosAbrangidos: number;
+  formandosZero: number;
+  instituicoesInscritas: number;
+  formandosInscritos: number;
+  formandosInscritosReais: number;
+  modulosConcluidos: number;
+  mediaQuizzesPct: number | null;
+  pessoasComDeficiencia: number;
+  instituicoesComApoios: number;
+  tiposApoioRequeridos: number;
+  licoesComAudioPct: number;
+};
+
+type Proveniencia = "inc" | "for" | "plat";
+type Kpi = {
+  src: Proveniencia;
+  val: string;
+  lab: string;
+  pct?: number | null;
+  barColor?: string;
 };
 
 function HomePage() {
