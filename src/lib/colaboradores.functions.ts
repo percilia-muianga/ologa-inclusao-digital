@@ -91,7 +91,7 @@ export const listarColaboradoresGestor = createServerFn({ method: "GET" })
 
     let query = supabaseAdmin
       .from("perfis")
-      .select("id, nome, email, funcao, criado_em")
+      .select("id, nome, email, funcao, criado_em, palavra_passe_definida_em")
       .eq("instituicao_id", g.instituicao_id)
       .eq("papel", "formando")
       .order("nome", { ascending: true });
@@ -105,35 +105,27 @@ export const listarColaboradoresGestor = createServerFn({ method: "GET" })
     if (error) return { ok: false as const, mensagem: error.message };
 
     const ids = (perfis ?? []).map((p) => p.id);
-    let estadoMap = new Map<
-      string,
-      { tem_password: boolean; ultimo_acesso: string | null }
-    >();
+    let ultimoMap = new Map<string, string | null>();
     if (ids.length > 0) {
       const { data: estados } = await supabaseAdmin.rpc("obter_estado_contas", { _ids: ids });
       for (const e of estados ?? []) {
-        estadoMap.set(e.id, {
-          tem_password: !!e.tem_password,
-          ultimo_acesso: e.ultimo_acesso,
-        });
+        ultimoMap.set(e.id, e.ultimo_acesso);
       }
     }
 
-    const colaboradores = (perfis ?? []).map((p) => {
-      const e = estadoMap.get(p.id);
-      return {
-        id: p.id,
-        nome: p.nome,
-        email: p.email,
-        funcao: p.funcao,
-        criado_em: p.criado_em,
-        tem_password: e?.tem_password ?? false,
-        ultimo_acesso: e?.ultimo_acesso ?? null,
-      };
-    });
+    const colaboradores = (perfis ?? []).map((p) => ({
+      id: p.id,
+      nome: p.nome,
+      email: p.email,
+      funcao: p.funcao,
+      criado_em: p.criado_em,
+      conta_ativada: p.palavra_passe_definida_em != null,
+      ultimo_acesso: ultimoMap.get(p.id) ?? null,
+    }));
 
     return { ok: true as const, colaboradores };
   });
+
 
 // ---------- Servidor: regenerar link de palavra-passe ----------
 
@@ -286,3 +278,19 @@ export const importarColaboradoresChunk = createServerFn({ method: "POST" })
 
     return { ok: true, resultados };
   });
+
+// ---------- Servidor: marcar palavra-passe como definida pelo próprio ----------
+
+export const marcarPasswordDefinida = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("perfis")
+      .update({ palavra_passe_definida_em: new Date().toISOString() })
+      .eq("id", context.userId)
+      .is("palavra_passe_definida_em", null);
+    if (error) return { ok: false as const, mensagem: error.message };
+    return { ok: true as const };
+  });
+

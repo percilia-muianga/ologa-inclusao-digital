@@ -251,6 +251,7 @@ export type Database = {
           instituicao_id: string | null
           nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          palavra_passe_definida_em: string | null
           papel: Database["public"]["Enums"]["papel_utilizador"]
           tem_deficiencia: boolean | null
         }
@@ -266,6 +267,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          palavra_passe_definida_em?: string | null
           papel: Database["public"]["Enums"]["papel_utilizador"]
           tem_deficiencia?: boolean | null
         }
@@ -281,6 +283,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
+          palavra_passe_definida_em?: string | null
           papel?: Database["public"]["Enums"]["papel_utilizador"]
           tem_deficiencia?: boolean | null
         }

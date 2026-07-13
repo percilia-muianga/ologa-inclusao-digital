@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useId, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { marcarPasswordDefinida } from "@/lib/colaboradores.functions";
+
 
 export const Route = createFileRoute("/definir-palavra-passe")({
   head: () => ({
@@ -16,6 +19,7 @@ type EstadoSessao =
 
 function DefinirPage() {
   const navigate = useNavigate();
+  const marcar = useServerFn(marcarPasswordDefinida);
   const passId = useId();
   const errId = useId();
   const [password, setPassword] = useState("");
@@ -110,10 +114,16 @@ function DefinirPage() {
       setErro(traduzirErroPassword(error.message));
       return;
     }
+    try {
+      await marcar();
+    } catch (e) {
+      console.error("[definir-palavra-passe] marcarPasswordDefinida falhou:", e);
+    }
     await supabase.auth.signOut();
     setLoading(false);
     navigate({ to: "/entrar" });
   }
+
 
   return (
     <>

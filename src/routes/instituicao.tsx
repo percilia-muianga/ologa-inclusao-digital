@@ -19,9 +19,10 @@ type Colaborador = {
   nome: string;
   email: string;
   funcao: string | null;
-  tem_password: boolean;
+  conta_ativada: boolean;
   ultimo_acesso: string | null;
 };
+
 
 type Instituicao = { id: string; nome: string; codigo_inscricao: string };
 
@@ -185,7 +186,7 @@ function InstituicaoPage() {
                 <tr>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Email</th>
-                  <th className="px-3 py-2">Palavra-passe definida</th>
+                  <th className="px-3 py-2">Conta ativada</th>
                   <th className="px-3 py-2">Último acesso</th>
                   <th className="px-3 py-2">Ações</th>
                 </tr>
@@ -203,7 +204,7 @@ function InstituicaoPage() {
                     <td className="px-3 py-2 font-semibold text-ink">{c.nome}</td>
                     <td className="px-3 py-2 text-foreground">{c.email}</td>
                     <td className="px-3 py-2">
-                      {c.tem_password ? (
+                      {c.conta_ativada ? (
                         <span className="text-ink">Sim</span>
                       ) : (
                         <span className="text-brand">Não</span>
