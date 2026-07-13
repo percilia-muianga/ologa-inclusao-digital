@@ -48,6 +48,8 @@ export const criarInscricao = createServerFn({ method: "POST" })
           num_trabalhadores_total: data.num_trabalhadores_total,
           meta_cobertura_pct: data.meta_cobertura_pct,
           prazo_meses: data.prazo_meses,
+          pedido_meta_cobertura_pct: data.meta_cobertura_pct,
+          pedido_prazo_meses: data.prazo_meses,
           num_colaboradores_total: data.num_colaboradores_total,
           nivel_literacia: data.nivel_literacia ?? null,
           num_mulheres: data.num_mulheres ?? null,
