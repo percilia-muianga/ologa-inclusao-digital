@@ -86,12 +86,6 @@ function OlogaPage() {
           <h1 className="text-3xl font-extrabold text-ink">Ologa — Instituições</h1>
           <div className="flex flex-wrap gap-2">
             <Link
-              to="/formacao"
-              className="inline-flex min-h-11 items-center rounded-md border border-ink/20 px-4 text-base font-semibold text-ink"
-            >
-              Ver cursos
-            </Link>
-            <Link
               to="/ologa/nova-instituicao"
               className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
             >
