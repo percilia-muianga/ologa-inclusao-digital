@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
+import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
 import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
@@ -71,6 +72,11 @@ const OlogaNovaInstituicaoRoute = OlogaNovaInstituicaoRouteImport.update({
   path: '/nova-instituicao',
   getParentRoute: () => OlogaRoute,
 } as any)
+const IndicadoresTokenRoute = IndicadoresTokenRouteImport.update({
+  id: '/indicadores/$token',
+  path: '/indicadores/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FormacaoModuloRoute = FormacaoModuloRouteImport.update({
   id: '/$modulo',
   path: '/$modulo',
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
+  '/indicadores/$token': typeof IndicadoresTokenRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/inscricao': typeof InscricaoRoute
   '/verificar': typeof VerificarRoute
+  '/indicadores/$token': typeof IndicadoresTokenRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
+  '/indicadores/$token': typeof IndicadoresTokenRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/verificar'
     | '/formacao/$modulo'
+    | '/indicadores/$token'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/inscricao'
     | '/verificar'
+    | '/indicadores/$token'
     | '/ologa/nova-instituicao'
     | '/formacao'
     | '/ologa'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/verificar'
     | '/formacao/$modulo'
+    | '/indicadores/$token'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   InscricaoRoute: typeof InscricaoRoute
   OlogaRoute: typeof OlogaRouteWithChildren
   VerificarRoute: typeof VerificarRoute
+  IndicadoresTokenRoute: typeof IndicadoresTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -289,6 +302,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ologa/nova-instituicao'
       preLoaderRoute: typeof OlogaNovaInstituicaoRouteImport
       parentRoute: typeof OlogaRoute
+    }
+    '/indicadores/$token': {
+      id: '/indicadores/$token'
+      path: '/indicadores/$token'
+      fullPath: '/indicadores/$token'
+      preLoaderRoute: typeof IndicadoresTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/formacao/$modulo': {
       id: '/formacao/$modulo'
@@ -397,6 +417,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscricaoRoute: InscricaoRoute,
   OlogaRoute: OlogaRouteWithChildren,
   VerificarRoute: VerificarRoute,
+  IndicadoresTokenRoute: IndicadoresTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

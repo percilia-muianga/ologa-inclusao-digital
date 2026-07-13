@@ -30,6 +30,8 @@ function InscricaoPage() {
   const [aSubmeter, setASubmeter] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [codigo, setCodigo] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [copiado, setCopiado] = useState<"codigo" | "link" | null>(null);
 
   useEffect(() => {
     let cancelado = false;
@@ -50,6 +52,7 @@ function InscricaoPage() {
     setASubmeter(false);
     if (res.ok) {
       setCodigo(res.codigo);
+      setToken(res.indicadores_token);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       setErro(
@@ -59,36 +62,79 @@ function InscricaoPage() {
     }
   }
 
-  if (codigo) {
+  async function copiar(texto: string, qual: "codigo" | "link") {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiado(qual);
+      setTimeout(() => setCopiado(null), 2000);
+    } catch {
+      /* sem clipboard: o utilizador copia à mão */
+    }
+  }
+
+  if (codigo && token) {
+    const linkIndicadores =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/indicadores/${token}`
+        : `/indicadores/${token}`;
     return (
       <>
         <a href="#conteudo" className="skip-link">
           Saltar para o conteúdo principal
         </a>
-        <main id="conteudo" className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+        <main id="conteudo" className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
           <h1 className="text-3xl font-extrabold text-ink">Inscrição registada</h1>
           <p className="mt-4 text-base text-ink">
-            A inscrição da instituição foi registada com sucesso. Guarde e partilhe o
-            código abaixo com os colaboradores que se vão inscrever na formação.
+            Guarde estes dois elementos. Estão disponíveis apenas neste ecrã — não
+            são enviados por email.
           </p>
-          <div
-            role="status"
-            aria-live="polite"
-            className="mt-6 rounded-md border border-ink/20 bg-accent p-6"
-          >
-            <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
-              Código de inscrição da instituição
-            </p>
-            <p className="mt-2 font-mono text-4xl font-extrabold tracking-widest text-ink">
-              {codigo}
-            </p>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <div
+              role="status"
+              aria-live="polite"
+              className="rounded-md border border-ink/20 bg-accent p-6"
+            >
+              <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
+                Código de inscrição da instituição
+              </p>
+              <p className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-ink">
+                {codigo}
+              </p>
+              <p className="mt-3 text-sm text-foreground">
+                Os colaboradores escrevem este código ao pedir o certificado.
+              </p>
+              <button
+                type="button"
+                onClick={() => copiar(codigo, "codigo")}
+                className="mt-4 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70"
+              >
+                {copiado === "codigo" ? "✓ Copiado" : "Copiar código"}
+              </button>
+            </div>
+
+            <div className="rounded-md border border-ink/20 bg-accent p-6">
+              <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
+                Link dos indicadores
+              </p>
+              <p className="mt-2 break-all font-mono text-sm text-ink">
+                {linkIndicadores}
+              </p>
+              <p className="mt-3 text-sm text-foreground">
+                Guarde este link. Dá acesso aos indicadores da sua instituição.
+                Não o partilhe fora dela.
+              </p>
+              <button
+                type="button"
+                onClick={() => copiar(linkIndicadores, "link")}
+                className="mt-4 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70"
+              >
+                {copiado === "link" ? "✓ Copiado" : "Copiar link"}
+              </button>
+            </div>
           </div>
-          <p className="mt-6 text-base text-foreground">
-            Cada colaborador vai precisar deste código para criar a sua conta em
-            /registo. Anote-o em local seguro — o código é curto e fácil de ditar ao
-            telefone.
-          </p>
-          <div className="mt-8">
+
+          <div className="mt-10">
             <Link
               to="/"
               className="inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-accent"
