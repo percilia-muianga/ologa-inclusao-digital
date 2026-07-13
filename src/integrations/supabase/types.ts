@@ -278,6 +278,7 @@ export type Database = {
       }
       modulos: {
         Row: {
+          cor_fundo: string | null
           descricao: string | null
           desenho_universal: string | null
           duracao: string | null
@@ -288,6 +289,7 @@ export type Database = {
           titulo: string
         }
         Insert: {
+          cor_fundo?: string | null
           descricao?: string | null
           desenho_universal?: string | null
           duracao?: string | null
@@ -298,6 +300,7 @@ export type Database = {
           titulo: string
         }
         Update: {
+          cor_fundo?: string | null
           descricao?: string | null
           desenho_universal?: string | null
           duracao?: string | null
