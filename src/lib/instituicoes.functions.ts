@@ -64,7 +64,116 @@ export const obterInstituicaoAdmin = createServerFn({ method: "GET" })
         .in("id", inst.modulos_interesse);
       modulos = mods ?? [];
     }
-    return { ok: true as const, instituicao: inst, modulos };
+
+    const { data: percursoRows } = await supabaseAdmin
+      .from("instituicao_modulos_percurso")
+      .select("modulo_id, ordem, modulos(titulo)")
+      .eq("instituicao_id", data.id)
+      .order("ordem", { ascending: true });
+    const percurso = (percursoRows ?? []).map((r) => ({
+      modulo_id: r.modulo_id as string,
+      ordem: r.ordem as number,
+      titulo:
+        (r as unknown as { modulos: { titulo: string } | null }).modulos?.titulo ?? "",
+    }));
+
+    const { data: hist } = await supabaseAdmin
+      .from("metas_historico")
+      .select("id, campo, valor_antigo, valor_novo, alterado_em, alterado_por")
+      .eq("instituicao_id", data.id)
+      .order("alterado_em", { ascending: false })
+      .limit(50);
+
+    return {
+      ok: true as const,
+      instituicao: inst,
+      modulos,
+      percurso,
+      historico: hist ?? [],
+    };
+  });
+
+const METAS_SCHEMA = z.object({
+  id: z.string().uuid(),
+  meta_cobertura_pct: z.number().int().min(1).max(100).nullable(),
+  meta_conclusao_pct: z.number().int().min(1).max(100).nullable(),
+  meta_ganho_pontos: z.number().int().min(1).max(100).nullable(),
+  meta_equidade_max_pp: z.number().int().min(0).max(100).nullable(),
+  prazo_meses: z.number().int().positive().nullable(),
+});
+
+export const atualizarMetasInstituicao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => METAS_SCHEMA.parse(d))
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("instituicoes")
+      .update({
+        meta_cobertura_pct: data.meta_cobertura_pct,
+        meta_conclusao_pct: data.meta_conclusao_pct,
+        meta_ganho_pontos: data.meta_ganho_pontos,
+        meta_equidade_max_pp: data.meta_equidade_max_pp,
+        prazo_meses: data.prazo_meses,
+      })
+      .eq("id", data.id);
+    if (error) return { ok: false as const, mensagem: error.message };
+    return { ok: true as const };
+  });
+
+const PERCURSO_SCHEMA = z.object({
+  id: z.string().uuid(),
+  modulos: z.array(z.string().uuid()),
+});
+
+export const atualizarPercursoInstituicao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => PERCURSO_SCHEMA.parse(d))
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error: delErr } = await supabaseAdmin
+      .from("instituicao_modulos_percurso")
+      .delete()
+      .eq("instituicao_id", data.id);
+    if (delErr) return { ok: false as const, mensagem: delErr.message };
+    if (data.modulos.length > 0) {
+      const rows = data.modulos.map((modulo_id, idx) => ({
+        instituicao_id: data.id,
+        modulo_id,
+        ordem: idx + 1,
+      }));
+      const { error: insErr } = await supabaseAdmin
+        .from("instituicao_modulos_percurso")
+        .insert(rows);
+      if (insErr) return { ok: false as const, mensagem: insErr.message };
+    }
+    return { ok: true as const };
+  });
+
+export const regenerarTokenIndicadores = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: upd, error } = await supabaseAdmin
+      .from("instituicoes")
+      .update({ indicadores_token: crypto.randomUUID() })
+      .eq("id", data.id)
+      .select("indicadores_token")
+      .single();
+    if (error || !upd) {
+      return { ok: false as const, mensagem: error?.message ?? "erro" };
+    }
+    return { ok: true as const, token: upd.indicadores_token };
   });
 
 export const regenerarCodigoInstituicao = createServerFn({ method: "POST" })
