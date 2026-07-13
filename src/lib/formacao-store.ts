@@ -64,6 +64,24 @@ export const formacaoStore = {
     return ler().quizzesPorModulo[moduloId] ?? null;
   },
 
+  guardarResultadoQuiz(moduloId: string, pontuacao: number, total: number) {
+    const s = ler();
+    s.resultadosQuizPorModulo[moduloId] = { pontuacao, total };
+    escrever(s);
+  },
+
+  resultadoQuiz(moduloId: string): ResultadoQuiz | null {
+    return ler().resultadosQuizPorModulo[moduloId] ?? null;
+  },
+
+  todosResultadosQuiz(): Record<string, ResultadoQuiz> {
+    return ler().resultadosQuizPorModulo;
+  },
+
+  todasLicoesConcluidas(): Record<string, string[]> {
+    return ler().licoesConcluidasPorModulo;
+  },
+
   guardarDiagnostico(moduloId: string, pontuacao: number, total: number) {
     const s = ler();
     s.diagnosticoPorModulo[moduloId] = { pontuacao, total };
