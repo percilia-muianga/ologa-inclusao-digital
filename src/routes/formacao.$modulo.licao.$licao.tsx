@@ -99,7 +99,7 @@ function LicaoView() {
           ← Voltar ao módulo
         </Link>
       </nav>
-      <h1 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h1>
+      <h2 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h2>
 
       <ul className="selos-formato" aria-label="Formatos acessíveis assegurados nesta lição">
         <li className="selo-formato"><span>Texto</span><span className="check" aria-hidden="true">✓</span></li>
