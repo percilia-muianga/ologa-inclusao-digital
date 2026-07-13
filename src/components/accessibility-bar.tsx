@@ -6,8 +6,8 @@ const MIN = 0.85;
 const MAX = 1.4;
 
 const RATE_STORAGE = "ologa-tts-rate";
-const RATE_MIN = 0.6;
-const RATE_MAX = 1.6;
+const RATE_MIN = 0.75;
+const RATE_MAX = 1.35;
 const RATE_STEP = 0.1;
 
 type Prefs = { scale: number; highContrast: boolean };

@@ -406,3 +406,10 @@
   color: var(--color-success);
   font-weight: 800;
 }
+
+/* Ilustração da lição — SVGs trazem role="img" e aria-label próprios */
+.ilustracao-licao svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
