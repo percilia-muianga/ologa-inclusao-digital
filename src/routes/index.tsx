@@ -109,8 +109,83 @@ const NAV_ITEMS: { href: string; label: string; kind: "hash" | "route"; to?: str
   { href: "#contacto", label: "Contacto", kind: "hash" },
 ];
 
+type ModuloCatalogo = {
+  id: string;
+  ordem: number | null;
+  titulo: string;
+  nivel: string | null;
+  duracao: string | null;
+  descricao: string | null;
+};
+
+type Indicadores = {
+  instituicoesInscritas: number;
+  instituicoesComDeclaracao: number;
+  formandosCertificados: number;
+  distritosAbrangidos: number;
+};
+
 function HomePage() {
   const [src, setSrc] = useState<Src | null>(null);
+  const listarModulos = useServerFn(listarModulosPublico);
+  const criar = useServerFn(criarInscricao);
+  const carregarIndicadores = useServerFn(obterIndicadoresPublicos);
+
+  // Cursos (para #modulos)
+  const [modulosCatalogo, setModulosCatalogo] = useState<ModuloCatalogo[]>([]);
+  const [modulosCarregadosCat, setModulosCarregadosCat] = useState(false);
+
+  // Formulário de instituições (para o embutido no #inscricao)
+  const [modulosForm, setModulosForm] = useState<ModuloForm[]>([]);
+  const [modulosFormCarregados, setModulosFormCarregados] = useState(false);
+  const [aSubmeter, setASubmeter] = useState(false);
+  const [erroInsc, setErroInsc] = useState<string | null>(null);
+  const [codigoInsc, setCodigoInsc] = useState<string | null>(null);
+
+  // Indicadores
+  const [indicadores, setIndicadores] = useState<Indicadores | null>(null);
+  const [indicadoresCarregados, setIndicadoresCarregados] = useState(false);
+
+  useEffect(() => {
+    let cancelado = false;
+    listarModulos().then((res) => {
+      if (cancelado) return;
+      if (res.ok) {
+        setModulosCatalogo(res.modulos as ModuloCatalogo[]);
+        setModulosForm(res.modulos as ModuloForm[]);
+      }
+      setModulosCarregadosCat(true);
+      setModulosFormCarregados(true);
+    });
+    carregarIndicadores()
+      .then((r) => {
+        if (cancelado) return;
+        setIndicadores(r);
+      })
+      .finally(() => {
+        if (!cancelado) setIndicadoresCarregados(true);
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [listarModulos, carregarIndicadores]);
+
+  async function submeterInscricao(payload: PayloadInstituicao) {
+    setErroInsc(null);
+    setASubmeter(true);
+    const res = await criar({ data: { ...payload, consentimento: true } });
+    setASubmeter(false);
+    if (res.ok) {
+      setCodigoInsc(res.codigo);
+      const el = document.getElementById("inscricao");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      setErroInsc(
+        res.mensagem ||
+          "Não foi possível concluir a inscrição. Tente novamente daqui a instantes.",
+      );
+    }
+  }
 
   // Fechar com Escape
   useEffect(() => {
@@ -123,6 +198,13 @@ function HomePage() {
   }, [src]);
 
   const openSrc = (url: string, ref: string) => setSrc({ url, ref });
+
+  const semIndicadores =
+    !indicadores ||
+    (indicadores.instituicoesInscritas === 0 &&
+      indicadores.instituicoesComDeclaracao === 0 &&
+      indicadores.formandosCertificados === 0 &&
+      indicadores.distritosAbrangidos === 0);
 
   return (
     <>
