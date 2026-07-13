@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerificarRouteImport } from './routes/verificar'
-import { Route as RegistoRouteImport } from './routes/registo'
 import { Route as RecuperarRouteImport } from './routes/recuperar'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OlogaRouteImport } from './routes/ologa'
@@ -32,11 +31,6 @@ import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
   path: '/verificar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistoRoute = RegistoRouteImport.update({
-  id: '/registo',
-  path: '/registo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecuperarRoute = RecuperarRouteImport.update({
@@ -136,7 +130,6 @@ export interface FileRoutesByFullPath {
   '/ologa': typeof OlogaRouteWithChildren
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
-  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
@@ -155,7 +148,6 @@ export interface FileRoutesByTo {
   '/instituicao': typeof InstituicaoRoute
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
-  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao': typeof FormacaoIndexRoute
@@ -176,7 +168,6 @@ export interface FileRoutesById {
   '/ologa': typeof OlogaRouteWithChildren
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
-  '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
@@ -199,7 +190,6 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/perfil'
     | '/recuperar'
-    | '/registo'
     | '/verificar'
     | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
@@ -218,7 +208,6 @@ export interface FileRouteTypes {
     | '/instituicao'
     | '/perfil'
     | '/recuperar'
-    | '/registo'
     | '/verificar'
     | '/ologa/nova-instituicao'
     | '/formacao'
@@ -238,7 +227,6 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/perfil'
     | '/recuperar'
-    | '/registo'
     | '/verificar'
     | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
@@ -260,7 +248,6 @@ export interface RootRouteChildren {
   OlogaRoute: typeof OlogaRouteWithChildren
   PerfilRoute: typeof PerfilRoute
   RecuperarRoute: typeof RecuperarRoute
-  RegistoRoute: typeof RegistoRoute
   VerificarRoute: typeof VerificarRoute
 }
 
@@ -271,13 +258,6 @@ declare module '@tanstack/react-router' {
       path: '/verificar'
       fullPath: '/verificar'
       preLoaderRoute: typeof VerificarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/registo': {
-      id: '/registo'
-      path: '/registo'
-      fullPath: '/registo'
-      preLoaderRoute: typeof RegistoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recuperar': {
@@ -456,7 +436,6 @@ const rootRouteChildren: RootRouteChildren = {
   OlogaRoute: OlogaRouteWithChildren,
   PerfilRoute: PerfilRoute,
   RecuperarRoute: RecuperarRoute,
-  RegistoRoute: RegistoRoute,
   VerificarRoute: VerificarRoute,
 }
 export const routeTree = rootRouteImport

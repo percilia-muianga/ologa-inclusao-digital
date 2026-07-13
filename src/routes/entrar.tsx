@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState, useId, useEffect } from "react";
+import { useState, useId } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { reenviarConfirmacao } from "@/lib/auth.functions";
-import { AUTH_BYPASS_ENABLED } from "@/lib/auth-bypass";
 
 export const Route = createFileRoute("/entrar")({
   head: () => ({
@@ -14,9 +13,7 @@ export const Route = createFileRoute("/entrar")({
 
 function EntrarPage() {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (AUTH_BYPASS_ENABLED) navigate({ to: "/ologa", replace: true });
-  }, [navigate]);
+
   const reenviar = useServerFn(reenviarConfirmacao);
   const emailId = useId();
   const passId = useId();
@@ -138,7 +135,7 @@ function EntrarPage() {
 
         <div className="mt-6 flex flex-col gap-2 text-base">
           <Link to="/recuperar" className="font-semibold text-ink underline">Esqueci-me da palavra-passe</Link>
-          <Link to="/registo" className="font-semibold text-ink underline">Criar conta com código da instituição</Link>
+          
           <Link to="/" className="text-muted-foreground underline">Voltar ao início</Link>
         </div>
       </main>
