@@ -33,7 +33,6 @@ function CertificadoView() {
   const { modulo: moduloId } = Route.useParams();
   const navigate = useNavigate();
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
-  const { data: instituicoes } = useSuspenseQuery(instituicoesQuery);
   const emitir = useServerFn(emitirCertificado);
 
   const [tokenExistente, setTokenExistente] = useState<string | null>(null);
@@ -43,7 +42,7 @@ function CertificadoView() {
   >(null);
 
   const [nome, setNome] = useState("");
-  const [instituicaoId, setInstituicaoId] = useState<string>("");
+  const [codigoInstituicao, setCodigoInstituicao] = useState<string>("");
   const [genero, setGenero] = useState<Genero | "">("");
   const [nivelPartida, setNivelPartida] = useState<Nivel | "">("");
   const [precisaApoio, setPrecisaApoio] = useState<"" | "sim" | "nao">("");
