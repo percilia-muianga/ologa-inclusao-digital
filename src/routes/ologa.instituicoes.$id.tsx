@@ -176,11 +176,7 @@ function FichaPage() {
           )}
         </div>
 
-        <SeccaoGestor
-          instituicaoId={inst.id}
-          emailPontoFocal={inst.ponto_focal_email ?? ""}
-          nomePontoFocal={inst.ponto_focal_nome ?? ""}
-        />
+
 
 
 
