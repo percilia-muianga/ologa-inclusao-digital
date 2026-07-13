@@ -75,6 +75,7 @@ export const registarFormando = createServerFn({ method: "POST" })
       nivel_partida: data.nivel_partida ?? null,
       tem_deficiencia: data.tem_deficiencia ?? null,
       apoios_acessibilidade: data.apoios_acessibilidade ?? null,
+      funcao: data.funcao?.trim() ? data.funcao.trim() : null,
     });
 
     if (perfilErr) {
