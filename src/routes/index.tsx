@@ -6,11 +6,12 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const HERO_EYEBROW = "Plataforma de Literacia Digital";
-const HERO_TITLE_A = "Literacia digital para a ";
-const HERO_TITLE_HIGHLIGHT = "transformação de Moçambique";
+const HERO_EYEBROW = "Capacitação Digital Alinhada com a Lei n.º 10/2024";
+const HERO_TITLE_A = "Literacia digital que sustenta a ";
+const HERO_TITLE_HIGHLIGHT = "transformação do Estado";
+const HERO_TITLE_B = " moçambicano";
 const HERO_DESC =
-  "Formação em competências digitais para instituições públicas e empresas — presencial e virtual, desenhada para todas as pessoas. Sem versões especiais.";
+  "Um único pacote: capacita as equipas e, ao mesmo tempo, reduz o risco de incumprimento. Presencial e virtual, desenhado para todas as pessoas — porque digitalizar sem desenho universal é reproduzir a exclusão em formato digital.";
 
 const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "#analise", label: "Análise de Mercado" },
@@ -73,6 +74,7 @@ function HomePage() {
             <h1 className="mb-4 text-[42px] font-extrabold leading-[1.12] text-white sm:text-[42px]">
               {HERO_TITLE_A}
               <span className="text-gold">{HERO_TITLE_HIGHLIGHT}</span>
+              {HERO_TITLE_B}
             </h1>
             <p className="mb-7 max-w-[620px] text-[17.5px] text-[#d6dde4]">{HERO_DESC}</p>
 
@@ -85,7 +87,7 @@ function HomePage() {
               </a>
               <ListenButton
                 variant="dark"
-                sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}`, HERO_DESC]}
+                sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}${HERO_TITLE_B}`, HERO_DESC]}
               />
             </div>
           </div>
