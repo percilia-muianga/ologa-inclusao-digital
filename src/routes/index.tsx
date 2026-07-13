@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import logo from "@/assets/ologa-logo.png.asset.json";
 import { ListenButton } from "@/components/listen-button";
+import {
+  FormularioInstituicao,
+  type Modulo as ModuloForm,
+  type PayloadInstituicao,
+} from "@/components/formulario-instituicao";
+import { criarInscricao, listarModulosPublico } from "@/lib/inscricao.functions";
+import { obterIndicadoresPublicos } from "@/lib/indicadores.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -93,9 +101,9 @@ const LEI_REF =
 
 const NAV_ITEMS: { href: string; label: string; kind: "hash" | "route"; to?: string }[] = [
   { href: "#mercado", label: "Análise de Mercado", kind: "hash" },
-  { href: "/inscricao", label: "Inscrição", kind: "route", to: "/inscricao" },
+  { href: "#inscricao", label: "Inscrição", kind: "hash" },
   { href: "#indicadores", label: "Indicadores", kind: "hash" },
-  { href: "/formacao", label: "Cursos", kind: "route", to: "/formacao" },
+  { href: "#modulos", label: "Cursos", kind: "hash" },
   { href: "#percurso", label: "Percurso", kind: "hash" },
   { href: "#entregaveis", label: "Entregáveis", kind: "hash" },
   { href: "#contacto", label: "Contacto", kind: "hash" },
