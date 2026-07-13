@@ -7,12 +7,12 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AccessibilityBar } from "@/components/accessibility-bar";
-import { AUTH_BYPASS_ENABLED, ensureBypassSession } from "@/lib/auth-bypass";
+
 
 function NotFoundComponent() {
   return (
