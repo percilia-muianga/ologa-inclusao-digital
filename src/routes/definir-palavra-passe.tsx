@@ -106,7 +106,8 @@ function DefinirPage() {
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setLoading(false);
-      setErro("Não foi possível definir a palavra-passe. Tente novamente.");
+      console.error("[definir-palavra-passe] updateUser falhou:", error);
+      setErro(traduzirErroPassword(error.message) + ` (detalhe: ${error.message})`);
       return;
     }
     await supabase.auth.signOut();
