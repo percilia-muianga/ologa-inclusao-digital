@@ -204,7 +204,7 @@ function InstituicaoPage() {
                     <td className="px-3 py-2 font-semibold text-ink">{c.nome}</td>
                     <td className="px-3 py-2 text-foreground">{c.email}</td>
                     <td className="px-3 py-2">
-                      {c.tem_password ? (
+                      {c.conta_ativada ? (
                         <span className="text-ink">Sim</span>
                       ) : (
                         <span className="text-brand">Não</span>
