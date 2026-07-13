@@ -202,8 +202,3 @@ function traduzirErroPassword(bruto: string): string {
   }
   return "Não foi possível definir a palavra-passe. Tente outra.";
 }
-  if (m.includes("session") || m.includes("jwt") || m.includes("auth")) {
-    return "A sessão de recuperação expirou. Peça um novo link.";
-  }
-  return "Não foi possível definir a palavra-passe.";
-}
