@@ -323,22 +323,24 @@ function CertificadoView() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-semibold text-navy" htmlFor="inst">
-                  Instituição (opcional)
+                <label className="mb-1 block text-sm font-semibold text-navy" htmlFor="codigo-inst">
+                  Código da instituição (opcional)
                 </label>
-                <select
-                  id="inst"
-                  value={instituicaoId}
-                  onChange={(e) => setInstituicaoId(e.target.value)}
-                  className="w-full rounded-md border border-line bg-white px-3 py-2 text-sm"
-                >
-                  <option value="">— Sem instituição —</option>
-                  {instituicoes.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.nome}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  id="codigo-inst"
+                  type="text"
+                  value={codigoInstituicao}
+                  onChange={(e) => setCodigoInstituicao(e.target.value.toUpperCase())}
+                  className="w-full rounded-md border border-line bg-white px-3 py-2 text-sm font-mono uppercase"
+                  placeholder="Ex.: MINEDH-2026"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Se a sua instituição está inscrita na Ologa, escreva o código
+                  que lhe foi dado. Se não tiver código, deixe em branco — o
+                  certificado é emitido só com o seu nome.
+                </p>
               </div>
 
               <fieldset>
