@@ -13,12 +13,12 @@ export const Route = createFileRoute("/formacao/$modulo/licao/$licao")({
 
 type Dados = Awaited<ReturnType<typeof obterLicao>>;
 
-const FORMATOS = [
-  "Texto",
-  "Leitura fácil",
-  "Áudio",
-  "Alto contraste",
-  "Língua de Sinais Moçambicana — interpretação assegurada",
+const FORMATOS: { label: string; estado: "disponivel" | "preparacao" }[] = [
+  { label: "Texto", estado: "disponivel" },
+  { label: "Leitura fácil", estado: "preparacao" },
+  { label: "Áudio", estado: "preparacao" },
+  { label: "Alto contraste", estado: "preparacao" },
+  { label: "Língua de Sinais Moçambicana", estado: "preparacao" },
 ];
 
 function LicaoPage() {
@@ -119,17 +119,37 @@ function LicaoPage() {
         )}
 
         <section className="mt-6 rounded-lg border border-ink/10 bg-white p-5">
-          <h2 className="text-base font-bold text-ink">Formatos disponíveis</h2>
+          <h2 className="text-base font-bold text-ink">Formatos de acesso</h2>
           <ul className="mt-2 flex flex-wrap gap-2">
-            {FORMATOS.map((f) => (
+            {FORMATOS.map(({ label, estado }) => (
               <li
-                key={f}
-                className="rounded-md border border-ink/20 bg-ink/5 px-3 py-1 text-sm text-ink"
+                key={label}
+                aria-label={`${label}: ${estado === "disponivel" ? "disponível" : "em preparação"}`}
+                className={
+                  "inline-flex items-center rounded-md px-3 py-1 text-sm " +
+                  (estado === "disponivel"
+                    ? "bg-ink font-medium text-ink-foreground"
+                    : "bg-ink/5 text-muted-foreground")
+                }
               >
-                {f}
+                <span aria-hidden="true">{label}</span>
+                <span
+                  aria-hidden="true"
+                  className={
+                    "ml-2 rounded-sm px-1.5 py-0.5 text-xs " +
+                    (estado === "disponivel"
+                      ? "bg-ink-foreground/20 text-ink-foreground"
+                      : "bg-ink/10 text-ink/70")
+                  }
+                >
+                  {estado === "disponivel" ? "disponível" : "em preparação"}
+                </span>
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Estes formatos estão a ser preparados. Por agora, a lição está disponível em texto.
+          </p>
         </section>
 
         <div className="mt-8" role="tablist" aria-label="Formato do conteúdo">
