@@ -251,10 +251,45 @@ function InstituicaoPage() {
             />
           </div>
 
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-md border border-ink/10 bg-ink/5 p-3">
+            <p className="text-sm text-foreground">
+              {selecionaveis.length > 0
+                ? `${selecionaveis.length} selecionado(s).`
+                : "Selecione colaboradores para gerar convites em lote."}
+            </p>
+            <button
+              type="button"
+              onClick={selecionarTodosNaoAtivados}
+              disabled={naoAtivados.length === 0}
+              className="inline-flex min-h-10 items-center rounded-md border border-ink/20 px-3 text-sm text-ink disabled:opacity-50"
+            >
+              Selecionar todos os não-ativados ({naoAtivados.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => gerarLote(selecionaveis.map((c) => c.id))}
+              disabled={selecionaveis.length === 0 || aGerarLote}
+              className="inline-flex min-h-10 items-center rounded-md bg-ink px-4 text-sm font-semibold text-ink-foreground disabled:opacity-50"
+            >
+              {aGerarLote
+                ? "A gerar…"
+                : `Gerar convites e descarregar folha (${selecionaveis.length})`}
+            </button>
+          </div>
+
           <div className="mt-4 overflow-auto rounded-md border border-ink/10">
-            <table className="w-full min-w-[720px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-ink/5 text-left">
                 <tr>
+                  <th className="px-3 py-2">
+                    <input
+                      type="checkbox"
+                      aria-label="Selecionar todos os não-ativados visíveis"
+                      checked={todosSelecionados}
+                      onChange={alternarTodos}
+                      disabled={naoAtivados.length === 0}
+                    />
+                  </th>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Conta ativada</th>
@@ -266,13 +301,22 @@ function InstituicaoPage() {
               <tbody>
                 {colabs.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
+                    <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
                       Ainda não há colaboradores registados nesta instituição.
                     </td>
                   </tr>
                 )}
                 {colabs.map((c) => (
                   <tr key={c.id} className="border-t border-ink/5">
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        aria-label={`Selecionar ${c.nome}`}
+                        checked={selecionados.has(c.id)}
+                        onChange={() => alternarSelecao(c.id)}
+                        disabled={c.conta_ativada}
+                      />
+                    </td>
                     <td className="px-3 py-2 font-semibold text-ink">{c.nome}</td>
                     <td className="px-3 py-2 text-foreground">{c.email}</td>
                     <td className="px-3 py-2">
@@ -298,6 +342,7 @@ function InstituicaoPage() {
                         Gerar novo link
                       </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
