@@ -276,7 +276,7 @@ function HomePage() {
                   <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
                     {st.l}
                   </div>
-                  <div className="mt-1 text-[12px] text-[#9aa6b2]">{st.s}</div>
+                  <div className="mt-1 text-[12px] text-muted-foreground">{st.s}</div>
                   <button
                     type="button"
                     onClick={() => openSrc(st.href, st.ref)}
@@ -920,7 +920,7 @@ function HomePage() {
                 },
               ].map((c) => (
                 <div key={c.h} className="card-elevated p-6">
-                  <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-brand">
+                  <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-dark">
                     {c.who}
                   </div>
                   <h4 className="mb-2 text-[16.5px] text-navy">{c.h}</h4>
@@ -1049,11 +1049,11 @@ function HomePage() {
               </p>
             </div>
             <div className="max-h-[64vh] overflow-auto p-7">
-              <h6 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand">
+              <h6 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Referência
               </h6>
               <p className="font-semibold text-navy">{src.ref}</p>
-              <h6 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand">
+              <h6 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Endereço
               </h6>
               <div className="break-all font-mono text-[13px] text-navy-2">

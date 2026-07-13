@@ -38,7 +38,7 @@ function ModuloOverview() {
           >
             <h2
               id="titulo-desenho-universal"
-              className="mb-2 text-sm font-bold uppercase tracking-wider text-brand"
+              className="mb-2 text-sm font-bold uppercase tracking-wider text-brand-dark"
             >
               Desenho universal
             </h2>
@@ -83,7 +83,7 @@ function ModuloOverview() {
                         ) : null}
                       </span>
                     </span>
-                    <span className="text-sm text-brand">Abrir →</span>
+                    <span className="text-sm text-brand-dark">Abrir →</span>
                   </Link>
                 </li>
               );
@@ -126,7 +126,7 @@ function ModuloOverview() {
             <Link
               to="/formacao/$modulo/diagnostico"
               params={{ modulo: moduloId }}
-              className="text-sm font-semibold text-brand underline"
+              className="text-sm font-semibold text-brand-dark underline"
             >
               {diagnostico ? "Rever diagnóstico" : "Fazer diagnóstico"}
             </Link>
@@ -144,7 +144,7 @@ function ModuloOverview() {
           <Link
             to="/formacao/$modulo/certificado"
             params={{ modulo: moduloId }}
-            className="text-sm font-semibold text-brand underline"
+            className="text-sm font-semibold text-brand-dark underline"
           >
             Ir para a página de certificado
           </Link>

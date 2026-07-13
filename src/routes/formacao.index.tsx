@@ -115,7 +115,7 @@ function ListaModulos() {
   return (
     <section className="wrap py-10">
       <div className="mb-6 max-w-3xl">
-        <div className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Cursos</div>
+        <div className="text-xs font-bold uppercase tracking-[0.18em] text-brand-dark">Cursos</div>
         <h1 className="mt-2 text-3xl font-extrabold text-navy sm:text-4xl">
           Pacote completo de literacia digital
         </h1>

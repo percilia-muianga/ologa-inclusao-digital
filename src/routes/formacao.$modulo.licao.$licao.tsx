@@ -94,7 +94,7 @@ function LicaoView() {
         <Link
           to="/formacao/$modulo"
           params={{ modulo: moduloId }}
-          className="text-navy-2 underline hover:text-brand"
+          className="text-navy-2 underline hover:text-brand-dark"
         >
           ← Voltar ao módulo
         </Link>
@@ -122,7 +122,7 @@ function LicaoView() {
             onKeyDown={teclaSeparador}
             className={
               "border-b-2 px-3 py-2 text-sm font-semibold " +
-              (aba === "elearning" ? "border-brand text-brand" : "border-transparent text-navy-2")
+              (aba === "elearning" ? "border-brand text-brand-dark" : "border-transparent text-navy-2")
             }
           >
             Conteúdo (e-learning)
@@ -138,7 +138,7 @@ function LicaoView() {
             onKeyDown={teclaSeparador}
             className={
               "border-b-2 px-3 py-2 text-sm font-semibold " +
-              (aba === "guiao" ? "border-brand text-brand" : "border-transparent text-navy-2")
+              (aba === "guiao" ? "border-brand text-brand-dark" : "border-transparent text-navy-2")
             }
           >
             Guião do formador
