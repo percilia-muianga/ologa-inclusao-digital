@@ -356,6 +356,42 @@ function FichaPage() {
           </div>
         </div>
 
+        {/* DOCUMENTOS */}
+        <section className="mt-8">
+          <h2 className="text-xl font-bold text-ink">Documentos</h2>
+          <p className="mt-1 text-sm text-foreground">
+            Gerados a partir dos dados registados. Atestam a formação realizada. Não constituem
+            certificação de conformidade legal.
+          </p>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+            {(
+              [
+                ["relatorio", "Relatório de capacitação"],
+                ["certificado", "Certificado da instituição"],
+                ["declaracao", "Declaração de desenho universal"],
+              ] as const
+            ).map(([t, nome]) => (
+              <li key={t} className="rounded-md border border-ink/10 bg-white p-4">
+                <a
+                  href={`/api/public/documentos/${t}/${inst.indicadores_token}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-base font-semibold text-brand-dark underline"
+                >
+                  {nome} (PDF)
+                </a>
+                {t === "declaracao" && (
+                  <p className="mt-2 text-xs text-ink/60">
+                    Ao gerar, fica registada como assinada.
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+
+
         {/* METAS ACORDADAS */}
         <section className="mt-10">
           <h2 className="text-xl font-bold text-ink">Metas acordadas</h2>
