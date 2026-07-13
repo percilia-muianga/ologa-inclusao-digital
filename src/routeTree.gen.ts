@@ -22,7 +22,10 @@ import { Route as DefinirPalavraPasseRouteImport } from './routes/definir-palavr
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
+import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
+import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
+import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
@@ -89,17 +92,33 @@ const OlogaNovaInstituicaoRoute = OlogaNovaInstituicaoRouteImport.update({
   path: '/nova-instituicao',
   getParentRoute: () => OlogaRoute,
 } as any)
+const FormacaoModuloRoute = FormacaoModuloRouteImport.update({
+  id: '/$modulo',
+  path: '/$modulo',
+  getParentRoute: () => FormacaoRoute,
+} as any)
 const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
   id: '/instituicoes/$id',
   path: '/instituicoes/$id',
   getParentRoute: () => OlogaRoute,
 } as any)
+const FormacaoModuloQuizRoute = FormacaoModuloQuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => FormacaoModuloRoute,
+} as any)
+const FormacaoModuloLicaoLicaoRoute =
+  FormacaoModuloLicaoLicaoRouteImport.update({
+    id: '/licao/$licao',
+    path: '/licao/$licao',
+    getParentRoute: () => FormacaoModuloRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
-  '/formacao': typeof FormacaoRoute
+  '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
   '/ologa': typeof OlogaRouteWithChildren
@@ -107,31 +126,37 @@ export interface FileRoutesByFullPath {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
-  '/formacao': typeof FormacaoRoute
+  '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
   '/perfil': typeof PerfilRoute
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/ologa': typeof OlogaIndexRoute
+  '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
-  '/formacao': typeof FormacaoRoute
+  '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
   '/ologa': typeof OlogaRouteWithChildren
@@ -139,9 +164,12 @@ export interface FileRoutesById {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,9 +185,12 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
     | '/ologa/'
+    | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/formacao/$modulo/licao/$licao'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -172,9 +203,12 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
     | '/ologa'
+    | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/formacao/$modulo/licao/$licao'
   id:
     | '__root__'
     | '/'
@@ -188,16 +222,19 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
     | '/ologa/'
+    | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/formacao/$modulo/licao/$licao'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DefinirPalavraPasseRoute: typeof DefinirPalavraPasseRoute
   EntrarRoute: typeof EntrarRoute
-  FormacaoRoute: typeof FormacaoRoute
+  FormacaoRoute: typeof FormacaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
   InstituicaoRoute: typeof InstituicaoRoute
   OlogaRoute: typeof OlogaRouteWithChildren
@@ -300,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OlogaNovaInstituicaoRouteImport
       parentRoute: typeof OlogaRoute
     }
+    '/formacao/$modulo': {
+      id: '/formacao/$modulo'
+      path: '/$modulo'
+      fullPath: '/formacao/$modulo'
+      preLoaderRoute: typeof FormacaoModuloRouteImport
+      parentRoute: typeof FormacaoRoute
+    }
     '/ologa/instituicoes/$id': {
       id: '/ologa/instituicoes/$id'
       path: '/instituicoes/$id'
@@ -307,8 +351,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OlogaInstituicoesIdRouteImport
       parentRoute: typeof OlogaRoute
     }
+    '/formacao/$modulo/quiz': {
+      id: '/formacao/$modulo/quiz'
+      path: '/quiz'
+      fullPath: '/formacao/$modulo/quiz'
+      preLoaderRoute: typeof FormacaoModuloQuizRouteImport
+      parentRoute: typeof FormacaoModuloRoute
+    }
+    '/formacao/$modulo/licao/$licao': {
+      id: '/formacao/$modulo/licao/$licao'
+      path: '/licao/$licao'
+      fullPath: '/formacao/$modulo/licao/$licao'
+      preLoaderRoute: typeof FormacaoModuloLicaoLicaoRouteImport
+      parentRoute: typeof FormacaoModuloRoute
+    }
   }
 }
+
+interface FormacaoModuloRouteChildren {
+  FormacaoModuloQuizRoute: typeof FormacaoModuloQuizRoute
+  FormacaoModuloLicaoLicaoRoute: typeof FormacaoModuloLicaoLicaoRoute
+}
+
+const FormacaoModuloRouteChildren: FormacaoModuloRouteChildren = {
+  FormacaoModuloQuizRoute: FormacaoModuloQuizRoute,
+  FormacaoModuloLicaoLicaoRoute: FormacaoModuloLicaoLicaoRoute,
+}
+
+const FormacaoModuloRouteWithChildren = FormacaoModuloRoute._addFileChildren(
+  FormacaoModuloRouteChildren,
+)
+
+interface FormacaoRouteChildren {
+  FormacaoModuloRoute: typeof FormacaoModuloRouteWithChildren
+}
+
+const FormacaoRouteChildren: FormacaoRouteChildren = {
+  FormacaoModuloRoute: FormacaoModuloRouteWithChildren,
+}
+
+const FormacaoRouteWithChildren = FormacaoRoute._addFileChildren(
+  FormacaoRouteChildren,
+)
 
 interface OlogaRouteChildren {
   OlogaNovaInstituicaoRoute: typeof OlogaNovaInstituicaoRoute
@@ -328,7 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DefinirPalavraPasseRoute: DefinirPalavraPasseRoute,
   EntrarRoute: EntrarRoute,
-  FormacaoRoute: FormacaoRoute,
+  FormacaoRoute: FormacaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
   InstituicaoRoute: InstituicaoRoute,
   OlogaRoute: OlogaRouteWithChildren,
