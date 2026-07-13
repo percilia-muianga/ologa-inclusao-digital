@@ -485,6 +485,14 @@ export type Database = {
         Args: { _instituicao: string; _uid: string }
         Returns: boolean
       }
+      obter_estado_contas: {
+        Args: { _ids: string[] }
+        Returns: {
+          id: string
+          tem_password: boolean
+          ultimo_acesso: string
+        }[]
+      }
     }
     Enums: {
       apoio_acessibilidade:
