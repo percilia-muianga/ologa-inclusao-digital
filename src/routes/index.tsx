@@ -79,9 +79,9 @@ function HomePage() {
             <p className="mb-7 max-w-[620px] text-[17.5px] text-[#d6dde4]">{HERO_DESC}</p>
 
             <div className="flex flex-wrap gap-3">
-              <a href="#cursos" className="btn-brand btn-brand-hover">
+              <Link to="/formacao" className="btn-brand btn-brand-hover">
                 Abrir os Cursos
-              </a>
+              </Link>
               <a href="#analise" className="btn-ghost-dark btn-ghost-dark-hover">
                 Ver Análise de Mercado
               </a>
