@@ -70,6 +70,7 @@ function RegistoPage() {
         nivel_partida: nivel === "" ? null : nivel,
         tem_deficiencia,
         apoios_acessibilidade: apoios.size > 0 ? Array.from(apoios) : null,
+        funcao: funcao.trim() ? funcao.trim() : null,
         origin: window.location.origin,
       },
     });
