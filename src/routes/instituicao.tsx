@@ -36,6 +36,7 @@ function InstituicaoPage() {
   const obterInst = useServerFn(obterMinhaInstituicaoGestor);
   const listar = useServerFn(listarColaboradoresGestor);
   const regenerar = useServerFn(regenerarLinkPasswordColaborador);
+  const regenerarLote = useServerFn(regenerarLinksPasswordEmLote);
 
   const [inst, setInst] = useState<Instituicao | null>(null);
   const [colabs, setColabs] = useState<Colaborador[]>([]);
@@ -45,6 +46,19 @@ function InstituicaoPage() {
   const [linkAberto, setLinkAberto] = useState<{ nome: string; link: string } | null>(null);
   const [copiado, setCopiado] = useState(false);
   const [codigoCopiado, setCodigoCopiado] = useState(false);
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
+  const [aGerarLote, setAGerarLote] = useState(false);
+  const [resumoLote, setResumoLote] = useState<
+    { gerados: number; ignorados: { nome: string; email: string; motivo: string }[] } | null
+  >(null);
+
+  const naoAtivados = useMemo(() => colabs.filter((c) => !c.conta_ativada), [colabs]);
+  const selecionaveis = useMemo(
+    () => naoAtivados.filter((c) => selecionados.has(c.id)),
+    [naoAtivados, selecionados],
+  );
+  const todosSelecionados =
+    naoAtivados.length > 0 && naoAtivados.every((c) => selecionados.has(c.id));
 
   const carregar = useCallback(
     async (q: string) => {
