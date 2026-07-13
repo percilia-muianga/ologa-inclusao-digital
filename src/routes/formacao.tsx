@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { listarCatalogo } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao")({
   head: () => ({ meta: [{ title: "A minha formação — Ologa" }] }),
