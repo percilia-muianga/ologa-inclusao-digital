@@ -31,7 +31,7 @@ const NIVEL_LABEL: Record<NivelDB, string> = {
 };
 
 function FormacaoPage() {
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(listarCatalogo);
   const [modulos, setModulos] = useState<Modulo[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);

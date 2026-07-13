@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
 import { obterModulo } from "@/lib/formacao.functions";
 
 export const Route = createFileRoute("/formacao/$modulo")({
@@ -13,7 +13,7 @@ type Dados = Awaited<ReturnType<typeof obterModulo>>;
 
 function ModuloPage() {
   const { modulo: moduloParam } = Route.useParams();
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(obterModulo);
   const [dados, setDados] = useState<Dados | null>(null);
   const [erro, setErro] = useState<string | null>(null);
