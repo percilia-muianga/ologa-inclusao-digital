@@ -1,21 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  emitirCertificado,
-  listarInstituicoesPublico,
-} from "@/lib/formacao.functions";
+import { emitirCertificado } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
 
-const instituicoesQuery = queryOptions({
-  queryKey: ["formacao", "instituicoes-publico"],
-  queryFn: () => listarInstituicoesPublico(),
-});
-
 export const Route = createFileRoute("/formacao/$modulo/certificado")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(instituicoesQuery),
   component: CertificadoView,
 });
 
