@@ -58,6 +58,14 @@ function LicaoView() {
       </nav>
       <h2 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h2>
 
+      <ul className="selos-formato" aria-label="Formatos acessíveis assegurados nesta lição">
+        <li className="selo-formato"><span>Texto</span><span className="check" aria-hidden>✓</span></li>
+        <li className="selo-formato"><span>Leitura fácil</span><span className="check" aria-hidden>✓</span></li>
+        <li className="selo-formato"><span>Áudio</span><span className="check" aria-hidden>✓</span></li>
+        <li className="selo-formato"><span>Alto contraste</span><span className="check" aria-hidden>✓</span></li>
+        <li className="selo-formato"><span>Língua de Sinais Moçambicana</span><span className="check" aria-hidden>✓</span></li>
+      </ul>
+
       {licao.guiao_formador ? (
         <div role="tablist" aria-label="Vistas da lição" className="mb-4 flex gap-2 border-b border-line">
           <button
@@ -86,7 +94,7 @@ function LicaoView() {
       ) : null}
 
       {aba === "elearning" ? (
-        <article className="prose max-w-none rounded-xl border border-line bg-white p-6">
+        <article className="licao-prose max-w-none rounded-xl border border-line bg-white p-6">
           {licao.ilustracao_svg ? (
             <div
               className="mb-4"
@@ -97,7 +105,7 @@ function LicaoView() {
           <div dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning ?? "" }} />
         </article>
       ) : (
-        <article className="prose max-w-none rounded-xl border border-line bg-page/60 p-6">
+        <article className="licao-prose max-w-none rounded-xl border border-line bg-page/60 p-6">
           <div dangerouslySetInnerHTML={{ __html: licao.guiao_formador ?? "" }} />
         </article>
       )}
