@@ -17,17 +17,9 @@ export const listarModulos = createServerFn({ method: 'GET' }).handler(async () 
   return data
 })
 
-// Lista pública mínima de instituições (só id + nome). Serve para o formando
-// se poder associar à sua instituição no momento do certificado. Não expõe
-// qualquer outra coluna.
-export const listarInstituicoesPublico = createServerFn({ method: 'GET' }).handler(async () => {
-  const s = await admin()
-  const { data, error } = await s.from('instituicoes')
-    .select('id, nome')
-    .order('nome')
-  if (error) throw error
-  return data ?? []
-})
+// (Nenhum endpoint público devolve nomes/ids de instituições. A associação
+// é feita por código escrito pelo formando; a resolução vive dentro de
+// emitirCertificado.)
 
 export const obterModulo = createServerFn({ method: 'GET' })
   .inputValidator((i: { moduloId: string }) =>
