@@ -546,123 +546,142 @@ function HomePage() {
                 A carregar indicadores…
               </div>
             ) : (
-              <>
-                {/* Compromisso institucional — cartão novo, acima de tudo */}
-                <div className="mb-8">
-                  <IndSubh titulo="Compromisso institucional" />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <KpiCard
-                      kpi={{
-                        src: "inc",
-                        val: fmtNum(indicadores!.instituicoesComDeclaracao),
-                        lab: "Instituições com Declaração de Desenho Universal assinada",
-                      }}
-                    />
-                  </div>
-                </div>
+              (() => {
+                // Enquanto não houver inscrições, os cartões que dependem dos
+                // formulários mostram "Ainda sem dados" — nunca 0 nem 0%,
+                // que se leem como resultado mau. As lições com áudio ficam
+                // porque é facto da plataforma, não depende de inscrições.
+                const semDadosInc = semInscricoes;
+                const nInc = (n: number | null | undefined) =>
+                  semDadosInc ? "Ainda sem dados" : fmtNum(n);
+                const pInc = (p: number | null | undefined) =>
+                  semDadosInc ? "Ainda sem dados" : fmtPct(p);
+                const nFor = (n: number | null | undefined) =>
+                  semDadosInc ? "Ainda sem dados" : fmtNum(n);
+                const pFor = (p: number | null | undefined) =>
+                  semDadosInc ? "Ainda sem dados" : fmtPct(p);
+                const barInc = (p: number | null | undefined) =>
+                  semDadosInc ? null : p;
+                return (
+                  <>
+                    {/* Compromisso institucional — cartão novo, acima de tudo */}
+                    <div className="mb-8">
+                      <IndSubh titulo="Compromisso institucional" />
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <KpiCard
+                          kpi={{
+                            src: "inc",
+                            val: nInc(indicadores!.instituicoesComDeclaracao),
+                            lab: "Instituições com Declaração de Desenho Universal assinada",
+                          }}
+                        />
+                      </div>
+                    </div>
 
-                <IndSubh titulo="Quem alcançamos" />
-                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtPct(indicadores!.mulheresPct),
-                      lab: "Mulheres formadas",
-                      pct: indicadores!.mulheresPct,
-                      barColor: "var(--red, #c8213a)",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtPct(indicadores!.ruraisPct),
-                      lab: "Formandos em zonas rurais",
-                      pct: indicadores!.ruraisPct,
-                      barColor: "var(--gold, #c98a2b)",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.distritosAbrangidos),
-                      lab: "Distritos e postos abrangidos",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.formandosZero),
-                      lab: "Formandos que partem do zero",
-                    }}
-                  />
-                </div>
+                    <IndSubh titulo="Quem alcançamos" />
+                    <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: pInc(indicadores!.mulheresPct),
+                          lab: "Mulheres formadas",
+                          pct: barInc(indicadores!.mulheresPct),
+                          barColor: "var(--red, #c8213a)",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: pInc(indicadores!.ruraisPct),
+                          lab: "Formandos em zonas rurais",
+                          pct: barInc(indicadores!.ruraisPct),
+                          barColor: "var(--gold, #c98a2b)",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.distritosAbrangidos),
+                          lab: "Distritos e postos abrangidos",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.formandosZero),
+                          lab: "Formandos que partem do zero",
+                        }}
+                      />
+                    </div>
 
-                <IndSubh titulo="Formação & cobertura" />
-                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.instituicoesInscritas),
-                      lab: "Instituições inscritas",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.formandosInscritos),
-                      lab: "Formandos inscritos",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "for",
-                      val: fmtNum(indicadores!.modulosConcluidos),
-                      lab: "Módulos concluídos",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "for",
-                      val: fmtPct(indicadores!.mediaQuizzesPct),
-                      lab: "Média nos quizzes",
-                      pct: indicadores!.mediaQuizzesPct,
-                      barColor: "var(--navy, #10233b)",
-                    }}
-                  />
-                </div>
+                    <IndSubh titulo="Formação & cobertura" />
+                    <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.instituicoesInscritas),
+                          lab: "Instituições inscritas",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.formandosInscritos),
+                          lab: "Formandos inscritos",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "for",
+                          val: nFor(indicadores!.modulosConcluidos),
+                          lab: "Módulos concluídos",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "for",
+                          val: pFor(indicadores!.mediaQuizzesPct),
+                          lab: "Média nos quizzes",
+                          pct: barInc(indicadores!.mediaQuizzesPct),
+                          barColor: "var(--navy, #10233b)",
+                        }}
+                      />
+                    </div>
 
-                <IndSubh titulo="Desenho universal" />
-                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.pessoasComDeficiencia),
-                      lab: "Pessoas com deficiência",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.instituicoesComApoios),
-                      lab: "Instituições com apoios solicitados",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "inc",
-                      val: fmtNum(indicadores!.tiposApoioRequeridos),
-                      lab: "Tipos de apoio requeridos",
-                    }}
-                  />
-                  <KpiCard
-                    kpi={{
-                      src: "plat",
-                      val: `${indicadores!.licoesComAudioPct}%`,
-                      lab: "Lições com áudio",
-                    }}
-                  />
-                </div>
-              </>
+                    <IndSubh titulo="Desenho universal" />
+                    <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.pessoasComDeficiencia),
+                          lab: "Pessoas com deficiência",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.instituicoesComApoios),
+                          lab: "Instituições com apoios solicitados",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "inc",
+                          val: nInc(indicadores!.tiposApoioRequeridos),
+                          lab: "Tipos de apoio requeridos",
+                        }}
+                      />
+                      <KpiCard
+                        kpi={{
+                          src: "plat",
+                          val: `${indicadores!.licoesComAudioPct}%`,
+                          lab: "Lições com áudio",
+                        }}
+                      />
+                    </div>
+                  </>
+                );
+              })()
             )}
 
             <div className="mt-8 grid gap-5 rounded-2xl bg-navy p-6 text-[14px] leading-[1.65] text-[#cdd5dd] sm:p-7">
@@ -1089,7 +1108,9 @@ function KpiCard({ kpi }: { kpi: Kpi }) {
       >
         {catRotulo}
       </span>
-      <div className="mt-[9px] text-[30px] font-extrabold leading-none text-navy">
+      <div
+        className={`mt-[9px] font-extrabold leading-none text-navy ${/^[\d—]/.test(kpi.val) ? "text-[30px]" : "text-[15px] leading-snug text-muted-foreground"}`}
+      >
         {kpi.val}
       </div>
       <div className="mt-[6px] text-[12.5px] font-semibold text-muted-foreground">
