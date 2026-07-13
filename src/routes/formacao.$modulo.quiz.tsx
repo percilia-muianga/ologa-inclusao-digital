@@ -93,6 +93,7 @@ function QuizPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <Link
           to="/formacao/$modulo"
