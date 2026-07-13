@@ -186,7 +186,7 @@ function InstituicaoPage() {
                 <tr>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Email</th>
-                  <th className="px-3 py-2">Palavra-passe definida</th>
+                  <th className="px-3 py-2">Conta ativada</th>
                   <th className="px-3 py-2">Último acesso</th>
                   <th className="px-3 py-2">Ações</th>
                 </tr>
