@@ -89,7 +89,7 @@ function CertificadoView() {
         moduloId: string;
         tokenPessoal: string | null;
         nome?: string;
-        instituicaoId?: string | null;
+        codigoInstituicao?: string | null;
         genero?: Genero | null;
         nivelPartida?: Nivel | null;
         precisaApoio?: boolean | null;
