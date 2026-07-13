@@ -72,6 +72,7 @@ function ModuloPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <Link to="/formacao" className="text-sm text-ink underline">
           ← Voltar aos módulos
