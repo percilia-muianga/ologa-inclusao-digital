@@ -118,6 +118,42 @@ export type Database = {
           },
         ]
       }
+      instituicao_modulos_percurso: {
+        Row: {
+          criado_em: string
+          instituicao_id: string
+          modulo_id: string
+          ordem: number
+        }
+        Insert: {
+          criado_em?: string
+          instituicao_id: string
+          modulo_id: string
+          ordem: number
+        }
+        Update: {
+          criado_em?: string
+          instituicao_id?: string
+          modulo_id?: string
+          ordem?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instituicao_modulos_percurso_instituicao_id_fkey"
+            columns: ["instituicao_id"]
+            isOneToOne: false
+            referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instituicao_modulos_percurso_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       instituicoes: {
         Row: {
           apoios_acessibilidade:
@@ -134,6 +170,9 @@ export type Database = {
           indicadores_token: string
           meio: Database["public"]["Enums"]["meio_instituicao"] | null
           meta_cobertura_pct: number | null
+          meta_conclusao_pct: number | null
+          meta_equidade_max_pp: number | null
+          meta_ganho_pontos: number | null
           modalidade: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
@@ -146,6 +185,8 @@ export type Database = {
           num_pcd: number | null
           num_trabalhadores_total: number | null
           observacoes: string | null
+          pedido_meta_cobertura_pct: number | null
+          pedido_prazo_meses: number | null
           percurso: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email: string | null
           ponto_focal_nome: string | null
@@ -172,6 +213,9 @@ export type Database = {
           indicadores_token?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
           meta_cobertura_pct?: number | null
+          meta_conclusao_pct?: number | null
+          meta_equidade_max_pp?: number | null
+          meta_ganho_pontos?: number | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse?: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
@@ -184,6 +228,8 @@ export type Database = {
           num_pcd?: number | null
           num_trabalhadores_total?: number | null
           observacoes?: string | null
+          pedido_meta_cobertura_pct?: number | null
+          pedido_prazo_meses?: number | null
           percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
@@ -210,6 +256,9 @@ export type Database = {
           indicadores_token?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
           meta_cobertura_pct?: number | null
+          meta_conclusao_pct?: number | null
+          meta_equidade_max_pp?: number | null
+          meta_ganho_pontos?: number | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse?: string[] | null
           natureza?: Database["public"]["Enums"]["natureza_instituicao"]
@@ -222,6 +271,8 @@ export type Database = {
           num_pcd?: number | null
           num_trabalhadores_total?: number | null
           observacoes?: string | null
+          pedido_meta_cobertura_pct?: number | null
+          pedido_prazo_meses?: number | null
           percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
@@ -272,6 +323,44 @@ export type Database = {
             columns: ["modulo_id"]
             isOneToOne: false
             referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      metas_historico: {
+        Row: {
+          alterado_em: string
+          alterado_por: string | null
+          campo: string
+          id: string
+          instituicao_id: string
+          valor_antigo: string | null
+          valor_novo: string | null
+        }
+        Insert: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo: string
+          id?: string
+          instituicao_id: string
+          valor_antigo?: string | null
+          valor_novo?: string | null
+        }
+        Update: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo?: string
+          id?: string
+          instituicao_id?: string
+          valor_antigo?: string | null
+          valor_novo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metas_historico_instituicao_id_fkey"
+            columns: ["instituicao_id"]
+            isOneToOne: false
+            referencedRelation: "instituicoes"
             referencedColumns: ["id"]
           },
         ]
@@ -448,30 +537,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_indicadores_por_token: {
-        Args: { _token: string }
-        Returns: {
-          apoio_censurado: boolean
-          declaracao_assinada: boolean
-          declaracao_assinada_em: string
-          distrito: string
-          formandos_certificados: number
-          formandos_inscritos: number
-          ganho_medio_pct: number
-          ganho_n: number
-          meta_cobertura_pct: number
-          nome: string
-          num_trabalhadores_total: number
-          prazo_meses: number
-          provincia: string
-          sexo_censurado: boolean
-          taxa_conclusao_com_apoio_pct: number
-          taxa_conclusao_feminino_pct: number
-          taxa_conclusao_geral_pct: number
-          taxa_conclusao_masculino_pct: number
-          taxa_conclusao_sem_apoio_pct: number
-        }[]
-      }
+      get_indicadores_por_token: { Args: { _token: string }; Returns: Json }
       get_totais_nacionais: {
         Args: never
         Returns: {
