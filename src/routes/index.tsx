@@ -76,7 +76,10 @@ function HomePage() {
               <Link to="/entrar" className="btn-ghost-dark btn-ghost-dark-hover">
                 Entrar
               </Link>
-              <ListenButton sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}`, HERO_DESC]} />
+              <ListenButton
+                variant="dark"
+                sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}`, HERO_DESC]}
+              />
             </div>
           </div>
         </section>
