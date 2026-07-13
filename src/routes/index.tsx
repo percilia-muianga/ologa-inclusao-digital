@@ -347,14 +347,14 @@ function HomePage() {
             {/* Insight — 4 blocos navy */}
             <div className="mt-11 grid grid-cols-1 gap-6 rounded-2xl bg-navy p-7 text-white sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <h5 className="mb-2 text-[14px] text-gold">1 · O contexto</h5>
+                <h3 className="mb-2 text-[14px] text-gold">1 · O contexto</h3>
                 <p className="text-[14px] leading-[1.5] text-[#cdd5dd]">
                   O Estado acelerou a digitalização: novo ministério, Estratégia
                   Nacional de Transformação Digital e serviços a passar para o digital.
                 </p>
               </div>
               <div>
-                <h5 className="mb-2 text-[14px] text-gold">2 · A necessidade</h5>
+                <h3 className="mb-2 text-[14px] text-gold">2 · A necessidade</h3>
                 <p className="text-[14px] leading-[1.5] text-[#cdd5dd]">
                   Mas falta quem saiba operar: baixa literacia digital, escassez de
                   competências em dados — e uma grande parte do país que não lê, não vê
@@ -362,7 +362,7 @@ function HomePage() {
                 </p>
               </div>
               <div>
-                <h5 className="mb-2 text-[14px] text-gold">3 · A exigência</h5>
+                <h3 className="mb-2 text-[14px] text-gold">3 · A exigência</h3>
                 <p className="text-[14px] leading-[1.5] text-[#cdd5dd]">
                   A <strong className="text-white">Lei n.º 10/2024</strong> obriga as
                   instituições — públicas e privadas que prestem serviços públicos — a
@@ -379,7 +379,7 @@ function HomePage() {
                 </button>
               </div>
               <div>
-                <h5 className="mb-2 text-[14px] text-gold">4 · A resposta</h5>
+                <h3 className="mb-2 text-[14px] text-gold">4 · A resposta</h3>
                 <p className="text-[14px] leading-[1.5] text-[#cdd5dd]">
                   Um pacote de literacia digital universalmente desenhado: uma só
                   formação, para todos, sem versões especiais — que capacita e, ao mesmo
@@ -686,15 +686,15 @@ function HomePage() {
 
             <div className="mt-8 grid gap-5 rounded-2xl bg-navy p-6 text-[14px] leading-[1.65] text-[#cdd5dd] sm:p-7">
               <div>
-                <h5 className="mb-2 text-[14px] text-gold">
+                <h3 className="mb-2 text-[14px] text-gold">
                   Leitura dos indicadores
-                </h5>
+                </h3>
                 <p>{lerIndicadores(indicadores, semInscricoes)}</p>
               </div>
               <div className="border-t border-white/15 pt-4">
-                <h5 className="mb-2 text-[14px] text-gold">
+                <h3 className="mb-2 text-[14px] text-gold">
                   Desenho universal e a Lei n.º 10/2024
-                </h5>
+                </h3>
                 <p>
                   Todas as lições têm áudio, leitura fácil e alto contraste. A
                   plataforma foi desenhada segundo os princípios de desenho
@@ -821,7 +821,7 @@ function HomePage() {
                   <div className="absolute -top-[14px] left-[26px] flex h-[30px] w-[30px] items-center justify-center rounded-full bg-brand text-[14px] font-extrabold text-white">
                     {lvl.n}
                   </div>
-                  <h4 className="mt-[10px] mb-1 text-[18px] text-navy">{lvl.h}</h4>
+                  <h3 className="mt-[10px] mb-1 text-[18px] text-navy">{lvl.h}</h3>
                   <div className="mb-[14px] text-[13px] font-semibold text-muted-foreground">
                     {lvl.d}
                   </div>
@@ -843,7 +843,7 @@ function HomePage() {
               <div className="flex gap-4 rounded-2xl border border-line bg-white p-[22px]">
                 <div className="text-[28px]">🏫</div>
                 <div>
-                  <h5 className="mb-1 text-[16px] text-navy">Formação presencial</h5>
+                  <h4 className="mb-1 text-[16px] text-navy">Formação presencial</h4>
                   <p className="text-[14px] text-muted-foreground">
                     Sessões práticas em sala, conduzidas pelo{" "}
                     <b className="text-navy">guião do formador</b> de cada lição —
@@ -854,7 +854,7 @@ function HomePage() {
               <div className="flex gap-4 rounded-2xl border border-line bg-white p-[22px]">
                 <div className="text-[28px]">💻</div>
                 <div>
-                  <h5 className="mb-1 text-[16px] text-navy">Formação virtual</h5>
+                  <h4 className="mb-1 text-[16px] text-navy">Formação virtual</h4>
                   <p className="text-[14px] text-muted-foreground">
                     Os mesmos módulos em{" "}
                     <b className="text-navy">conteúdo e-learning</b> para estudo
@@ -923,7 +923,7 @@ function HomePage() {
                   <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-dark">
                     {c.who}
                   </div>
-                  <h4 className="mb-2 text-[16.5px] text-navy">{c.h}</h4>
+                  <h3 className="mb-2 text-[16.5px] text-navy">{c.h}</h3>
                   <p className="text-[13.5px] text-muted-foreground">{c.p}</p>
                 </div>
               ))}
@@ -1049,13 +1049,13 @@ function HomePage() {
               </p>
             </div>
             <div className="max-h-[64vh] overflow-auto p-7">
-              <h6 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
+              <h4 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Referência
-              </h6>
+              </h4>
               <p className="font-semibold text-navy">{src.ref}</p>
-              <h6 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
+              <h4 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Endereço
-              </h6>
+              </h4>
               <div className="break-all font-mono text-[13px] text-navy-2">
                 {src.url}
               </div>
