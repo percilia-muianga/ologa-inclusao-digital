@@ -1051,3 +1051,91 @@ function HomePage() {
     </>
   );
 }
+
+// ---- Painel de indicadores: helpers ----
+function fmtNum(n: number | null | undefined): string {
+  if (n == null) return "—";
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+function fmtPct(p: number | null | undefined): string {
+  if (p == null) return "—";
+  return `${p}%`;
+}
+function IndSubh({ titulo }: { titulo: string }) {
+  return (
+    <div className="mb-4 flex items-center gap-3 text-[12px] font-extrabold uppercase tracking-[1px] text-navy">
+      <span>{titulo}</span>
+      <span className="h-px flex-1 bg-line" />
+    </div>
+  );
+}
+function KpiCard({ kpi }: { kpi: Kpi }) {
+  const catRotulo =
+    kpi.src === "inc"
+      ? "Via inscrição"
+      : kpi.src === "for"
+        ? "Atividade na plataforma"
+        : "Da plataforma";
+  const catClasse =
+    kpi.src === "inc"
+      ? "bg-[#fdecea] text-[#c8213a]"
+      : kpi.src === "for"
+        ? "bg-[#eaf3fb] text-[#1b6ea8]"
+        : "bg-[#eef2f6] text-navy";
+  return (
+    <div className="card-elevated p-[20px]">
+      <span
+        className={`inline-block rounded-full px-2 py-[2px] text-[10px] font-extrabold uppercase tracking-[.6px] ${catClasse}`}
+      >
+        {catRotulo}
+      </span>
+      <div className="mt-[9px] text-[30px] font-extrabold leading-none text-navy">
+        {kpi.val}
+      </div>
+      <div className="mt-[6px] text-[12.5px] font-semibold text-muted-foreground">
+        {kpi.lab}
+      </div>
+      {kpi.pct != null ? (
+        <div className="mt-[13px] h-[7px] overflow-hidden rounded-md bg-[#eef1f4]">
+          <div
+            className="h-full rounded-md"
+            style={{
+              width: `${Math.max(0, Math.min(100, kpi.pct))}%`,
+              background: kpi.barColor ?? "var(--navy, #10233b)",
+            }}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+function lerIndicadores(ind: Indicadores | null, semInscricoes: boolean): string {
+  if (!ind || semInscricoes) {
+    return "Ainda sem inscrições registadas. Esta leitura é gerada automaticamente a partir dos formulários de inscrição submetidos.";
+  }
+  const partes: string[] = [];
+  partes.push(
+    `Com base em ${fmtNum(ind.instituicoesInscritas)} instituição(ões) inscrita(s), estão previstos ${fmtNum(ind.formandosInscritos)} formandos`,
+  );
+  if (ind.mulheresPct != null && ind.ruraisPct != null) {
+    partes.push(
+      `, dos quais ${ind.mulheresPct}% mulheres e ${ind.ruraisPct}% em zonas rurais`,
+    );
+  }
+  partes.push(`, abrangendo ${fmtNum(ind.distritosAbrangidos)} distrito(s)/posto(s)`);
+  if (ind.pessoasComDeficiencia > 0) {
+    partes.push(
+      ` e incluindo ${fmtNum(ind.pessoasComDeficiencia)} pessoa(s) com deficiência`,
+    );
+  }
+  partes.push(
+    ". A participação feminina e a cobertura rural são acompanhadas como metas de inclusão do programa.",
+  );
+  if (ind.formandosZero > 0 && ind.formandosInscritos > 0) {
+    const pZero = Math.round((ind.formandosZero / ind.formandosInscritos) * 100);
+    partes.push(
+      ` ${pZero}% destes formandos partem do zero, sem qualquer literacia digital.`,
+    );
+  }
+  return partes.join("");
+}
