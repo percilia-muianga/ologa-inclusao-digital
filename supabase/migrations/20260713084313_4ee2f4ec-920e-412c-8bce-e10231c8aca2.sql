@@ -1,0 +1,1 @@
+ALTER TABLE public.perfis ADD COLUMN IF NOT EXISTS palavra_passe_definida_em timestamptz;
