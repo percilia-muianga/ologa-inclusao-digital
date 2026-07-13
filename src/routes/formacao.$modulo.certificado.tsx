@@ -112,7 +112,7 @@ function CertificadoView() {
           return;
         }
         payload.nome = nome.trim();
-        payload.instituicaoId = instituicaoId || null;
+        payload.codigoInstituicao = codigoInstituicao.trim().toUpperCase() || null;
         payload.genero = (genero || null) as Genero | null;
         payload.nivelPartida = (nivelPartida || null) as Nivel | null;
         payload.precisaApoio =
