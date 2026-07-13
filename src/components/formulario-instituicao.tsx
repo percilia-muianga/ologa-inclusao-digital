@@ -28,6 +28,9 @@ export type ValoresFormulario = {
   modalidade: string;
   conectividade: string;
   num_computadores: string;
+  num_trabalhadores_total: string;
+  meta_cobertura_pct: string;
+  prazo_meses: string;
   num_colaboradores_total: string;
   nivel_literacia: string;
   num_mulheres: string;
@@ -36,7 +39,6 @@ export type ValoresFormulario = {
   apoios_acessibilidade: string[];
   modulos_interesse: string[];
   percurso: string;
-  prazo: string;
   sala_disponivel: string;
   observacoes: string;
   consentimento: boolean;
@@ -55,6 +57,9 @@ export const VALORES_INICIAIS: ValoresFormulario = {
   modalidade: "",
   conectividade: "",
   num_computadores: "",
+  num_trabalhadores_total: "",
+  meta_cobertura_pct: "",
+  prazo_meses: "",
   num_colaboradores_total: "",
   nivel_literacia: "",
   num_mulheres: "",
@@ -63,7 +68,6 @@ export const VALORES_INICIAIS: ValoresFormulario = {
   apoios_acessibilidade: [],
   modulos_interesse: [],
   percurso: "",
-  prazo: "",
   sala_disponivel: "",
   observacoes: "",
   consentimento: false,
@@ -88,6 +92,9 @@ export type PayloadInstituicao = {
   modalidade: string | null;
   conectividade: string | null;
   num_computadores: number | null;
+  num_trabalhadores_total: number;
+  meta_cobertura_pct: number;
+  prazo_meses: number;
   num_colaboradores_total: number;
   nivel_literacia: string | null;
   num_mulheres: number | null;
@@ -96,7 +103,6 @@ export type PayloadInstituicao = {
   apoios_acessibilidade: string[] | null;
   modulos_interesse: string[] | null;
   percurso: string | null;
-  prazo: string | null;
   sala_disponivel: string | null;
   observacoes: string | null;
 };
@@ -115,6 +121,9 @@ export function valoresParaPayload(v: ValoresFormulario): PayloadInstituicao {
     modalidade: v.modalidade || null,
     conectividade: v.conectividade || null,
     num_computadores: numOuNulo(v.num_computadores),
+    num_trabalhadores_total: Number(v.num_trabalhadores_total),
+    meta_cobertura_pct: Number(v.meta_cobertura_pct),
+    prazo_meses: Number(v.prazo_meses),
     num_colaboradores_total: Number(v.num_colaboradores_total),
     nivel_literacia: v.nivel_literacia || null,
     num_mulheres: numOuNulo(v.num_mulheres),
@@ -125,7 +134,6 @@ export function valoresParaPayload(v: ValoresFormulario): PayloadInstituicao {
     modulos_interesse:
       v.modulos_interesse.length > 0 ? v.modulos_interesse : null,
     percurso: v.percurso || null,
-    prazo: v.prazo || null,
     sala_disponivel: v.sala_disponivel || null,
     observacoes: v.observacoes.trim() || null,
   };
