@@ -146,6 +146,7 @@ function CertificadoView() {
           "A nota do teste ainda não chegou. Reveja as lições e repita o teste — sem limites.",
         TOKEN_INVALIDO: "O seu link pessoal já não é reconhecido.",
         NOME_OBRIGATORIO: "Escreva o seu nome.",
+        CODIGO_INVALIDO: "Código inválido.",
       };
       setErro(traducao[msg] ?? msg);
     } finally {
