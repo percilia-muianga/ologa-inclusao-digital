@@ -1,10 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAdminGuard } from "@/hooks/use-admin-guard";
 import {
+  atualizarMetasInstituicao,
+  atualizarPercursoInstituicao,
+  listarModulosAdmin,
   obterInstituicaoAdmin,
   regenerarCodigoInstituicao,
+  regenerarTokenIndicadores,
 } from "@/lib/instituicoes.functions";
 import {
   APOIOS_OPCOES,
@@ -49,7 +53,12 @@ type Instituicao = {
   percurso: string | null;
   num_trabalhadores_total: number | null;
   meta_cobertura_pct: number | null;
+  meta_conclusao_pct: number | null;
+  meta_ganho_pontos: number | null;
+  meta_equidade_max_pp: number | null;
   prazo_meses: number | null;
+  pedido_meta_cobertura_pct: number | null;
+  pedido_prazo_meses: number | null;
   declaracao_assinada: boolean;
   declaracao_assinada_em: string | null;
   indicadores_token: string;
@@ -60,26 +69,71 @@ type Instituicao = {
   criado_em: string;
 };
 
+type ItemPercurso = { modulo_id: string; ordem: number; titulo: string };
+type ItemHist = {
+  id: string;
+  campo: string;
+  valor_antigo: string | null;
+  valor_novo: string | null;
+  alterado_em: string;
+  alterado_por: string | null;
+};
+
 function FichaPage() {
   const guard = useAdminGuard();
   const { id } = Route.useParams();
   const obter = useServerFn(obterInstituicaoAdmin);
-  const regenerar = useServerFn(regenerarCodigoInstituicao);
+  const regenerarCodigo = useServerFn(regenerarCodigoInstituicao);
+  const regenerarToken = useServerFn(regenerarTokenIndicadores);
+  const guardarMetas = useServerFn(atualizarMetasInstituicao);
+  const guardarPercurso = useServerFn(atualizarPercursoInstituicao);
+  const listarMods = useServerFn(listarModulosAdmin);
+
   const [inst, setInst] = useState<Instituicao | null>(null);
-  const [modulos, setModulos] = useState<{ id: string; titulo: string }[]>([]);
+  const [modulosInteresse, setModulosInteresse] = useState<
+    { id: string; titulo: string }[]
+  >([]);
+  const [percurso, setPercurso] = useState<ItemPercurso[]>([]);
+  const [historico, setHistorico] = useState<ItemHist[]>([]);
+  const [todosModulos, setTodosModulos] = useState<{ id: string; titulo: string }[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
-  const [aRegenerar, setARegenerar] = useState(false);
+
+  const [aRegenerarCodigo, setARegenerarCodigo] = useState(false);
   const [msgRegen, setMsgRegen] = useState<string | null>(null);
+  const [aRegenerarToken, setARegenerarToken] = useState(false);
+  const [msgToken, setMsgToken] = useState<string | null>(null);
+
+  const [metaCob, setMetaCob] = useState<string>("");
+  const [metaConcl, setMetaConcl] = useState<string>("");
+  const [metaGanho, setMetaGanho] = useState<string>("");
+  const [metaEqui, setMetaEqui] = useState<string>("");
+  const [prazo, setPrazo] = useState<string>("");
+  const [aGuardarMetas, setAGuardarMetas] = useState(false);
+  const [msgMetas, setMsgMetas] = useState<string | null>(null);
+
+  const [selPercurso, setSelPercurso] = useState<string>("");
+  const [rascunhoPercurso, setRascunhoPercurso] = useState<string[]>([]);
+  const [aGuardarPercurso, setAGuardarPercurso] = useState(false);
+  const [msgPercurso, setMsgPercurso] = useState<string | null>(null);
 
   useEffect(() => {
     if (guard.estado !== "ok") return;
     let cancelado = false;
-    obter({ data: { id } }).then((res) => {
+    Promise.all([obter({ data: { id } }), listarMods()]).then(([res, ml]) => {
       if (cancelado) return;
       if (res.ok) {
-        setInst(res.instituicao as Instituicao);
-        setModulos(res.modulos);
+        const i = res.instituicao as Instituicao;
+        setInst(i);
+        setModulosInteresse(res.modulos);
+        setPercurso(res.percurso as ItemPercurso[]);
+        setHistorico(res.historico as ItemHist[]);
+        setRascunhoPercurso((res.percurso as ItemPercurso[]).map((p) => p.modulo_id));
+        setMetaCob(i.meta_cobertura_pct?.toString() ?? "");
+        setMetaConcl(i.meta_conclusao_pct?.toString() ?? "");
+        setMetaGanho(i.meta_ganho_pontos?.toString() ?? "");
+        setMetaEqui(i.meta_equidade_max_pp?.toString() ?? "");
+        setPrazo(i.prazo_meses?.toString() ?? "");
       } else {
         setErro(
           res.mensagem === "nao_encontrada"
@@ -87,23 +141,26 @@ function FichaPage() {
             : res.mensagem || "Erro ao carregar.",
         );
       }
+      if (ml.ok) setTodosModulos(ml.modulos as { id: string; titulo: string }[]);
       setCarregando(false);
     });
     return () => {
       cancelado = true;
     };
-  }, [guard.estado, id, obter]);
+  }, [guard.estado, id, obter, listarMods]);
 
-  async function onRegenerar() {
+  async function onRegenerarCodigo() {
     if (!inst) return;
-    const confirmar = window.confirm(
-      "Vai gerar um novo código de inscrição. O código antigo deixa de ser válido para novas inscrições. Continuar?",
-    );
-    if (!confirmar) return;
-    setARegenerar(true);
+    if (
+      !window.confirm(
+        "Vai gerar um novo código de inscrição. O código antigo deixa de ser válido para novas inscrições. Continuar?",
+      )
+    )
+      return;
+    setARegenerarCodigo(true);
     setMsgRegen(null);
-    const res = await regenerar({ data: { id: inst.id } });
-    setARegenerar(false);
+    const res = await regenerarCodigo({ data: { id: inst.id } });
+    setARegenerarCodigo(false);
     if (res.ok) {
       setInst({ ...inst, codigo_inscricao: res.codigo });
       setMsgRegen("Novo código gerado.");
@@ -111,6 +168,101 @@ function FichaPage() {
       setMsgRegen(res.mensagem || "Não foi possível gerar novo código.");
     }
   }
+
+  async function onRegenerarToken() {
+    if (!inst) return;
+    if (
+      !window.confirm(
+        "Vai invalidar imediatamente o link atual dos indicadores. Quem tiver o link antigo perde o acesso. Continuar?",
+      )
+    )
+      return;
+    setARegenerarToken(true);
+    setMsgToken(null);
+    const res = await regenerarToken({ data: { id: inst.id } });
+    setARegenerarToken(false);
+    if (res.ok) {
+      setInst({ ...inst, indicadores_token: res.token });
+      setMsgToken("Novo link gerado. O antigo já não funciona.");
+    } else {
+      setMsgToken(res.mensagem || "Não foi possível gerar novo link.");
+    }
+  }
+
+  async function onGuardarMetas() {
+    if (!inst) return;
+    setAGuardarMetas(true);
+    setMsgMetas(null);
+    const numOrNull = (s: string) => (s.trim() === "" ? null : Number(s));
+    const res = await guardarMetas({
+      data: {
+        id: inst.id,
+        meta_cobertura_pct: numOrNull(metaCob),
+        meta_conclusao_pct: numOrNull(metaConcl),
+        meta_ganho_pontos: numOrNull(metaGanho),
+        meta_equidade_max_pp: numOrNull(metaEqui),
+        prazo_meses: numOrNull(prazo),
+      },
+    });
+    setAGuardarMetas(false);
+    if (res.ok) {
+      setMsgMetas("Metas guardadas.");
+      // recarrega histórico
+      obter({ data: { id: inst.id } }).then((r) => {
+        if (r.ok) setHistorico(r.historico as ItemHist[]);
+      });
+    } else {
+      setMsgMetas(res.mensagem || "Não foi possível guardar.");
+    }
+  }
+
+  async function onGuardarPercurso() {
+    if (!inst) return;
+    setAGuardarPercurso(true);
+    setMsgPercurso(null);
+    const res = await guardarPercurso({
+      data: { id: inst.id, modulos: rascunhoPercurso },
+    });
+    setAGuardarPercurso(false);
+    if (res.ok) {
+      setMsgPercurso("Percurso guardado.");
+      const novo = rascunhoPercurso.map((mid, idx) => ({
+        modulo_id: mid,
+        ordem: idx + 1,
+        titulo: todosModulos.find((m) => m.id === mid)?.titulo ?? "",
+      }));
+      setPercurso(novo);
+    } else {
+      setMsgPercurso(res.mensagem || "Não foi possível guardar.");
+    }
+  }
+
+  function adicionarAoPercurso() {
+    if (!selPercurso) return;
+    if (rascunhoPercurso.includes(selPercurso)) return;
+    setRascunhoPercurso([...rascunhoPercurso, selPercurso]);
+    setSelPercurso("");
+  }
+  function removerDoPercurso(mid: string) {
+    setRascunhoPercurso(rascunhoPercurso.filter((m) => m !== mid));
+  }
+  function moverPercurso(idx: number, dir: -1 | 1) {
+    const novo = [...rascunhoPercurso];
+    const j = idx + dir;
+    if (j < 0 || j >= novo.length) return;
+    [novo[idx], novo[j]] = [novo[j], novo[idx]];
+    setRascunhoPercurso(novo);
+  }
+
+  const disponiveis = useMemo(
+    () => todosModulos.filter((m) => !rascunhoPercurso.includes(m.id)),
+    [todosModulos, rascunhoPercurso],
+  );
+
+  const linkIndicadores =
+    typeof window !== "undefined" && inst
+      ? `${window.location.origin}/indicadores/${inst.indicadores_token}`
+      : "";
 
   if (guard.estado === "a_verificar" || carregando) {
     return (
@@ -130,7 +282,10 @@ function FichaPage() {
             ← Voltar à lista
           </Link>
         </p>
-        <p role="alert" className="mt-6 rounded-md border border-brand/40 bg-brand/5 p-3 text-base text-ink">
+        <p
+          role="alert"
+          className="mt-6 rounded-md border border-brand/40 bg-brand/5 p-3 text-base text-ink"
+        >
           {erro ?? "Instituição não disponível."}
         </p>
       </main>
@@ -142,7 +297,7 @@ function FichaPage() {
       <a href="#conteudo" className="skip-link">
         Saltar para o conteúdo principal
       </a>
-      <main id="conteudo" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <main id="conteudo" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <p>
           <Link to="/ologa" className="text-base font-semibold text-ink underline">
             ← Voltar à lista
@@ -154,32 +309,246 @@ function FichaPage() {
           Inscrita em {new Date(inst.criado_em).toLocaleDateString("pt-PT")}
         </p>
 
-        <div className="mt-6 rounded-md border border-ink/20 bg-accent p-6">
-          <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
-            Código de inscrição
-          </p>
-          <p className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-ink">
-            {inst.codigo_inscricao}
-          </p>
-          <button
-            type="button"
-            onClick={onRegenerar}
-            disabled={aRegenerar}
-            className="mt-4 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70 disabled:opacity-70"
-          >
-            {aRegenerar ? "A gerar…" : "Gerar novo código"}
-          </button>
-          {msgRegen && (
-            <p role="status" aria-live="polite" className="mt-2 text-sm text-ink">
-              {msgRegen}
+        {/* CÓDIGO DE INSCRIÇÃO */}
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-md border border-ink/20 bg-accent p-6">
+            <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
+              Código de inscrição
             </p>
-          )}
+            <p className="mt-2 font-mono text-2xl font-extrabold tracking-widest text-ink">
+              {inst.codigo_inscricao}
+            </p>
+            <button
+              type="button"
+              onClick={onRegenerarCodigo}
+              disabled={aRegenerarCodigo}
+              className="mt-4 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70 disabled:opacity-70"
+            >
+              {aRegenerarCodigo ? "A gerar…" : "Gerar novo código"}
+            </button>
+            {msgRegen && (
+              <p role="status" aria-live="polite" className="mt-2 text-sm text-ink">
+                {msgRegen}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-md border border-ink/20 bg-accent p-6">
+            <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
+              Link dos indicadores
+            </p>
+            <p className="mt-2 break-all font-mono text-xs text-ink">
+              {linkIndicadores}
+            </p>
+            <button
+              type="button"
+              onClick={onRegenerarToken}
+              disabled={aRegenerarToken}
+              className="mt-4 inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70 disabled:opacity-70"
+            >
+              {aRegenerarToken ? "A gerar…" : "Regenerar link"}
+            </button>
+            {msgToken && (
+              <p role="status" aria-live="polite" className="mt-2 text-sm text-ink">
+                {msgToken}
+              </p>
+            )}
+          </div>
         </div>
 
+        {/* METAS ACORDADAS */}
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-ink">Metas acordadas</h2>
+          <p className="mt-1 text-sm text-foreground">
+            Ao lado de cada meta é apresentado o valor que a instituição pediu no
+            formulário de inscrição. As alterações ficam registadas em histórico.
+          </p>
+          <div className="mt-4 grid gap-4 rounded-md border border-ink/10 p-4 sm:grid-cols-2">
+            <CampoMeta
+              rot="Meta de cobertura (%)"
+              valor={metaCob}
+              onChange={setMetaCob}
+              pedido={inst.pedido_meta_cobertura_pct}
+              tipo="int"
+              min={1}
+              max={100}
+            />
+            <CampoMeta
+              rot="Prazo (meses)"
+              valor={prazo}
+              onChange={setPrazo}
+              pedido={inst.pedido_prazo_meses}
+              tipo="int"
+              min={1}
+            />
+            <CampoMeta
+              rot="Meta de conclusão (%)"
+              valor={metaConcl}
+              onChange={setMetaConcl}
+              pedido={null}
+              tipo="int"
+              min={1}
+              max={100}
+            />
+            <CampoMeta
+              rot="Meta de ganho (pontos)"
+              valor={metaGanho}
+              onChange={setMetaGanho}
+              pedido={null}
+              tipo="int"
+              min={1}
+              max={100}
+            />
+            <CampoMeta
+              rot="Meta de equidade (diferença máxima, pp)"
+              valor={metaEqui}
+              onChange={setMetaEqui}
+              pedido={null}
+              tipo="int"
+              min={0}
+              max={100}
+            />
+          </div>
+          <div className="mt-4 flex items-center gap-4">
+            <button
+              type="button"
+              onClick={onGuardarMetas}
+              disabled={aGuardarMetas}
+              className="inline-flex min-h-11 items-center rounded-md bg-ink px-5 text-base font-semibold text-white hover:bg-ink/90 disabled:opacity-70"
+            >
+              {aGuardarMetas ? "A guardar…" : "Guardar metas"}
+            </button>
+            {msgMetas && (
+              <p role="status" aria-live="polite" className="text-sm text-ink">
+                {msgMetas}
+              </p>
+            )}
+          </div>
+        </section>
 
+        {/* MÓDULOS DO PERCURSO */}
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-ink">Módulos do percurso</h2>
+          <p className="mt-1 text-sm text-foreground">
+            Ordene os módulos acordados. Módulos que a instituição indicou como
+            interesse aparecem em baixo, apenas como referência.
+          </p>
 
+          <ol className="mt-4 space-y-2">
+            {rascunhoPercurso.length === 0 && (
+              <li className="rounded-md border border-dashed border-ink/20 p-3 text-sm text-foreground">
+                Sem módulos definidos.
+              </li>
+            )}
+            {rascunhoPercurso.map((mid, idx) => {
+              const t = todosModulos.find((m) => m.id === mid)?.titulo ?? "(módulo)";
+              return (
+                <li
+                  key={mid}
+                  className="flex items-center gap-3 rounded-md border border-ink/10 p-3"
+                >
+                  <span className="font-mono text-sm text-ink/70">{idx + 1}.</span>
+                  <span className="flex-1 text-base text-ink">{t}</span>
+                  <button
+                    type="button"
+                    onClick={() => moverPercurso(idx, -1)}
+                    disabled={idx === 0}
+                    aria-label="Subir"
+                    className="rounded-md border border-ink/20 px-2 py-1 text-sm disabled:opacity-40"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moverPercurso(idx, 1)}
+                    disabled={idx === rascunhoPercurso.length - 1}
+                    aria-label="Descer"
+                    className="rounded-md border border-ink/20 px-2 py-1 text-sm disabled:opacity-40"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removerDoPercurso(mid)}
+                    className="rounded-md border border-ink/20 px-2 py-1 text-sm text-ink"
+                  >
+                    Remover
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
 
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <select
+              value={selPercurso}
+              onChange={(e) => setSelPercurso(e.target.value)}
+              className="min-h-11 rounded-md border border-ink/20 bg-white px-3 text-base"
+            >
+              <option value="">Adicionar módulo…</option>
+              {disponiveis.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.titulo}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={adicionarAoPercurso}
+              disabled={!selPercurso}
+              className="inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-accent disabled:opacity-50"
+            >
+              Adicionar
+            </button>
+            <button
+              type="button"
+              onClick={onGuardarPercurso}
+              disabled={aGuardarPercurso}
+              className="ml-auto inline-flex min-h-11 items-center rounded-md bg-ink px-5 text-base font-semibold text-white hover:bg-ink/90 disabled:opacity-70"
+            >
+              {aGuardarPercurso ? "A guardar…" : "Guardar percurso"}
+            </button>
+          </div>
+          {msgPercurso && (
+            <p role="status" aria-live="polite" className="mt-2 text-sm text-ink">
+              {msgPercurso}
+            </p>
+          )}
 
+          <p className="mt-6 text-sm font-semibold text-ink/70">
+            Referência — módulos indicados no formulário de inscrição:
+          </p>
+          <p className="mt-1 text-sm text-foreground">
+            {modulosInteresse.length > 0
+              ? modulosInteresse.map((m) => m.titulo).join(", ")
+              : "Nenhum indicado."}
+          </p>
+        </section>
+
+        {/* HISTÓRICO DE METAS */}
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-ink">Histórico de metas</h2>
+          {historico.length === 0 ? (
+            <p className="mt-2 text-sm text-foreground">Sem alterações registadas.</p>
+          ) : (
+            <ul className="mt-4 divide-y divide-ink/10 rounded-md border border-ink/10">
+              {historico.map((h) => (
+                <li key={h.id} className="grid gap-1 px-4 py-3 sm:grid-cols-[200px_1fr]">
+                  <p className="text-sm text-ink/70">
+                    {new Date(h.alterado_em).toLocaleString("pt-PT")}
+                  </p>
+                  <p className="text-sm text-ink">
+                    <span className="font-semibold">{h.campo}</span>:{" "}
+                    <span className="text-ink/70">{h.valor_antigo ?? "—"}</span>{" "}
+                    → <span className="font-semibold">{h.valor_novo ?? "—"}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* DADOS DA INSCRIÇÃO */}
         <Seccao titulo="1. Identificação">
           <Linha rot="Nome" val={inst.nome} />
           <Linha rot="Natureza" val={rotulo(NATUREZA_OPCOES, inst.natureza)} />
@@ -230,16 +599,8 @@ function FichaPage() {
           />
         </Seccao>
 
-        <Seccao titulo="5. Módulos e percurso">
-          <Linha
-            rot="Módulos de interesse"
-            val={
-              modulos.length > 0
-                ? modulos.map((m) => m.titulo).join(", ")
-                : "—"
-            }
-          />
-          <Linha rot="Percurso pretendido" val={rotulo(PERCURSO_OPCOES, inst.percurso)} />
+        <Seccao titulo="5. Percurso pretendido (do formulário)">
+          <Linha rot="Percurso" val={rotulo(PERCURSO_OPCOES, inst.percurso)} />
         </Seccao>
 
         <Seccao titulo="6. Logística">
@@ -261,6 +622,42 @@ function FichaPage() {
   );
 }
 
+function CampoMeta({
+  rot,
+  valor,
+  onChange,
+  pedido,
+  tipo: _tipo,
+  min,
+  max,
+}: {
+  rot: string;
+  valor: string;
+  onChange: (v: string) => void;
+  pedido: number | null;
+  tipo: "int";
+  min?: number;
+  max?: number;
+}) {
+  return (
+    <label className="block">
+      <span className="text-sm font-semibold text-ink">{rot}</span>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={min}
+        max={max}
+        value={valor}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1 min-h-11 w-full rounded-md border border-ink/20 bg-white px-3 text-base"
+      />
+      <span className="mt-1 block text-xs text-ink/60">
+        Pedido: {pedido == null ? "— (não pedido no formulário)" : pedido}
+      </span>
+    </label>
+  );
+}
+
 function Seccao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <section className="mt-10">
@@ -279,4 +676,3 @@ function Linha({ rot, val }: { rot: string; val: string }) {
     </div>
   );
 }
-
