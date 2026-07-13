@@ -40,6 +40,7 @@ function RegistoPage() {
   const [nivel, setNivel] = useState<Nivel | "">("");
   const [defic, setDefic] = useState<Deficiencia | "">("");
   const [apoios, setApoios] = useState<Set<Apoio>>(new Set());
+  const [funcao, setFuncao] = useState("");
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
