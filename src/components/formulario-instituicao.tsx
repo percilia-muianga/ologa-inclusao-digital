@@ -378,10 +378,47 @@ export function FormularioInstituicao({
         />
       </section>
 
-      {/* 3. Colaboradores */}
+      {/* 3. Dimensão e metas */}
+      <section aria-labelledby={idsCampos.secDim} className="space-y-5">
+        <h2 id={idsCampos.secDim} className="text-xl font-bold text-ink">
+          3. Dimensão e metas
+        </h2>
+
+        <CampoNumero
+          id={idsCampos.nTrabTotal}
+          label="Número TOTAL de trabalhadores da instituição"
+          obrigatorio
+          value={v.num_trabalhadores_total}
+          onChange={(x) => setCampo("num_trabalhadores_total", x)}
+          erro={erros.num_trabalhadores_total}
+          min={1}
+        />
+
+        <CampoNumero
+          id={idsCampos.metaCob}
+          label="Meta de cobertura pretendida (% do quadro a formar)"
+          obrigatorio
+          value={v.meta_cobertura_pct}
+          onChange={(x) => setCampo("meta_cobertura_pct", x)}
+          erro={erros.meta_cobertura_pct}
+          min={1}
+        />
+
+        <CampoNumero
+          id={idsCampos.prazoMeses}
+          label="Prazo pretendido, em meses"
+          obrigatorio
+          value={v.prazo_meses}
+          onChange={(x) => setCampo("prazo_meses", x)}
+          erro={erros.prazo_meses}
+          min={1}
+        />
+      </section>
+
+      {/* 4. Colaboradores */}
       <section aria-labelledby={idsCampos.secColab} className="space-y-5">
         <h2 id={idsCampos.secColab} className="text-xl font-bold text-ink">
-          3. Colaboradores a formar
+          4. Colaboradores a formar
         </h2>
 
         <CampoNumero
@@ -430,10 +467,10 @@ export function FormularioInstituicao({
         </div>
       </section>
 
-      {/* 4. Apoios de acessibilidade */}
+      {/* 5. Apoios de acessibilidade */}
       <section aria-labelledby={idsCampos.secApoios} className="space-y-4">
         <h2 id={idsCampos.secApoios} className="text-xl font-bold text-ink">
-          4. Apoios de acessibilidade necessários
+          5. Apoios de acessibilidade necessários
         </h2>
         <p className="text-base text-foreground">
           Serve para garantir a provisão (intérprete, sala acessível). A formação é a mesma
@@ -455,10 +492,10 @@ export function FormularioInstituicao({
         </fieldset>
       </section>
 
-      {/* 5. Módulos e percurso */}
+      {/* 6. Módulos e percurso */}
       <section aria-labelledby={idsCampos.secModulos} className="space-y-5">
         <h2 id={idsCampos.secModulos} className="text-xl font-bold text-ink">
-          5. Módulos de interesse e percurso pretendido
+          6. Módulos de interesse e percurso pretendido
         </h2>
 
         <div>
@@ -496,19 +533,20 @@ export function FormularioInstituicao({
         />
       </section>
 
-      {/* 6. Logística */}
+      {/* 7. Logística */}
       <section aria-labelledby={idsCampos.secLog} className="space-y-5">
         <h2 id={idsCampos.secLog} className="text-xl font-bold text-ink">
-          6. Logística
+          7. Logística
         </h2>
 
         <CampoSelecao
-          id={idsCampos.prazo}
-          label="Prazo pretendido"
-          value={v.prazo}
-          onChange={(x) => setCampo("prazo", x)}
-          opcoes={PRAZO_OPCOES}
+          id={idsCampos.sala}
+          label="Sala disponível"
+          value={v.sala_disponivel}
+          onChange={(x) => setCampo("sala_disponivel", x)}
+          opcoes={SALA_OPCOES}
         />
+
 
         <CampoSelecao
           id={idsCampos.sala}
