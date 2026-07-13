@@ -4,12 +4,14 @@ type Props = {
   sentences: string[];
   label?: string;
   stopLabel?: string;
+  variant?: "light" | "dark";
 };
 
 export function ListenButton({
   sentences,
   label = "🔊 Ouvir esta página",
   stopLabel = "⏹ Parar leitura",
+  variant = "light",
 }: Props) {
   const [speaking, setSpeaking] = useState(false);
   const cancelledRef = useRef(false);
