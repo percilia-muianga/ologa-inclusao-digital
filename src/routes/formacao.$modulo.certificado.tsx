@@ -95,7 +95,21 @@ function CertificadoView() {
         estado.licoesConcluidasPorModulo[moduloId] ?? [],
       );
 
-      const payload: Parameters<typeof emitir>[0]["data"] = {
+      const payload: {
+        moduloId: string;
+        tokenPessoal: string | null;
+        nome?: string;
+        instituicaoId?: string | null;
+        genero?: Genero | null;
+        nivelPartida?: Nivel | null;
+        precisaApoio?: boolean | null;
+        apoiosAcessibilidade?: Apoio[] | null;
+        diagnostico?: { pontuacao: number; total: number } | null;
+        progresso: {
+          licoesConcluidasIds: string[];
+          quizzes: { moduloId: string; respostas: { perguntaId: string; indice: number }[] }[];
+        };
+      } = {
         moduloId,
         tokenPessoal: tokenExistente ?? null,
         progresso: { licoesConcluidasIds, quizzes },
