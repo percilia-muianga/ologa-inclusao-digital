@@ -13,12 +13,12 @@ export const Route = createFileRoute("/formacao/$modulo/licao/$licao")({
 
 type Dados = Awaited<ReturnType<typeof obterLicao>>;
 
-const FORMATOS = [
-  "Texto",
-  "Leitura fácil",
-  "Áudio",
-  "Alto contraste",
-  "Língua de Sinais Moçambicana — interpretação assegurada",
+const FORMATOS: { label: string; estado: "disponivel" | "preparacao" }[] = [
+  { label: "Texto", estado: "disponivel" },
+  { label: "Leitura fácil", estado: "preparacao" },
+  { label: "Áudio", estado: "preparacao" },
+  { label: "Alto contraste", estado: "preparacao" },
+  { label: "Língua de Sinais Moçambicana", estado: "preparacao" },
 ];
 
 function LicaoPage() {
