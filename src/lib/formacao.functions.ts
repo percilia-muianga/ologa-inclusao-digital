@@ -17,12 +17,13 @@ type ModuloBase = {
   descricao: string | null
   desenho_universal: string | null
   icone: string | null
+  cor_fundo: string | null
 }
 
 export const listarModulos = createServerFn({ method: 'GET' }).handler(async () => {
   const s = await admin()
   const { data, error } = await s.from('modulos')
-    .select('id, ordem, titulo, nivel, duracao, descricao, desenho_universal, icone, licoes(id)')
+    .select('id, ordem, titulo, nivel, duracao, descricao, desenho_universal, icone, cor_fundo, licoes(id)')
     .order('ordem')
   if (error) throw error
   const linhas = (data ?? []) as (ModuloBase & { licoes: { id: string }[] | null })[]
