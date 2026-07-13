@@ -16,12 +16,14 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OlogaRouteImport } from './routes/ologa'
 import { Route as InstituicaoRouteImport } from './routes/instituicao'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
+import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirPalavraPasseRouteImport } from './routes/definir-palavra-passe'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
+import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
 import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
 import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
@@ -62,6 +64,11 @@ const InscricaoRoute = InscricaoRouteImport.update({
   path: '/inscricao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormacaoRoute = FormacaoRouteImport.update({
+  id: '/formacao',
+  path: '/formacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
@@ -83,19 +90,24 @@ const OlogaIndexRoute = OlogaIndexRouteImport.update({
   getParentRoute: () => OlogaRoute,
 } as any)
 const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
-  id: '/formacao/',
-  path: '/formacao/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => FormacaoRoute,
 } as any)
 const OlogaNovaInstituicaoRoute = OlogaNovaInstituicaoRouteImport.update({
   id: '/nova-instituicao',
   path: '/nova-instituicao',
   getParentRoute: () => OlogaRoute,
 } as any)
+const FormacaoModuloRoute = FormacaoModuloRouteImport.update({
+  id: '/$modulo',
+  path: '/$modulo',
+  getParentRoute: () => FormacaoRoute,
+} as any)
 const FormacaoModuloIndexRoute = FormacaoModuloIndexRouteImport.update({
-  id: '/formacao/$modulo/',
-  path: '/formacao/$modulo/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => FormacaoModuloRoute,
 } as any)
 const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
   id: '/instituicoes/$id',
@@ -103,21 +115,22 @@ const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
   getParentRoute: () => OlogaRoute,
 } as any)
 const FormacaoModuloQuizRoute = FormacaoModuloQuizRouteImport.update({
-  id: '/formacao/$modulo/quiz',
-  path: '/formacao/$modulo/quiz',
-  getParentRoute: () => rootRouteImport,
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => FormacaoModuloRoute,
 } as any)
 const FormacaoModuloLicaoLicaoRoute =
   FormacaoModuloLicaoLicaoRouteImport.update({
-    id: '/formacao/$modulo/licao/$licao',
-    path: '/formacao/$modulo/licao/$licao',
-    getParentRoute: () => rootRouteImport,
+    id: '/licao/$licao',
+    path: '/licao/$licao',
+    getParentRoute: () => FormacaoModuloRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
+  '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
   '/ologa': typeof OlogaRouteWithChildren
@@ -125,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -156,6 +170,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/definir-palavra-passe': typeof DefinirPalavraPasseRoute
   '/entrar': typeof EntrarRoute
+  '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/instituicao': typeof InstituicaoRoute
   '/ologa': typeof OlogaRouteWithChildren
@@ -163,6 +178,7 @@ export interface FileRoutesById {
   '/recuperar': typeof RecuperarRoute
   '/registo': typeof RegistoRoute
   '/verificar': typeof VerificarRoute
+  '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -177,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/definir-palavra-passe'
     | '/entrar'
+    | '/formacao'
     | '/inscricao'
     | '/instituicao'
     | '/ologa'
@@ -184,6 +201,7 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
@@ -214,6 +232,7 @@ export interface FileRouteTypes {
     | '/'
     | '/definir-palavra-passe'
     | '/entrar'
+    | '/formacao'
     | '/inscricao'
     | '/instituicao'
     | '/ologa'
@@ -221,6 +240,7 @@ export interface FileRouteTypes {
     | '/recuperar'
     | '/registo'
     | '/verificar'
+    | '/formacao/$modulo'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
@@ -234,6 +254,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DefinirPalavraPasseRoute: typeof DefinirPalavraPasseRoute
   EntrarRoute: typeof EntrarRoute
+  FormacaoRoute: typeof FormacaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
   InstituicaoRoute: typeof InstituicaoRoute
   OlogaRoute: typeof OlogaRouteWithChildren
@@ -241,10 +262,6 @@ export interface RootRouteChildren {
   RecuperarRoute: typeof RecuperarRoute
   RegistoRoute: typeof RegistoRoute
   VerificarRoute: typeof VerificarRoute
-  FormacaoIndexRoute: typeof FormacaoIndexRoute
-  FormacaoModuloQuizRoute: typeof FormacaoModuloQuizRoute
-  FormacaoModuloIndexRoute: typeof FormacaoModuloIndexRoute
-  FormacaoModuloLicaoLicaoRoute: typeof FormacaoModuloLicaoLicaoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscricaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formacao': {
+      id: '/formacao'
+      path: '/formacao'
+      fullPath: '/formacao'
+      preLoaderRoute: typeof FormacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrar': {
       id: '/entrar'
       path: '/entrar'
@@ -328,10 +352,10 @@ declare module '@tanstack/react-router' {
     }
     '/formacao/': {
       id: '/formacao/'
-      path: '/formacao'
+      path: '/'
       fullPath: '/formacao/'
       preLoaderRoute: typeof FormacaoIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FormacaoRoute
     }
     '/ologa/nova-instituicao': {
       id: '/ologa/nova-instituicao'
@@ -340,12 +364,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OlogaNovaInstituicaoRouteImport
       parentRoute: typeof OlogaRoute
     }
+    '/formacao/$modulo': {
+      id: '/formacao/$modulo'
+      path: '/$modulo'
+      fullPath: '/formacao/$modulo'
+      preLoaderRoute: typeof FormacaoModuloRouteImport
+      parentRoute: typeof FormacaoRoute
+    }
     '/formacao/$modulo/': {
       id: '/formacao/$modulo/'
-      path: '/formacao/$modulo'
+      path: '/'
       fullPath: '/formacao/$modulo/'
       preLoaderRoute: typeof FormacaoModuloIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FormacaoModuloRoute
     }
     '/ologa/instituicoes/$id': {
       id: '/ologa/instituicoes/$id'
@@ -356,20 +387,50 @@ declare module '@tanstack/react-router' {
     }
     '/formacao/$modulo/quiz': {
       id: '/formacao/$modulo/quiz'
-      path: '/formacao/$modulo/quiz'
+      path: '/quiz'
       fullPath: '/formacao/$modulo/quiz'
       preLoaderRoute: typeof FormacaoModuloQuizRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FormacaoModuloRoute
     }
     '/formacao/$modulo/licao/$licao': {
       id: '/formacao/$modulo/licao/$licao'
-      path: '/formacao/$modulo/licao/$licao'
+      path: '/licao/$licao'
       fullPath: '/formacao/$modulo/licao/$licao'
       preLoaderRoute: typeof FormacaoModuloLicaoLicaoRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FormacaoModuloRoute
     }
   }
 }
+
+interface FormacaoModuloRouteChildren {
+  FormacaoModuloQuizRoute: typeof FormacaoModuloQuizRoute
+  FormacaoModuloIndexRoute: typeof FormacaoModuloIndexRoute
+  FormacaoModuloLicaoLicaoRoute: typeof FormacaoModuloLicaoLicaoRoute
+}
+
+const FormacaoModuloRouteChildren: FormacaoModuloRouteChildren = {
+  FormacaoModuloQuizRoute: FormacaoModuloQuizRoute,
+  FormacaoModuloIndexRoute: FormacaoModuloIndexRoute,
+  FormacaoModuloLicaoLicaoRoute: FormacaoModuloLicaoLicaoRoute,
+}
+
+const FormacaoModuloRouteWithChildren = FormacaoModuloRoute._addFileChildren(
+  FormacaoModuloRouteChildren,
+)
+
+interface FormacaoRouteChildren {
+  FormacaoModuloRoute: typeof FormacaoModuloRouteWithChildren
+  FormacaoIndexRoute: typeof FormacaoIndexRoute
+}
+
+const FormacaoRouteChildren: FormacaoRouteChildren = {
+  FormacaoModuloRoute: FormacaoModuloRouteWithChildren,
+  FormacaoIndexRoute: FormacaoIndexRoute,
+}
+
+const FormacaoRouteWithChildren = FormacaoRoute._addFileChildren(
+  FormacaoRouteChildren,
+)
 
 interface OlogaRouteChildren {
   OlogaNovaInstituicaoRoute: typeof OlogaNovaInstituicaoRoute
@@ -389,6 +450,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DefinirPalavraPasseRoute: DefinirPalavraPasseRoute,
   EntrarRoute: EntrarRoute,
+  FormacaoRoute: FormacaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
   InstituicaoRoute: InstituicaoRoute,
   OlogaRoute: OlogaRouteWithChildren,
@@ -396,11 +458,17 @@ const rootRouteChildren: RootRouteChildren = {
   RecuperarRoute: RecuperarRoute,
   RegistoRoute: RegistoRoute,
   VerificarRoute: VerificarRoute,
-  FormacaoIndexRoute: FormacaoIndexRoute,
-  FormacaoModuloQuizRoute: FormacaoModuloQuizRoute,
-  FormacaoModuloIndexRoute: FormacaoModuloIndexRoute,
-  FormacaoModuloLicaoLicaoRoute: FormacaoModuloLicaoLicaoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
