@@ -259,6 +259,20 @@ function RegistoPage() {
                 ))}
               </div>
             </fieldset>
+
+            <div className="mt-4">
+              <label htmlFor="funcao-registo" className="block text-base font-semibold text-ink">
+                Função (opcional)
+              </label>
+              <input
+                id="funcao-registo"
+                type="text"
+                maxLength={100}
+                value={funcao}
+                onChange={(e) => setFuncao(e.target.value)}
+                className="mt-1 block w-full rounded-md border border-ink/20 bg-white px-3 py-2 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ink"
+              />
+            </div>
           </fieldset>
 
           {erro && (
