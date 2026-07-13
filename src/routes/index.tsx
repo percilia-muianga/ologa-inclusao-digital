@@ -99,15 +99,6 @@ const LEI_HREF =
 const LEI_REF =
   "Lei n.º 10/2024 — Promoção e Proteção dos Direitos da Pessoa com Deficiência";
 
-const NAV_ITEMS: { href: string; label: string; kind: "hash" | "route"; to?: string }[] = [
-  { href: "#mercado", label: "Análise de Mercado", kind: "hash" },
-  { href: "#inscricao", label: "Inscrição", kind: "hash" },
-  { href: "#indicadores", label: "Indicadores", kind: "hash" },
-  { href: "#modulos", label: "Cursos", kind: "hash" },
-  { href: "#percurso", label: "Percurso", kind: "hash" },
-  { href: "#entregaveis", label: "Entregáveis", kind: "hash" },
-  { href: "#contacto", label: "Contacto", kind: "hash" },
-];
 
 type ModuloCatalogo = {
   id: string;
