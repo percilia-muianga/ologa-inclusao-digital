@@ -197,16 +197,28 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       }
     } else {
       if (!data.nome) throw new Error('NOME_OBRIGATORIO')
+
+      // Resolver código escrito → instituicao_id. Erro genérico se inválido:
+      // não revela se a instituição existe.
+      let instituicaoIdResolvido: string | null = null
+      const codigo = data.codigoInstituicao?.trim().toUpperCase() || null
+      if (codigo) {
+        const { data: inst } = await s.from('instituicoes')
+          .select('id').eq('codigo_inscricao', codigo).maybeSingle()
+        if (!inst) throw new Error('CODIGO_INVALIDO')
+        instituicaoIdResolvido = inst.id
+      }
+
       const { data: novo, error } = await s.from('formandos').insert({
         nome: data.nome,
-        instituicao_id: data.instituicaoId ?? null,
+        instituicao_id: instituicaoIdResolvido,
         genero: data.genero ?? null,
         nivel_partida: data.nivelPartida ?? null,
         precisa_apoio: data.precisaApoio ?? null,
         apoios_acessibilidade: data.apoiosAcessibilidade ?? null,
         diagnostico_pontuacao: data.diagnostico?.pontuacao ?? null,
         diagnostico_total: data.diagnostico?.total ?? null,
-      }).select('id, token_pessoal').single()
+      }).select('id, token_pessoal, instituicao_id').single()
       if (error) throw error
       formandoId = novo.id
       tokenPessoal = novo.token_pessoal
