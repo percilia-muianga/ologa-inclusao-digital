@@ -344,7 +344,13 @@
 }
 .licao-prose h1 { font-size: 1.75rem; }
 .licao-prose h2 { font-size: 1.5rem; }
-.licao-prose h3 { font-size: 1.3rem; }
+.licao-prose h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-brand-dark);
+  font-weight: 800;
+}
 .licao-prose h4 { font-size: 1.15rem; }
 .licao-prose h5 { font-size: 1.05rem; text-transform: none; }
 .licao-prose h6 {
