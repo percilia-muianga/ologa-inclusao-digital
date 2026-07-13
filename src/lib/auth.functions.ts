@@ -22,6 +22,7 @@ const registoSchema = z.object({
     .max(20)
     .nullable()
     .optional(),
+  funcao: z.string().trim().max(100).nullable().optional(),
   origin: z.string().url(),
 });
 
