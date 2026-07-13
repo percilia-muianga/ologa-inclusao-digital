@@ -1,0 +1,1 @@
+ALTER TABLE public.modulos ADD COLUMN IF NOT EXISTS cor_fundo text;

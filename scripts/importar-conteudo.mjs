@@ -25,6 +25,23 @@ const dados = JSON.parse(readFileSync(path, 'utf8'));
 
 let nModulos = 0, nLicoes = 0, nQuiz = 0, licoesComSvg = 0;
 
+// Ícone e cor de fundo por ordem de módulo. Origem: HTML de referência
+// (plataforma-literacia-digital-ologa.html). O JSON de conteúdo não traz
+// estes campos; ficam aqui para que uma reimportação não os apague.
+const VISUAL_POR_ORDEM = {
+  1:  { icone: '🪟', cor_fundo: '#eef2f6' },
+  2:  { icone: '🌐', cor_fundo: '#eaf3fb' },
+  3:  { icone: '📝', cor_fundo: '#fdecea' },
+  4:  { icone: '✉️', cor_fundo: '#fff4e0' },
+  5:  { icone: '📊', cor_fundo: '#e6f4ec' },
+  6:  { icone: '☁️', cor_fundo: '#eaf3fb' },
+  7:  { icone: '🔒', cor_fundo: '#fdecea' },
+  8:  { icone: '🛡️', cor_fundo: '#fff4e0' },
+  9:  { icone: '🤖', cor_fundo: '#f0ecfb' },
+  10: { icone: '✨', cor_fundo: '#f0ecfb' },
+  11: { icone: '⚙️', cor_fundo: '#e6f4ec' },
+};
+
 for (const m of dados.modulos) {
   const nivel = NIVEL_MAP[m.nivel];
   if (!nivel) throw new Error(`Nível desconhecido: ${m.nivel}`);
@@ -33,7 +50,9 @@ for (const m of dados.modulos) {
   // Upsert módulo por ordem
   const { data: existente, error: eSel } = await sb.from('modulos').select('id').eq('ordem', ordem).maybeSingle();
   if (eSel) throw eSel;
-  const patch = { ordem, titulo: m.titulo, nivel, duracao: m.duracao, descricao: m.descricao, desenho_universal: m.desenho_universal, icone: null };
+  const visual = VISUAL_POR_ORDEM[ordem];
+  if (!visual) throw new Error(`Sem ícone/cor definidos para o módulo de ordem ${ordem}. Acrescenta a VISUAL_POR_ORDEM antes de importar.`);
+  const patch = { ordem, titulo: m.titulo, nivel, duracao: m.duracao, descricao: m.descricao, desenho_universal: m.desenho_universal, icone: visual.icone, cor_fundo: visual.cor_fundo };
   let moduloId;
   if (existente) {
     moduloId = existente.id;

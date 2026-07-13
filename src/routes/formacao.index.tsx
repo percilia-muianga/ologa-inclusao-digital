@@ -242,12 +242,15 @@ function ListaModulos() {
                     ✓ Concluído
                   </span>
                 ) : null}
-                <div
-                  className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-page text-2xl"
-                  aria-hidden="true"
-                >
-                  {m.icone ?? "📘"}
-                </div>
+                {m.icone ? (
+                  <div
+                    className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+                    style={{ backgroundColor: m.cor_fundo ?? "transparent" }}
+                    aria-hidden="true"
+                  >
+                    {m.icone}
+                  </div>
+                ) : null}
                 <h3 className="text-lg font-bold text-navy">{m.titulo}</h3>
                 {m.descricao ? (
                   <p className="mt-1 text-sm text-navy-2">{m.descricao}</p>
