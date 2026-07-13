@@ -6,7 +6,7 @@ import { PreviewBanner } from "@/components/preview-banner";
 import { listarCatalogo } from "@/lib/formacao.functions";
 
 
-export const Route = createFileRoute("/formacao")({
+export const Route = createFileRoute("/formacao/")({
   head: () => ({ meta: [{ title: "A minha formação — Ologa" }] }),
   component: FormacaoPage,
 });
