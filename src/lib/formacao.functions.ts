@@ -11,10 +11,13 @@ const NOTA_MINIMA = 2 / 3 // 67% (dois terços)
 export const listarModulos = createServerFn({ method: 'GET' }).handler(async () => {
   const s = await admin()
   const { data, error } = await s.from('modulos')
-    .select('id, ordem, titulo, nivel, duracao, descricao, desenho_universal, icone')
+    .select('id, ordem, titulo, nivel, duracao, descricao, desenho_universal, icone, licoes(id)')
     .order('ordem')
   if (error) throw error
-  return data
+  return (data ?? []).map((m: { licoes?: { id: string }[] } & Record<string, unknown>) => {
+    const { licoes, ...rest } = m
+    return { ...rest, numeroLicoes: (licoes ?? []).length }
+  })
 })
 
 // (Nenhum endpoint público devolve nomes/ids de instituições. A associação
