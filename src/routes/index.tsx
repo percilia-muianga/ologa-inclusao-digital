@@ -276,7 +276,7 @@ function HomePage() {
                   <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
                     {st.l}
                   </div>
-                  <div className="mt-1 text-[12px] text-[#9aa6b2]">{st.s}</div>
+                  <div className="mt-1 text-[12px] text-muted-foreground">{st.s}</div>
                   <button
                     type="button"
                     onClick={() => openSrc(st.href, st.ref)}
@@ -290,7 +290,7 @@ function HomePage() {
 
             {/* Nota metodológica */}
             <div className="mt-5 rounded-xl border border-[#f0d9a8] bg-[#fff4e0] p-5 text-[13.5px] leading-[1.65] text-[#6b5310]">
-              <b className="mb-1 block text-[#8a6d1f]">
+              <b className="mb-1 block text-[#6b4f0c]">
                 Nota metodológica — este valor é um piso mínimo, não a dimensão real do
                 público.
               </b>
@@ -465,7 +465,7 @@ function HomePage() {
                     key={i}
                     className="grid grid-cols-1 gap-5 border-t border-line py-[18px] md:grid-cols-[200px_1fr]"
                   >
-                    <div className="text-[15px] font-extrabold text-brand">
+                    <div className="text-[15px] font-extrabold text-brand-dark">
                       {row.gap}
                       <small className="mt-1 block text-[12.5px] font-semibold text-muted-foreground">
                         {row.sub}
@@ -920,7 +920,7 @@ function HomePage() {
                 },
               ].map((c) => (
                 <div key={c.h} className="card-elevated p-6">
-                  <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-brand">
+                  <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-dark">
                     {c.who}
                   </div>
                   <h4 className="mb-2 text-[16.5px] text-navy">{c.h}</h4>
@@ -931,7 +931,7 @@ function HomePage() {
 
             {/* Nota amarela — fase seguinte */}
             <div className="mt-5 rounded-xl border border-[#f0d9a8] bg-[#fff4e0] p-5 text-[13px] leading-[1.6] text-[#6b5310]">
-              <b className="text-[#8a6d1f]">
+              <b className="text-[#6b4f0c]">
                 Fase seguinte — reconhecimento no sistema nacional.
               </b>{" "}
               O Certificado de Conclusão é hoje emitido pela Ologa e verificável em
@@ -1049,11 +1049,11 @@ function HomePage() {
               </p>
             </div>
             <div className="max-h-[64vh] overflow-auto p-7">
-              <h6 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand">
+              <h6 className="mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Referência
               </h6>
               <p className="font-semibold text-navy">{src.ref}</p>
-              <h6 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand">
+              <h6 className="mt-4 mb-2 text-[12.5px] font-extrabold uppercase tracking-wider text-brand-dark">
                 Endereço
               </h6>
               <div className="break-all font-mono text-[13px] text-navy-2">

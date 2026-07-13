@@ -91,7 +91,7 @@
   --secondary-foreground: #1c2733;
 
   --muted: #eef1f4;
-  --muted-foreground: #6b7886;
+  --muted-foreground: #5b6875;         /* apertado para WCAG AA sobre branco (>= 4.5:1) */
 
   --accent: #eef1f4;
   --accent-foreground: #1c2733;
@@ -220,7 +220,7 @@
 }
 
 @utility eyebrow {
-  color: var(--color-brand);
+  color: var(--color-brand-dark);      /* WCAG AA: #C20400 sobre branco ≈ 5.9:1 */
   font-weight: 800;
   font-size: 0.8125rem;
   letter-spacing: 0.09375em;
@@ -229,13 +229,13 @@
   display: block;
 }
 
-/* Botão vermelho da marca (uso moderado) */
+/* Botão vermelho da marca — usa o vermelho escuro para garantir 4.5:1 sobre texto branco */
 @utility btn-brand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 2.75rem;
-  background: var(--color-brand);
+  background: var(--color-brand-dark);
   color: #fff;
   padding: 0.5625rem 1rem;
   border-radius: 8px;
@@ -246,7 +246,7 @@
   transition: background-color 0.15s ease;
 }
 @utility btn-brand-hover {
-  &:hover { background: var(--color-brand-dark); }
+  &:hover { background: #9a0300; }     /* ainda mais escuro no hover */
 }
 
 /* Botão fantasma (fundo escuro do hero) */
@@ -351,8 +351,10 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-brand);
+  color: var(--color-brand-dark);
 }
+.licao-prose li::marker { color: var(--color-brand-dark); }
+.licao-prose blockquote { border-left-color: var(--color-brand-dark); }
 .licao-prose p { margin: 0.75rem 0; }
 .licao-prose strong { color: var(--color-navy); font-weight: 700; }
 .licao-prose ul,
@@ -363,13 +365,13 @@
 .licao-prose ul { list-style: disc outside; }
 .licao-prose ol { list-style: decimal outside; }
 .licao-prose li { margin: 0.35rem 0; padding-left: 0.25rem; }
-.licao-prose li::marker { color: var(--color-brand); }
+.licao-prose li::marker { color: var(--color-brand-dark); }
 .licao-prose a {
-  color: var(--color-brand);
+  color: var(--color-brand-dark);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.licao-prose a:hover { color: var(--color-brand-dark); }
+.licao-prose a:hover { color: #9a0300; }
 .licao-prose code {
   background: var(--color-page);
   padding: 0.1rem 0.35rem;
@@ -405,4 +407,11 @@
 .selo-formato .check {
   color: var(--color-success);
   font-weight: 800;
+}
+
+/* Ilustração da lição — SVGs trazem role="img" e aria-label próprios */
+.ilustracao-licao svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
