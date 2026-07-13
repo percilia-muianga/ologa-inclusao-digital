@@ -12,6 +12,16 @@ const HERO_TITLE_HIGHLIGHT = "transformação de Moçambique";
 const HERO_DESC =
   "Formação em competências digitais para instituições públicas e empresas — presencial e virtual, desenhada para todas as pessoas. Sem versões especiais.";
 
+const NAV_ITEMS: { href: string; label: string }[] = [
+  { href: "#analise", label: "Análise de Mercado" },
+  { href: "#inscricao", label: "Inscrição" },
+  { href: "#indicadores", label: "Indicadores" },
+  { href: "#cursos", label: "Cursos" },
+  { href: "#percurso", label: "Percurso" },
+  { href: "#entregaveis", label: "Entregáveis" },
+  { href: "#contacto", label: "Contacto" },
+];
+
 function HomePage() {
   return (
     <>
@@ -37,25 +47,22 @@ function HomePage() {
 
           <nav
             aria-label="Navegação principal"
-            className="hidden items-center gap-1 md:flex"
+            className="hidden items-center gap-1 lg:flex"
           >
-            <Link
-              to="/entrar"
-              className="rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
-            >
-              Entrar
-            </Link>
-            <Link
-              to="/verificar"
-              className="rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
-            >
-              Verificar certificado
-            </Link>
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
 
-          <Link to="/inscricao" className="btn-brand btn-brand-hover">
-            Inscrever instituição
-          </Link>
+          <a href="#proposta" className="btn-brand btn-brand-hover">
+            Solicitar Proposta
+          </a>
         </div>
       </header>
 
@@ -70,12 +77,12 @@ function HomePage() {
             <p className="mb-7 max-w-[620px] text-[17.5px] text-[#d6dde4]">{HERO_DESC}</p>
 
             <div className="flex flex-wrap gap-3">
-              <Link to="/inscricao" className="btn-brand btn-brand-hover">
-                Inscrever a minha instituição
-              </Link>
-              <Link to="/entrar" className="btn-ghost-dark btn-ghost-dark-hover">
-                Entrar
-              </Link>
+              <a href="#cursos" className="btn-brand btn-brand-hover">
+                Abrir os Cursos
+              </a>
+              <a href="#analise" className="btn-ghost-dark btn-ghost-dark-hover">
+                Ver Análise de Mercado
+              </a>
               <ListenButton
                 variant="dark"
                 sentences={[HERO_EYEBROW, `${HERO_TITLE_A}${HERO_TITLE_HIGHLIGHT}`, HERO_DESC]}
@@ -94,7 +101,15 @@ function HomePage() {
               <p className="text-white/60">Ologa Sistemas Informáticos, Lda. · Maputo, Moçambique</p>
             </div>
           </div>
-          <p className="text-xs text-white/60">Empresa Certificada NM ISO 9001</p>
+          <nav aria-label="Ligações do rodapé" className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
+            <Link to="/verificar" className="text-white/70 underline hover:text-white">
+              Verificar certificado
+            </Link>
+            <Link to="/entrar" className="text-white/50 hover:text-white/80">
+              Área interna Ologa
+            </Link>
+            <span className="text-white/60">Empresa Certificada NM ISO 9001</span>
+          </nav>
         </div>
       </footer>
     </>
