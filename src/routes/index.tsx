@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import logo from "@/assets/ologa-logo.png.asset.json";
+import { SiteHeader } from "@/components/site-header";
 import { ListenButton } from "@/components/listen-button";
 import {
   FormularioInstituicao,
