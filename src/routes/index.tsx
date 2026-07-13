@@ -203,49 +203,8 @@ function HomePage() {
         Saltar para o conteúdo principal
       </a>
 
-      <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur">
-        <div className="wrap flex h-16 items-center justify-between gap-4">
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 font-extrabold tracking-wide"
-            aria-label="Ologa — Literacia Digital"
-          >
-            <img src={logo.url} alt="" aria-hidden="true" className="h-9 w-auto" />
-            <span className="flex flex-col leading-tight">
-              <span className="text-base font-extrabold text-navy">OLOGA</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Literacia Digital
-              </span>
-            </span>
-          </Link>
+      <SiteHeader />
 
-          <nav aria-label="Navegação principal" className="hidden items-center gap-1 lg:flex">
-            {NAV_ITEMS.map((item) =>
-              item.kind === "route" && item.to ? (
-                <Link
-                  key={item.href}
-                  to={item.to}
-                  className="rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
-                >
-                  {item.label}
-                </a>
-              ),
-            )}
-          </nav>
-
-          <Link to="/inscricao" className="btn-brand btn-brand-hover">
-            Solicitar Proposta
-          </Link>
-        </div>
-      </header>
 
       <main id="conteudo">
         {/* HERO — inalterado */}
