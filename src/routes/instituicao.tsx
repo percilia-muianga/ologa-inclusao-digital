@@ -14,6 +14,8 @@ export const Route = createFileRoute("/instituicao")({
   component: InstituicaoPage,
 });
 
+type EstadoConvite = "por_usar" | "usado" | "expirado" | "sem_convite";
+
 type Colaborador = {
   id: string;
   nome: string;
@@ -21,6 +23,7 @@ type Colaborador = {
   funcao: string | null;
   conta_ativada: boolean;
   ultimo_acesso: string | null;
+  estado_convite: EstadoConvite;
 };
 
 
