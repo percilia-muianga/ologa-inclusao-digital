@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import * as XLSX from "xlsx";
 import { useGestorGuard } from "@/hooks/use-gestor-guard";
 import {
   listarColaboradoresGestor,
   obterMinhaInstituicaoGestor,
   regenerarLinkPasswordColaborador,
+  regenerarLinksPasswordEmLote,
 } from "@/lib/colaboradores.functions";
 import { ImportColaboradoresDialog } from "@/components/import-colaboradores-dialog";
 
