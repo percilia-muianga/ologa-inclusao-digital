@@ -5,8 +5,6 @@ import { useAdminGuard } from "@/hooks/use-admin-guard";
 import {
   obterInstituicaoAdmin,
   regenerarCodigoInstituicao,
-  listarGestoresInstituicao,
-  criarGestorInstituicao,
 } from "@/lib/instituicoes.functions";
 import {
   APOIOS_OPCOES,
