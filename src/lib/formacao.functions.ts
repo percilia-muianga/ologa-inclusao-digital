@@ -245,24 +245,17 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       if (error) throw error
     }
 
-    // 5. buscar nome do módulo e da instituição (só quando formando novo, senão fica '')
+    // 5. buscar nome do módulo e da instituição (snapshot no certificado)
     const { data: modulo } = await s.from('modulos')
       .select('titulo').eq('id', data.moduloId).single()
 
     let nomeInstituicao = ''
-    let nomeFormando = data.nome ?? ''
-    if (data.tokenPessoal) {
-      const { data: f } = await s.from('formandos')
-        .select('nome, instituicao_id').eq('id', formandoId).single()
-      nomeFormando = f?.nome ?? ''
-      if (f?.instituicao_id) {
-        const { data: inst } = await s.from('instituicoes')
-          .select('nome').eq('id', f.instituicao_id).single()
-        nomeInstituicao = inst?.nome ?? ''
-      }
-    } else if (data.instituicaoId) {
+    const { data: f } = await s.from('formandos')
+      .select('nome, instituicao_id').eq('id', formandoId).single()
+    const nomeFormando = f?.nome ?? (data.nome ?? '')
+    if (f?.instituicao_id) {
       const { data: inst } = await s.from('instituicoes')
-        .select('nome').eq('id', data.instituicaoId).single()
+        .select('nome').eq('id', f.instituicao_id).single()
       nomeInstituicao = inst?.nome ?? ''
     }
 
