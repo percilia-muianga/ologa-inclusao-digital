@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { obterLicao, marcarLicaoConcluida } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao/$modulo/licao/$licao")({
   head: () => ({ meta: [{ title: "Lição — Ologa" }] }),
@@ -22,7 +24,7 @@ const FORMATOS = [
 function LicaoPage() {
   const { modulo: moduloParam, licao: licaoParam } = Route.useParams();
   const navigate = useNavigate();
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(obterLicao);
   const marcar = useServerFn(marcarLicaoConcluida);
 
@@ -100,6 +102,7 @@ function LicaoPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <Link
           to="/formacao/$modulo"

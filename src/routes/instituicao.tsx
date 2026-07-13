@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
@@ -190,7 +190,15 @@ function InstituicaoPage() {
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
       <main id="conteudo" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <h1 className="text-3xl font-extrabold text-ink">A minha instituição</h1>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-3xl font-extrabold text-ink">A minha instituição</h1>
+          <Link
+            to="/formacao"
+            className="inline-flex min-h-11 items-center rounded-md border border-ink/20 px-4 text-base font-semibold text-ink"
+          >
+            Ver cursos
+          </Link>
+        </div>
 
         {erro && (
           <p role="alert" className="mt-4 rounded-md border border-brand/40 bg-brand/5 p-3 text-base text-ink">

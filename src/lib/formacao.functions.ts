@@ -152,6 +152,14 @@ export const marcarLicaoConcluida = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ licao_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { data: perfil } = await supabase
+      .from("perfis")
+      .select("papel")
+      .eq("id", userId)
+      .maybeSingle();
+    if (perfil?.papel !== "formando") {
+      return { ok: true, modo_pre_visualizacao: true };
+    }
     const { error } = await supabase
       .from("progresso_licoes")
       .upsert(
@@ -159,8 +167,9 @@ export const marcarLicaoConcluida = createServerFn({ method: "POST" })
         { onConflict: "perfil_id,licao_id", ignoreDuplicates: true },
       );
     if (error) throw error;
-    return { ok: true };
+    return { ok: true, modo_pre_visualizacao: false };
   });
+
 
 // ---------- Quiz: perguntas (sem revelar resposta correta) ----------
 
@@ -235,6 +244,15 @@ export const submeterQuiz = createServerFn({ method: "POST" })
     }
     const total = lista.length;
 
+    const { data: perfil } = await supabase
+      .from("perfis")
+      .select("papel")
+      .eq("id", userId)
+      .maybeSingle();
+    if (perfil?.papel !== "formando") {
+      return { pontuacao, total, modo_pre_visualizacao: true };
+    }
+
     const { error } = await supabase.from("progresso_quizzes").insert({
       perfil_id: userId,
       modulo_id: modulo.id,
@@ -243,5 +261,6 @@ export const submeterQuiz = createServerFn({ method: "POST" })
     });
     if (error) throw error;
 
-    return { pontuacao, total };
+    return { pontuacao, total, modo_pre_visualizacao: false };
   });
+

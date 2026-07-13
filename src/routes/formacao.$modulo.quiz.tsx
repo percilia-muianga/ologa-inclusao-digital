@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { obterQuiz, submeterQuiz } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao/$modulo/quiz")({
   head: () => ({ meta: [{ title: "Quiz — Ologa" }] }),
@@ -13,7 +15,7 @@ type Dados = Awaited<ReturnType<typeof obterQuiz>>;
 
 function QuizPage() {
   const { modulo: moduloParam } = Route.useParams();
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(obterQuiz);
   const submeter = useServerFn(submeterQuiz);
 
@@ -91,6 +93,7 @@ function QuizPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <Link
           to="/formacao/$modulo"

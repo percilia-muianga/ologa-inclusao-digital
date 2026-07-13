@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { listarCatalogo } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao")({
   head: () => ({ meta: [{ title: "A minha formação — Ologa" }] }),
@@ -29,7 +31,7 @@ const NIVEL_LABEL: Record<NivelDB, string> = {
 };
 
 function FormacaoPage() {
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(listarCatalogo);
   const [modulos, setModulos] = useState<Modulo[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -71,6 +73,7 @@ function FormacaoPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <h1 className="text-3xl font-extrabold text-ink">A minha formação</h1>
 

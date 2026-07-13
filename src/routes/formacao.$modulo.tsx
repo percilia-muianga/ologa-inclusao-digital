@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useFormandoGuard } from "@/hooks/use-formando-guard";
+import { usePreviewFormacaoGuard } from "@/hooks/use-preview-formacao-guard";
+import { PreviewBanner } from "@/components/preview-banner";
 import { obterModulo } from "@/lib/formacao.functions";
+
 
 export const Route = createFileRoute("/formacao/$modulo")({
   head: () => ({ meta: [{ title: "Módulo — Ologa" }] }),
@@ -13,7 +15,7 @@ type Dados = Awaited<ReturnType<typeof obterModulo>>;
 
 function ModuloPage() {
   const { modulo: moduloParam } = Route.useParams();
-  const guard = useFormandoGuard();
+  const guard = usePreviewFormacaoGuard();
   const carregar = useServerFn(obterModulo);
   const [dados, setDados] = useState<Dados | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -70,6 +72,7 @@ function ModuloPage() {
   return (
     <>
       <a href="#conteudo" className="skip-link">Saltar para o conteúdo principal</a>
+      {guard.modoPreVisualizacao && <PreviewBanner />}
       <main id="conteudo" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <Link to="/formacao" className="text-sm text-ink underline">
           ← Voltar aos módulos
