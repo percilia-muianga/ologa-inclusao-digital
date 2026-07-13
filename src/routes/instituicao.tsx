@@ -14,6 +14,8 @@ export const Route = createFileRoute("/instituicao")({
   component: InstituicaoPage,
 });
 
+type EstadoConvite = "por_usar" | "usado" | "expirado" | "sem_convite";
+
 type Colaborador = {
   id: string;
   nome: string;
@@ -21,6 +23,7 @@ type Colaborador = {
   funcao: string | null;
   conta_ativada: boolean;
   ultimo_acesso: string | null;
+  estado_convite: EstadoConvite;
 };
 
 
@@ -187,6 +190,7 @@ function InstituicaoPage() {
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Conta ativada</th>
+                  <th className="px-3 py-2">Convite</th>
                   <th className="px-3 py-2">Último acesso</th>
                   <th className="px-3 py-2">Ações</th>
                 </tr>
@@ -194,7 +198,7 @@ function InstituicaoPage() {
               <tbody>
                 {colabs.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
+                    <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
                       Ainda não há colaboradores registados nesta instituição.
                     </td>
                   </tr>
@@ -210,6 +214,7 @@ function InstituicaoPage() {
                         <span className="text-brand">Não</span>
                       )}
                     </td>
+                    <td className="px-3 py-2">{rotuloEstadoConvite(c.estado_convite)}</td>
                     <td className="px-3 py-2 text-foreground">
                       {c.ultimo_acesso
                         ? new Date(c.ultimo_acesso).toLocaleString("pt-PT")
@@ -219,7 +224,8 @@ function InstituicaoPage() {
                       <button
                         type="button"
                         onClick={() => pedirNovoLink(c.id, c.nome)}
-                        className="inline-flex min-h-9 items-center rounded-md border border-ink/20 px-3 text-sm text-ink"
+                        disabled={c.conta_ativada}
+                        className="inline-flex min-h-9 items-center rounded-md border border-ink/20 px-3 text-sm text-ink disabled:opacity-50"
                       >
                         Gerar novo link
                       </button>
@@ -281,3 +287,17 @@ function InstituicaoPage() {
     </>
   );
 }
+
+function rotuloEstadoConvite(e: EstadoConvite) {
+  switch (e) {
+    case "por_usar":
+      return <span className="text-brand">Por usar</span>;
+    case "usado":
+      return <span className="text-ink">Usado</span>;
+    case "expirado":
+      return <span className="text-brand">Expirado</span>;
+    default:
+      return <span className="text-muted-foreground">—</span>;
+  }
+}
+

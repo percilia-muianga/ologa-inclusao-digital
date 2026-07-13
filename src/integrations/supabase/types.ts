@@ -62,6 +62,44 @@ export type Database = {
           },
         ]
       }
+      convites_colaborador: {
+        Row: {
+          criado_em: string
+          expira_em: string
+          id: string
+          invalidado_em: string | null
+          perfil_id: string
+          token_hash: string
+          usado_em: string | null
+        }
+        Insert: {
+          criado_em?: string
+          expira_em: string
+          id?: string
+          invalidado_em?: string | null
+          perfil_id: string
+          token_hash: string
+          usado_em?: string | null
+        }
+        Update: {
+          criado_em?: string
+          expira_em?: string
+          id?: string
+          invalidado_em?: string | null
+          perfil_id?: string
+          token_hash?: string
+          usado_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "convites_colaborador_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       instituicoes: {
         Row: {
           apoios_acessibilidade:

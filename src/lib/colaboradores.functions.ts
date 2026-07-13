@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Database } from "@/integrations/supabase/types";
 
 // ---------- Utils ----------
 
@@ -59,6 +57,60 @@ export function mapearNivel(v: string | null | undefined): Nivel | null | "inval
   return "invalido";
 }
 
+// ---------- Convite: geração e hash ----------
+
+const VALIDADE_CONVITE_DIAS = 30;
+
+function gerarTokenConvite(): string {
+  // 32 bytes = 256 bits de entropia. Codificação base64url -> ~43 chars imprimíveis.
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function hashToken(token: string): Promise<string> {
+  const buf = new TextEncoder().encode(token);
+  const digest = await crypto.subtle.digest("SHA-256", buf);
+  const arr = Array.from(new Uint8Array(digest));
+  return arr.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Cria um novo convite para um perfil e invalida quaisquer convites anteriores.
+ * Devolve o token em claro (para incluir no link) — o token nunca é guardado em claro.
+ */
+async function criarConviteParaPerfil(perfilId: string): Promise<string> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  // Invalidar convites anteriores por usar deste perfil.
+  await supabaseAdmin
+    .from("convites_colaborador")
+    .update({ invalidado_em: new Date().toISOString() })
+    .eq("perfil_id", perfilId)
+    .is("usado_em", null)
+    .is("invalidado_em", null);
+
+  const token = gerarTokenConvite();
+  const token_hash = await hashToken(token);
+  const expira_em = new Date(
+    Date.now() + VALIDADE_CONVITE_DIAS * 24 * 60 * 60 * 1000,
+  ).toISOString();
+
+  const { error } = await supabaseAdmin.from("convites_colaborador").insert({
+    perfil_id: perfilId,
+    token_hash,
+    expira_em,
+  });
+  if (error) throw new Error(error.message);
+  return token;
+}
+
+function construirLink(origin: string, token: string): string {
+  return `${origin.replace(/\/$/, "")}/definir-palavra-passe?convite=${token}`;
+}
+
 // ---------- Servidor: obter dados da minha instituição ----------
 
 export const obterMinhaInstituicaoGestor = createServerFn({ method: "GET" })
@@ -78,6 +130,8 @@ export const obterMinhaInstituicaoGestor = createServerFn({ method: "GET" })
   });
 
 // ---------- Servidor: listar colaboradores ----------
+
+export type EstadoConvite = "por_usar" | "usado" | "expirado" | "sem_convite";
 
 export const listarColaboradoresGestor = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -105,11 +159,30 @@ export const listarColaboradoresGestor = createServerFn({ method: "GET" })
     if (error) return { ok: false as const, mensagem: error.message };
 
     const ids = (perfis ?? []).map((p) => p.id);
-    let ultimoMap = new Map<string, string | null>();
+    const ultimoMap = new Map<string, string | null>();
     if (ids.length > 0) {
       const { data: estados } = await supabaseAdmin.rpc("obter_estado_contas", { _ids: ids });
       for (const e of estados ?? []) {
         ultimoMap.set(e.id, e.ultimo_acesso);
+      }
+    }
+
+    // Estado do convite mais recente por perfil (ignora convites invalidados).
+    const conviteMap = new Map<string, EstadoConvite>();
+    if (ids.length > 0) {
+      const { data: convites } = await supabaseAdmin
+        .from("convites_colaborador")
+        .select("perfil_id, expira_em, usado_em, invalidado_em, criado_em")
+        .in("perfil_id", ids)
+        .is("invalidado_em", null)
+        .order("criado_em", { ascending: false });
+      const agora = Date.now();
+      for (const c of convites ?? []) {
+        if (conviteMap.has(c.perfil_id)) continue; // fica só com o mais recente
+        if (c.usado_em) conviteMap.set(c.perfil_id, "usado");
+        else if (new Date(c.expira_em).getTime() < agora)
+          conviteMap.set(c.perfil_id, "expirado");
+        else conviteMap.set(c.perfil_id, "por_usar");
       }
     }
 
@@ -121,13 +194,14 @@ export const listarColaboradoresGestor = createServerFn({ method: "GET" })
       criado_em: p.criado_em,
       conta_ativada: p.palavra_passe_definida_em != null,
       ultimo_acesso: ultimoMap.get(p.id) ?? null,
+      estado_convite: (conviteMap.get(p.id) ?? "sem_convite") as EstadoConvite,
     }));
 
     return { ok: true as const, colaboradores };
   });
 
 
-// ---------- Servidor: regenerar link de palavra-passe ----------
+// ---------- Servidor: regenerar link de convite ----------
 
 export const regenerarLinkPasswordColaborador = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -141,10 +215,9 @@ export const regenerarLinkPasswordColaborador = createServerFn({ method: "POST" 
     if (!g) return { ok: false as const, mensagem: "acesso_negado" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Confirmar que o perfil pertence à mesma instituição
     const { data: perfil, error: erroPerfil } = await supabaseAdmin
       .from("perfis")
-      .select("email, instituicao_id, papel")
+      .select("email, instituicao_id, papel, palavra_passe_definida_em")
       .eq("id", data.perfil_id)
       .maybeSingle();
     if (erroPerfil) return { ok: false as const, mensagem: erroPerfil.message };
@@ -154,17 +227,16 @@ export const regenerarLinkPasswordColaborador = createServerFn({ method: "POST" 
     if (perfil.papel !== "formando") {
       return { ok: false as const, mensagem: "so_formandos" };
     }
-
-    const redirectTo = `${data.origin.replace(/\/$/, "")}/definir-palavra-passe`;
-    const { data: linkData, error: erroLink } = await supabaseAdmin.auth.admin.generateLink({
-      type: "recovery",
-      email: perfil.email,
-      options: { redirectTo },
-    });
-    if (erroLink || !linkData?.properties?.action_link) {
-      return { ok: false as const, mensagem: erroLink?.message ?? "erro_link" };
+    if (perfil.palavra_passe_definida_em) {
+      return { ok: false as const, mensagem: "conta_ja_ativada" };
     }
-    return { ok: true as const, link: linkData.properties.action_link };
+
+    try {
+      const token = await criarConviteParaPerfil(data.perfil_id);
+      return { ok: true as const, link: construirLink(data.origin, token) };
+    } catch (e) {
+      return { ok: false as const, mensagem: e instanceof Error ? e.message : "erro_convite" };
+    }
   });
 
 // ---------- Servidor: importar colaboradores em bloco ----------
@@ -202,7 +274,6 @@ export const importarColaboradoresChunk = createServerFn({ method: "POST" })
     const g = await obterGestor(context.userId);
     if (!g) return { ok: false, mensagem: "acesso_negado" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const redirectTo = `${data.origin.replace(/\/$/, "")}/definir-palavra-passe`;
 
     const resultados: ResultadoLinha[] = [];
 
@@ -258,28 +329,110 @@ export const importarColaboradoresChunk = createServerFn({ method: "POST" })
         continue;
       }
 
-      const { data: linkData, error: erroLink } = await supabaseAdmin.auth.admin.generateLink({
-        type: "recovery",
-        email,
-        options: { redirectTo },
-      });
-      if (erroLink || !linkData?.properties?.action_link) {
+      try {
+        const token = await criarConviteParaPerfil(novoId);
+        resultados.push({ email, nome, ok: true, link: construirLink(data.origin, token) });
+      } catch (e) {
         resultados.push({
           email,
           nome,
           ok: true,
-          erro: "Conta criada, mas não foi possível gerar link automaticamente.",
+          erro:
+            "Conta criada, mas não foi possível gerar o convite: " +
+            (e instanceof Error ? e.message : "erro desconhecido"),
         });
-        continue;
       }
-
-      resultados.push({ email, nome, ok: true, link: linkData.properties.action_link });
     }
 
     return { ok: true, resultados };
   });
 
-// ---------- Servidor: marcar palavra-passe como definida pelo próprio ----------
+// ---------- Servidor: verificar convite (público) ----------
+
+export const verificarConvite = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ token: z.string().min(20).max(200) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const token_hash = await hashToken(data.token);
+    const { data: convite } = await supabaseAdmin
+      .from("convites_colaborador")
+      .select("perfil_id, expira_em, usado_em, invalidado_em, perfis!inner(email, palavra_passe_definida_em)")
+      .eq("token_hash", token_hash)
+      .maybeSingle();
+    if (!convite) return { ok: false as const, motivo: "invalido" as const };
+    if (convite.invalidado_em) return { ok: false as const, motivo: "invalidado" as const };
+    if (convite.usado_em) return { ok: false as const, motivo: "usado" as const };
+    if (new Date(convite.expira_em).getTime() < Date.now())
+      return { ok: false as const, motivo: "expirado" as const };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const perfil = convite.perfis as any;
+    if (perfil?.palavra_passe_definida_em)
+      return { ok: false as const, motivo: "ja_ativada" as const };
+    return { ok: true as const, email: perfil?.email as string };
+  });
+
+// ---------- Servidor: definir palavra-passe via convite (público) ----------
+
+export const definirPasswordViaConvite = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        token: z.string().min(20).max(200),
+        password: z.string().min(8).max(200),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const token_hash = await hashToken(data.token);
+
+    const { data: convite } = await supabaseAdmin
+      .from("convites_colaborador")
+      .select("id, perfil_id, expira_em, usado_em, invalidado_em")
+      .eq("token_hash", token_hash)
+      .maybeSingle();
+    if (!convite) return { ok: false as const, motivo: "invalido" as const };
+    if (convite.invalidado_em) return { ok: false as const, motivo: "invalidado" as const };
+    if (convite.usado_em) return { ok: false as const, motivo: "usado" as const };
+    if (new Date(convite.expira_em).getTime() < Date.now())
+      return { ok: false as const, motivo: "expirado" as const };
+
+    const { data: perfil } = await supabaseAdmin
+      .from("perfis")
+      .select("id, palavra_passe_definida_em")
+      .eq("id", convite.perfil_id)
+      .maybeSingle();
+    if (!perfil) return { ok: false as const, motivo: "invalido" as const };
+    if (perfil.palavra_passe_definida_em)
+      return { ok: false as const, motivo: "ja_ativada" as const };
+
+    const { error: erroUpd } = await supabaseAdmin.auth.admin.updateUserById(perfil.id, {
+      password: data.password,
+    });
+    if (erroUpd) {
+      return {
+        ok: false as const,
+        motivo: "password_invalida" as const,
+        mensagem: erroUpd.message,
+      };
+    }
+
+    // Marcar convite como usado e perfil como ativado.
+    await supabaseAdmin
+      .from("convites_colaborador")
+      .update({ usado_em: new Date().toISOString() })
+      .eq("id", convite.id);
+    await supabaseAdmin
+      .from("perfis")
+      .update({ palavra_passe_definida_em: new Date().toISOString() })
+      .eq("id", perfil.id);
+
+    return { ok: true as const };
+  });
+
+// ---------- Servidor: marcar palavra-passe como definida pelo próprio (fluxo recovery normal) ----------
 
 export const marcarPasswordDefinida = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -293,4 +446,3 @@ export const marcarPasswordDefinida = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, mensagem: error.message };
     return { ok: true as const };
   });
-
