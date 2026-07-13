@@ -527,88 +527,168 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 3. INDICADORES — painel público */}
+        {/* 3. INDICADORES — painel público, agregados nacionais */}
         <section id="indicadores" className="py-16">
           <div className="wrap">
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Indicadores
             </h2>
             <p className="mb-9 max-w-[820px] text-[17px] text-muted-foreground">
-              Totais nacionais do programa. Não são apresentados dados de nenhuma
-              instituição em concreto — só agregados. Começam a zero e atualizam-se
-              à medida que as inscrições e as certificações entram.
+              Indicadores que o programa se propõe observar. Os valores são
+              calculados a partir das inscrições submetidas e da atividade de
+              formação — começam a zero e atualizam-se à medida que os dados
+              entram. Todos os números são agregados nacionais; nunca dados de
+              uma instituição em concreto.
             </p>
 
             {!indicadoresCarregados ? (
               <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
                 A carregar indicadores…
               </div>
-            ) : semIndicadores ? (
-              <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
-                Ainda sem dados.
-              </div>
             ) : (
               <>
-                <div className="mb-6">
-                  <div className="eyebrow">Compromisso Institucional</div>
-                  <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="card-elevated p-[22px]">
-                      <div className="text-[32px] font-extrabold leading-none text-brand">
-                        {indicadores!.instituicoesComDeclaracao}
-                      </div>
-                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
-                        Instituições com Declaração assinada
-                      </div>
-                    </div>
+                {/* Compromisso institucional — cartão novo, acima de tudo */}
+                <div className="mb-8">
+                  <IndSubh titulo="Compromisso institucional" />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <KpiCard
+                      kpi={{
+                        src: "inc",
+                        val: fmtNum(indicadores!.instituicoesComDeclaracao),
+                        lab: "Instituições com Declaração de Desenho Universal assinada",
+                      }}
+                    />
                   </div>
                 </div>
-                <div>
-                  <div className="eyebrow">Totais nacionais</div>
-                  <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="card-elevated p-[22px]">
-                      <div className="text-[32px] font-extrabold leading-none text-brand">
-                        {indicadores!.instituicoesInscritas}
-                      </div>
-                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
-                        Instituições inscritas
-                      </div>
-                    </div>
-                    <div className="card-elevated p-[22px]">
-                      <div className="text-[32px] font-extrabold leading-none text-brand">
-                        {indicadores!.formandosCertificados}
-                      </div>
-                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
-                        Formandos certificados
-                      </div>
-                    </div>
-                    <div className="card-elevated p-[22px]">
-                      <div className="text-[32px] font-extrabold leading-none text-brand">
-                        {indicadores!.distritosAbrangidos}
-                      </div>
-                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
-                        Distritos abrangidos
-                      </div>
-                    </div>
-                  </div>
+
+                <IndSubh titulo="Quem alcançamos" />
+                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtPct(indicadores!.mulheresPct),
+                      lab: "Mulheres formadas",
+                      pct: indicadores!.mulheresPct,
+                      barColor: "var(--red, #c8213a)",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtPct(indicadores!.ruraisPct),
+                      lab: "Formandos em zonas rurais",
+                      pct: indicadores!.ruraisPct,
+                      barColor: "var(--gold, #c98a2b)",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.distritosAbrangidos),
+                      lab: "Distritos e postos abrangidos",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.formandosZero),
+                      lab: "Formandos que partem do zero",
+                    }}
+                  />
+                </div>
+
+                <IndSubh titulo="Formação & cobertura" />
+                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.instituicoesInscritas),
+                      lab: "Instituições inscritas",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.formandosInscritos),
+                      lab: "Formandos inscritos",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "for",
+                      val: fmtNum(indicadores!.modulosConcluidos),
+                      lab: "Módulos concluídos",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "for",
+                      val: fmtPct(indicadores!.mediaQuizzesPct),
+                      lab: "Média nos quizzes",
+                      pct: indicadores!.mediaQuizzesPct,
+                      barColor: "var(--navy, #10233b)",
+                    }}
+                  />
+                </div>
+
+                <IndSubh titulo="Desenho universal" />
+                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.pessoasComDeficiencia),
+                      lab: "Pessoas com deficiência",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.instituicoesComApoios),
+                      lab: "Instituições com apoios solicitados",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "inc",
+                      val: fmtNum(indicadores!.tiposApoioRequeridos),
+                      lab: "Tipos de apoio requeridos",
+                    }}
+                  />
+                  <KpiCard
+                    kpi={{
+                      src: "plat",
+                      val: `${indicadores!.licoesComAudioPct}%`,
+                      lab: "Lições com áudio",
+                    }}
+                  />
                 </div>
               </>
             )}
 
-            <div className="mt-8 rounded-2xl bg-navy p-6 text-[14px] leading-[1.65] text-[#cdd5dd]">
-              <h5 className="mb-2 text-[14px] text-gold">
-                Desenho universal e a Lei n.º 10/2024
-              </h5>
-              <p>
-                Todas as lições têm áudio, leitura fácil e alto contraste. A
-                plataforma foi desenhada segundo os princípios de desenho universal
-                que a Lei n.º 10/2024 consagra — o que reduz o risco de
-                incumprimento e aproxima a instituição da conformidade. A avaliação
-                da conformidade de cada instituição compete às entidades
-                competentes, não à Ologa.
-              </p>
+            <div className="mt-8 grid gap-5 rounded-2xl bg-navy p-6 text-[14px] leading-[1.65] text-[#cdd5dd] sm:p-7">
+              <div>
+                <h5 className="mb-2 text-[14px] text-gold">
+                  Leitura dos indicadores
+                </h5>
+                <p>{lerIndicadores(indicadores, semInscricoes)}</p>
+              </div>
+              <div className="border-t border-white/15 pt-4">
+                <h5 className="mb-2 text-[14px] text-gold">
+                  Desenho universal e a Lei n.º 10/2024
+                </h5>
+                <p>
+                  Todas as lições têm áudio, leitura fácil e alto contraste. A
+                  plataforma foi desenhada segundo os princípios de desenho
+                  universal que a Lei n.º 10/2024 consagra — o que reduz o
+                  risco de incumprimento e aproxima a instituição da
+                  conformidade. A avaliação da conformidade de cada instituição
+                  compete às entidades competentes, não à Ologa.
+                </p>
+              </div>
             </div>
           </div>
         </section>
+
 
         {/* 4. CURSOS — lidos da base de dados */}
         <section id="modulos" className="border-t border-line bg-white py-16">
