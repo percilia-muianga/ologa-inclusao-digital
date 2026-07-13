@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import logo from "@/assets/ologa-logo.png.asset.json";
 import { ListenButton } from "@/components/listen-button";
+import {
+  FormularioInstituicao,
+  type Modulo as ModuloForm,
+  type PayloadInstituicao,
+} from "@/components/formulario-instituicao";
+import { criarInscricao, listarModulosPublico } from "@/lib/inscricao.functions";
+import { obterIndicadoresPublicos } from "@/lib/indicadores.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -93,16 +101,91 @@ const LEI_REF =
 
 const NAV_ITEMS: { href: string; label: string; kind: "hash" | "route"; to?: string }[] = [
   { href: "#mercado", label: "Análise de Mercado", kind: "hash" },
-  { href: "/inscricao", label: "Inscrição", kind: "route", to: "/inscricao" },
+  { href: "#inscricao", label: "Inscrição", kind: "hash" },
   { href: "#indicadores", label: "Indicadores", kind: "hash" },
-  { href: "/formacao", label: "Cursos", kind: "route", to: "/formacao" },
+  { href: "#modulos", label: "Cursos", kind: "hash" },
   { href: "#percurso", label: "Percurso", kind: "hash" },
   { href: "#entregaveis", label: "Entregáveis", kind: "hash" },
   { href: "#contacto", label: "Contacto", kind: "hash" },
 ];
 
+type ModuloCatalogo = {
+  id: string;
+  ordem: number | null;
+  titulo: string;
+  nivel: string | null;
+  duracao: string | null;
+  descricao: string | null;
+};
+
+type Indicadores = {
+  instituicoesInscritas: number;
+  instituicoesComDeclaracao: number;
+  formandosCertificados: number;
+  distritosAbrangidos: number;
+};
+
 function HomePage() {
   const [src, setSrc] = useState<Src | null>(null);
+  const listarModulos = useServerFn(listarModulosPublico);
+  const criar = useServerFn(criarInscricao);
+  const carregarIndicadores = useServerFn(obterIndicadoresPublicos);
+
+  // Cursos (para #modulos)
+  const [modulosCatalogo, setModulosCatalogo] = useState<ModuloCatalogo[]>([]);
+  const [modulosCarregadosCat, setModulosCarregadosCat] = useState(false);
+
+  // Formulário de instituições (para o embutido no #inscricao)
+  const [modulosForm, setModulosForm] = useState<ModuloForm[]>([]);
+  const [modulosFormCarregados, setModulosFormCarregados] = useState(false);
+  const [aSubmeter, setASubmeter] = useState(false);
+  const [erroInsc, setErroInsc] = useState<string | null>(null);
+  const [codigoInsc, setCodigoInsc] = useState<string | null>(null);
+
+  // Indicadores
+  const [indicadores, setIndicadores] = useState<Indicadores | null>(null);
+  const [indicadoresCarregados, setIndicadoresCarregados] = useState(false);
+
+  useEffect(() => {
+    let cancelado = false;
+    listarModulos().then((res) => {
+      if (cancelado) return;
+      if (res.ok) {
+        setModulosCatalogo(res.modulos as ModuloCatalogo[]);
+        setModulosForm(res.modulos as ModuloForm[]);
+      }
+      setModulosCarregadosCat(true);
+      setModulosFormCarregados(true);
+    });
+    carregarIndicadores()
+      .then((r) => {
+        if (cancelado) return;
+        setIndicadores(r);
+      })
+      .finally(() => {
+        if (!cancelado) setIndicadoresCarregados(true);
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [listarModulos, carregarIndicadores]);
+
+  async function submeterInscricao(payload: PayloadInstituicao) {
+    setErroInsc(null);
+    setASubmeter(true);
+    const res = await criar({ data: { ...payload, consentimento: true } });
+    setASubmeter(false);
+    if (res.ok) {
+      setCodigoInsc(res.codigo);
+      const el = document.getElementById("inscricao");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      setErroInsc(
+        res.mensagem ||
+          "Não foi possível concluir a inscrição. Tente novamente daqui a instantes.",
+      );
+    }
+  }
 
   // Fechar com Escape
   useEffect(() => {
@@ -115,6 +198,13 @@ function HomePage() {
   }, [src]);
 
   const openSrc = (url: string, ref: string) => setSrc({ url, ref });
+
+  const semIndicadores =
+    !indicadores ||
+    (indicadores.instituicoesInscritas === 0 &&
+      indicadores.instituicoesComDeclaracao === 0 &&
+      indicadores.formandosCertificados === 0 &&
+      indicadores.distritosAbrangidos === 0);
 
   return (
     <>
@@ -424,7 +514,199 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 3. PERCURSO */}
+        {/* 2. INSCRIÇÃO — embutida na homepage */}
+        <section id="inscricao" className="border-t border-line bg-white py-16">
+          <div className="wrap max-w-[960px]">
+            <div className="eyebrow">Inscrição de Instituição</div>
+            <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
+              Inscreva a sua instituição
+            </h2>
+            <p className="mb-8 max-w-[720px] text-[17px] text-muted-foreground">
+              Preencha os dados da sua organização e das equipas a formar. No fim,
+              recebe um código de inscrição para partilhar com os colaboradores que
+              vão fazer a formação.
+            </p>
+
+            {codigoInsc ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-2xl border border-line bg-page p-7"
+              >
+                <h3 className="text-[22px] font-extrabold text-navy">
+                  Inscrição registada
+                </h3>
+                <p className="mt-2 text-[15px] text-muted-foreground">
+                  Guarde e partilhe o código abaixo com os colaboradores.
+                </p>
+                <div className="mt-5 rounded-xl border border-ink/20 bg-white p-5">
+                  <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Código de inscrição da instituição
+                  </p>
+                  <p className="mt-1 font-mono text-[32px] font-extrabold tracking-widest text-navy">
+                    {codigoInsc}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <FormularioInstituicao
+                modo="publico"
+                modulos={modulosForm}
+                modulosCarregados={modulosFormCarregados}
+                aSubmeter={aSubmeter}
+                onSubmit={submeterInscricao}
+                textoBotao="Submeter inscrição"
+                mensagemErro={erroInsc}
+              />
+            )}
+          </div>
+        </section>
+
+        {/* 3. INDICADORES — painel público */}
+        <section id="indicadores" className="py-16">
+          <div className="wrap">
+            <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
+              Indicadores
+            </h2>
+            <p className="mb-9 max-w-[820px] text-[17px] text-muted-foreground">
+              Totais nacionais do programa. Não são apresentados dados de nenhuma
+              instituição em concreto — só agregados. Começam a zero e atualizam-se
+              à medida que as inscrições e as certificações entram.
+            </p>
+
+            {!indicadoresCarregados ? (
+              <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
+                A carregar indicadores…
+              </div>
+            ) : semIndicadores ? (
+              <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
+                Ainda sem dados.
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <div className="eyebrow">Compromisso Institucional</div>
+                  <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="card-elevated p-[22px]">
+                      <div className="text-[32px] font-extrabold leading-none text-brand">
+                        {indicadores!.instituicoesComDeclaracao}
+                      </div>
+                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
+                        Instituições com Declaração assinada
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div className="eyebrow">Totais nacionais</div>
+                  <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="card-elevated p-[22px]">
+                      <div className="text-[32px] font-extrabold leading-none text-brand">
+                        {indicadores!.instituicoesInscritas}
+                      </div>
+                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
+                        Instituições inscritas
+                      </div>
+                    </div>
+                    <div className="card-elevated p-[22px]">
+                      <div className="text-[32px] font-extrabold leading-none text-brand">
+                        {indicadores!.formandosCertificados}
+                      </div>
+                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
+                        Formandos certificados
+                      </div>
+                    </div>
+                    <div className="card-elevated p-[22px]">
+                      <div className="text-[32px] font-extrabold leading-none text-brand">
+                        {indicadores!.distritosAbrangidos}
+                      </div>
+                      <div className="mt-2 text-[13.5px] font-semibold text-muted-foreground">
+                        Distritos abrangidos
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="mt-8 rounded-2xl bg-navy p-6 text-[14px] leading-[1.65] text-[#cdd5dd]">
+              <h5 className="mb-2 text-[14px] text-gold">
+                Desenho universal e a Lei n.º 10/2024
+              </h5>
+              <p>
+                Todas as lições têm áudio, leitura fácil e alto contraste. A
+                plataforma foi desenhada segundo os princípios de desenho universal
+                que a Lei n.º 10/2024 consagra — o que reduz o risco de
+                incumprimento e aproxima a instituição da conformidade. A avaliação
+                da conformidade de cada instituição compete às entidades
+                competentes, não à Ologa.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. CURSOS — lidos da base de dados */}
+        <section id="modulos" className="border-t border-line bg-white py-16">
+          <div className="wrap">
+            <div className="eyebrow">Cursos</div>
+            <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
+              Pacote completo de literacia digital
+            </h2>
+            <p className="mb-9 max-w-[820px] text-[17px] text-muted-foreground">
+              Módulos adaptados ao contexto de Moçambique, em formato físico e
+              virtual. Abra a formação para ver as lições, o material de e-learning
+              e o guião do formador.
+            </p>
+
+            {!modulosCarregadosCat ? (
+              <div className="rounded-2xl border border-line bg-page p-7 text-[15px] text-muted-foreground">
+                A carregar cursos…
+              </div>
+            ) : modulosCatalogo.length === 0 ? (
+              <div className="rounded-2xl border border-line bg-page p-7 text-[15px] text-muted-foreground">
+                Conteúdo ainda não carregado.
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {modulosCatalogo.map((m) => (
+                    <Link
+                      key={m.id}
+                      to="/formacao"
+                      className="card-elevated block p-[22px] transition-colors hover:border-brand"
+                    >
+                      {m.nivel ? (
+                        <div className="mb-2 inline-block rounded-full border border-line px-2 py-[3px] text-[11px] font-bold uppercase tracking-wider text-navy-2">
+                          {m.nivel}
+                        </div>
+                      ) : null}
+                      <h3 className="text-[17px] font-extrabold text-navy">
+                        {m.titulo}
+                      </h3>
+                      {m.duracao ? (
+                        <div className="mt-1 text-[12.5px] font-semibold text-muted-foreground">
+                          {m.duracao}
+                        </div>
+                      ) : null}
+                      {m.descricao ? (
+                        <p className="mt-2 text-[13.5px] text-[#39485a]">
+                          {m.descricao}
+                        </p>
+                      ) : null}
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-6">
+                  <Link to="/formacao" className="btn-brand btn-brand-hover">
+                    Abrir a formação
+                  </Link>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* 5. PERCURSO */}
         <section id="percurso" className="py-16">
           <div className="wrap">
             <div className="eyebrow">Percurso de Aprendizagem</div>

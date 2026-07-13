@@ -16,7 +16,7 @@ export const listarModulosPublico = createServerFn({ method: "GET" }).handler(
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("modulos")
-      .select("id, titulo, ordem, nivel")
+      .select("id, titulo, ordem, nivel, duracao, descricao")
       .order("ordem", { ascending: true });
     if (error) return { ok: false as const, mensagem: error.message };
     return { ok: true as const, modulos: data ?? [] };
