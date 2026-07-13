@@ -109,9 +109,13 @@ export type Database = {
           conectividade: Database["public"]["Enums"]["conectividade"] | null
           consentimento: boolean
           criado_em: string
+          declaracao_assinada: boolean
+          declaracao_assinada_em: string | null
           distrito: string | null
           id: string
+          indicadores_token: string
           meio: Database["public"]["Enums"]["meio_instituicao"] | null
+          meta_cobertura_pct: number | null
           modalidade: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
@@ -122,11 +126,12 @@ export type Database = {
           num_homens: number | null
           num_mulheres: number | null
           num_pcd: number | null
+          num_trabalhadores_total: number | null
           observacoes: string | null
           percurso: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email: string | null
           ponto_focal_nome: string | null
-          prazo: Database["public"]["Enums"]["prazo_pretendido"] | null
+          prazo_meses: number | null
           provincia: string | null
           sala_disponivel:
             | Database["public"]["Enums"]["sala_disponivel_opt"]
@@ -142,9 +147,13 @@ export type Database = {
           conectividade?: Database["public"]["Enums"]["conectividade"] | null
           consentimento?: boolean
           criado_em?: string
+          declaracao_assinada?: boolean
+          declaracao_assinada_em?: string | null
           distrito?: string | null
           id?: string
+          indicadores_token?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
+          meta_cobertura_pct?: number | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse?: string[] | null
           natureza: Database["public"]["Enums"]["natureza_instituicao"]
@@ -155,11 +164,12 @@ export type Database = {
           num_homens?: number | null
           num_mulheres?: number | null
           num_pcd?: number | null
+          num_trabalhadores_total?: number | null
           observacoes?: string | null
           percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
-          prazo?: Database["public"]["Enums"]["prazo_pretendido"] | null
+          prazo_meses?: number | null
           provincia?: string | null
           sala_disponivel?:
             | Database["public"]["Enums"]["sala_disponivel_opt"]
@@ -175,9 +185,13 @@ export type Database = {
           conectividade?: Database["public"]["Enums"]["conectividade"] | null
           consentimento?: boolean
           criado_em?: string
+          declaracao_assinada?: boolean
+          declaracao_assinada_em?: string | null
           distrito?: string | null
           id?: string
+          indicadores_token?: string
           meio?: Database["public"]["Enums"]["meio_instituicao"] | null
+          meta_cobertura_pct?: number | null
           modalidade?: Database["public"]["Enums"]["modalidade"] | null
           modulos_interesse?: string[] | null
           natureza?: Database["public"]["Enums"]["natureza_instituicao"]
@@ -188,11 +202,12 @@ export type Database = {
           num_homens?: number | null
           num_mulheres?: number | null
           num_pcd?: number | null
+          num_trabalhadores_total?: number | null
           observacoes?: string | null
           percurso?: Database["public"]["Enums"]["percurso"] | null
           ponto_focal_email?: string | null
           ponto_focal_nome?: string | null
-          prazo?: Database["public"]["Enums"]["prazo_pretendido"] | null
+          prazo_meses?: number | null
           provincia?: string | null
           sala_disponivel?:
             | Database["public"]["Enums"]["sala_disponivel_opt"]
@@ -516,10 +531,34 @@ export type Database = {
         Args: { _turma: string; _uid: string }
         Returns: boolean
       }
+      get_indicadores_por_token: {
+        Args: { _token: string }
+        Returns: {
+          declaracao_assinada: boolean
+          declaracao_assinada_em: string
+          distrito: string
+          formandos_certificados: number
+          meta_cobertura_pct: number
+          nome: string
+          num_colaboradores_total: number
+          num_trabalhadores_total: number
+          prazo_meses: number
+          provincia: string
+        }[]
+      }
       get_instituicao: { Args: { _uid: string }; Returns: string }
       get_papel: {
         Args: { _uid: string }
         Returns: Database["public"]["Enums"]["papel_utilizador"]
+      }
+      get_totais_nacionais: {
+        Args: never
+        Returns: {
+          declaracoes_assinadas: number
+          distritos_abrangidos: number
+          formandos_certificados: number
+          instituicoes_inscritas: number
+        }[]
       }
       is_admin: { Args: { _uid: string }; Returns: boolean }
       is_gestor_de: {
@@ -559,12 +598,6 @@ export type Database = {
       nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
       papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
       percurso: "completo" | "fundacao" | "intermedio" | "avancado" | "avulsos"
-      prazo_pretendido:
-        | "breve"
-        | "entre_1_3_meses"
-        | "entre_3_6_meses"
-        | "mais_6_meses"
-        | "nao_definido"
       sala_disponivel_opt: "sim" | "nao" | "nao_sei"
       setor_instituicao:
         | "admin_publica_central"
@@ -732,13 +765,6 @@ export const Constants = {
       nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
       papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
       percurso: ["completo", "fundacao", "intermedio", "avancado", "avulsos"],
-      prazo_pretendido: [
-        "breve",
-        "entre_1_3_meses",
-        "entre_3_6_meses",
-        "mais_6_meses",
-        "nao_definido",
-      ],
       sala_disponivel_opt: ["sim", "nao", "nao_sei"],
       setor_instituicao: [
         "admin_publica_central",

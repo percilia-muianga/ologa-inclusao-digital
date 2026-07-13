@@ -45,6 +45,9 @@ export const criarInscricao = createServerFn({ method: "POST" })
           modalidade: data.modalidade ?? null,
           conectividade: data.conectividade ?? null,
           num_computadores: data.num_computadores ?? null,
+          num_trabalhadores_total: data.num_trabalhadores_total,
+          meta_cobertura_pct: data.meta_cobertura_pct,
+          prazo_meses: data.prazo_meses,
           num_colaboradores_total: data.num_colaboradores_total,
           nivel_literacia: data.nivel_literacia ?? null,
           num_mulheres: data.num_mulheres ?? null,
@@ -53,19 +56,19 @@ export const criarInscricao = createServerFn({ method: "POST" })
           apoios_acessibilidade: data.apoios_acessibilidade ?? null,
           modulos_interesse: data.modulos_interesse ?? null,
           percurso: data.percurso ?? null,
-          prazo: data.prazo ?? null,
           sala_disponivel: data.sala_disponivel ?? null,
           observacoes: data.observacoes?.trim() || null,
           consentimento: true,
           codigo_inscricao: codigo,
         })
-        .select("id, codigo_inscricao")
+        .select("id, codigo_inscricao, indicadores_token")
         .single();
       if (!error && inserted) {
         return {
           ok: true as const,
           id: inserted.id,
           codigo: inserted.codigo_inscricao,
+          indicadores_token: inserted.indicadores_token,
         };
       }
       const msg = error?.message?.toLowerCase() ?? "";

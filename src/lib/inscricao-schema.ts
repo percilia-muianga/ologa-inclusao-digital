@@ -82,14 +82,6 @@ export const PERCURSO_OPCOES = [
   ["avulsos", "Módulos avulsos (selecionar na lista de módulos)"],
 ] as const;
 
-export const PRAZO_OPCOES = [
-  ["breve", "O mais breve possível"],
-  ["entre_1_3_meses", "Dentro de 1 a 3 meses"],
-  ["entre_3_6_meses", "Dentro de 3 a 6 meses"],
-  ["mais_6_meses", "Mais de 6 meses"],
-  ["nao_definido", "Ainda não definido"],
-] as const;
-
 export const SALA_OPCOES = [
   ["sim", "Sim"],
   ["nao", "Não"],
@@ -166,13 +158,6 @@ const percurso = z.enum([
   "avancado",
   "avulsos",
 ]);
-const prazo = z.enum([
-  "breve",
-  "entre_1_3_meses",
-  "entre_3_6_meses",
-  "mais_6_meses",
-  "nao_definido",
-]);
 const sala = z.enum(["sim", "nao", "nao_sei"]);
 const provincia = z.enum(PROVINCIAS as unknown as [string, ...string[]]);
 
@@ -196,6 +181,19 @@ const baseInstituicaoObject = z.object({
   modalidade: modalidade.nullable().optional(),
   conectividade: conectividade.nullable().optional(),
   num_computadores: z.number().int().min(0).nullable().optional(),
+  num_trabalhadores_total: z
+    .number({ invalid_type_error: "Indique o número total de trabalhadores." })
+    .int()
+    .min(1, "Deve ser pelo menos 1."),
+  meta_cobertura_pct: z
+    .number({ invalid_type_error: "Indique a meta de cobertura em %." })
+    .int()
+    .min(1, "A meta deve ser entre 1 e 100.")
+    .max(100, "A meta deve ser entre 1 e 100."),
+  prazo_meses: z
+    .number({ invalid_type_error: "Indique o prazo em meses." })
+    .int()
+    .min(1, "O prazo deve ser de pelo menos 1 mês."),
   num_colaboradores_total: z
     .number({ invalid_type_error: "Indique o número total de colaboradores." })
     .int()
@@ -207,7 +205,6 @@ const baseInstituicaoObject = z.object({
   apoios_acessibilidade: z.array(apoio).max(10).nullable().optional(),
   modulos_interesse: z.array(z.string().uuid()).max(500).nullable().optional(),
   percurso: percurso.nullable().optional(),
-  prazo: prazo.nullable().optional(),
   sala_disponivel: sala.nullable().optional(),
   observacoes: z.string().trim().max(5000).nullable().optional(),
 });

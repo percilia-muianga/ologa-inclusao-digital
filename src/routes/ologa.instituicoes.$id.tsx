@@ -16,7 +16,6 @@ import {
   NATUREZA_OPCOES,
   NIVEL_LITERACIA_OPCOES,
   PERCURSO_OPCOES,
-  PRAZO_OPCOES,
   SALA_OPCOES,
   SETOR_OPCOES,
   rotulo,
@@ -50,7 +49,12 @@ type Instituicao = {
   apoios_acessibilidade: string[] | null;
   modulos_interesse: string[] | null;
   percurso: string | null;
-  prazo: string | null;
+  num_trabalhadores_total: number | null;
+  meta_cobertura_pct: number | null;
+  prazo_meses: number | null;
+  declaracao_assinada: boolean;
+  declaracao_assinada_em: string | null;
+  indicadores_token: string;
   sala_disponivel: string | null;
   observacoes: string | null;
   consentimento: boolean;
@@ -245,7 +249,6 @@ function FichaPage() {
         </Seccao>
 
         <Seccao titulo="6. Logística">
-          <Linha rot="Prazo pretendido" val={rotulo(PRAZO_OPCOES, inst.prazo)} />
           <Linha
             rot="Sala disponível"
             val={rotulo(SALA_OPCOES, inst.sala_disponivel)}

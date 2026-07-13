@@ -8,7 +8,6 @@ import {
   NATUREZA_OPCOES,
   NIVEL_LITERACIA_OPCOES,
   PERCURSO_OPCOES,
-  PRAZO_OPCOES,
   PROVINCIAS,
   SALA_OPCOES,
   SETOR_OPCOES,
@@ -29,6 +28,9 @@ export type ValoresFormulario = {
   modalidade: string;
   conectividade: string;
   num_computadores: string;
+  num_trabalhadores_total: string;
+  meta_cobertura_pct: string;
+  prazo_meses: string;
   num_colaboradores_total: string;
   nivel_literacia: string;
   num_mulheres: string;
@@ -37,7 +39,6 @@ export type ValoresFormulario = {
   apoios_acessibilidade: string[];
   modulos_interesse: string[];
   percurso: string;
-  prazo: string;
   sala_disponivel: string;
   observacoes: string;
   consentimento: boolean;
@@ -56,6 +57,9 @@ export const VALORES_INICIAIS: ValoresFormulario = {
   modalidade: "",
   conectividade: "",
   num_computadores: "",
+  num_trabalhadores_total: "",
+  meta_cobertura_pct: "",
+  prazo_meses: "",
   num_colaboradores_total: "",
   nivel_literacia: "",
   num_mulheres: "",
@@ -64,7 +68,6 @@ export const VALORES_INICIAIS: ValoresFormulario = {
   apoios_acessibilidade: [],
   modulos_interesse: [],
   percurso: "",
-  prazo: "",
   sala_disponivel: "",
   observacoes: "",
   consentimento: false,
@@ -89,6 +92,9 @@ export type PayloadInstituicao = {
   modalidade: string | null;
   conectividade: string | null;
   num_computadores: number | null;
+  num_trabalhadores_total: number;
+  meta_cobertura_pct: number;
+  prazo_meses: number;
   num_colaboradores_total: number;
   nivel_literacia: string | null;
   num_mulheres: number | null;
@@ -97,7 +103,6 @@ export type PayloadInstituicao = {
   apoios_acessibilidade: string[] | null;
   modulos_interesse: string[] | null;
   percurso: string | null;
-  prazo: string | null;
   sala_disponivel: string | null;
   observacoes: string | null;
 };
@@ -116,6 +121,9 @@ export function valoresParaPayload(v: ValoresFormulario): PayloadInstituicao {
     modalidade: v.modalidade || null,
     conectividade: v.conectividade || null,
     num_computadores: numOuNulo(v.num_computadores),
+    num_trabalhadores_total: Number(v.num_trabalhadores_total),
+    meta_cobertura_pct: Number(v.meta_cobertura_pct),
+    prazo_meses: Number(v.prazo_meses),
     num_colaboradores_total: Number(v.num_colaboradores_total),
     nivel_literacia: v.nivel_literacia || null,
     num_mulheres: numOuNulo(v.num_mulheres),
@@ -126,7 +134,6 @@ export function valoresParaPayload(v: ValoresFormulario): PayloadInstituicao {
     modulos_interesse:
       v.modulos_interesse.length > 0 ? v.modulos_interesse : null,
     percurso: v.percurso || null,
-    prazo: v.prazo || null,
     sala_disponivel: v.sala_disponivel || null,
     observacoes: v.observacoes.trim() || null,
   };
@@ -187,6 +194,27 @@ export function FormularioInstituicao({
     if (v.ponto_focal_email.trim()) {
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.ponto_focal_email.trim());
       if (!emailOk) e.ponto_focal_email = "Email inválido.";
+    }
+    const totStr = v.num_trabalhadores_total.trim();
+    if (!totStr) e.num_trabalhadores_total = "Indique o número total de trabalhadores.";
+    else {
+      const n = Number(totStr);
+      if (!Number.isInteger(n) || n < 1)
+        e.num_trabalhadores_total = "Deve ser um número inteiro maior ou igual a 1.";
+    }
+    const metaStr = v.meta_cobertura_pct.trim();
+    if (!metaStr) e.meta_cobertura_pct = "Indique a meta de cobertura em %.";
+    else {
+      const n = Number(metaStr);
+      if (!Number.isInteger(n) || n < 1 || n > 100)
+        e.meta_cobertura_pct = "A meta deve ser um inteiro entre 1 e 100.";
+    }
+    const prazoStr = v.prazo_meses.trim();
+    if (!prazoStr) e.prazo_meses = "Indique o prazo em meses.";
+    else {
+      const n = Number(prazoStr);
+      if (!Number.isInteger(n) || n < 1)
+        e.prazo_meses = "O prazo deve ser um inteiro maior ou igual a 1.";
     }
     const totalStr = v.num_colaboradores_total.trim();
     if (!totalStr) e.num_colaboradores_total = "Indique o número total.";
@@ -350,10 +378,47 @@ export function FormularioInstituicao({
         />
       </section>
 
-      {/* 3. Colaboradores */}
+      {/* 3. Dimensão e metas */}
+      <section aria-labelledby={idsCampos.secDim} className="space-y-5">
+        <h2 id={idsCampos.secDim} className="text-xl font-bold text-ink">
+          3. Dimensão e metas
+        </h2>
+
+        <CampoNumero
+          id={idsCampos.nTrabTotal}
+          label="Número TOTAL de trabalhadores da instituição"
+          obrigatorio
+          value={v.num_trabalhadores_total}
+          onChange={(x) => setCampo("num_trabalhadores_total", x)}
+          erro={erros.num_trabalhadores_total}
+          min={1}
+        />
+
+        <CampoNumero
+          id={idsCampos.metaCob}
+          label="Meta de cobertura pretendida (% do quadro a formar)"
+          obrigatorio
+          value={v.meta_cobertura_pct}
+          onChange={(x) => setCampo("meta_cobertura_pct", x)}
+          erro={erros.meta_cobertura_pct}
+          min={1}
+        />
+
+        <CampoNumero
+          id={idsCampos.prazoMeses}
+          label="Prazo pretendido, em meses"
+          obrigatorio
+          value={v.prazo_meses}
+          onChange={(x) => setCampo("prazo_meses", x)}
+          erro={erros.prazo_meses}
+          min={1}
+        />
+      </section>
+
+      {/* 4. Colaboradores */}
       <section aria-labelledby={idsCampos.secColab} className="space-y-5">
         <h2 id={idsCampos.secColab} className="text-xl font-bold text-ink">
-          3. Colaboradores a formar
+          4. Colaboradores a formar
         </h2>
 
         <CampoNumero
@@ -402,10 +467,10 @@ export function FormularioInstituicao({
         </div>
       </section>
 
-      {/* 4. Apoios de acessibilidade */}
+      {/* 5. Apoios de acessibilidade */}
       <section aria-labelledby={idsCampos.secApoios} className="space-y-4">
         <h2 id={idsCampos.secApoios} className="text-xl font-bold text-ink">
-          4. Apoios de acessibilidade necessários
+          5. Apoios de acessibilidade necessários
         </h2>
         <p className="text-base text-foreground">
           Serve para garantir a provisão (intérprete, sala acessível). A formação é a mesma
@@ -427,10 +492,10 @@ export function FormularioInstituicao({
         </fieldset>
       </section>
 
-      {/* 5. Módulos e percurso */}
+      {/* 6. Módulos e percurso */}
       <section aria-labelledby={idsCampos.secModulos} className="space-y-5">
         <h2 id={idsCampos.secModulos} className="text-xl font-bold text-ink">
-          5. Módulos de interesse e percurso pretendido
+          6. Módulos de interesse e percurso pretendido
         </h2>
 
         <div>
@@ -468,19 +533,20 @@ export function FormularioInstituicao({
         />
       </section>
 
-      {/* 6. Logística */}
+      {/* 7. Logística */}
       <section aria-labelledby={idsCampos.secLog} className="space-y-5">
         <h2 id={idsCampos.secLog} className="text-xl font-bold text-ink">
-          6. Logística
+          7. Logística
         </h2>
 
         <CampoSelecao
-          id={idsCampos.prazo}
-          label="Prazo pretendido"
-          value={v.prazo}
-          onChange={(x) => setCampo("prazo", x)}
-          opcoes={PRAZO_OPCOES}
+          id={idsCampos.sala}
+          label="Sala disponível"
+          value={v.sala_disponivel}
+          onChange={(x) => setCampo("sala_disponivel", x)}
+          opcoes={SALA_OPCOES}
         />
+
 
         <CampoSelecao
           id={idsCampos.sala}
@@ -667,6 +733,7 @@ function useIdsCampos() {
   return {
     secIdent: `${base}-s1`,
     secLoc: `${base}-s2`,
+    secDim: `${base}-s3d`,
     secColab: `${base}-s3`,
     secApoios: `${base}-s4`,
     secModulos: `${base}-s5`,
@@ -684,13 +751,15 @@ function useIdsCampos() {
     modalidade: `${base}-modalidade`,
     conectividade: `${base}-conectividade`,
     nComp: `${base}-ncomp`,
+    nTrabTotal: `${base}-ntrabtotal`,
+    metaCob: `${base}-metacob`,
+    prazoMeses: `${base}-prazomeses`,
     nTotal: `${base}-ntotal`,
     nivelLit: `${base}-nivel-lit`,
     nMul: `${base}-nmul`,
     nHom: `${base}-nhom`,
     nPcd: `${base}-npcd`,
     percurso: `${base}-percurso`,
-    prazo: `${base}-prazo`,
     sala: `${base}-sala`,
     obs: `${base}-obs`,
   };
