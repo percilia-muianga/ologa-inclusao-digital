@@ -239,6 +239,56 @@ export const regenerarLinkPasswordColaborador = createServerFn({ method: "POST" 
     }
   });
 
+// ---------- Servidor: regenerar convites em lote ----------
+
+export const regenerarLinksPasswordEmLote = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        perfil_ids: z.array(z.string().uuid()).min(1).max(500),
+        origin: z.string().url(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const g = await obterGestor(context.userId);
+    if (!g) return { ok: false as const, mensagem: "acesso_negado" };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: perfis, error } = await supabaseAdmin
+      .from("perfis")
+      .select("id, nome, email, instituicao_id, papel, palavra_passe_definida_em")
+      .in("id", data.perfil_ids);
+    if (error) return { ok: false as const, mensagem: error.message };
+
+    const gerados: { nome: string; email: string; link: string }[] = [];
+    const ignorados: { nome: string; email: string; motivo: string }[] = [];
+
+    for (const p of perfis ?? []) {
+      if (p.instituicao_id !== g.instituicao_id || p.papel !== "formando") {
+        ignorados.push({ nome: p.nome, email: p.email, motivo: "acesso_negado" });
+        continue;
+      }
+      if (p.palavra_passe_definida_em) {
+        ignorados.push({ nome: p.nome, email: p.email, motivo: "conta_ja_ativada" });
+        continue;
+      }
+      try {
+        const token = await criarConviteParaPerfil(p.id);
+        gerados.push({ nome: p.nome, email: p.email, link: construirLink(data.origin, token) });
+      } catch (e) {
+        ignorados.push({
+          nome: p.nome,
+          email: p.email,
+          motivo: e instanceof Error ? e.message : "erro_convite",
+        });
+      }
+    }
+
+    return { ok: true as const, gerados, ignorados };
+  });
+
 // ---------- Servidor: importar colaboradores em bloco ----------
 
 const linhaSchema = z.object({

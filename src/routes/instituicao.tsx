@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import * as XLSX from "xlsx";
 import { useGestorGuard } from "@/hooks/use-gestor-guard";
 import {
   listarColaboradoresGestor,
   obterMinhaInstituicaoGestor,
   regenerarLinkPasswordColaborador,
+  regenerarLinksPasswordEmLote,
 } from "@/lib/colaboradores.functions";
 import { ImportColaboradoresDialog } from "@/components/import-colaboradores-dialog";
 
@@ -34,6 +36,7 @@ function InstituicaoPage() {
   const obterInst = useServerFn(obterMinhaInstituicaoGestor);
   const listar = useServerFn(listarColaboradoresGestor);
   const regenerar = useServerFn(regenerarLinkPasswordColaborador);
+  const regenerarLote = useServerFn(regenerarLinksPasswordEmLote);
 
   const [inst, setInst] = useState<Instituicao | null>(null);
   const [colabs, setColabs] = useState<Colaborador[]>([]);
@@ -43,6 +46,19 @@ function InstituicaoPage() {
   const [linkAberto, setLinkAberto] = useState<{ nome: string; link: string } | null>(null);
   const [copiado, setCopiado] = useState(false);
   const [codigoCopiado, setCodigoCopiado] = useState(false);
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
+  const [aGerarLote, setAGerarLote] = useState(false);
+  const [resumoLote, setResumoLote] = useState<
+    { gerados: number; ignorados: { nome: string; email: string; motivo: string }[] } | null
+  >(null);
+
+  const naoAtivados = useMemo(() => colabs.filter((c) => !c.conta_ativada), [colabs]);
+  const selecionaveis = useMemo(
+    () => naoAtivados.filter((c) => selecionados.has(c.id)),
+    [naoAtivados, selecionados],
+  );
+  const todosSelecionados =
+    naoAtivados.length > 0 && naoAtivados.every((c) => selecionados.has(c.id));
 
   const carregar = useCallback(
     async (q: string) => {
@@ -61,9 +77,61 @@ function InstituicaoPage() {
         return;
       }
       setColabs(r2.colaboradores);
+      setSelecionados(new Set());
     },
     [obterInst, listar],
   );
+
+  function alternarSelecao(id: string) {
+    setSelecionados((prev) => {
+      const s = new Set(prev);
+      if (s.has(id)) s.delete(id);
+      else s.add(id);
+      return s;
+    });
+  }
+
+  function alternarTodos() {
+    setSelecionados((prev) => {
+      if (naoAtivados.every((c) => prev.has(c.id))) return new Set();
+      return new Set(naoAtivados.map((c) => c.id));
+    });
+  }
+
+  function selecionarTodosNaoAtivados() {
+    setSelecionados(new Set(naoAtivados.map((c) => c.id)));
+  }
+
+  async function gerarLote(ids: string[]) {
+    if (ids.length === 0) return;
+    setAGerarLote(true);
+    setResumoLote(null);
+    try {
+      const res = await regenerarLote({
+        data: { perfil_ids: ids, origin: window.location.origin },
+      });
+      if (!res.ok) {
+        alert("Não foi possível gerar os convites.");
+        return;
+      }
+      if (res.gerados.length > 0) {
+        const linhas = [
+          ["Nome", "Email", "Link"],
+          ...res.gerados.map((g) => [g.nome, g.email, g.link]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(linhas);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Convites");
+        const nome = `convites-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        XLSX.writeFile(wb, nome);
+      }
+      setResumoLote({ gerados: res.gerados.length, ignorados: res.ignorados });
+      setSelecionados(new Set());
+      await carregar(pesquisa.trim());
+    } finally {
+      setAGerarLote(false);
+    }
+  }
 
   useEffect(() => {
     if (guard.estado !== "ok") return;
@@ -183,10 +251,45 @@ function InstituicaoPage() {
             />
           </div>
 
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-md border border-ink/10 bg-ink/5 p-3">
+            <p className="text-sm text-foreground">
+              {selecionaveis.length > 0
+                ? `${selecionaveis.length} selecionado(s).`
+                : "Selecione colaboradores para gerar convites em lote."}
+            </p>
+            <button
+              type="button"
+              onClick={selecionarTodosNaoAtivados}
+              disabled={naoAtivados.length === 0}
+              className="inline-flex min-h-10 items-center rounded-md border border-ink/20 px-3 text-sm text-ink disabled:opacity-50"
+            >
+              Selecionar todos os não-ativados ({naoAtivados.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => gerarLote(selecionaveis.map((c) => c.id))}
+              disabled={selecionaveis.length === 0 || aGerarLote}
+              className="inline-flex min-h-10 items-center rounded-md bg-ink px-4 text-sm font-semibold text-ink-foreground disabled:opacity-50"
+            >
+              {aGerarLote
+                ? "A gerar…"
+                : `Gerar convites e descarregar folha (${selecionaveis.length})`}
+            </button>
+          </div>
+
           <div className="mt-4 overflow-auto rounded-md border border-ink/10">
-            <table className="w-full min-w-[720px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-ink/5 text-left">
                 <tr>
+                  <th className="px-3 py-2">
+                    <input
+                      type="checkbox"
+                      aria-label="Selecionar todos os não-ativados visíveis"
+                      checked={todosSelecionados}
+                      onChange={alternarTodos}
+                      disabled={naoAtivados.length === 0}
+                    />
+                  </th>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Conta ativada</th>
@@ -198,13 +301,22 @@ function InstituicaoPage() {
               <tbody>
                 {colabs.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
+                    <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
                       Ainda não há colaboradores registados nesta instituição.
                     </td>
                   </tr>
                 )}
                 {colabs.map((c) => (
                   <tr key={c.id} className="border-t border-ink/5">
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        aria-label={`Selecionar ${c.nome}`}
+                        checked={selecionados.has(c.id)}
+                        onChange={() => alternarSelecao(c.id)}
+                        disabled={c.conta_ativada}
+                      />
+                    </td>
                     <td className="px-3 py-2 font-semibold text-ink">{c.nome}</td>
                     <td className="px-3 py-2 text-foreground">{c.email}</td>
                     <td className="px-3 py-2">
@@ -230,6 +342,7 @@ function InstituicaoPage() {
                         Gerar novo link
                       </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
@@ -284,8 +397,62 @@ function InstituicaoPage() {
           </div>
         </div>
       )}
+
+      {resumoLote && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="lote-titulo"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4"
+        >
+          <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+            <h2 id="lote-titulo" className="text-2xl font-extrabold text-ink">
+              Convites gerados
+            </h2>
+            <p className="mt-2 text-base text-foreground">
+              Foram gerados <strong>{resumoLote.gerados}</strong> convite(s). A folha
+              <strong> convites-AAAA-MM-DD.xlsx</strong> foi descarregada. Os links estão apenas
+              nessa folha — entregue-os aos colaboradores pelo canal habitual.
+            </p>
+            {resumoLote.ignorados.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-semibold text-ink">
+                  Não foram gerados convites para {resumoLote.ignorados.length}:
+                </p>
+                <ul className="mt-2 max-h-48 overflow-auto text-sm text-foreground">
+                  {resumoLote.ignorados.map((i) => (
+                    <li key={i.email} className="border-t border-ink/5 py-1">
+                      {i.nome} — {motivoIgnorado(i.motivo)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => setResumoLote(null)}
+                className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
+}
+
+function motivoIgnorado(m: string): string {
+  switch (m) {
+    case "conta_ja_ativada":
+      return "conta já ativada";
+    case "acesso_negado":
+      return "sem acesso";
+    default:
+      return "não foi possível gerar";
+  }
 }
 
 function rotuloEstadoConvite(e: EstadoConvite) {
