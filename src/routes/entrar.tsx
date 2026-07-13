@@ -135,7 +135,7 @@ function EntrarPage() {
 
         <div className="mt-6 flex flex-col gap-2 text-base">
           <Link to="/recuperar" className="font-semibold text-ink underline">Esqueci-me da palavra-passe</Link>
-          <Link to="/registo" className="font-semibold text-ink underline">Criar conta com código da instituição</Link>
+          
           <Link to="/" className="text-muted-foreground underline">Voltar ao início</Link>
         </div>
       </main>
