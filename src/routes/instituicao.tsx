@@ -287,3 +287,17 @@ function InstituicaoPage() {
     </>
   );
 }
+
+function rotuloEstadoConvite(e: EstadoConvite) {
+  switch (e) {
+    case "por_usar":
+      return <span className="text-brand">Por usar</span>;
+    case "usado":
+      return <span className="text-ink">Usado</span>;
+    case "expirado":
+      return <span className="text-brand">Expirado</span>;
+    default:
+      return <span className="text-muted-foreground">—</span>;
+  }
+}
+
