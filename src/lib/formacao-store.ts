@@ -4,11 +4,13 @@
 const CHAVE = "ologa.formacao.v1";
 
 export type RespostaQuiz = { perguntaId: string; indice: number };
+export type ResultadoQuiz = { pontuacao: number; total: number };
 
 export type EstadoFormacao = {
   tokenPessoal: string | null;
   licoesConcluidasPorModulo: Record<string, string[]>; // moduloId -> licaoId[]
   quizzesPorModulo: Record<string, RespostaQuiz[]>; // moduloId -> últimas respostas
+  resultadosQuizPorModulo: Record<string, ResultadoQuiz>; // moduloId -> resultado
   diagnosticoPorModulo: Record<string, { pontuacao: number; total: number }>;
 };
 
@@ -16,6 +18,7 @@ const INICIAL: EstadoFormacao = {
   tokenPessoal: null,
   licoesConcluidasPorModulo: {},
   quizzesPorModulo: {},
+  resultadosQuizPorModulo: {},
   diagnosticoPorModulo: {},
 };
 
