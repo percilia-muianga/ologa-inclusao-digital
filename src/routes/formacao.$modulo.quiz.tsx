@@ -59,6 +59,7 @@ function QuizView() {
     try {
       const r = await submeter({ data: { moduloId, respostas: lista } });
       formacaoStore.guardarQuiz(moduloId, lista);
+      formacaoStore.guardarResultadoQuiz(moduloId, r.pontuacao, r.total);
       setResultado(r);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
