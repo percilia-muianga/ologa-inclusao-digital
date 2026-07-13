@@ -278,3 +278,19 @@ export const importarColaboradoresChunk = createServerFn({ method: "POST" })
 
     return { ok: true, resultados };
   });
+
+// ---------- Servidor: marcar palavra-passe como definida pelo próprio ----------
+
+export const marcarPasswordDefinida = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("perfis")
+      .update({ palavra_passe_definida_em: new Date().toISOString() })
+      .eq("id", context.userId)
+      .is("palavra_passe_definida_em", null);
+    if (error) return { ok: false as const, mensagem: error.message };
+    return { ok: true as const };
+  });
+
