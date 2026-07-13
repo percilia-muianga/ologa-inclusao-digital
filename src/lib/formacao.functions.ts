@@ -185,11 +185,12 @@ export const obterQuiz = createServerFn({ method: "GET" })
       .maybeSingle();
     if (!modulo) return null;
 
-    const { data: perguntas } = await supabase
+    const { data: perguntas, error: pErr } = await supabase
       .from("quiz_perguntas")
       .select("id, pergunta, opcoes")
       .eq("modulo_id", modulo.id)
       .order("id", { ascending: true });
+    console.log("[obterQuiz] perguntas.len=", perguntas?.length, "err=", pErr);
 
     const { data: tentativas } = await supabase
       .from("progresso_quizzes")
@@ -207,6 +208,7 @@ export const obterQuiz = createServerFn({ method: "GET" })
         opcoes: p.opcoes as string[],
       })),
       ultima_tentativa: tentativas?.[0] ?? null,
+      _debug: { perguntas_len: perguntas?.length ?? 0, err: pErr ? JSON.stringify(pErr) : null },
     };
   });
 
