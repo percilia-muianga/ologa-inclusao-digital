@@ -189,8 +189,53 @@ function IndicadoresPage() {
             </div>
           )}
         </section>
+
+        <section aria-label="Documentos" className="mt-12">
+          <h2 className="text-2xl font-bold text-ink">Documentos</h2>
+          <p className="mt-2 text-sm text-foreground">
+            Cada documento é gerado a partir dos dados registados na plataforma. Atestam a formação
+            realizada. Não constituem certificação de conformidade legal.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+            <LinkDoc token={token} tipo="relatorio" nome="Relatório de capacitação" />
+            <LinkDoc token={token} tipo="certificado" nome="Certificado da instituição" />
+            <LinkDoc
+              token={token}
+              tipo="declaracao"
+              nome="Declaração de desenho universal"
+              nota="Ao gerar, a declaração fica registada como assinada."
+            />
+          </ul>
+        </section>
       </main>
     </>
+  );
+}
+
+function LinkDoc({
+  token,
+  tipo,
+  nome,
+  nota,
+}: {
+  token: string;
+  tipo: "relatorio" | "certificado" | "declaracao";
+  nome: string;
+  nota?: string;
+}) {
+  const href = `/api/public/documentos/${tipo}/${token}`;
+  return (
+    <li className="rounded-md border border-ink/10 bg-white p-4">
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener"
+        className="text-base font-semibold text-brand-dark underline"
+      >
+        {nome} (PDF)
+      </a>
+      {nota && <p className="mt-2 text-xs text-ink/60">{nota}</p>}
+    </li>
   );
 }
 

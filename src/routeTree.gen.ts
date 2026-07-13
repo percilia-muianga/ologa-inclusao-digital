@@ -26,6 +26,7 @@ import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modul
 import { Route as FormacaoModuloDiagnosticoRouteImport } from './routes/formacao.$modulo.diagnostico'
 import { Route as FormacaoModuloCertificadoRouteImport } from './routes/formacao.$modulo.certificado'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
+import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
 
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
@@ -115,6 +116,12 @@ const FormacaoModuloLicaoLicaoRoute =
     path: '/licao/$licao',
     getParentRoute: () => FormacaoModuloRoute,
   } as any)
+const ApiPublicDocumentosTipoTokenRoute =
+  ApiPublicDocumentosTipoTokenRouteImport.update({
+    id: '/api/public/documentos/$tipo/$token',
+    path: '/api/public/documentos/$tipo/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/ologa/instituicoes/$id'
     | '/formacao/$modulo/'
     | '/formacao/$modulo/licao/$licao'
+    | '/api/public/documentos/$tipo/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/ologa/instituicoes/$id'
     | '/formacao/$modulo'
     | '/formacao/$modulo/licao/$licao'
+    | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
     | '/'
@@ -226,6 +238,7 @@ export interface FileRouteTypes {
     | '/ologa/instituicoes/$id'
     | '/formacao/$modulo/'
     | '/formacao/$modulo/licao/$licao'
+    | '/api/public/documentos/$tipo/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -236,6 +249,7 @@ export interface RootRouteChildren {
   OlogaRoute: typeof OlogaRouteWithChildren
   VerificarRoute: typeof VerificarRoute
   IndicadoresTokenRoute: typeof IndicadoresTokenRoute
+  ApiPublicDocumentosTipoTokenRoute: typeof ApiPublicDocumentosTipoTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -359,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoModuloLicaoLicaoRouteImport
       parentRoute: typeof FormacaoModuloRoute
     }
+    '/api/public/documentos/$tipo/$token': {
+      id: '/api/public/documentos/$tipo/$token'
+      path: '/api/public/documentos/$tipo/$token'
+      fullPath: '/api/public/documentos/$tipo/$token'
+      preLoaderRoute: typeof ApiPublicDocumentosTipoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -418,6 +439,7 @@ const rootRouteChildren: RootRouteChildren = {
   OlogaRoute: OlogaRouteWithChildren,
   VerificarRoute: VerificarRoute,
   IndicadoresTokenRoute: IndicadoresTokenRoute,
+  ApiPublicDocumentosTipoTokenRoute: ApiPublicDocumentosTipoTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
