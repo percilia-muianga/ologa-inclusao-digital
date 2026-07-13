@@ -232,10 +232,11 @@ export const submeterQuiz = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!modulo) throw new Error("Módulo não encontrado");
 
-    const { data: perguntas } = await supabase
+    const { data: perguntas, error: perguntasErr } = await supabase
       .from("quiz_perguntas")
       .select("id, resposta_correta_indice")
       .eq("modulo_id", modulo.id);
+    console.log("[submeterQuiz] modulo.id=", modulo.id, "perguntas=", perguntas?.length, "err=", perguntasErr);
 
     const lista = perguntas ?? [];
     let pontuacao = 0;
