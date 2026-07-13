@@ -40,6 +40,7 @@ function RegistoPage() {
   const [nivel, setNivel] = useState<Nivel | "">("");
   const [defic, setDefic] = useState<Deficiencia | "">("");
   const [apoios, setApoios] = useState<Set<Apoio>>(new Set());
+  const [funcao, setFuncao] = useState("");
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
@@ -69,6 +70,7 @@ function RegistoPage() {
         nivel_partida: nivel === "" ? null : nivel,
         tem_deficiencia,
         apoios_acessibilidade: apoios.size > 0 ? Array.from(apoios) : null,
+        funcao: funcao.trim() ? funcao.trim() : null,
         origin: window.location.origin,
       },
     });
@@ -257,6 +259,20 @@ function RegistoPage() {
                 ))}
               </div>
             </fieldset>
+
+            <div className="mt-4">
+              <label htmlFor="funcao-registo" className="block text-base font-semibold text-ink">
+                Função (opcional)
+              </label>
+              <input
+                id="funcao-registo"
+                type="text"
+                maxLength={100}
+                value={funcao}
+                onChange={(e) => setFuncao(e.target.value)}
+                className="mt-1 block w-full rounded-md border border-ink/20 bg-white px-3 py-2 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ink"
+              />
+            </div>
           </fieldset>
 
           {erro && (
