@@ -4,12 +4,14 @@ type Props = {
   sentences: string[];
   label?: string;
   stopLabel?: string;
+  variant?: "light" | "dark";
 };
 
 export function ListenButton({
   sentences,
   label = "🔊 Ouvir esta página",
   stopLabel = "⏹ Parar leitura",
+  variant = "light",
 }: Props) {
   const [speaking, setSpeaking] = useState(false);
   const cancelledRef = useRef(false);
@@ -75,12 +77,17 @@ export function ListenButton({
     setSpeaking(false);
   };
 
+  const className =
+    variant === "dark"
+      ? "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-white/40 bg-white/15 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/25"
+      : "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-ink/20 bg-white px-4 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-page";
+
   return (
     <button
       type="button"
       onClick={speaking ? stop : speakSequence}
       aria-pressed={speaking}
-      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-ink/20 bg-white px-5 py-3 text-base font-semibold text-ink transition-colors hover:bg-accent"
+      className={className}
     >
       {speaking ? stopLabel : label}
     </button>

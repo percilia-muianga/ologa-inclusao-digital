@@ -6,14 +6,20 @@
 
 /*
  * Ologa — Literacia Digital
- * Sistema de estilos com foco em Desenho Universal (WCAG AA).
+ * Sistema de estilos calcado no ficheiro HTML de referência
+ * (plataforma-literacia-digital-ologa.html). Não reinterpretar.
  *
- * Paleta da marca:
- *   Vermelho Ologa  #FE0500  (uso moderado, acentos e ações críticas)
- *   Azul-escuro     #15202B  (fundos escuros, títulos)
- *   Dourado         #E2A93B  (destaques)
- *   Verde sucesso   #2E8B57
- *   Fundo claro     #F5F6F8
+ * Paleta:
+ *   Vermelho Ologa   #FE0500
+ *   Vermelho escuro  #C20400
+ *   Azul-escuro      #15202B
+ *   Azul-escuro 2    #1E2D3D
+ *   Ink              #1c2733
+ *   Dourado          #E2A93B
+ *   Verde sucesso    #2E8B57
+ *   Fundo claro      #F5F6F8
+ *   Linha            #e6e9ec
+ *   Muted            #6b7886
  */
 
 @theme inline {
@@ -22,10 +28,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
 
-  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -48,128 +52,72 @@
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
 
-  /* Cores da marca Ologa */
+  /* Marca Ologa */
   --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
   --color-brand-foreground: var(--brand-foreground);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-foreground: var(--navy-foreground);
   --color-ink: var(--ink);
   --color-ink-foreground: var(--ink-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
-
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-line: var(--line);
+  --color-page: var(--page);
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* Fundo claro #F5F6F8 · Texto ink #15202B */
-  --background: oklch(0.972 0.003 250);
-  --foreground: oklch(0.23 0.03 250);
+  /* Base do site (fundo claro) */
+  --page: #f5f6f8;
+  --line: #e6e9ec;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.23 0.03 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.23 0.03 250);
+  --background: #f5f6f8;
+  --foreground: #1c2733;              /* ink */
 
-  /* Primary = Ink (azul-escuro) para botões neutros de forte contraste */
-  --primary: oklch(0.23 0.03 250);
-  --primary-foreground: oklch(0.985 0 0);
+  --card: #ffffff;
+  --card-foreground: #1c2733;
+  --popover: #ffffff;
+  --popover-foreground: #1c2733;
 
-  --secondary: oklch(0.955 0.006 250);
-  --secondary-foreground: oklch(0.23 0.03 250);
+  --primary: #15202b;                 /* navy — botões neutros de forte contraste */
+  --primary-foreground: #ffffff;
 
-  --muted: oklch(0.955 0.006 250);
-  --muted-foreground: oklch(0.42 0.02 250);
+  --secondary: #eef1f4;
+  --secondary-foreground: #1c2733;
 
-  --accent: oklch(0.94 0.01 250);
-  --accent-foreground: oklch(0.23 0.03 250);
+  --muted: #eef1f4;
+  --muted-foreground: #6b7886;
 
-  /* Destructive = vermelho Ologa */
-  --destructive: oklch(0.58 0.24 27);
-  --destructive-foreground: oklch(0.99 0 0);
+  --accent: #eef1f4;
+  --accent-foreground: #1c2733;
 
-  --border: oklch(0.9 0.008 250);
-  --input: oklch(0.9 0.008 250);
-  --ring: oklch(0.58 0.24 27);
+  --destructive: #FE0500;
+  --destructive-foreground: #ffffff;
 
-  /* Cores da marca */
-  --brand: oklch(0.58 0.24 27);           /* #FE0500 */
-  --brand-foreground: oklch(0.99 0 0);
-  --ink: oklch(0.23 0.03 250);            /* #15202B */
-  --ink-foreground: oklch(0.985 0 0);
-  --gold: oklch(0.76 0.14 80);            /* #E2A93B */
-  --gold-foreground: oklch(0.23 0.03 250);
-  --success: oklch(0.55 0.13 155);        /* #2E8B57 */
-  --success-foreground: oklch(0.99 0 0);
+  --border: #e6e9ec;
+  --input: #e6e9ec;
+  --ring: #FE0500;
 
-  --chart-1: oklch(0.58 0.24 27);
-  --chart-2: oklch(0.23 0.03 250);
-  --chart-3: oklch(0.76 0.14 80);
-  --chart-4: oklch(0.55 0.13 155);
-  --chart-5: oklch(0.6 0.05 250);
+  /* Marca */
+  --brand: #FE0500;
+  --brand-dark: #C20400;
+  --brand-foreground: #ffffff;
+  --navy: #15202B;
+  --navy-2: #1E2D3D;
+  --navy-foreground: #ffffff;
+  --ink: #1c2733;
+  --ink-foreground: #ffffff;
+  --gold: #E2A93B;
+  --gold-foreground: #15202B;
+  --success: #2E8B57;
+  --success-foreground: #ffffff;
 
-  --sidebar: oklch(0.23 0.03 250);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.58 0.24 27);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.3 0.03 250);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.3 0.03 250);
-  --sidebar-ring: oklch(0.58 0.24 27);
-}
-
-.dark {
-  --background: oklch(0.19 0.03 250);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.23 0.03 250);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.23 0.03 250);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.23 0.03 250);
-  --secondary: oklch(0.28 0.03 250);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.28 0.03 250);
-  --muted-foreground: oklch(0.78 0.02 250);
-  --accent: oklch(0.28 0.03 250);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.65 0.22 27);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.22 27);
-
-  --brand: oklch(0.65 0.22 27);
-  --brand-foreground: oklch(0.99 0 0);
-  --ink: oklch(0.19 0.03 250);
-  --ink-foreground: oklch(0.985 0 0);
-  --gold: oklch(0.8 0.14 80);
-  --gold-foreground: oklch(0.19 0.03 250);
-  --success: oklch(0.62 0.13 155);
-  --success-foreground: oklch(0.99 0 0);
-
-  --sidebar: oklch(0.19 0.03 250);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.22 27);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.28 0.03 250);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.65 0.22 27);
+  --shadow-elev: 0 8px 28px rgba(21, 32, 43, 0.10);
 }
 
 @layer base {
@@ -184,45 +132,23 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-size: 1.0625rem; /* ~17px, tamanhos generosos */
-    line-height: 1.6;
-  }
-
-  /* Alto contraste — ativado pela barra de acessibilidade */
-  html.high-contrast {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0 0 0);
-    --muted: oklch(1 0 0);
-    --muted-foreground: oklch(0 0 0);
-    --border: oklch(0 0 0);
-    --input: oklch(0 0 0);
-    --primary: oklch(0 0 0);
-    --primary-foreground: oklch(1 0 0);
-    --ink: oklch(0 0 0);
-    --ink-foreground: oklch(1 0 0);
-    --brand: oklch(0.48 0.24 27);
-    --brand-foreground: oklch(1 0 0);
-    --ring: oklch(0 0 0);
-  }
-  html.high-contrast * {
-    text-shadow: none !important;
-    box-shadow: none !important;
-  }
-
-  h1, h2, h3, h4 {
+    background-color: var(--color-page);
     color: var(--color-ink);
-    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: var(--color-navy);
+    font-weight: 800;
     line-height: 1.2;
     letter-spacing: -0.01em;
   }
 
-  /* Foco visível em todos os elementos interativos (Desenho Universal) */
+  /* Foco visível universal (Desenho Universal / WCAG AA) */
   :focus-visible {
-    outline: 3px solid var(--color-ring);
+    outline: 3px solid var(--color-brand);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -232,24 +158,166 @@
     position: absolute;
     left: -9999px;
     top: 0;
-    background: var(--color-ink);
-    color: var(--color-ink-foreground);
-    padding: 0.75rem 1rem;
-    z-index: 100;
-    font-weight: 600;
+    background: var(--color-navy);
+    color: var(--color-navy-foreground);
+    padding: 0.6875rem 1.125rem;
+    z-index: 300;
+    font-weight: 700;
     border-radius: 0 0 8px 0;
   }
   .skip-link:focus {
     left: 0;
   }
+
+  /* Alto contraste — ativado pela barra de acessibilidade (.hc no body) */
+  body.hc {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  body.hc header,
+  body.hc footer,
+  body.hc section,
+  body.hc .a11y-bar,
+  body.hc .hero {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  body.hc * {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  body.hc h1, body.hc h2, body.hc h3, body.hc h4, body.hc h5 {
+    color: #fff !important;
+  }
+  body.hc a,
+  body.hc .eyebrow {
+    color: #FFD400 !important;
+  }
+  body.hc .btn-brand,
+  body.hc .a11y-bar button[aria-pressed="true"] {
+    background: #FFD400 !important;
+    color: #000 !important;
+    border-color: #FFD400 !important;
+  }
+}
+
+/* ---------- Utilitários derivados da referência ---------- */
+
+@utility wrap {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.375rem;
+  padding-right: 1.375rem;
 }
 
 @utility card-elevated {
   background-color: var(--color-card);
   color: var(--color-card-foreground);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 1px 2px oklch(0.23 0.03 250 / 0.06),
-    0 8px 24px -12px oklch(0.23 0.03 250 / 0.12);
-  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-elev);
+  border: 1px solid var(--color-line);
+}
+
+@utility eyebrow {
+  color: var(--color-brand);
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.09375em;
+  text-transform: uppercase;
+  margin-bottom: 0.625rem;
+  display: block;
+}
+
+/* Botão vermelho da marca (uso moderado) */
+@utility btn-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  background: var(--color-brand);
+  color: #fff;
+  padding: 0.5625rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+@utility btn-brand-hover {
+  &:hover { background: var(--color-brand-dark); }
+}
+
+/* Botão fantasma (fundo escuro do hero) */
+@utility btn-ghost-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  background: transparent;
+  color: #fff;
+  padding: 0.5625rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+@utility btn-ghost-dark-hover {
+  &:hover { border-color: #fff; }
+}
+
+/* Botão fantasma (fundo claro) */
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  background: transparent;
+  color: var(--color-navy);
+  padding: 0.5625rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-line);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+@utility btn-ghost-hover {
+  &:hover { border-color: var(--color-brand); color: var(--color-brand); }
+}
+
+/* Hero — gradiente escuro exato do HTML de referência */
+@utility hero-bg {
+  background: linear-gradient(120deg, #15202B 0%, #1E2D3D 55%, #28384a 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+@utility hero-halo {
+  &::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(200, 51, 42, 0.55), transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+}
+
+/* Pill do hero */
+@utility pill-dark {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  padding: 0.3125rem 0.8125rem;
+  border-radius: 30px;
+  font-size: 0.78125rem;
+  font-weight: 600;
+  color: #fff;
 }
