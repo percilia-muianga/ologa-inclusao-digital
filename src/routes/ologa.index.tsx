@@ -13,7 +13,7 @@ import {
   rotulo,
 } from "@/lib/inscricao-schema";
 
-export const Route = createFileRoute("/ologa")({
+export const Route = createFileRoute("/ologa/")({
   head: () => ({ meta: [{ title: "Ologa — Administração" }] }),
   component: OlogaPage,
 });
