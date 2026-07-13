@@ -117,7 +117,7 @@ const emitirSchema = z.object({
 
   // dados de perfil — obrigatórios só quando não há tokenPessoal
   nome: z.string().trim().min(2).max(120).optional(),
-  instituicaoId: z.string().uuid().nullable().optional(),
+  codigoInstituicao: z.string().trim().min(1).max(64).nullable().optional(),
   genero: z.enum(['feminino', 'masculino', 'prefere_nao_indicar']).nullable().optional(),
   nivelPartida: z.enum(['nenhum', 'basico', 'intermedio', 'prefere_nao_indicar']).nullable().optional(),
   precisaApoio: z.boolean().nullable().optional(),
