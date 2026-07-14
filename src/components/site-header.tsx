@@ -129,10 +129,10 @@ export function SiteHeader() {
         <div
           ref={painelRef}
           id="menu-principal"
-          className="border-t border-line bg-white xl:hidden"
+          className="border-t border-line bg-white lg:hidden"
         >
           <nav aria-label="Navegação principal" className="wrap flex flex-col py-2">
-            {NAV_ITEMS.map((item) =>
+            {MOBILE_NAV_ITEMS.map((item) =>
               item.to ? (
                 <Link
                   key={item.to}
