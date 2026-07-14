@@ -11,6 +11,7 @@ import {
 } from "@/components/formulario-instituicao";
 import { criarInscricao, listarModulosPublico } from "@/lib/inscricao.functions";
 import { obterIndicadoresPublicos } from "@/lib/indicadores.functions";
+import { CatalogoCursos } from "@/components/catalogo-cursos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -101,14 +102,6 @@ const LEI_REF =
   "Lei n.º 10/2024 — Promoção e Proteção dos Direitos da Pessoa com Deficiência";
 
 
-type ModuloCatalogo = {
-  id: string;
-  ordem: number | null;
-  titulo: string;
-  nivel: string | null;
-  duracao: string | null;
-  descricao: string | null;
-};
 
 type Indicadores = {
   instituicoesComDeclaracao: number;
@@ -142,10 +135,6 @@ function HomePage() {
   const criar = useServerFn(criarInscricao);
   const carregarIndicadores = useServerFn(obterIndicadoresPublicos);
 
-  // Cursos (para #modulos)
-  const [modulosCatalogo, setModulosCatalogo] = useState<ModuloCatalogo[]>([]);
-  const [modulosCarregadosCat, setModulosCarregadosCat] = useState(false);
-
   // Formulário de instituições (para o embutido no #inscricao)
   const [modulosForm, setModulosForm] = useState<ModuloForm[]>([]);
   const [modulosFormCarregados, setModulosFormCarregados] = useState(false);
@@ -162,10 +151,8 @@ function HomePage() {
     listarModulos().then((res) => {
       if (cancelado) return;
       if (res.ok) {
-        setModulosCatalogo(res.modulos as ModuloCatalogo[]);
         setModulosForm(res.modulos as ModuloForm[]);
       }
-      setModulosCarregadosCat(true);
       setModulosFormCarregados(true);
     });
     carregarIndicadores()
@@ -709,7 +696,7 @@ function HomePage() {
         </section>
 
 
-        {/* 4. CURSOS — lidos da base de dados */}
+        {/* 4. CURSOS — componente partilhado com /formacao */}
         <section id="modulos" className="border-t border-line bg-white py-16">
           <div className="wrap">
             <div className="eyebrow">Cursos</div>
@@ -717,58 +704,13 @@ function HomePage() {
               Pacote completo de literacia digital
             </h2>
             <p className="mb-9 max-w-[820px] text-[17px] text-muted-foreground">
-              Módulos adaptados ao contexto de Moçambique, em formato físico e
-              virtual. Abra a formação para ver as lições, o material de e-learning
-              e o guião do formador.
+              Onze módulos adaptados ao contexto de Moçambique, em formato físico e virtual.
             </p>
 
-            {!modulosCarregadosCat ? (
-              <div className="rounded-2xl border border-line bg-page p-7 text-[15px] text-muted-foreground">
-                A carregar cursos…
-              </div>
-            ) : modulosCatalogo.length === 0 ? (
-              <div className="rounded-2xl border border-line bg-page p-7 text-[15px] text-muted-foreground">
-                Conteúdo ainda não carregado.
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {modulosCatalogo.map((m) => (
-                    <Link
-                      key={m.id}
-                      to="/formacao"
-                      className="card-elevated block p-[22px] transition-colors hover:border-brand"
-                    >
-                      {m.nivel ? (
-                        <div className="mb-2 inline-block rounded-full border border-line px-2 py-[3px] text-[11px] font-bold uppercase tracking-wider text-navy-2">
-                          {m.nivel}
-                        </div>
-                      ) : null}
-                      <h3 className="text-[17px] font-extrabold text-navy">
-                        {m.titulo}
-                      </h3>
-                      {m.duracao ? (
-                        <div className="mt-1 text-[12.5px] font-semibold text-muted-foreground">
-                          {m.duracao}
-                        </div>
-                      ) : null}
-                      {m.descricao ? (
-                        <p className="mt-2 text-[13.5px] text-[#39485a]">
-                          {m.descricao}
-                        </p>
-                      ) : null}
-                    </Link>
-                  ))}
-                </div>
-                <div className="mt-6">
-                  <Link to="/formacao" className="btn-brand btn-brand-hover">
-                    Abrir a formação
-                  </Link>
-                </div>
-              </>
-            )}
+            <CatalogoCursos />
           </div>
         </section>
+
 
         {/* 5. PERCURSO */}
         <section id="percurso" className="py-16">
