@@ -940,12 +940,12 @@ function HomePage() {
               estiver concluído, não apresentamos o certificado como acreditado.
             </div>
 
-            {/* Nota navy — rigor sobre conformidade */}
-            <div className="mt-5 rounded-xl bg-navy p-5 text-[13px] leading-[1.6] text-[#cdd5dd]">
-              <b className="text-gold">
+            {/* Nota de rigor — estilo neutro claro, sem competir com o aviso amarelo */}
+            <div className="mt-5 rounded-xl border border-line bg-page p-5 text-[13px] leading-[1.6] text-navy-2">
+              <b className="text-navy">
                 Uma nota de rigor, que fazemos questão de deixar clara:
               </b>{" "}
-              esta declaração atesta <b className="text-white">o que foi feito na formação</b>. Não
+              esta declaração atesta <b className="text-navy">o que foi feito na formação</b>. Não
               certifica que a instituição cumpre a Lei n.º 10/2024 — essa avaliação não
               nos compete e não a fazemos. O que fica documentado é que as suas equipas
               foram capacitadas por um programa que serve todas as pessoas, sem versões
