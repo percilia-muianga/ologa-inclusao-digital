@@ -76,7 +76,7 @@ export function SiteHeader() {
               <Link
                 key={item.to}
                 to={item.to}
-                className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
               >
                 {item.label}
               </Link>
@@ -84,8 +84,9 @@ export function SiteHeader() {
               <a
                 key={item.href}
                 href={item.href}
-                className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
               >
+
                 {item.label}
               </a>
             ),
