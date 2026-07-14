@@ -529,6 +529,16 @@ function HomePage() {
         {/* 3. INDICADORES — painel público, agregados nacionais */}
         <section id="indicadores" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Indicadores.",
+                  "Indicadores que o programa se propõe observar. Os valores são calculados a partir das inscrições submetidas e da atividade de formação; começam a zero e atualizam-se à medida que os dados entram.",
+                  "Todos os números são agregados nacionais; nunca dados de uma instituição em concreto.",
+                ]}
+              />
+            </div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Indicadores
             </h2>
@@ -539,6 +549,7 @@ function HomePage() {
               entram. Todos os números são agregados nacionais; nunca dados de
               uma instituição em concreto.
             </p>
+
 
             {!indicadoresCarregados ? (
               <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
