@@ -241,6 +241,17 @@ function HomePage() {
         {/* 1. ANÁLISE DE MERCADO */}
         <section id="mercado" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Análise de Mercado. Contexto Moçambicano.",
+                  "Quem ficou de fora.",
+                  "A adesão móvel é forte, mas o uso da internet é baixo, boa parte do país não lê, e há moçambicanos que não veem, não ouvem ou têm dificuldade de locomoção.",
+                  ...STATS.map((st) => `${st.n}: ${st.l}. ${st.s}.`),
+                ]}
+              />
+            </div>
             <div className="eyebrow">Análise de Mercado · Contexto Moçambicano</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Quem ficou de fora
@@ -250,6 +261,7 @@ function HomePage() {
               não lê, e há moçambicanos que não veem, não ouvem ou têm dificuldade de
               locomoção.
             </p>
+
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {STATS.map((st) => (
@@ -517,6 +529,16 @@ function HomePage() {
         {/* 3. INDICADORES — painel público, agregados nacionais */}
         <section id="indicadores" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Indicadores.",
+                  "Indicadores que o programa se propõe observar. Os valores são calculados a partir das inscrições submetidas e da atividade de formação; começam a zero e atualizam-se à medida que os dados entram.",
+                  "Todos os números são agregados nacionais; nunca dados de uma instituição em concreto.",
+                ]}
+              />
+            </div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Indicadores
             </h2>
@@ -527,6 +549,7 @@ function HomePage() {
               entram. Todos os números são agregados nacionais; nunca dados de
               uma instituição em concreto.
             </p>
+
 
             {!indicadoresCarregados ? (
               <div className="rounded-2xl border border-line bg-white p-7 text-[15px] text-muted-foreground">
@@ -712,6 +735,19 @@ function HomePage() {
         {/* 5. PERCURSO */}
         <section id="percurso" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Percurso de Aprendizagem.",
+                  "Três níveis, um destino: equipas digitalmente competentes.",
+                  "Um percurso progressivo que leva o formando da fundação operacional até às competências avançadas de inteligência artificial e digitalização.",
+                  "Nível 1: Fundação — quatro a seis semanas. Windows, navegação segura, Word e email.",
+                  "Nível 2: Intermédio — cinco a sete semanas. Excel avançado, colaboração na nuvem, segurança digital e proteção de dados.",
+                  "Nível 3: Avançado — quatro a cinco semanas. Fundamentos de inteligência artificial, inteligência artificial generativa, digitalização de processos e projeto final aplicado.",
+                ]}
+              />
+            </div>
             <div className="eyebrow">Percurso de Aprendizagem</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Três níveis, um destino: equipas digitalmente competentes
@@ -720,6 +756,7 @@ function HomePage() {
               Um percurso progressivo que leva o formando da fundação operacional até às
               competências avançadas de IA e digitalização.
             </p>
+
             <div className="grid grid-cols-1 gap-[18px] md:grid-cols-3">
               {[
                 {
@@ -803,6 +840,19 @@ function HomePage() {
         {/* 4. ENTREGÁVEIS */}
         <section id="entregaveis" className="border-t border-line bg-white py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "No fim da formação.",
+                  "O que fica na mão de quem se formou e da instituição.",
+                  "A formação não termina numa lista de presenças. Termina em três documentos, dois deles para a instituição levar a uma auditoria.",
+                  "Para o formando: Certificado de Conclusão — módulo concluído, horas de formação, pontuação obtida e um código de verificação.",
+                  "Para a instituição: Relatório de Capacitação — quantos formou, taxa de conclusão, participação de mulheres, pessoas com deficiência e o antes e depois.",
+                  "Para a instituição: Declaração de Formação com Desenho Universal — atesta que a capacitação foi realizada num programa desenhado segundo os princípios do desenho universal.",
+                ]}
+              />
+            </div>
             <div className="eyebrow">No fim da formação</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               O que fica na mão de quem se formou — e da instituição
@@ -811,6 +861,7 @@ function HomePage() {
               A formação não termina numa lista de presenças. Termina em três
               documentos, dois deles para a instituição levar a uma auditoria.
             </p>
+
 
             <div className="grid grid-cols-1 gap-[18px] md:grid-cols-3">
               {[

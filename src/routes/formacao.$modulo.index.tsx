@@ -3,6 +3,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const Route = createFileRoute("/formacao/$modulo/")({
   component: ModuloOverview,
@@ -25,11 +27,29 @@ function ModuloOverview() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <div>
+        <div className="mb-4 flex justify-end">
+          <ListenButton
+            getSentences={() => {
+              const partes: string[] = [data.modulo.titulo];
+              if (data.modulo.descricao) partes.push(data.modulo.descricao);
+              if (data.modulo.desenho_universal)
+                partes.push(`Desenho universal. ${data.modulo.desenho_universal}`);
+              partes.push(
+                `Este módulo tem ${data.licoes.length} ${
+                  data.licoes.length === 1 ? "lição" : "lições"
+                }.`,
+              );
+              data.licoes.forEach((l) => partes.push(`${l.ordem}. ${l.titulo}.`));
+              return partes;
+            }}
+          />
+        </div>
         {data.modulo.descricao ? (
           <p className="mb-6 text-base leading-relaxed text-navy-2">
             {data.modulo.descricao}
           </p>
         ) : null}
+
 
         {data.modulo.desenho_universal ? (
           <section

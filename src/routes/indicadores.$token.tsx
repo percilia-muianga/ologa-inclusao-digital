@@ -5,6 +5,8 @@ import {
   obterIndicadoresPorToken,
   type PainelIndicadores,
 } from "@/lib/indicadores-instituicao.functions";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const Route = createFileRoute("/indicadores/$token")({
   ssr: false,
@@ -90,6 +92,23 @@ function IndicadoresPage() {
       </a>
       <main id="conteudo" className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         <header>
+          <div className="mb-3 flex justify-end">
+            <ListenButton
+              getSentences={() => {
+                const loc =
+                  [p.instituicao.distrito, p.instituicao.provincia]
+                    .filter(Boolean)
+                    .join(", ") || "localização não indicada";
+                return [
+                  `Painel de indicadores de ${p.instituicao.nome}.`,
+                  `Localização: ${loc}.`,
+                  `Trabalhadores no total: ${p.instituicao.num_trabalhadores_total ?? "—"}.`,
+                  `Formandos inscritos: ${p.totais.inscritos}.`,
+                  `Formandos certificados: ${p.totais.certificados}.`,
+                ];
+              }}
+            />
+          </div>
           <p className="text-sm font-semibold uppercase tracking-wide text-ink/60">
             Painel de indicadores
           </p>
@@ -104,6 +123,7 @@ function IndicadoresPage() {
               : ""}
           </p>
         </header>
+
 
         <section aria-label="Totais" className="mt-8 grid gap-4 sm:grid-cols-3">
           <Total titulo="Trabalhadores no total" valor={p.instituicao.num_trabalhadores_total} />

@@ -3,6 +3,8 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { listarModulos } from "@/lib/formacao.functions";
 import { formacaoStore } from "@/lib/formacao-store";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const modulosCatalogoQuery = queryOptions({
   queryKey: ["formacao", "modulos"],
@@ -117,8 +119,26 @@ export function CatalogoCursos() {
 
   return (
     <>
+      <div className="mb-4 flex justify-end">
+        <ListenButton
+          getSentences={() => {
+            const partes = [
+              "Os seus cursos.",
+              `Progresso: ${totais.feitas} de ${totais.totalLicoes} lições concluídas.`,
+              `${totais.modulosCompletos} de ${modulos.length} módulos completos.`,
+              totais.mediaQuiz === null
+                ? "Ainda sem resultados nos quizzes."
+                : `Média nos quizzes: ${totais.mediaQuiz} por cento.`,
+              ...modulos.map((m) => `${m.titulo}. ${m.descricao ?? ""}`.trim()),
+            ];
+            return partes;
+          }}
+        />
+      </div>
+
       {/* Painel de progresso */}
       <div className="mb-8 grid gap-6 rounded-2xl border border-line bg-white p-6 md:grid-cols-[1.4fr_1fr]">
+
         <div>
           <h3 className="text-lg font-bold text-navy">O seu progresso</h3>
           <p className="mt-1 text-sm text-navy-2">
