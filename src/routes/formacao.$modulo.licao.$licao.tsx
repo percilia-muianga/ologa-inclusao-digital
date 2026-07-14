@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
-import { ListenButton, extrairFrasesDeHtml } from "@/components/listen-button";
+import {
+  ListenButton,
+  extrairFalasDeHtml,
+  PAUSA_TITULO_MS,
+  type Fala,
+} from "@/components/listen-button";
 
 const licaoQuery = (licaoId: string) =>
   queryOptions({
