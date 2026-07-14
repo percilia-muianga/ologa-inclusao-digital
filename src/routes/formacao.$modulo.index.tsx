@@ -3,6 +3,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const Route = createFileRoute("/formacao/$modulo/")({
   component: ModuloOverview,
