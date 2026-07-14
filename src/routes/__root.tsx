@@ -126,13 +126,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  // Ao mudar de página, parar qualquer leitura em voz alta em curso.
+  useEffect(() => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <AccessibilityBar />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <BackToTop />
     </QueryClientProvider>
   );
 }
+
 
