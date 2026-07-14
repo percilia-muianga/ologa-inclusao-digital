@@ -12,6 +12,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/#percurso", label: "Percurso" },
   { href: "/#entregaveis", label: "Entregáveis" },
   { href: "/#contacto", label: "Contacto" },
+];
+
+const MOBILE_NAV_ITEMS: NavItem[] = [
+  ...NAV_ITEMS,
   { to: "/verificar", label: "Verificar certificado" },
 ];
 
