@@ -47,9 +47,9 @@ export function SiteHeader() {
           </Link>
         </nav>
 
-        <Link to="/inscricao" className="btn-brand btn-brand-hover">
+        <a href="/#inscricao" className="btn-brand btn-brand-hover">
           Solicitar Proposta
-        </Link>
+        </a>
       </div>
     </header>
   );
