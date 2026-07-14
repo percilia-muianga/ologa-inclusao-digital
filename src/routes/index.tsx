@@ -129,7 +129,11 @@ type Kpi = {
   barColor?: string;
 };
 
-  // Cursos (para #modulos)
+function HomePage() {
+  const [src, setSrc] = useState<Src | null>(null);
+  const listarModulos = useServerFn(listarModulosPublico);
+  const criar = useServerFn(criarInscricao);
+  const carregarIndicadores = useServerFn(obterIndicadoresPublicos);
 
   // Formulário de instituições (para o embutido no #inscricao)
   const [modulosForm, setModulosForm] = useState<ModuloForm[]>([]);
