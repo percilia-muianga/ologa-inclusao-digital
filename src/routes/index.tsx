@@ -735,6 +735,19 @@ function HomePage() {
         {/* 5. PERCURSO */}
         <section id="percurso" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Percurso de Aprendizagem.",
+                  "Três níveis, um destino: equipas digitalmente competentes.",
+                  "Um percurso progressivo que leva o formando da fundação operacional até às competências avançadas de inteligência artificial e digitalização.",
+                  "Nível 1: Fundação — quatro a seis semanas. Windows, navegação segura, Word e email.",
+                  "Nível 2: Intermédio — cinco a sete semanas. Excel avançado, colaboração na nuvem, segurança digital e proteção de dados.",
+                  "Nível 3: Avançado — quatro a cinco semanas. Fundamentos de inteligência artificial, inteligência artificial generativa, digitalização de processos e projeto final aplicado.",
+                ]}
+              />
+            </div>
             <div className="eyebrow">Percurso de Aprendizagem</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Três níveis, um destino: equipas digitalmente competentes
@@ -743,6 +756,7 @@ function HomePage() {
               Um percurso progressivo que leva o formando da fundação operacional até às
               competências avançadas de IA e digitalização.
             </p>
+
             <div className="grid grid-cols-1 gap-[18px] md:grid-cols-3">
               {[
                 {
