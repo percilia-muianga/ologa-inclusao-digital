@@ -53,7 +53,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur">
-      <div className="wrap flex h-16 items-center justify-between gap-3">
+      <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between gap-3 px-4 sm:px-6">
         <Link
           to="/"
           className="flex min-w-0 items-center gap-2.5 font-extrabold tracking-wide"
