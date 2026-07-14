@@ -825,14 +825,9 @@ function HomePage() {
                   <div className="mb-[14px] text-[13px] font-semibold text-muted-foreground">
                     {lvl.d}
                   </div>
-                  <ul className="list-none">
+                  <ul className="list-disc space-y-1 pl-5 text-[14px] text-[#39485a] marker:text-muted-foreground">
                     {lvl.items.map((it) => (
-                      <li
-                        key={it}
-                        className="relative border-t border-dashed border-line py-[7px] pl-6 text-[14px] text-[#39485a] before:absolute before:left-0 before:font-extrabold before:text-success before:content-['✓']"
-                      >
-                        {it}
-                      </li>
+                      <li key={it}>{it}</li>
                     ))}
                   </ul>
                 </div>
@@ -945,12 +940,12 @@ function HomePage() {
               estiver concluído, não apresentamos o certificado como acreditado.
             </div>
 
-            {/* Nota navy — rigor sobre conformidade */}
-            <div className="mt-5 rounded-xl bg-navy p-5 text-[13px] leading-[1.6] text-[#cdd5dd]">
-              <b className="text-gold">
+            {/* Nota de rigor — estilo neutro claro, sem competir com o aviso amarelo */}
+            <div className="mt-5 rounded-xl border border-line bg-page p-5 text-[13px] leading-[1.6] text-navy-2">
+              <b className="text-navy">
                 Uma nota de rigor, que fazemos questão de deixar clara:
               </b>{" "}
-              esta declaração atesta <b className="text-white">o que foi feito na formação</b>. Não
+              esta declaração atesta <b className="text-navy">o que foi feito na formação</b>. Não
               certifica que a instituição cumpre a Lei n.º 10/2024 — essa avaliação não
               nos compete e não a fazemos. O que fica documentado é que as suas equipas
               foram capacitadas por um programa que serve todas as pessoas, sem versões
@@ -972,9 +967,9 @@ function HomePage() {
               Desenhamos um plano de formação à medida da sua organização, com módulos,
               calendário e formato adaptados às suas necessidades.
             </p>
-            <Link to="/inscricao" className="btn-brand btn-brand-hover">
+            <a href="#inscricao" className="btn-brand btn-brand-hover">
               Solicitar uma Proposta
-            </Link>
+            </a>
           </div>
         </section>
       </main>
