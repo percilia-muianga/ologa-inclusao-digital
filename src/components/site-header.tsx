@@ -107,7 +107,7 @@ export function SiteHeader() {
             Solicitar Proposta
           </a>
 
-          {/* Botão de menu — visível abaixo do xl */}
+          {/* Botão de menu — visível abaixo do lg */}
           <button
             ref={botaoRef}
             type="button"
@@ -115,7 +115,7 @@ export function SiteHeader() {
             aria-expanded={aberto}
             aria-controls="menu-principal"
             aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line text-navy transition-colors hover:bg-page xl:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line text-navy transition-colors hover:bg-page lg:hidden"
           >
             <span aria-hidden="true" className="text-xl leading-none">
               {aberto ? "✕" : "☰"}
