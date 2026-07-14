@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
-import { ListenButton, extrairFrasesDeHtml } from "@/components/listen-button";
+import {
+  ListenButton,
+  extrairFalasDeHtml,
+  PAUSA_TITULO_MS,
+  type Fala,
+} from "@/components/listen-button";
 
 const licaoQuery = (licaoId: string) =>
   queryOptions({
@@ -157,12 +162,14 @@ function LicaoView() {
             <ListenButton
               key={`elearning-${licaoId}`}
               label="🔊 Ouvir esta página"
-              getSentences={() => {
-                const partes: string[] = [licao.titulo];
+              getFalas={() => {
+                const falas: Fala[] = [
+                  { texto: licao.titulo, pausaMs: PAUSA_TITULO_MS },
+                ];
                 if (licao.conteudo_elearning) {
-                  partes.push(...extrairFrasesDeHtml(licao.conteudo_elearning));
+                  falas.push(...extrairFalasDeHtml(licao.conteudo_elearning));
                 }
-                return partes;
+                return falas;
               }}
             />
           </div>
@@ -189,12 +196,14 @@ function LicaoView() {
             <ListenButton
               key={`guiao-${licaoId}`}
               label="🔊 Ouvir o guião do formador"
-              getSentences={() => {
-                const partes: string[] = [`Guião do formador — ${licao.titulo}`];
+              getFalas={() => {
+                const falas: Fala[] = [
+                  { texto: `Guião do formador — ${licao.titulo}`, pausaMs: PAUSA_TITULO_MS },
+                ];
                 if (licao.guiao_formador) {
-                  partes.push(...extrairFrasesDeHtml(licao.guiao_formador));
+                  falas.push(...extrairFalasDeHtml(licao.guiao_formador));
                 }
-                return partes;
+                return falas;
               }}
             />
           </div>
