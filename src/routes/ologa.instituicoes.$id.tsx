@@ -6,6 +6,7 @@ import {
   atualizarMetasInstituicao,
   atualizarPercursoInstituicao,
   listarModulosAdmin,
+  marcarDeclaracaoManualmente,
   obterInstituicaoAdmin,
   regenerarCodigoInstituicao,
   regenerarTokenIndicadores,
@@ -380,14 +381,15 @@ function FichaPage() {
                 >
                   {nome} (PDF)
                 </a>
-                {t === "declaracao" && (
-                  <p className="mt-2 text-xs text-ink/60">
-                    Ao gerar, fica registada como assinada.
-                  </p>
-                )}
               </li>
             ))}
           </ul>
+          <DeclaracaoAssinaturaCard
+            inst={inst}
+            onAtualizado={(assinada, assinada_em) =>
+              setInst({ ...inst, declaracao_assinada: assinada, declaracao_assinada_em: assinada_em })
+            }
+          />
         </section>
 
 
