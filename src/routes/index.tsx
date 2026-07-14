@@ -825,14 +825,9 @@ function HomePage() {
                   <div className="mb-[14px] text-[13px] font-semibold text-muted-foreground">
                     {lvl.d}
                   </div>
-                  <ul className="list-none">
+                  <ul className="list-disc space-y-1 pl-5 text-[14px] text-[#39485a] marker:text-muted-foreground">
                     {lvl.items.map((it) => (
-                      <li
-                        key={it}
-                        className="relative border-t border-dashed border-line py-[7px] pl-6 text-[14px] text-[#39485a] before:absolute before:left-0 before:font-extrabold before:text-success before:content-['✓']"
-                      >
-                        {it}
-                      </li>
+                      <li key={it}>{it}</li>
                     ))}
                   </ul>
                 </div>
