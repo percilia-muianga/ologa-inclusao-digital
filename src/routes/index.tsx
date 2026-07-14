@@ -840,6 +840,19 @@ function HomePage() {
         {/* 4. ENTREGÁVEIS */}
         <section id="entregaveis" className="border-t border-line bg-white py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "No fim da formação.",
+                  "O que fica na mão de quem se formou e da instituição.",
+                  "A formação não termina numa lista de presenças. Termina em três documentos, dois deles para a instituição levar a uma auditoria.",
+                  "Para o formando: Certificado de Conclusão — módulo concluído, horas de formação, pontuação obtida e um código de verificação.",
+                  "Para a instituição: Relatório de Capacitação — quantos formou, taxa de conclusão, participação de mulheres, pessoas com deficiência e o antes e depois.",
+                  "Para a instituição: Declaração de Formação com Desenho Universal — atesta que a capacitação foi realizada num programa desenhado segundo os princípios do desenho universal.",
+                ]}
+              />
+            </div>
             <div className="eyebrow">No fim da formação</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               O que fica na mão de quem se formou — e da instituição
@@ -848,6 +861,7 @@ function HomePage() {
               A formação não termina numa lista de presenças. Termina em três
               documentos, dois deles para a instituição levar a uma auditoria.
             </p>
+
 
             <div className="grid grid-cols-1 gap-[18px] md:grid-cols-3">
               {[
