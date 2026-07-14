@@ -914,32 +914,25 @@ function HomePage() {
               ))}
             </div>
 
-            {/* Nota amarela — fase seguinte */}
+            {/* Nota amarela — certificado emitido pela Ologa */}
             <div className="mt-5 rounded-xl border border-[#f0d9a8] bg-[#fff4e0] p-5 text-[13px] leading-[1.6] text-[#6b5310]">
-              <b className="text-[#6b4f0c]">
-                Fase seguinte — reconhecimento no sistema nacional.
-              </b>{" "}
-              O Certificado de Conclusão é hoje emitido pela Ologa e verificável em
-              linha. Está em curso o caminho para o seu{" "}
-              <strong>
-                reconhecimento no Sistema Nacional de Qualificações Profissionais
-              </strong>
-              , através do processo de acreditação junto da{" "}
-              <strong>ANEP — Autoridade Nacional de Educação Profissional</strong>,
-              tendo o IFPELAC como âncora institucional. Enquanto esse processo não
-              estiver concluído, não apresentamos o certificado como acreditado.
+              <b className="text-[#6b4f0c]">Certificado emitido pela Ologa, verificável em linha.</b>{" "}
+              O Certificado de Conclusão é hoje emitido pela Ologa e qualquer pessoa pode
+              confirmar a sua autenticidade em linha, a qualquer hora. Está em curso o
+              processo de reconhecimento junto da{" "}
+              <strong>ANEP — Autoridade Nacional de Educação Profissional</strong>.
+              Enquanto não estiver concluído, não apresentamos o certificado como
+              acreditado.
             </div>
 
             {/* Nota de rigor — estilo neutro claro, sem competir com o aviso amarelo */}
             <div className="mt-5 rounded-xl border border-line bg-page p-5 text-[13px] leading-[1.6] text-navy-2">
-              <b className="text-navy">
-                Uma nota de rigor, que fazemos questão de deixar clara:
-              </b>{" "}
-              esta declaração atesta <b className="text-navy">o que foi feito na formação</b>. Não
-              certifica que a instituição cumpre a Lei n.º 10/2024 — essa avaliação não
-              nos compete e não a fazemos. O que fica documentado é que as suas equipas
-              foram capacitadas por um programa que serve todas as pessoas, sem versões
-              especiais.
+              <b className="text-navy">O que atestamos — e o que não atestamos.</b>{" "}
+              A Declaração de Desenho Universal atesta a formação que foi realizada: uma
+              só formação, para todos, sem versões especiais. Não certifica que a sua
+              instituição cumpre a Lei n.º 10/2024 — essa avaliação compete às entidades
+              competentes, não a um fornecedor de formação. Dizemo-lo à partida porque
+              preferimos ser o parceiro que não promete o que não pode cumprir.
             </div>
           </div>
         </section>
