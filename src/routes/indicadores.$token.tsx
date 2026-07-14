@@ -5,6 +5,8 @@ import {
   obterIndicadoresPorToken,
   type PainelIndicadores,
 } from "@/lib/indicadores-instituicao.functions";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const Route = createFileRoute("/indicadores/$token")({
   ssr: false,
