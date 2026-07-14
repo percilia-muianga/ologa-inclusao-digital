@@ -3,6 +3,8 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { listarModulos } from "@/lib/formacao.functions";
 import { formacaoStore } from "@/lib/formacao-store";
+import { ListenButton } from "@/components/listen-button";
+
 
 export const modulosCatalogoQuery = queryOptions({
   queryKey: ["formacao", "modulos"],
