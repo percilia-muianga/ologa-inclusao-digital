@@ -73,14 +73,17 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Navegação desktop — apenas quando cabe (xl e acima) */}
-        <nav aria-label="Navegação principal" className="hidden items-center gap-1 xl:flex">
+        {/* Navegação desktop — a partir de lg (~1024px) */}
+        <nav
+          aria-label="Navegação principal"
+          className="hidden items-center gap-0 lg:flex xl:gap-1"
+        >
           {NAV_ITEMS.map((item) =>
             item.to ? (
               <Link
                 key={item.to}
                 to={item.to}
-                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-1.5 py-2 text-[12px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand xl:px-2 xl:text-[13px]"
               >
                 {item.label}
               </Link>
@@ -88,9 +91,8 @@ export function SiteHeader() {
               <a
                 key={item.href}
                 href={item.href}
-                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-1.5 py-2 text-[12px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand xl:px-2 xl:text-[13px]"
               >
-
                 {item.label}
               </a>
             ),
