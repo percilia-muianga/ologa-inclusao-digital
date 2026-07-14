@@ -714,3 +714,84 @@ function Linha({ rot, val }: { rot: string; val: string }) {
     </div>
   );
 }
+
+function DeclaracaoAssinaturaCard({
+  inst,
+  onAtualizado,
+}: {
+  inst: Instituicao;
+  onAtualizado: (assinada: boolean, assinada_em: string | null) => void;
+}) {
+  const marcar = useServerFn(marcarDeclaracaoManualmente);
+  const [aGuardar, setAGuardar] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  async function alternar(assinada: boolean) {
+    const confirmMsg = assinada
+      ? "Confirma que a Declaração de desenho universal foi assinada e devolvida pela instituição?"
+      : "Marcar a declaração como NÃO assinada?";
+    if (!window.confirm(confirmMsg)) return;
+    setAGuardar(true);
+    setMsg(null);
+    const res = await marcar({ data: { id: inst.id, assinada } });
+    setAGuardar(false);
+    if (res.ok) {
+      onAtualizado(res.assinada, res.assinada_em);
+      setMsg(assinada ? "Marcada como assinada." : "Marca de assinada removida.");
+    } else {
+      setMsg(res.mensagem || "Não foi possível atualizar.");
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-md border border-ink/10 bg-accent p-4">
+      <p className="text-sm font-semibold uppercase tracking-wide text-ink/70">
+        Declaração de desenho universal — assinatura
+      </p>
+      <p className="mt-2 text-sm text-foreground">
+        Gerar o PDF não assina nada. Marque como assinada apenas depois de receber a
+        declaração assinada pela instituição.
+      </p>
+      <p className="mt-3 text-base text-ink">
+        Estado:{" "}
+        <span className="font-semibold">
+          {inst.declaracao_assinada ? "Assinada" : "Por assinar"}
+        </span>
+        {inst.declaracao_assinada && inst.declaracao_assinada_em && (
+          <>
+            {" "}
+            <span className="text-sm text-ink/70">
+              (em {new Date(inst.declaracao_assinada_em).toLocaleDateString("pt-PT")})
+            </span>
+          </>
+        )}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-3">
+        {!inst.declaracao_assinada ? (
+          <button
+            type="button"
+            onClick={() => alternar(true)}
+            disabled={aGuardar}
+            className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-white hover:bg-ink/90 disabled:opacity-70"
+          >
+            {aGuardar ? "A guardar…" : "Marcar como assinada"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => alternar(false)}
+            disabled={aGuardar}
+            className="inline-flex min-h-11 items-center rounded-md border border-ink/30 bg-white px-4 text-base font-semibold text-ink hover:bg-white/70 disabled:opacity-70"
+          >
+            {aGuardar ? "A guardar…" : "Remover marca de assinada"}
+          </button>
+        )}
+      </div>
+      {msg && (
+        <p role="status" aria-live="polite" className="mt-2 text-sm text-ink">
+          {msg}
+        </p>
+      )}
+    </div>
+  );
+}
