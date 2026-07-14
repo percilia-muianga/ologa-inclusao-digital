@@ -203,6 +203,36 @@ export const regenerarCodigoInstituicao = createServerFn({ method: "POST" })
     return { ok: false as const, mensagem: "Não foi possível gerar código único." };
   });
 
+const DECLARACAO_SCHEMA = z.object({
+  id: z.string().uuid(),
+  assinada: z.boolean(),
+});
+
+export const marcarDeclaracaoManualmente = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => DECLARACAO_SCHEMA.parse(d))
+  .handler(async ({ data, context }) => {
+    if (!(await garantirAdmin(context.userId))) {
+      return { ok: false as const, mensagem: "acesso_negado" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: upd, error } = await supabaseAdmin
+      .from("instituicoes")
+      .update({
+        declaracao_assinada: data.assinada,
+        declaracao_assinada_em: data.assinada ? new Date().toISOString() : null,
+      })
+      .eq("id", data.id)
+      .select("declaracao_assinada, declaracao_assinada_em")
+      .single();
+    if (error || !upd) return { ok: false as const, mensagem: error?.message ?? "erro" };
+    return {
+      ok: true as const,
+      assinada: upd.declaracao_assinada,
+      assinada_em: upd.declaracao_assinada_em,
+    };
+  });
+
 export const criarInstituicaoManual = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => baseInstituicaoSchema.parse(d))
