@@ -534,22 +534,19 @@ function HomePage() {
               </div>
             ) : (
               (() => {
-                // Enquanto não houver inscrições, os cartões que dependem dos
-                // formulários mostram "Ainda sem dados" — nunca 0 nem 0%,
-                // que se leem como resultado mau. As lições com áudio ficam
-                // porque é facto da plataforma, não depende de inscrições.
-                const semDadosInc = semInscricoes;
-                const nInc = (n: number | null | undefined) =>
-                  semDadosInc ? "Ainda sem dados" : fmtNum(n);
-                const pInc = (p: number | null | undefined) =>
-                  semDadosInc ? "Ainda sem dados" : fmtPct(p);
-                const nFor = (n: number | null | undefined) =>
-                  semDadosInc ? "Ainda sem dados" : fmtNum(n);
-                const pFor = (p: number | null | undefined) =>
-                  semDadosInc ? "Ainda sem dados" : fmtPct(p);
+                // Distinção entre CONTAGENS e RÁCIOS:
+                // - Contagens: mostram o número, mesmo que seja 0 (facto verdadeiro).
+                // - Rácios/percentagens: sem denominador são indefinidos → "—".
+                // A ausência de inscrições é explicada uma vez no painel
+                // "Leitura dos indicadores", em vez de repetida em cada cartão.
+                const nInc = (n: number | null | undefined) => fmtNum(n);
+                const pInc = (p: number | null | undefined) => fmtPct(p);
+                const nFor = (n: number | null | undefined) => fmtNum(n);
+                const pFor = (p: number | null | undefined) => fmtPct(p);
                 const barInc = (p: number | null | undefined) =>
-                  semDadosInc ? null : p;
+                  p == null ? null : p;
                 return (
+
                   <>
                     {/* Compromisso institucional — cartão novo, acima de tudo */}
                     <div className="mb-8">
