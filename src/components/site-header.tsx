@@ -12,6 +12,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/#percurso", label: "Percurso" },
   { href: "/#entregaveis", label: "Entregáveis" },
   { href: "/#contacto", label: "Contacto" },
+];
+
+const MOBILE_NAV_ITEMS: NavItem[] = [
+  ...NAV_ITEMS,
   { to: "/verificar", label: "Verificar certificado" },
 ];
 
@@ -69,14 +73,17 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Navegação desktop — apenas quando cabe (xl e acima) */}
-        <nav aria-label="Navegação principal" className="hidden items-center gap-1 xl:flex">
+        {/* Navegação desktop — a partir de lg (~1024px) */}
+        <nav
+          aria-label="Navegação principal"
+          className="hidden items-center gap-0 lg:flex xl:gap-1"
+        >
           {NAV_ITEMS.map((item) =>
             item.to ? (
               <Link
                 key={item.to}
                 to={item.to}
-                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-1.5 py-2 text-[12px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand xl:px-2 xl:text-[13px]"
               >
                 {item.label}
               </Link>
@@ -84,9 +91,8 @@ export function SiteHeader() {
               <a
                 key={item.href}
                 href={item.href}
-                className="whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand"
+                className="whitespace-nowrap rounded-md px-1.5 py-2 text-[12px] font-semibold text-navy-2 transition-colors hover:bg-page hover:text-brand xl:px-2 xl:text-[13px]"
               >
-
                 {item.label}
               </a>
             ),
@@ -101,7 +107,7 @@ export function SiteHeader() {
             Solicitar Proposta
           </a>
 
-          {/* Botão de menu — visível abaixo do xl */}
+          {/* Botão de menu — visível abaixo do lg */}
           <button
             ref={botaoRef}
             type="button"
@@ -109,7 +115,7 @@ export function SiteHeader() {
             aria-expanded={aberto}
             aria-controls="menu-principal"
             aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line text-navy transition-colors hover:bg-page xl:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line text-navy transition-colors hover:bg-page lg:hidden"
           >
             <span aria-hidden="true" className="text-xl leading-none">
               {aberto ? "✕" : "☰"}
@@ -123,10 +129,10 @@ export function SiteHeader() {
         <div
           ref={painelRef}
           id="menu-principal"
-          className="border-t border-line bg-white xl:hidden"
+          className="border-t border-line bg-white lg:hidden"
         >
           <nav aria-label="Navegação principal" className="wrap flex flex-col py-2">
-            {NAV_ITEMS.map((item) =>
+            {MOBILE_NAV_ITEMS.map((item) =>
               item.to ? (
                 <Link
                   key={item.to}
