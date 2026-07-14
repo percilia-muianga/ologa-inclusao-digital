@@ -241,6 +241,17 @@ function HomePage() {
         {/* 1. ANÁLISE DE MERCADO */}
         <section id="mercado" className="py-16">
           <div className="wrap">
+            <div className="mb-4 flex justify-end">
+              <ListenButton
+                label="🔊 Ouvir esta secção"
+                sentences={[
+                  "Análise de Mercado. Contexto Moçambicano.",
+                  "Quem ficou de fora.",
+                  "A adesão móvel é forte, mas o uso da internet é baixo, boa parte do país não lê, e há moçambicanos que não veem, não ouvem ou têm dificuldade de locomoção.",
+                  ...STATS.map((st) => `${st.n}: ${st.l}. ${st.s}.`),
+                ]}
+              />
+            </div>
             <div className="eyebrow">Análise de Mercado · Contexto Moçambicano</div>
             <h2 className="mb-3 text-[30px] font-extrabold leading-tight text-navy">
               Quem ficou de fora
@@ -250,6 +261,7 @@ function HomePage() {
               não lê, e há moçambicanos que não veem, não ouvem ou têm dificuldade de
               locomoção.
             </p>
+
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {STATS.map((st) => (
