@@ -10,7 +10,6 @@ async function servir(tipo: string, token: string): Promise<Response> {
   }
   const {
     carregarDadosPorToken,
-    marcarDeclaracaoAssinada,
     gerarRelatorio,
     gerarCertificadoInstituicao,
     gerarDeclaracaoDesenhoUniversal,
@@ -30,7 +29,6 @@ async function servir(tipo: string, token: string): Promise<Response> {
   } else {
     bytes = await gerarDeclaracaoDesenhoUniversal(d);
     nome = "declaracao-desenho-universal.pdf";
-    await marcarDeclaracaoAssinada(d.inst.id);
   }
 
   return new Response(bytes as BodyInit, {

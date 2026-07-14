@@ -267,14 +267,6 @@ async function construirDados(instituicaoId: string) {
   };
 }
 
-export async function marcarDeclaracaoAssinada(instituicaoId: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  await supabaseAdmin
-    .from("instituicoes")
-    .update({ declaracao_assinada: true, declaracao_assinada_em: new Date().toISOString() })
-    .eq("id", instituicaoId)
-    .eq("declaracao_assinada", false);
-}
 
 // ---------- PDFs ----------
 
