@@ -967,9 +967,9 @@ function HomePage() {
               Desenhamos um plano de formação à medida da sua organização, com módulos,
               calendário e formato adaptados às suas necessidades.
             </p>
-            <Link to="/inscricao" className="btn-brand btn-brand-hover">
+            <a href="#inscricao" className="btn-brand btn-brand-hover">
               Solicitar uma Proposta
-            </Link>
+            </a>
           </div>
         </section>
       </main>
