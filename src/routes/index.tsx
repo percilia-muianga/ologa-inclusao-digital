@@ -102,14 +102,6 @@ const LEI_REF =
   "Lei n.º 10/2024 — Promoção e Proteção dos Direitos da Pessoa com Deficiência";
 
 
-type ModuloCatalogo = {
-  id: string;
-  ordem: number | null;
-  titulo: string;
-  nivel: string | null;
-  duracao: string | null;
-  descricao: string | null;
-};
 
 type Indicadores = {
   instituicoesComDeclaracao: number;
@@ -137,15 +129,7 @@ type Kpi = {
   barColor?: string;
 };
 
-function HomePage() {
-  const [src, setSrc] = useState<Src | null>(null);
-  const listarModulos = useServerFn(listarModulosPublico);
-  const criar = useServerFn(criarInscricao);
-  const carregarIndicadores = useServerFn(obterIndicadoresPublicos);
-
   // Cursos (para #modulos)
-  const [modulosCatalogo, setModulosCatalogo] = useState<ModuloCatalogo[]>([]);
-  const [modulosCarregadosCat, setModulosCarregadosCat] = useState(false);
 
   // Formulário de instituições (para o embutido no #inscricao)
   const [modulosForm, setModulosForm] = useState<ModuloForm[]>([]);
@@ -163,10 +147,8 @@ function HomePage() {
     listarModulos().then((res) => {
       if (cancelado) return;
       if (res.ok) {
-        setModulosCatalogo(res.modulos as ModuloCatalogo[]);
         setModulosForm(res.modulos as ModuloForm[]);
       }
-      setModulosCarregadosCat(true);
       setModulosFormCarregados(true);
     });
     carregarIndicadores()
