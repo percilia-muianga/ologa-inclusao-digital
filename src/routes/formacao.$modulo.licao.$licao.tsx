@@ -196,12 +196,14 @@ function LicaoView() {
             <ListenButton
               key={`guiao-${licaoId}`}
               label="🔊 Ouvir o guião do formador"
-              getSentences={() => {
-                const partes: string[] = [`Guião do formador — ${licao.titulo}`];
+              getFalas={() => {
+                const falas: Fala[] = [
+                  { texto: `Guião do formador — ${licao.titulo}`, pausaMs: PAUSA_TITULO_MS },
+                ];
                 if (licao.guiao_formador) {
-                  partes.push(...extrairFrasesDeHtml(licao.guiao_formador));
+                  falas.push(...extrairFalasDeHtml(licao.guiao_formador));
                 }
-                return partes;
+                return falas;
               }}
             />
           </div>
