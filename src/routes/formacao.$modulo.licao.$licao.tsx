@@ -162,12 +162,14 @@ function LicaoView() {
             <ListenButton
               key={`elearning-${licaoId}`}
               label="🔊 Ouvir esta página"
-              getSentences={() => {
-                const partes: string[] = [licao.titulo];
+              getFalas={() => {
+                const falas: Fala[] = [
+                  { texto: licao.titulo, pausaMs: PAUSA_TITULO_MS },
+                ];
                 if (licao.conteudo_elearning) {
-                  partes.push(...extrairFrasesDeHtml(licao.conteudo_elearning));
+                  falas.push(...extrairFalasDeHtml(licao.conteudo_elearning));
                 }
-                return partes;
+                return falas;
               }}
             />
           </div>
