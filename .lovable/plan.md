@@ -67,10 +67,13 @@ Nota honesta: o relatório de permissões só fica completo à medida que as ent
 - Papéis em tabela `utilizador_papeis` + função `tem_papel()` com `security definer`; políticas de acesso escritas sobre essa função, nunca sobre um campo do perfil.
 - Auditoria por gatilho genérico em cada tabela, a escrever em `registo_auditoria`; sem `UPDATE`/`DELETE` concedidos a ninguém, gatilho de bloqueio incluído. O endereço IP é passado pelo servidor na sessão da transacção.
 - Ecrãs protegidos sob `_authenticated`, com as leituras a passar por funções de servidor autenticadas; o público mantém-se fora de qualquer barreira.
-- Email e palavra-passe activados no arranque da fase 1.
+- Email e palavra-passe activados no arranque da fase 1, com confirmação automática apenas para as contas de teste criadas por nós.
+- `conta_de_teste boolean` no perfil, com filtro aplicado nas funções de indicadores já existentes e nas novas.
+- Papel activo do selector guardado apenas na sessão do navegador; nunca altera permissões reais — o que o selector faz é escolher a vista, e a base de dados continua a validar tudo.
 
 ## Preciso da sua confirmação
 
-1. Aceita o faseamento em três partes, ou quer tudo de uma vez?
-2. Confirma a activação de entrada por email e palavra-passe (sem redes sociais)?
-3. Para a fase 1, crio a primeira conta de auditor com que email?
+1. Qual o **email da sua conta de demonstração** (a que recebe os seis papéis)?
+2. Qual o **domínio das contas de teste** (ex.: `formando.teste@ologa.com`)?
+3. Aceita o faseamento, entregando fase 1 + fase 0 juntas?
+4. Confirma entrada por email e palavra-passe, sem redes sociais?
