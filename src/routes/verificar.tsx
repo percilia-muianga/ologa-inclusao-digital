@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { verificarCodigo } from "@/lib/verificar.functions";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { PlataformaHeader } from "@/components/plataforma-header";
+import { PlataformaFooter } from "@/components/plataforma-footer";
 
 export const Route = createFileRoute("/verificar")({
   head: () => ({
@@ -53,7 +53,7 @@ function VerificarPage() {
       <a href="#conteudo" className="skip-link">
         Saltar para o conteúdo principal
       </a>
-      <SiteHeader />
+      <PlataformaHeader />
       <main id="conteudo" className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
         <h1 className="text-3xl font-extrabold text-ink">Verificar certificado</h1>
         <p className="mt-3 text-base text-foreground">
@@ -117,7 +117,7 @@ function VerificarPage() {
           )}
         </div>
       </main>
-      <SiteFooter />
+      <PlataformaFooter />
     </>
   );
 }

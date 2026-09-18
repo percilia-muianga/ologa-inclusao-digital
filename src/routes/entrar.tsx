@@ -3,8 +3,8 @@ import { useState, useId, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { garantirPerfil } from "@/lib/conta.functions";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { PlataformaHeader } from "@/components/plataforma-header";
+import { PlataformaFooter } from "@/components/plataforma-footer";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
 
 export const Route = createFileRoute("/entrar")({
@@ -80,7 +80,7 @@ function EntrarPage() {
       <a href="#conteudo" className="skip-link">
         Saltar para o conteúdo principal
       </a>
-      <SiteHeader />
+      <PlataformaHeader />
       <main id="conteudo" ref={ref} className="wrap max-w-md py-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-extrabold text-navy">Entrar</h1>
@@ -151,7 +151,7 @@ function EntrarPage() {
           </Link>
         </div>
       </main>
-      <SiteFooter />
+      <PlataformaFooter />
     </>
   );
 }

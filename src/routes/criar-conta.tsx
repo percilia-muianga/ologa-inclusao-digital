@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useId, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { PlataformaHeader } from "@/components/plataforma-header";
+import { PlataformaFooter } from "@/components/plataforma-footer";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
 import { PROVINCIAS, GENEROS } from "@/lib/papeis";
 
@@ -109,7 +109,7 @@ function CriarContaPage() {
       <a href="#conteudo" className="skip-link">
         Saltar para o conteúdo principal
       </a>
-      <SiteHeader />
+      <PlataformaHeader />
       <main id="conteudo" ref={ref} className="wrap max-w-2xl py-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-extrabold text-navy">Criar conta</h1>
@@ -209,7 +209,7 @@ function CriarContaPage() {
           </form>
         )}
       </main>
-      <SiteFooter />
+      <PlataformaFooter />
     </>
   );
 }
