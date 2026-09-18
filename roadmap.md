@@ -26,7 +26,13 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] 97 lições com estado "conteúdo por fornecer", contável por curso e no total geral
 - [x] Seis lições legais, organizadas pelos artigos 16, 17, 20, 24, 30 e 31 da Lei n.º 10/2024
 
-## Fase 3 — Turmas e cronogramas
+## Fase 3 — Turmas e cronogramas (concluída)
+- [x] Turmas com curso, província e distrito do local de formação, local, modalidade, formadores, datas, limite de 30 e estado
+- [x] Código de inscrição legível e ditável (sem O, 0, I, L, 1), gerado na base de dados
+- [x] Sessões com data, horas, duração, tema e formador; verificação da soma contra a carga horária do curso
+- [x] Lista com filtros por província, curso, estado e formador
+- [x] Soma por província: turmas e formandos inscritos (embrião do Painel Nacional)
+- [ ] Ecrãs de criação/edição de turmas e sessões (dependem da fase 8 — acessos)
 ## Fase 4 — Presenças (offline e telefone)
 ## Fase 5 — Avaliação e certificação individual
 ## Fase 6 — Painel Nacional e dados de demonstração
