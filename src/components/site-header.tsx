@@ -59,7 +59,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between gap-3 px-4 sm:px-6">
         <Link
-          to="/"
+          to="/ologa"
           className="flex min-w-0 items-center gap-2.5 font-extrabold tracking-wide"
           aria-label="Ologa — Agência de Transformação Digital"
           onClick={fechar}
@@ -101,7 +101,7 @@ export function SiteHeader() {
 
         <div className="flex shrink-0 items-center gap-2">
           <a
-            href="/#inscricao"
+            href="/ologa#inscricao"
             className="btn-brand btn-brand-hover hidden whitespace-nowrap sm:inline-flex"
           >
             Solicitar Proposta
@@ -154,7 +154,7 @@ export function SiteHeader() {
               ),
             )}
             <a
-              href="/#inscricao"
+              href="/ologa#inscricao"
               onClick={fechar}
               className="btn-brand btn-brand-hover mt-2 sm:hidden"
             >
