@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerificarRouteImport } from './routes/verificar'
+import { Route as OlogaRouteImport } from './routes/ologa'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
 import { Route as GestaoRouteImport } from './routes/gestao'
 import { Route as FormacaoRouteImport } from './routes/formacao'
@@ -39,6 +40,11 @@ import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/p
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
   path: '/verificar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OlogaRoute = OlogaRouteImport.update({
+  id: '/ologa',
+  path: '/ologa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InscricaoRoute = InscricaoRouteImport.update({
@@ -71,9 +77,9 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const OlogaIndexRoute = OlogaIndexRouteImport.update({
-  id: '/ologa/',
-  path: '/ologa/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => OlogaRoute,
 } as any)
 const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
   id: '/',
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
@@ -236,6 +243,7 @@ export interface FileRoutesById {
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
@@ -266,6 +274,7 @@ export interface FileRouteTypes {
     | '/formacao'
     | '/gestao'
     | '/inscricao'
+    | '/ologa'
     | '/verificar'
     | '/painel'
     | '/formacao/$modulo'
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | '/formacao'
     | '/gestao'
     | '/inscricao'
+    | '/ologa'
     | '/verificar'
     | '/_authenticated/painel'
     | '/formacao/$modulo'
@@ -348,9 +358,9 @@ export interface RootRouteChildren {
   FormacaoRoute: typeof FormacaoRouteWithChildren
   GestaoRoute: typeof GestaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
+  OlogaRoute: typeof OlogaRouteWithChildren
   VerificarRoute: typeof VerificarRoute
   IndicadoresTokenRoute: typeof IndicadoresTokenRoute
-  OlogaIndexRoute: typeof OlogaIndexRoute
   ApiPublicDocumentosTipoTokenRoute: typeof ApiPublicDocumentosTipoTokenRoute
 }
 
@@ -361,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/verificar'
       fullPath: '/verificar'
       preLoaderRoute: typeof VerificarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ologa': {
+      id: '/ologa'
+      path: '/ologa'
+      fullPath: '/ologa'
+      preLoaderRoute: typeof OlogaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inscricao': {
@@ -407,10 +424,10 @@ declare module '@tanstack/react-router' {
     }
     '/ologa/': {
       id: '/ologa/'
-      path: '/ologa'
+      path: '/'
       fullPath: '/ologa/'
       preLoaderRoute: typeof OlogaIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OlogaRoute
     }
     '/formacao/': {
       id: '/formacao/'
@@ -620,6 +637,16 @@ const GestaoRouteChildren: GestaoRouteChildren = {
 const GestaoRouteWithChildren =
   GestaoRoute._addFileChildren(GestaoRouteChildren)
 
+interface OlogaRouteChildren {
+  OlogaIndexRoute: typeof OlogaIndexRoute
+}
+
+const OlogaRouteChildren: OlogaRouteChildren = {
+  OlogaIndexRoute: OlogaIndexRoute,
+}
+
+const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   CriarContaRoute: CriarContaRoute,
@@ -627,9 +654,9 @@ const rootRouteChildren: RootRouteChildren = {
   FormacaoRoute: FormacaoRouteWithChildren,
   GestaoRoute: GestaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
+  OlogaRoute: OlogaRouteWithChildren,
   VerificarRoute: VerificarRoute,
   IndicadoresTokenRoute: IndicadoresTokenRoute,
-  OlogaIndexRoute: OlogaIndexRoute,
   ApiPublicDocumentosTipoTokenRoute: ApiPublicDocumentosTipoTokenRoute,
 }
 export const routeTree = rootRouteImport

@@ -41,7 +41,7 @@ function NovaInstituicaoPage() {
     const res = await criar({ data: payload });
     setASubmeter(false);
     if (res.ok) {
-      navigate({ to: "/ologa/instituicoes/$id", params: { id: res.id } });
+      navigate({ to: "/gestao/instituicoes/$id", params: { id: res.id } });
     } else {
       setErro(res.mensagem || "Não foi possível criar a instituição.");
     }
