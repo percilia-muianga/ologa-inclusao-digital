@@ -29,6 +29,8 @@ import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modul
 import { Route as FormacaoModuloDiagnosticoRouteImport } from './routes/formacao.$modulo.diagnostico'
 import { Route as FormacaoModuloCertificadoRouteImport } from './routes/formacao.$modulo.certificado'
 import { Route as AuthenticatedPainelUtilizadoresRouteImport } from './routes/_authenticated/painel.utilizadores'
+import { Route as AuthenticatedPainelPermissoesRouteImport } from './routes/_authenticated/painel.permissoes'
+import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
 import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_authenticated/painel.auditoria'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
@@ -136,6 +138,18 @@ const AuthenticatedPainelUtilizadoresRoute =
     path: '/utilizadores',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelPermissoesRoute =
+  AuthenticatedPainelPermissoesRouteImport.update({
+    id: '/permissoes',
+    path: '/permissoes',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelEquipaRoute =
+  AuthenticatedPainelEquipaRouteImport.update({
+    id: '/equipa',
+    path: '/equipa',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedPainelAuditoriaRoute =
   AuthenticatedPainelAuditoriaRouteImport.update({
     id: '/auditoria',
@@ -169,6 +183,8 @@ export interface FileRoutesByFullPath {
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
@@ -189,6 +205,8 @@ export interface FileRoutesByTo {
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
@@ -215,6 +233,8 @@ export interface FileRoutesById {
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/_authenticated/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
@@ -241,6 +261,8 @@ export interface FileRouteTypes {
     | '/formacao/'
     | '/ologa/'
     | '/painel/auditoria'
+    | '/painel/equipa'
+    | '/painel/permissoes'
     | '/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
@@ -261,6 +283,8 @@ export interface FileRouteTypes {
     | '/formacao'
     | '/ologa'
     | '/painel/auditoria'
+    | '/painel/equipa'
+    | '/painel/permissoes'
     | '/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
@@ -286,6 +310,8 @@ export interface FileRouteTypes {
     | '/formacao/'
     | '/ologa/'
     | '/_authenticated/painel/auditoria'
+    | '/_authenticated/painel/equipa'
+    | '/_authenticated/painel/permissoes'
     | '/_authenticated/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
@@ -451,6 +477,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelUtilizadoresRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/painel/permissoes': {
+      id: '/_authenticated/painel/permissoes'
+      path: '/permissoes'
+      fullPath: '/painel/permissoes'
+      preLoaderRoute: typeof AuthenticatedPainelPermissoesRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/equipa': {
+      id: '/_authenticated/painel/equipa'
+      path: '/equipa'
+      fullPath: '/painel/equipa'
+      preLoaderRoute: typeof AuthenticatedPainelEquipaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/_authenticated/painel/auditoria': {
       id: '/_authenticated/painel/auditoria'
       path: '/auditoria'
@@ -477,12 +517,16 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelAuditoriaRoute: typeof AuthenticatedPainelAuditoriaRoute
+  AuthenticatedPainelEquipaRoute: typeof AuthenticatedPainelEquipaRoute
+  AuthenticatedPainelPermissoesRoute: typeof AuthenticatedPainelPermissoesRoute
   AuthenticatedPainelUtilizadoresRoute: typeof AuthenticatedPainelUtilizadoresRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelAuditoriaRoute: AuthenticatedPainelAuditoriaRoute,
+  AuthenticatedPainelEquipaRoute: AuthenticatedPainelEquipaRoute,
+  AuthenticatedPainelPermissoesRoute: AuthenticatedPainelPermissoesRoute,
   AuthenticatedPainelUtilizadoresRoute: AuthenticatedPainelUtilizadoresRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
 }
