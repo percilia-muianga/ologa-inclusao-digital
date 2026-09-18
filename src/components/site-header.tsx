@@ -5,13 +5,14 @@ import logo from "@/assets/ologa-logo.png.asset.json";
 type NavItem = { href?: string; to?: string; label: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/#mercado", label: "Análise de Mercado" },
-  { href: "/#inscricao", label: "Inscrição" },
-  { href: "/#indicadores", label: "Indicadores" },
-  { href: "/#modulos", label: "Cursos" },
-  { href: "/#percurso", label: "Percurso" },
-  { href: "/#entregaveis", label: "Entregáveis" },
-  { href: "/#contacto", label: "Contacto" },
+  { to: "/", label: "Plataforma" },
+  { href: "/ologa#mercado", label: "Análise de Mercado" },
+  { href: "/ologa#inscricao", label: "Inscrição" },
+  { href: "/ologa#indicadores", label: "Indicadores" },
+  { href: "/ologa#modulos", label: "Cursos" },
+  { href: "/ologa#percurso", label: "Percurso" },
+  { href: "/ologa#entregaveis", label: "Entregáveis" },
+  { href: "/ologa#contacto", label: "Contacto" },
 ];
 
 const MOBILE_NAV_ITEMS: NavItem[] = [
