@@ -3,7 +3,11 @@ import { PlataformaPagina } from "@/components/plataforma-pagina";
 import { obterCursoPrograma } from "@/lib/cursos.functions";
 
 export const Route = createFileRoute("/cursos/$curso")({
-  loader: async ({ params }) => (await obterCursoPrograma({ data: params.curso })) ?? notFound(),
+  loader: async ({ params }) => {
+    const resultado = await obterCursoPrograma({ data: params.curso });
+    if (!resultado) throw notFound();
+    return resultado;
+  },
   component: CursoPage,
 });
 
