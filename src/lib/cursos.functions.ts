@@ -35,7 +35,7 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
 });
 
 export const obterCursoPrograma = createServerFn({ method: "GET" })
-  .inputValidator((slug: string) => slug)
+  .validator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cursoRes = await supabaseAdmin.from("cursos")
