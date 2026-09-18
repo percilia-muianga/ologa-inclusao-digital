@@ -25,7 +25,7 @@ import {
   rotulosLista,
 } from "@/lib/inscricao-schema";
 
-export const Route = createFileRoute("/ologa/instituicoes/$id")({
+export const Route = createFileRoute("/gestao/instituicoes/$id")({
   head: () => ({ meta: [{ title: "Ficha da instituição — Ologa" }] }),
   component: FichaPage,
 });
@@ -279,7 +279,7 @@ function FichaPage() {
     return (
       <main id="conteudo" className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
         <p>
-          <Link to="/ologa" className="text-base font-semibold text-ink underline">
+          <Link to="/gestao/instituicoes" className="text-base font-semibold text-ink underline">
             ← Voltar à lista
           </Link>
         </p>
@@ -300,7 +300,7 @@ function FichaPage() {
       </a>
       <main id="conteudo" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <p>
-          <Link to="/ologa" className="text-base font-semibold text-ink underline">
+          <Link to="/gestao/instituicoes" className="text-base font-semibold text-ink underline">
             ← Voltar à lista
           </Link>
         </p>

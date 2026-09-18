@@ -13,7 +13,7 @@ import { criarInscricao, listarModulosPublico } from "@/lib/inscricao.functions"
 import { obterIndicadoresPublicos } from "@/lib/indicadores.functions";
 import { CatalogoCursos } from "@/components/catalogo-cursos";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/ologa/")({
   head: () => ({
     meta: [
       { title: "Ologa | Plataforma de Literacia Digital" },

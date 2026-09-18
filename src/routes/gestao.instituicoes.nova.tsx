@@ -12,7 +12,7 @@ import {
   type PayloadInstituicao,
 } from "@/components/formulario-instituicao";
 
-export const Route = createFileRoute("/ologa/nova-instituicao")({
+export const Route = createFileRoute("/gestao/instituicoes/nova")({
   head: () => ({ meta: [{ title: "Nova instituição — Ologa" }] }),
   component: NovaInstituicaoPage,
 });
@@ -65,7 +65,7 @@ function NovaInstituicaoPage() {
       </a>
       <main id="conteudo" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <p>
-          <Link to="/ologa" className="text-base font-semibold text-ink underline">
+          <Link to="/gestao/instituicoes" className="text-base font-semibold text-ink underline">
             ← Voltar à lista
           </Link>
         </p>

@@ -13,7 +13,7 @@ import {
   rotulo,
 } from "@/lib/inscricao-schema";
 
-export const Route = createFileRoute("/ologa/")({
+export const Route = createFileRoute("/gestao/instituicoes/")({
   head: () => ({ meta: [{ title: "Ologa — Administração" }] }),
   component: OlogaPage,
 });
@@ -86,7 +86,7 @@ function OlogaPage() {
           <h1 className="text-3xl font-extrabold text-ink">Ologa — Instituições</h1>
           <div className="flex flex-wrap gap-2">
             <Link
-              to="/ologa/nova-instituicao"
+              to="/gestao/instituicoes/nova"
               className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-base font-semibold text-ink-foreground"
             >
               Criar instituição manualmente
@@ -165,7 +165,7 @@ function OlogaPage() {
                     <tr key={i.id} className="border-t border-ink/10 hover:bg-accent/60">
                       <Td>
                         <Link
-                          to="/ologa/instituicoes/$id"
+                          to="/gestao/instituicoes/$id"
                           params={{ id: i.id }}
                           className="font-semibold text-ink underline"
                         >

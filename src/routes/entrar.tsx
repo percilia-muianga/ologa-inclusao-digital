@@ -68,7 +68,7 @@ function EntrarPage() {
       .eq("id", data.user.id)
       .maybeSingle();
     if (perfil?.papel === "admin_ologa") {
-      navigate({ to: "/ologa" });
+      navigate({ to: "/gestao/instituicoes" });
       return;
     }
 
