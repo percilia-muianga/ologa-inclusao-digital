@@ -44,23 +44,36 @@ Cada criação, alteração e eliminação fica registada com: utilizador, acç�
 
 Cada pessoa é encaminhada para a sua área conforme o papel; quem não tem papel não entra em área nenhuma.
 
+## Acesso da equipa (fase 0, antes de tudo o resto)
+
+- **Conta de demonstração** — a sua conta recebe os seis papéis. No topo da área interna aparece um selector visível "A ver como: …" que troca de área sem terminar a sessão, para mostrar cada perfil de seguida ao cliente. O selector só aparece a quem tem mais do que um papel.
+- **Seis contas de teste** — uma por papel, nos endereços `formando.teste@`, `formador.teste@`, `supervisor.teste@`, `coordenador.teste@`, `admin.teste@` e `auditor.teste@`, no domínio que indicar. Palavras-passe geradas e entregues numa folha descarregável, nunca escritas no chat.
+- **Marcação `conta_de_teste`** — etiqueta "TESTE" bem visível na gestão de utilizadores, exclusão automática destas contas de todos os indicadores e relatórios, e um único comando de remoção (contas e dados associados) antes da entrega à ATDI.
+- **Relatório de verificação de permissões** — ecrã `/ologa/permissoes`, aberto a administrador e auditor, com uma matriz por papel: cada entidade (utilizadores, cursos, turmas, sessões, presenças, inscrições, exames, certificados, registo de auditoria) cruzada com ver / criar / alterar / eliminar, e o âmbito de cada uma ("só os próprios", "só as suas turmas", "só a sua província", "tudo"). A matriz é lida directamente das regras de acesso em vigor na base de dados, não escrita à mão, para ser prova real e não declaração. Exportável em PDF, com data, para anexar à proposta técnica.
+
 ## Proposta de faseamento
 
-Isto é grande de mais para uma entrega só com qualidade auditável. Proponho três fases, cada uma testada antes da seguinte:
+Isto é grande de mais para uma entrega só com qualidade auditável. Proponho quatro fases, cada uma testada antes da seguinte:
 
+0. **Acesso da equipa** — o descrito acima (depende da fase 1 estar feita em primeiro lugar do lado das tabelas; na prática entrego 1 e 0 juntas, porque as contas precisam das tabelas de papéis).
 1. **Base** — tabelas, os seis papéis, registo de auditoria imutável, entrada e criação de conta, encaminhamento por papel, área do auditor (leitura total, activa desde o primeiro dia).
 2. **Formação** — cursos, turmas, sessões, inscrição por código, presenças, áreas do formando e do formador.
 3. **Gestão** — supervisor provincial, coordenador nacional (cronogramas, banco de questões, tentativas de exame, certificados de turma) e área do administrador.
+
+Nota honesta: o relatório de permissões só fica completo à medida que as entidades existirem. Na primeira entrega cobre utilizadores, papéis e registo de auditoria; cresce nas fases seguintes.
 
 ## Notas técnicas
 
 - Papéis em tabela `utilizador_papeis` + função `tem_papel()` com `security definer`; políticas de acesso escritas sobre essa função, nunca sobre um campo do perfil.
 - Auditoria por gatilho genérico em cada tabela, a escrever em `registo_auditoria`; sem `UPDATE`/`DELETE` concedidos a ninguém, gatilho de bloqueio incluído. O endereço IP é passado pelo servidor na sessão da transacção.
 - Ecrãs protegidos sob `_authenticated`, com as leituras a passar por funções de servidor autenticadas; o público mantém-se fora de qualquer barreira.
-- Email e palavra-passe activados no arranque da fase 1.
+- Email e palavra-passe activados no arranque da fase 1, com confirmação automática apenas para as contas de teste criadas por nós.
+- `conta_de_teste boolean` no perfil, com filtro aplicado nas funções de indicadores já existentes e nas novas.
+- Papel activo do selector guardado apenas na sessão do navegador; nunca altera permissões reais — o que o selector faz é escolher a vista, e a base de dados continua a validar tudo.
 
 ## Preciso da sua confirmação
 
-1. Aceita o faseamento em três partes, ou quer tudo de uma vez?
-2. Confirma a activação de entrada por email e palavra-passe (sem redes sociais)?
-3. Para a fase 1, crio a primeira conta de auditor com que email?
+1. Qual o **email da sua conta de demonstração** (a que recebe os seis papéis)?
+2. Qual o **domínio das contas de teste** (ex.: `formando.teste@ologa.com`)?
+3. Aceita o faseamento, entregando fase 1 + fase 0 juntas?
+4. Confirma entrada por email e palavra-passe, sem redes sociais?
