@@ -20,9 +20,11 @@ import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as ConformidadeRouteImport } from './routes/conformidade'
 import { Route as CertificadosRouteImport } from './routes/certificados'
 import { Route as AvaliacaoRouteImport } from './routes/avaliacao'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
@@ -98,6 +100,11 @@ const CriarContaRoute = CriarContaRouteImport.update({
   path: '/criar-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConformidadeRoute = ConformidadeRouteImport.update({
+  id: '/conformidade',
+  path: '/conformidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CertificadosRoute = CertificadosRouteImport.update({
   id: '/certificados',
   path: '/certificados',
@@ -110,6 +117,11 @@ const AvaliacaoRoute = AvaliacaoRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OlogaIndexRoute = OlogaIndexRouteImport.update({
@@ -218,9 +230,10 @@ const ApiPublicDocumentosTipoTokenRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedRouteRouteWithChildren
+  '/': typeof IndexRoute
   '/avaliacao': typeof AvaliacaoRoute
   '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
   '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
@@ -253,9 +266,10 @@ export interface FileRoutesByFullPath {
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof AuthenticatedRouteRouteWithChildren
+  '/': typeof IndexRoute
   '/avaliacao': typeof AvaliacaoRoute
   '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
   '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
@@ -285,9 +299,11 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/avaliacao': typeof AvaliacaoRoute
   '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
   '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
@@ -325,6 +341,7 @@ export interface FileRouteTypes {
     | '/'
     | '/avaliacao'
     | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
     | '/cursos'
     | '/entrar'
@@ -360,6 +377,7 @@ export interface FileRouteTypes {
     | '/'
     | '/avaliacao'
     | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
     | '/cursos'
     | '/entrar'
@@ -388,9 +406,11 @@ export interface FileRouteTypes {
     | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
+    | '/'
     | '/_authenticated'
     | '/avaliacao'
     | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
     | '/cursos'
     | '/entrar'
@@ -424,9 +444,11 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AvaliacaoRoute: typeof AvaliacaoRoute
   CertificadosRoute: typeof CertificadosRoute
+  ConformidadeRoute: typeof ConformidadeRoute
   CriarContaRoute: typeof CriarContaRoute
   CursosRoute: typeof CursosRoute
   EntrarRoute: typeof EntrarRoute
@@ -521,6 +543,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CriarContaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conformidade': {
+      id: '/conformidade'
+      path: '/conformidade'
+      fullPath: '/conformidade'
+      preLoaderRoute: typeof ConformidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/certificados': {
       id: '/certificados'
       path: '/certificados'
@@ -540,6 +569,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ologa/': {
@@ -768,9 +804,11 @@ const OlogaRouteChildren: OlogaRouteChildren = {
 const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AvaliacaoRoute: AvaliacaoRoute,
   CertificadosRoute: CertificadosRoute,
+  ConformidadeRoute: ConformidadeRoute,
   CriarContaRoute: CriarContaRoute,
   CursosRoute: CursosRoute,
   EntrarRoute: EntrarRoute,
