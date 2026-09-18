@@ -78,7 +78,7 @@ const NUMEROS: { valor: string; rotulo: string }[] = [
   { valor: "6", rotulo: "cursos do programa" },
   { valor: "11", rotulo: "províncias abrangidas" },
   { valor: "4000", rotulo: "formandos previstos" },
-  { valor: "2 h", rotulo: "módulo transversal de acessibilidade" },
+  { valor: "6 artigos", rotulo: "conformidade com a Lei n.º 10/2024" },
 ];
 
 function PlataformaHome() {

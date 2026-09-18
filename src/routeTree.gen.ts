@@ -29,6 +29,7 @@ import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
+import { Route as CursosCursoRouteImport } from './routes/cursos.$curso'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as GestaoInstituicoesIndexRouteImport } from './routes/gestao.instituicoes.index'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
@@ -144,6 +145,11 @@ const FormacaoModuloRoute = FormacaoModuloRouteImport.update({
   path: '/$modulo',
   getParentRoute: () => FormacaoRoute,
 } as any)
+const CursosCursoRoute = CursosCursoRouteImport.update({
+  id: '/$curso',
+  path: '/$curso',
+  getParentRoute: () => CursosRoute,
+} as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -235,7 +241,7 @@ export interface FileRoutesByFullPath {
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao/': typeof FormacaoIndexRoute
@@ -271,7 +278,7 @@ export interface FileRoutesByTo {
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/entrar': typeof EntrarRoute
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/presencas': typeof PresencasRoute
   '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
+  '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
@@ -305,7 +313,7 @@ export interface FileRoutesById {
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao/': typeof FormacaoIndexRoute
@@ -354,6 +363,7 @@ export interface FileRouteTypes {
     | '/turmas'
     | '/verificar'
     | '/painel'
+    | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/formacao/'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/presencas'
     | '/turmas'
     | '/verificar'
+    | '/cursos/$curso'
     | '/indicadores/$token'
     | '/formacao'
     | '/ologa'
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/turmas'
     | '/verificar'
     | '/_authenticated/painel'
+    | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/formacao/'
@@ -450,7 +462,7 @@ export interface RootRouteChildren {
   CertificadosRoute: typeof CertificadosRoute
   ConformidadeRoute: typeof ConformidadeRoute
   CriarContaRoute: typeof CriarContaRoute
-  CursosRoute: typeof CursosRoute
+  CursosRoute: typeof CursosRouteWithChildren
   EntrarRoute: typeof EntrarRoute
   FormacaoRoute: typeof FormacaoRouteWithChildren
   GestaoRoute: typeof GestaoRouteWithChildren
@@ -606,6 +618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoModuloRouteImport
       parentRoute: typeof FormacaoRoute
     }
+    '/cursos/$curso': {
+      id: '/cursos/$curso'
+      path: '/$curso'
+      fullPath: '/cursos/$curso'
+      preLoaderRoute: typeof CursosCursoRouteImport
+      parentRoute: typeof CursosRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -744,6 +763,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface CursosRouteChildren {
+  CursosCursoRoute: typeof CursosCursoRoute
+}
+
+const CursosRouteChildren: CursosRouteChildren = {
+  CursosCursoRoute: CursosCursoRoute,
+}
+
+const CursosRouteWithChildren =
+  CursosRoute._addFileChildren(CursosRouteChildren)
+
 interface FormacaoModuloRouteChildren {
   FormacaoModuloCertificadoRoute: typeof FormacaoModuloCertificadoRoute
   FormacaoModuloDiagnosticoRoute: typeof FormacaoModuloDiagnosticoRoute
@@ -810,7 +840,7 @@ const rootRouteChildren: RootRouteChildren = {
   CertificadosRoute: CertificadosRoute,
   ConformidadeRoute: ConformidadeRoute,
   CriarContaRoute: CriarContaRoute,
-  CursosRoute: CursosRoute,
+  CursosRoute: CursosRouteWithChildren,
   EntrarRoute: EntrarRoute,
   FormacaoRoute: FormacaoRouteWithChildren,
   GestaoRoute: GestaoRouteWithChildren,

@@ -11,19 +11,20 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - Em todos os ecrãs: barra de acessibilidade, alto contraste, ouvir, saltar para o conteúdo, 44 px de toque, teclado, leitor de ecrã, português de Moçambique
 - Nenhum ecrã em branco: estado vazio explica o que sucede e o que fazer
 
-## Fase 1 — Primeira impressão (em curso)
+## Fase 1 — Primeira impressão (concluída)
 - [x] Administração de instituições movida para `/gestao/instituicoes` e ligações internas actualizadas
 - [x] Conteúdo comercial movido na íntegra para `/ologa`, com a sua navegação própria
 - [x] Nova página principal: plataforma do programa nacional
 - [x] Navegação da plataforma: Cursos, Turmas, Presenças, Avaliação, Certificados, Painel Nacional, Conformidade + Entrar
 - [x] Rodapé da plataforma com ligação discreta "Sobre a Ologa"
 - [x] Ecrãs das sete áreas navegáveis, com estado vazio digno
-- [ ] Verificação final de acessibilidade e responsividade
+- [x] Verificação final de acessibilidade e responsividade
 
-## Fase 2 — Cursos e módulos
-- [ ] Curso → Módulo → Lição, módulos reutilizáveis
-- [ ] Os seis cursos do Termo de Referência + módulo transversal de acessibilidade (redigido por nós)
-- [ ] Lições com estado "conteúdo por fornecer", contável por curso
+## Fase 2 — Cursos e módulos (concluída)
+- [x] Curso → Módulo → Lição, módulos reutilizáveis
+- [x] Os seis cursos do Termo de Referência + módulo transversal de acessibilidade (redigido por nós)
+- [x] 97 lições com estado "conteúdo por fornecer", contável por curso e no total geral
+- [x] Seis lições legais, organizadas pelos artigos 16, 17, 20, 24, 30 e 31 da Lei n.º 10/2024
 
 ## Fase 3 — Turmas e cronogramas
 ## Fase 4 — Presenças (offline e telefone)

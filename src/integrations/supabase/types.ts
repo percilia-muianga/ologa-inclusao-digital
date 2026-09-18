@@ -62,6 +62,96 @@ export type Database = {
           },
         ]
       }
+      curso_modulos: {
+        Row: {
+          carga_horaria_minutos: number
+          curso_id: string
+          modulo_id: string
+          obrigatorio: boolean
+          ordem: number
+          transversal: boolean
+        }
+        Insert: {
+          carga_horaria_minutos: number
+          curso_id: string
+          modulo_id: string
+          obrigatorio?: boolean
+          ordem: number
+          transversal?: boolean
+        }
+        Update: {
+          carga_horaria_minutos?: number
+          curso_id?: string
+          modulo_id?: string
+          obrigatorio?: boolean
+          ordem?: number
+          transversal?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curso_modulos_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curso_modulos_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cursos: {
+        Row: {
+          abrangencia: string | null
+          carga_horaria: number
+          criado_em: string
+          formandos_previstos: number
+          id: string
+          materiais: string | null
+          modalidade: string
+          objectivos: string | null
+          ordem: number
+          pre_requisitos: string | null
+          publico_alvo: string | null
+          slug: string
+          titulo: string
+        }
+        Insert: {
+          abrangencia?: string | null
+          carga_horaria: number
+          criado_em?: string
+          formandos_previstos: number
+          id?: string
+          materiais?: string | null
+          modalidade: string
+          objectivos?: string | null
+          ordem: number
+          pre_requisitos?: string | null
+          publico_alvo?: string | null
+          slug: string
+          titulo: string
+        }
+        Update: {
+          abrangencia?: string | null
+          carga_horaria?: number
+          criado_em?: string
+          formandos_previstos?: number
+          id?: string
+          materiais?: string | null
+          modalidade?: string
+          objectivos?: string | null
+          ordem?: number
+          pre_requisitos?: string | null
+          publico_alvo?: string | null
+          slug?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
       formandos: {
         Row: {
           apoios_acessibilidade:
@@ -290,6 +380,7 @@ export type Database = {
         Row: {
           conteudo_elearning: string | null
           duracao: string | null
+          estado_conteudo: string
           guiao_formador: string | null
           id: string
           ilustracao_svg: string | null
@@ -300,6 +391,7 @@ export type Database = {
         Insert: {
           conteudo_elearning?: string | null
           duracao?: string | null
+          estado_conteudo?: string
           guiao_formador?: string | null
           id?: string
           ilustracao_svg?: string | null
@@ -310,6 +402,7 @@ export type Database = {
         Update: {
           conteudo_elearning?: string | null
           duracao?: string | null
+          estado_conteudo?: string
           guiao_formador?: string | null
           id?: string
           ilustracao_svg?: string | null
@@ -367,6 +460,7 @@ export type Database = {
       }
       modulos: {
         Row: {
+          catalogo_publico: boolean
           cor_fundo: string | null
           descricao: string | null
           desenho_universal: string | null
@@ -378,6 +472,7 @@ export type Database = {
           titulo: string
         }
         Insert: {
+          catalogo_publico?: boolean
           cor_fundo?: string | null
           descricao?: string | null
           desenho_universal?: string | null
@@ -389,6 +484,7 @@ export type Database = {
           titulo: string
         }
         Update: {
+          catalogo_publico?: boolean
           cor_fundo?: string | null
           descricao?: string | null
           desenho_universal?: string | null
