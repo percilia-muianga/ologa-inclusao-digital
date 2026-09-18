@@ -10,22 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerificarRouteImport } from './routes/verificar'
+import { Route as TurmasRouteImport } from './routes/turmas'
+import { Route as PresencasRouteImport } from './routes/presencas'
+import { Route as PainelNacionalRouteImport } from './routes/painel-nacional'
 import { Route as OlogaRouteImport } from './routes/ologa'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
+import { Route as GestaoRouteImport } from './routes/gestao'
 import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as ConformidadeRouteImport } from './routes/conformidade'
+import { Route as CertificadosRouteImport } from './routes/certificados'
+import { Route as AvaliacaoRouteImport } from './routes/avaliacao'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
-import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as GestaoInstituicoesIndexRouteImport } from './routes/gestao.instituicoes.index'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
-import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
+import { Route as GestaoInstituicoesNovaRouteImport } from './routes/gestao.instituicoes.nova'
+import { Route as GestaoInstituicoesIdRouteImport } from './routes/gestao.instituicoes.$id'
 import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
 import { Route as FormacaoModuloDiagnosticoRouteImport } from './routes/formacao.$modulo.diagnostico'
 import { Route as FormacaoModuloCertificadoRouteImport } from './routes/formacao.$modulo.certificado'
@@ -41,6 +50,21 @@ const VerificarRoute = VerificarRouteImport.update({
   path: '/verificar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TurmasRoute = TurmasRouteImport.update({
+  id: '/turmas',
+  path: '/turmas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PresencasRoute = PresencasRouteImport.update({
+  id: '/presencas',
+  path: '/presencas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PainelNacionalRoute = PainelNacionalRouteImport.update({
+  id: '/painel-nacional',
+  path: '/painel-nacional',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OlogaRoute = OlogaRouteImport.update({
   id: '/ologa',
   path: '/ologa',
@@ -49,6 +73,11 @@ const OlogaRoute = OlogaRouteImport.update({
 const InscricaoRoute = InscricaoRouteImport.update({
   id: '/inscricao',
   path: '/inscricao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GestaoRoute = GestaoRouteImport.update({
+  id: '/gestao',
+  path: '/gestao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FormacaoRoute = FormacaoRouteImport.update({
@@ -61,9 +90,29 @@ const EntrarRoute = EntrarRouteImport.update({
   path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CursosRoute = CursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CriarContaRoute = CriarContaRouteImport.update({
   id: '/criar-conta',
   path: '/criar-conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConformidadeRoute = ConformidadeRouteImport.update({
+  id: '/conformidade',
+  path: '/conformidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CertificadosRoute = CertificadosRouteImport.update({
+  id: '/certificados',
+  path: '/certificados',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvaliacaoRoute = AvaliacaoRouteImport.update({
+  id: '/avaliacao',
+  path: '/avaliacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -85,11 +134,6 @@ const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FormacaoRoute,
 } as any)
-const OlogaNovaInstituicaoRoute = OlogaNovaInstituicaoRouteImport.update({
-  id: '/nova-instituicao',
-  path: '/nova-instituicao',
-  getParentRoute: () => OlogaRoute,
-} as any)
 const IndicadoresTokenRoute = IndicadoresTokenRouteImport.update({
   id: '/indicadores/$token',
   path: '/indicadores/$token',
@@ -105,6 +149,11 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const GestaoInstituicoesIndexRoute = GestaoInstituicoesIndexRouteImport.update({
+  id: '/instituicoes/',
+  path: '/instituicoes/',
+  getParentRoute: () => GestaoRoute,
+} as any)
 const FormacaoModuloIndexRoute = FormacaoModuloIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -116,10 +165,15 @@ const AuthenticatedPainelIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
-const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
+const GestaoInstituicoesNovaRoute = GestaoInstituicoesNovaRouteImport.update({
+  id: '/instituicoes/nova',
+  path: '/instituicoes/nova',
+  getParentRoute: () => GestaoRoute,
+} as any)
+const GestaoInstituicoesIdRoute = GestaoInstituicoesIdRouteImport.update({
   id: '/instituicoes/$id',
   path: '/instituicoes/$id',
-  getParentRoute: () => OlogaRoute,
+  getParentRoute: () => GestaoRoute,
 } as any)
 const FormacaoModuloQuizRoute = FormacaoModuloQuizRouteImport.update({
   id: '/quiz',
@@ -177,16 +231,23 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/avaliacao': typeof AvaliacaoRoute
+  '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
+  '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
+  '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
+  '/painel-nacional': typeof PainelNacionalRoute
+  '/presencas': typeof PresencasRoute
+  '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
-  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -196,20 +257,29 @@ export interface FileRoutesByFullPath {
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
-  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
+  '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
+  '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/avaliacao': typeof AvaliacaoRoute
+  '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
+  '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
+  '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/painel-nacional': typeof PainelNacionalRoute
+  '/presencas': typeof PresencasRoute
+  '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
-  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -219,9 +289,11 @@ export interface FileRoutesByTo {
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
-  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
+  '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
+  '/gestao/instituicoes': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
@@ -229,16 +301,23 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/avaliacao': typeof AvaliacaoRoute
+  '/certificados': typeof CertificadosRoute
+  '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
+  '/cursos': typeof CursosRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
+  '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
+  '/painel-nacional': typeof PainelNacionalRoute
+  '/presencas': typeof PresencasRoute
+  '/turmas': typeof TurmasRoute
   '/verificar': typeof VerificarRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
-  '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -248,9 +327,11 @@ export interface FileRoutesById {
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
-  '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
+  '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
+  '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
@@ -258,16 +339,23 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/avaliacao'
+    | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
+    | '/cursos'
     | '/entrar'
     | '/formacao'
+    | '/gestao'
     | '/inscricao'
     | '/ologa'
+    | '/painel-nacional'
+    | '/presencas'
+    | '/turmas'
     | '/verificar'
     | '/painel'
     | '/formacao/$modulo'
     | '/indicadores/$token'
-    | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
     | '/painel/auditoria'
@@ -277,20 +365,29 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
-    | '/ologa/instituicoes/$id'
+    | '/gestao/instituicoes/$id'
+    | '/gestao/instituicoes/nova'
     | '/painel/'
     | '/formacao/$modulo/'
+    | '/gestao/instituicoes/'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/avaliacao'
+    | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
+    | '/cursos'
     | '/entrar'
+    | '/gestao'
     | '/inscricao'
+    | '/painel-nacional'
+    | '/presencas'
+    | '/turmas'
     | '/verificar'
     | '/indicadores/$token'
-    | '/ologa/nova-instituicao'
     | '/formacao'
     | '/ologa'
     | '/painel/auditoria'
@@ -300,25 +397,34 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
-    | '/ologa/instituicoes/$id'
+    | '/gestao/instituicoes/$id'
+    | '/gestao/instituicoes/nova'
     | '/painel'
     | '/formacao/$modulo'
+    | '/gestao/instituicoes'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/avaliacao'
+    | '/certificados'
+    | '/conformidade'
     | '/criar-conta'
+    | '/cursos'
     | '/entrar'
     | '/formacao'
+    | '/gestao'
     | '/inscricao'
     | '/ologa'
+    | '/painel-nacional'
+    | '/presencas'
+    | '/turmas'
     | '/verificar'
     | '/_authenticated/painel'
     | '/formacao/$modulo'
     | '/indicadores/$token'
-    | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
     | '/_authenticated/painel/auditoria'
@@ -328,9 +434,11 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
-    | '/ologa/instituicoes/$id'
+    | '/gestao/instituicoes/$id'
+    | '/gestao/instituicoes/nova'
     | '/_authenticated/painel/'
     | '/formacao/$modulo/'
+    | '/gestao/instituicoes/'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
   fileRoutesById: FileRoutesById
@@ -338,11 +446,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AvaliacaoRoute: typeof AvaliacaoRoute
+  CertificadosRoute: typeof CertificadosRoute
+  ConformidadeRoute: typeof ConformidadeRoute
   CriarContaRoute: typeof CriarContaRoute
+  CursosRoute: typeof CursosRoute
   EntrarRoute: typeof EntrarRoute
   FormacaoRoute: typeof FormacaoRouteWithChildren
+  GestaoRoute: typeof GestaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
   OlogaRoute: typeof OlogaRouteWithChildren
+  PainelNacionalRoute: typeof PainelNacionalRoute
+  PresencasRoute: typeof PresencasRoute
+  TurmasRoute: typeof TurmasRoute
   VerificarRoute: typeof VerificarRoute
   IndicadoresTokenRoute: typeof IndicadoresTokenRoute
   ApiPublicDocumentosTipoTokenRoute: typeof ApiPublicDocumentosTipoTokenRoute
@@ -355,6 +471,27 @@ declare module '@tanstack/react-router' {
       path: '/verificar'
       fullPath: '/verificar'
       preLoaderRoute: typeof VerificarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/turmas': {
+      id: '/turmas'
+      path: '/turmas'
+      fullPath: '/turmas'
+      preLoaderRoute: typeof TurmasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/presencas': {
+      id: '/presencas'
+      path: '/presencas'
+      fullPath: '/presencas'
+      preLoaderRoute: typeof PresencasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/painel-nacional': {
+      id: '/painel-nacional'
+      path: '/painel-nacional'
+      fullPath: '/painel-nacional'
+      preLoaderRoute: typeof PainelNacionalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ologa': {
@@ -371,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscricaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gestao': {
+      id: '/gestao'
+      path: '/gestao'
+      fullPath: '/gestao'
+      preLoaderRoute: typeof GestaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/formacao': {
       id: '/formacao'
       path: '/formacao'
@@ -385,11 +529,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cursos': {
+      id: '/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof CursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/criar-conta': {
       id: '/criar-conta'
       path: '/criar-conta'
       fullPath: '/criar-conta'
       preLoaderRoute: typeof CriarContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conformidade': {
+      id: '/conformidade'
+      path: '/conformidade'
+      fullPath: '/conformidade'
+      preLoaderRoute: typeof ConformidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificados': {
+      id: '/certificados'
+      path: '/certificados'
+      fullPath: '/certificados'
+      preLoaderRoute: typeof CertificadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avaliacao': {
+      id: '/avaliacao'
+      path: '/avaliacao'
+      fullPath: '/avaliacao'
+      preLoaderRoute: typeof AvaliacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -420,13 +592,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoIndexRouteImport
       parentRoute: typeof FormacaoRoute
     }
-    '/ologa/nova-instituicao': {
-      id: '/ologa/nova-instituicao'
-      path: '/nova-instituicao'
-      fullPath: '/ologa/nova-instituicao'
-      preLoaderRoute: typeof OlogaNovaInstituicaoRouteImport
-      parentRoute: typeof OlogaRoute
-    }
     '/indicadores/$token': {
       id: '/indicadores/$token'
       path: '/indicadores/$token'
@@ -448,6 +613,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/gestao/instituicoes/': {
+      id: '/gestao/instituicoes/'
+      path: '/instituicoes'
+      fullPath: '/gestao/instituicoes/'
+      preLoaderRoute: typeof GestaoInstituicoesIndexRouteImport
+      parentRoute: typeof GestaoRoute
+    }
     '/formacao/$modulo/': {
       id: '/formacao/$modulo/'
       path: '/'
@@ -462,12 +634,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
-    '/ologa/instituicoes/$id': {
-      id: '/ologa/instituicoes/$id'
+    '/gestao/instituicoes/nova': {
+      id: '/gestao/instituicoes/nova'
+      path: '/instituicoes/nova'
+      fullPath: '/gestao/instituicoes/nova'
+      preLoaderRoute: typeof GestaoInstituicoesNovaRouteImport
+      parentRoute: typeof GestaoRoute
+    }
+    '/gestao/instituicoes/$id': {
+      id: '/gestao/instituicoes/$id'
       path: '/instituicoes/$id'
-      fullPath: '/ologa/instituicoes/$id'
-      preLoaderRoute: typeof OlogaInstituicoesIdRouteImport
-      parentRoute: typeof OlogaRoute
+      fullPath: '/gestao/instituicoes/$id'
+      preLoaderRoute: typeof GestaoInstituicoesIdRouteImport
+      parentRoute: typeof GestaoRoute
     }
     '/formacao/$modulo/quiz': {
       id: '/formacao/$modulo/quiz'
@@ -599,16 +778,27 @@ const FormacaoRouteWithChildren = FormacaoRoute._addFileChildren(
   FormacaoRouteChildren,
 )
 
+interface GestaoRouteChildren {
+  GestaoInstituicoesIdRoute: typeof GestaoInstituicoesIdRoute
+  GestaoInstituicoesNovaRoute: typeof GestaoInstituicoesNovaRoute
+  GestaoInstituicoesIndexRoute: typeof GestaoInstituicoesIndexRoute
+}
+
+const GestaoRouteChildren: GestaoRouteChildren = {
+  GestaoInstituicoesIdRoute: GestaoInstituicoesIdRoute,
+  GestaoInstituicoesNovaRoute: GestaoInstituicoesNovaRoute,
+  GestaoInstituicoesIndexRoute: GestaoInstituicoesIndexRoute,
+}
+
+const GestaoRouteWithChildren =
+  GestaoRoute._addFileChildren(GestaoRouteChildren)
+
 interface OlogaRouteChildren {
-  OlogaNovaInstituicaoRoute: typeof OlogaNovaInstituicaoRoute
   OlogaIndexRoute: typeof OlogaIndexRoute
-  OlogaInstituicoesIdRoute: typeof OlogaInstituicoesIdRoute
 }
 
 const OlogaRouteChildren: OlogaRouteChildren = {
-  OlogaNovaInstituicaoRoute: OlogaNovaInstituicaoRoute,
   OlogaIndexRoute: OlogaIndexRoute,
-  OlogaInstituicoesIdRoute: OlogaInstituicoesIdRoute,
 }
 
 const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
@@ -616,11 +806,19 @@ const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AvaliacaoRoute: AvaliacaoRoute,
+  CertificadosRoute: CertificadosRoute,
+  ConformidadeRoute: ConformidadeRoute,
   CriarContaRoute: CriarContaRoute,
+  CursosRoute: CursosRoute,
   EntrarRoute: EntrarRoute,
   FormacaoRoute: FormacaoRouteWithChildren,
+  GestaoRoute: GestaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
   OlogaRoute: OlogaRouteWithChildren,
+  PainelNacionalRoute: PainelNacionalRoute,
+  PresencasRoute: PresencasRoute,
+  TurmasRoute: TurmasRoute,
   VerificarRoute: VerificarRoute,
   IndicadoresTokenRoute: IndicadoresTokenRoute,
   ApiPublicDocumentosTipoTokenRoute: ApiPublicDocumentosTipoTokenRoute,

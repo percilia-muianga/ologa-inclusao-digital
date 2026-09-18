@@ -1,35 +1,38 @@
-# Roteiro — autenticação, perfis e auditoria
+# Roteiro — plataforma nacional primeiro, acessos no fim
 
-## Correcções obrigatórias (aplicam-se a todas as fases)
-- Certificado é INDIVIDUAL: formando + curso, código único; turma apenas como referência (fase 3)
-- Turma tem província e distrito próprios, obrigatórios; relatório nacional por LOCAL DE FORMAÇÃO (fase 2)
-- Tipo de deficiência: reversível pelo próprio; auditoria regista só que houve alteração, nunca o valor
-- Consulta a campos sensíveis por administrador ou auditor fica registada (quem, de quem, o quê, quando)
+Decisão da cliente: construir a plataforma inteira, visível e navegável, e só no fim aplicar os acessos. O que já existe de autenticação, papéis e registo de auditoria fica intacto e a funcionar.
 
-## Fase 1 + Fase 0 (em curso)
-- [ ] Extensão do perfil (telefone, entidade, província, distrito, cargo, género, tipo de deficiência, conta_de_teste)
-- [ ] Tabela de papéis + função de verificação de papel
-- [ ] Registo de auditoria imutável, com excepção do tipo de deficiência
-- [ ] Registo de acessos a campos sensíveis
-- [ ] Entrada e criação de conta, encaminhamento por papel
-- [ ] Área do auditor (leitura total, activa desde o primeiro dia)
-- [ ] Conta de demonstração com os seis papéis + selector de papel activo
-- [ ] Seis contas de teste marcadas "TESTE", excluídas de indicadores, removíveis num comando
-- [ ] Ecrã de verificação de permissões lido das regras da base de dados, exportável
+## Condições permanentes desta entrega
+- Conteúdo comercial em `/ologa`; administração de instituições em `/gestao/instituicoes`, sem ligações mortas
+- Conteúdo formativo dos seis cursos é fornecido pela Ologa — não inventar. Lições criadas com estado "conteúdo por fornecer", visível e contável
+- Excepção: o módulo transversal Governo Digital Inclusivo e Acessibilidade é redigido por nós, a partir dos artigos 16, 17, 20, 24, 30 e 31 da Lei n.º 10/2024
+- `/formacao`, `/verificar` e as lições existentes continuam a funcionar
+- Aviso de dados de demonstração (fase 6): barra fina no topo, discreta mas inequívoca
+- Em todos os ecrãs: barra de acessibilidade, alto contraste, ouvir, saltar para o conteúdo, 44 px de toque, teclado, leitor de ecrã, português de Moçambique
+- Nenhum ecrã em branco: estado vazio explica o que sucede e o que fazer
 
-## Fase 2 — Formação
-- [ ] Cursos, turmas (com província e distrito próprios), sessões, inscrição por código, presenças
-- [ ] Áreas do formando e do formador
+## Fase 1 — Primeira impressão (em curso)
+- [x] Administração de instituições movida para `/gestao/instituicoes` e ligações internas actualizadas
+- [x] Conteúdo comercial movido na íntegra para `/ologa`, com a sua navegação própria
+- [x] Nova página principal: plataforma do programa nacional
+- [x] Navegação da plataforma: Cursos, Turmas, Presenças, Avaliação, Certificados, Painel Nacional, Conformidade + Entrar
+- [x] Rodapé da plataforma com ligação discreta "Sobre a Ologa"
+- [x] Ecrãs das sete áreas navegáveis, com estado vazio digno
+- [ ] Verificação final de acessibilidade e responsividade
 
-## Fase 3 — Gestão
-- [ ] Supervisor provincial
-- [ ] Coordenador nacional (cronogramas, banco de questões, exames)
-- [ ] Certificado individual (formando + curso, código único)
-- [ ] Área do administrador
+## Fase 2 — Cursos e módulos
+- [ ] Curso → Módulo → Lição, módulos reutilizáveis
+- [ ] Os seis cursos do Termo de Referência + módulo transversal de acessibilidade (redigido por nós)
+- [ ] Lições com estado "conteúdo por fornecer", contável por curso
 
-## Bloqueios
-- Falta o email real da conta de demonstração e o domínio real das contas de teste (vieram como exemplos).
+## Fase 3 — Turmas e cronogramas
+## Fase 4 — Presenças (offline e telefone)
+## Fase 5 — Avaliação e certificação individual
+## Fase 6 — Painel Nacional e dados de demonstração
+## Fase 7 — Conformidade e selector de papel
+## Fase 8 — Aplicar os acessos (no fim)
 
 ## Pendências anteriores
 - [ ] Remover `.env` do controlo de versões antes de ligar o GitHub
 - [ ] Áudio pré-gerado (Azure) — planeado, não construído
+- [ ] Email da conta de demonstração e domínio das contas de teste
