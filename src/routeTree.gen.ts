@@ -14,6 +14,7 @@ import { Route as OlogaRouteImport } from './routes/ologa'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
 import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as CriarContaRouteImport } from './routes/criar-conta'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
@@ -58,6 +59,11 @@ const FormacaoRoute = FormacaoRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CriarContaRoute = CriarContaRouteImport.update({
+  id: '/criar-conta',
+  path: '/criar-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -171,6 +177,7 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/inscricao': typeof InscricaoRoute
   '/verificar': typeof VerificarRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/criar-conta'
     | '/entrar'
     | '/formacao'
     | '/inscricao'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/criar-conta'
     | '/entrar'
     | '/inscricao'
     | '/verificar'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/criar-conta'
     | '/entrar'
     | '/formacao'
     | '/inscricao'
@@ -326,6 +338,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  CriarContaRoute: typeof CriarContaRoute
   EntrarRoute: typeof EntrarRoute
   FormacaoRoute: typeof FormacaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/criar-conta': {
+      id: '/criar-conta'
+      path: '/criar-conta'
+      fullPath: '/criar-conta'
+      preLoaderRoute: typeof CriarContaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -596,6 +616,7 @@ const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  CriarContaRoute: CriarContaRoute,
   EntrarRoute: EntrarRoute,
   FormacaoRoute: FormacaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
