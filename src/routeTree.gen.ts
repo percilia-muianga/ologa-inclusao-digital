@@ -16,7 +16,7 @@ import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CriarContaRouteImport } from './routes/criar-conta'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
@@ -70,9 +70,9 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const OlogaIndexRoute = OlogaIndexRouteImport.update({
+  id: '/ologa/',
+  path: '/ologa/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
@@ -176,7 +176,7 @@ const ApiPublicDocumentosTipoTokenRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
@@ -187,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao/': typeof FormacaoIndexRoute
+  '/ologa/': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -203,7 +204,7 @@ export interface FileRoutesByFullPath {
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/gestao': typeof GestaoRouteWithChildren
@@ -211,6 +212,7 @@ export interface FileRoutesByTo {
   '/verificar': typeof VerificarRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao': typeof FormacaoIndexRoute
+  '/ologa': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -228,7 +230,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
@@ -240,6 +241,7 @@ export interface FileRoutesById {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/formacao/': typeof FormacaoIndexRoute
+  '/ologa/': typeof OlogaIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -269,6 +271,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/formacao/'
+    | '/ologa/'
     | '/painel/auditoria'
     | '/painel/equipa'
     | '/painel/permissoes'
@@ -293,6 +296,7 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/indicadores/$token'
     | '/formacao'
+    | '/ologa'
     | '/painel/auditoria'
     | '/painel/equipa'
     | '/painel/permissoes'
@@ -309,7 +313,6 @@ export interface FileRouteTypes {
     | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
-    | '/'
     | '/_authenticated'
     | '/criar-conta'
     | '/entrar'
@@ -321,6 +324,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/formacao/'
+    | '/ologa/'
     | '/_authenticated/painel/auditoria'
     | '/_authenticated/painel/equipa'
     | '/_authenticated/painel/permissoes'
@@ -338,7 +342,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   CriarContaRoute: typeof CriarContaRoute
   EntrarRoute: typeof EntrarRoute
@@ -347,6 +350,7 @@ export interface RootRouteChildren {
   InscricaoRoute: typeof InscricaoRoute
   VerificarRoute: typeof VerificarRoute
   IndicadoresTokenRoute: typeof IndicadoresTokenRoute
+  OlogaIndexRoute: typeof OlogaIndexRoute
   ApiPublicDocumentosTipoTokenRoute: typeof ApiPublicDocumentosTipoTokenRoute
 }
 
@@ -401,11 +405,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/ologa/': {
+      id: '/ologa/'
+      path: '/ologa'
+      fullPath: '/ologa/'
+      preLoaderRoute: typeof OlogaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/formacao/': {
@@ -617,7 +621,6 @@ const GestaoRouteWithChildren =
   GestaoRoute._addFileChildren(GestaoRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   CriarContaRoute: CriarContaRoute,
   EntrarRoute: EntrarRoute,
@@ -626,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscricaoRoute: InscricaoRoute,
   VerificarRoute: VerificarRoute,
   IndicadoresTokenRoute: IndicadoresTokenRoute,
+  OlogaIndexRoute: OlogaIndexRoute,
   ApiPublicDocumentosTipoTokenRoute: ApiPublicDocumentosTipoTokenRoute,
 }
 export const routeTree = rootRouteImport
