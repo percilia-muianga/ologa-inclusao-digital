@@ -13,12 +13,33 @@ export const Route = createFileRoute("/cursos/$curso")({
 
 function CursoPage() {
   const { curso, modulos, totalPorFornecer } = Route.useLoaderData();
+  const campos = [
+    ["Objectivos", curso.objectivos],
+    ["Público-alvo", curso.publico_alvo],
+    ["Pré-requisitos", curso.pre_requisitos],
+    ["Materiais", curso.materiais],
+  ] as const;
   return (
     <PlataformaPagina titulo={curso.titulo} introducao={`${curso.carga_horaria} horas · ${curso.modalidade} · Meta de ${curso.formandos_previstos.toLocaleString("pt-PT")} formandos.`}>
       <Link to="/cursos" className="inline-flex min-h-11 items-center font-semibold text-navy underline">← Voltar aos seis cursos</Link>
       <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
         <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
         <p className="mt-2 text-navy-2"><strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os títulos organizam o plano de produção; o conteúdo temático será fornecido pela equipa Ologa.</p>
+      </section>
+      <section aria-labelledby="ficha-curso" className="mt-6">
+        <h2 id="ficha-curso" className="text-xl font-extrabold text-navy">Ficha do curso</h2>
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {campos.map(([rotulo, valor]) => (
+            <div key={rotulo} className="rounded-lg border border-line bg-page p-4">
+              <dt className="font-bold text-navy">{rotulo}</dt>
+              <dd className="mt-2 text-sm text-navy-2">{valor || "Conteúdo por fornecer pela equipa Ologa."}</dd>
+            </div>
+          ))}
+          <div className="rounded-lg border border-line bg-page p-4">
+            <dt className="font-bold text-navy">Progresso agregado</dt>
+            <dd className="mt-2 text-sm text-navy-2">—</dd>
+          </div>
+        </dl>
       </section>
       <div className="mt-8 space-y-6">
         {modulos.map((modulo) => (
