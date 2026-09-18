@@ -8,6 +8,13 @@
       "when": 1789709000172,
       "tag": "0000_perfis_papeis_auditoria",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789761889768,
+      "tag": "0001_add_program_courses_and_reusable_modules",
+      "breakpoints": true
     }
   ]
 }
