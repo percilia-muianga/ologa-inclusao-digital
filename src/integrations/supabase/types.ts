@@ -724,6 +724,182 @@ export type Database = {
         }
         Relationships: []
       }
+      turma_inscricoes: {
+        Row: {
+          criado_em: string
+          dados_de_demonstracao: boolean
+          email: string | null
+          estado: string
+          id: string
+          nome: string
+          perfil_id: string | null
+          turma_id: string
+        }
+        Insert: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          email?: string | null
+          estado?: string
+          id?: string
+          nome: string
+          perfil_id?: string | null
+          turma_id: string
+        }
+        Update: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          email?: string | null
+          estado?: string
+          id?: string
+          nome?: string
+          perfil_id?: string | null
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turma_inscricoes_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_inscricoes_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      turma_sessoes: {
+        Row: {
+          criado_em: string
+          dados_de_demonstracao: boolean
+          data: string
+          formador_nome: string | null
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          modalidade: string
+          ordem: number
+          tema: string
+          turma_id: string
+        }
+        Insert: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          data: string
+          formador_nome?: string | null
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          modalidade?: string
+          ordem: number
+          tema: string
+          turma_id: string
+        }
+        Update: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          data?: string
+          formador_nome?: string | null
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          modalidade?: string
+          ordem?: number
+          tema?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turma_sessoes_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      turmas: {
+        Row: {
+          codigo_inscricao: string
+          criado_em: string
+          curso_id: string
+          dados_de_demonstracao: boolean
+          data_fim: string | null
+          data_inicio: string | null
+          designacao: string
+          distrito: string
+          estado: Database["public"]["Enums"]["estado_turma"]
+          formador_principal_id: string | null
+          formador_principal_nome: string | null
+          formadores_auxiliares: string[]
+          id: string
+          limite_formandos: number
+          local_formacao: string | null
+          modalidade: string
+          observacoes: string | null
+          provincia: string
+        }
+        Insert: {
+          codigo_inscricao?: string
+          criado_em?: string
+          curso_id: string
+          dados_de_demonstracao?: boolean
+          data_fim?: string | null
+          data_inicio?: string | null
+          designacao: string
+          distrito: string
+          estado?: Database["public"]["Enums"]["estado_turma"]
+          formador_principal_id?: string | null
+          formador_principal_nome?: string | null
+          formadores_auxiliares?: string[]
+          id?: string
+          limite_formandos?: number
+          local_formacao?: string | null
+          modalidade?: string
+          observacoes?: string | null
+          provincia: string
+        }
+        Update: {
+          codigo_inscricao?: string
+          criado_em?: string
+          curso_id?: string
+          dados_de_demonstracao?: boolean
+          data_fim?: string | null
+          data_inicio?: string | null
+          designacao?: string
+          distrito?: string
+          estado?: Database["public"]["Enums"]["estado_turma"]
+          formador_principal_id?: string | null
+          formador_principal_nome?: string | null
+          formadores_auxiliares?: string[]
+          id?: string
+          limite_formandos?: number
+          local_formacao?: string | null
+          modalidade?: string
+          observacoes?: string | null
+          provincia?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turmas_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turmas_formador_principal_id_fkey"
+            columns: ["formador_principal_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       utilizador_papeis: {
         Row: {
           atribuido_em: string
@@ -764,6 +940,7 @@ export type Database = {
       e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
       e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
       endereco_ip_do_pedido: { Args: never; Returns: string }
+      gerar_codigo_turma: { Args: never; Returns: string }
       get_indicadores_por_token: { Args: { _token: string }; Returns: Json }
       get_totais_nacionais: {
         Args: never
@@ -819,6 +996,12 @@ export type Database = {
         | "mobilidade"
         | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
+      estado_turma:
+        | "planeada"
+        | "inscricoes_abertas"
+        | "a_decorrer"
+        | "concluida"
+        | "cancelada"
       genero: "feminino" | "masculino" | "prefere_nao_indicar"
       genero_utilizador:
         | "feminino"
@@ -997,6 +1180,13 @@ export const Constants = {
         "nenhum",
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
+      estado_turma: [
+        "planeada",
+        "inscricoes_abertas",
+        "a_decorrer",
+        "concluida",
+        "cancelada",
+      ],
       genero: ["feminino", "masculino", "prefere_nao_indicar"],
       genero_utilizador: [
         "feminino",
