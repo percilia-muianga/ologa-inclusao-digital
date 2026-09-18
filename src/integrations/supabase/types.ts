@@ -403,25 +403,52 @@ export type Database = {
       }
       perfis: {
         Row: {
+          actualizado_em: string
+          cargo: string | null
+          conta_de_teste: boolean
           criado_em: string
+          distrito: string | null
           email: string
+          entidade_empregadora: string | null
+          genero: Database["public"]["Enums"]["genero_utilizador"] | null
           id: string
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
+          provincia: string | null
+          telefone: string | null
+          tipo_deficiencia: string | null
         }
         Insert: {
+          actualizado_em?: string
+          cargo?: string | null
+          conta_de_teste?: boolean
           criado_em?: string
+          distrito?: string | null
           email: string
+          entidade_empregadora?: string | null
+          genero?: Database["public"]["Enums"]["genero_utilizador"] | null
           id: string
           nome: string
           papel: Database["public"]["Enums"]["papel_utilizador"]
+          provincia?: string | null
+          telefone?: string | null
+          tipo_deficiencia?: string | null
         }
         Update: {
+          actualizado_em?: string
+          cargo?: string | null
+          conta_de_teste?: boolean
           criado_em?: string
+          distrito?: string | null
           email?: string
+          entidade_empregadora?: string | null
+          genero?: Database["public"]["Enums"]["genero_utilizador"] | null
           id?: string
           nome?: string
           papel?: Database["public"]["Enums"]["papel_utilizador"]
+          provincia?: string | null
+          telefone?: string | null
+          tipo_deficiencia?: string | null
         }
         Relationships: []
       }
@@ -532,11 +559,115 @@ export type Database = {
           },
         ]
       }
+      registo_acesso_sensivel: {
+        Row: {
+          campos: string[]
+          consultado_por: string | null
+          contexto: string | null
+          endereco_ip: string | null
+          id: string
+          ocorrido_em: string
+          perfil_consultado: string | null
+        }
+        Insert: {
+          campos: string[]
+          consultado_por?: string | null
+          contexto?: string | null
+          endereco_ip?: string | null
+          id?: string
+          ocorrido_em?: string
+          perfil_consultado?: string | null
+        }
+        Update: {
+          campos?: string[]
+          consultado_por?: string | null
+          contexto?: string | null
+          endereco_ip?: string | null
+          id?: string
+          ocorrido_em?: string
+          perfil_consultado?: string | null
+        }
+        Relationships: []
+      }
+      registo_auditoria: {
+        Row: {
+          accao: string
+          campos_sensiveis_alterados: string[] | null
+          endereco_ip: string | null
+          entidade: string
+          id: string
+          ocorrido_em: string
+          registo_id: string | null
+          utilizador_id: string | null
+          valor_anterior: Json | null
+          valor_novo: Json | null
+        }
+        Insert: {
+          accao: string
+          campos_sensiveis_alterados?: string[] | null
+          endereco_ip?: string | null
+          entidade: string
+          id?: string
+          ocorrido_em?: string
+          registo_id?: string | null
+          utilizador_id?: string | null
+          valor_anterior?: Json | null
+          valor_novo?: Json | null
+        }
+        Update: {
+          accao?: string
+          campos_sensiveis_alterados?: string[] | null
+          endereco_ip?: string | null
+          entidade?: string
+          id?: string
+          ocorrido_em?: string
+          registo_id?: string | null
+          utilizador_id?: string | null
+          valor_anterior?: Json | null
+          valor_novo?: Json | null
+        }
+        Relationships: []
+      }
+      utilizador_papeis: {
+        Row: {
+          atribuido_em: string
+          atribuido_por: string | null
+          id: string
+          papel: Database["public"]["Enums"]["papel_sistema"]
+          utilizador_id: string
+        }
+        Insert: {
+          atribuido_em?: string
+          atribuido_por?: string | null
+          id?: string
+          papel: Database["public"]["Enums"]["papel_sistema"]
+          utilizador_id: string
+        }
+        Update: {
+          atribuido_em?: string
+          atribuido_por?: string | null
+          id?: string
+          papel?: Database["public"]["Enums"]["papel_sistema"]
+          utilizador_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utilizador_papeis_utilizador_id_fkey"
+            columns: ["utilizador_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
+      e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
+      endereco_ip_do_pedido: { Args: never; Returns: string }
       get_indicadores_por_token: { Args: { _token: string }; Returns: Json }
       get_totais_nacionais: {
         Args: never
@@ -548,6 +679,40 @@ export type Database = {
         }[]
       }
       is_admin: { Args: { _uid: string }; Returns: boolean }
+      listar_politicas_acesso: {
+        Args: never
+        Returns: {
+          condicao: string
+          condicao_escrita: string
+          operacao: string
+          papeis: string
+          politica: string
+          tabela: string
+        }[]
+      }
+      listar_tabelas_protegidas: {
+        Args: never
+        Returns: {
+          numero_politicas: number
+          rls_activa: boolean
+          tabela: string
+        }[]
+      }
+      registar_acesso_sensivel: {
+        Args: {
+          _campos: string[]
+          _contexto: string
+          _perfil_consultado: string
+        }
+        Returns: undefined
+      }
+      tem_papel: {
+        Args: {
+          _papel: Database["public"]["Enums"]["papel_sistema"]
+          _uid: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       apoio_acessibilidade:
@@ -559,6 +724,11 @@ export type Database = {
         | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
       genero: "feminino" | "masculino" | "prefere_nao_indicar"
+      genero_utilizador:
+        | "feminino"
+        | "masculino"
+        | "outro"
+        | "prefere_nao_indicar"
       meio_instituicao: "urbano" | "peri_urbano" | "rural"
       modalidade: "presencial" | "virtual" | "misto"
       natureza_instituicao:
@@ -571,6 +741,13 @@ export type Database = {
         | "outro"
       nivel_modulo: "basico" | "intermedio" | "avancado"
       nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
+      papel_sistema:
+        | "formando"
+        | "formador"
+        | "supervisor_provincial"
+        | "coordenador_nacional"
+        | "admin_atdi"
+        | "auditor_atdi"
       papel_utilizador: "admin_ologa" | "gestor_instituicao" | "formando"
       percurso: "completo" | "fundacao" | "intermedio" | "avancado" | "avulsos"
       sala_disponivel_opt: "sim" | "nao" | "nao_sei"
@@ -725,6 +902,12 @@ export const Constants = {
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
       genero: ["feminino", "masculino", "prefere_nao_indicar"],
+      genero_utilizador: [
+        "feminino",
+        "masculino",
+        "outro",
+        "prefere_nao_indicar",
+      ],
       meio_instituicao: ["urbano", "peri_urbano", "rural"],
       modalidade: ["presencial", "virtual", "misto"],
       natureza_instituicao: [
@@ -738,6 +921,14 @@ export const Constants = {
       ],
       nivel_modulo: ["basico", "intermedio", "avancado"],
       nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
+      papel_sistema: [
+        "formando",
+        "formador",
+        "supervisor_provincial",
+        "coordenador_nacional",
+        "admin_atdi",
+        "auditor_atdi",
+      ],
       papel_utilizador: ["admin_ologa", "gestor_instituicao", "formando"],
       percurso: ["completo", "fundacao", "intermedio", "avancado", "avulsos"],
       sala_disponivel_opt: ["sim", "nao", "nao_sei"],

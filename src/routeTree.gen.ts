@@ -14,17 +14,25 @@ import { Route as OlogaRouteImport } from './routes/ologa'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
 import { Route as FormacaoRouteImport } from './routes/formacao'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as OlogaNovaInstituicaoRouteImport } from './routes/ologa.nova-instituicao'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
+import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
+import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
 import { Route as OlogaInstituicoesIdRouteImport } from './routes/ologa.instituicoes.$id'
 import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
 import { Route as FormacaoModuloDiagnosticoRouteImport } from './routes/formacao.$modulo.diagnostico'
 import { Route as FormacaoModuloCertificadoRouteImport } from './routes/formacao.$modulo.certificado'
+import { Route as AuthenticatedPainelUtilizadoresRouteImport } from './routes/_authenticated/painel.utilizadores'
+import { Route as AuthenticatedPainelPermissoesRouteImport } from './routes/_authenticated/painel.permissoes'
+import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
+import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_authenticated/painel.auditoria'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
 
@@ -51,6 +59,15 @@ const FormacaoRoute = FormacaoRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CriarContaRoute = CriarContaRouteImport.update({
+  id: '/criar-conta',
+  path: '/criar-conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -83,11 +100,22 @@ const FormacaoModuloRoute = FormacaoModuloRouteImport.update({
   path: '/$modulo',
   getParentRoute: () => FormacaoRoute,
 } as any)
+const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const FormacaoModuloIndexRoute = FormacaoModuloIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FormacaoModuloRoute,
 } as any)
+const AuthenticatedPainelIndexRoute =
+  AuthenticatedPainelIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const OlogaInstituicoesIdRoute = OlogaInstituicoesIdRouteImport.update({
   id: '/instituicoes/$id',
   path: '/instituicoes/$id',
@@ -110,6 +138,30 @@ const FormacaoModuloCertificadoRoute =
     path: '/certificado',
     getParentRoute: () => FormacaoModuloRoute,
   } as any)
+const AuthenticatedPainelUtilizadoresRoute =
+  AuthenticatedPainelUtilizadoresRouteImport.update({
+    id: '/utilizadores',
+    path: '/utilizadores',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPermissoesRoute =
+  AuthenticatedPainelPermissoesRouteImport.update({
+    id: '/permissoes',
+    path: '/permissoes',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelEquipaRoute =
+  AuthenticatedPainelEquipaRouteImport.update({
+    id: '/equipa',
+    path: '/equipa',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelAuditoriaRoute =
+  AuthenticatedPainelAuditoriaRouteImport.update({
+    id: '/auditoria',
+    path: '/auditoria',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const FormacaoModuloLicaoLicaoRoute =
   FormacaoModuloLicaoLicaoRouteImport.update({
     id: '/licao/$licao',
@@ -125,26 +177,34 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
+  '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
+  '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/inscricao': typeof InscricaoRoute
   '/verificar': typeof VerificarRoute
@@ -152,10 +212,15 @@ export interface FileRoutesByTo {
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
+  '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
+  '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/painel': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
@@ -163,20 +228,28 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/formacao': typeof FormacaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/verificar': typeof VerificarRoute
+  '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/ologa/nova-instituicao': typeof OlogaNovaInstituicaoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
+  '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
+  '/_authenticated/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/ologa/instituicoes/$id': typeof OlogaInstituicoesIdRoute
+  '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
@@ -185,26 +258,34 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/criar-conta'
     | '/entrar'
     | '/formacao'
     | '/inscricao'
     | '/ologa'
     | '/verificar'
+    | '/painel'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
+    | '/painel/auditoria'
+    | '/painel/equipa'
+    | '/painel/permissoes'
+    | '/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/painel/'
     | '/formacao/$modulo/'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/criar-conta'
     | '/entrar'
     | '/inscricao'
     | '/verificar'
@@ -212,30 +293,43 @@ export interface FileRouteTypes {
     | '/ologa/nova-instituicao'
     | '/formacao'
     | '/ologa'
+    | '/painel/auditoria'
+    | '/painel/equipa'
+    | '/painel/permissoes'
+    | '/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/painel'
     | '/formacao/$modulo'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/criar-conta'
     | '/entrar'
     | '/formacao'
     | '/inscricao'
     | '/ologa'
     | '/verificar'
+    | '/_authenticated/painel'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/ologa/nova-instituicao'
     | '/formacao/'
     | '/ologa/'
+    | '/_authenticated/painel/auditoria'
+    | '/_authenticated/painel/equipa'
+    | '/_authenticated/painel/permissoes'
+    | '/_authenticated/painel/utilizadores'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
     | '/ologa/instituicoes/$id'
+    | '/_authenticated/painel/'
     | '/formacao/$modulo/'
     | '/formacao/$modulo/licao/$licao'
     | '/api/public/documentos/$tipo/$token'
@@ -243,6 +337,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  CriarContaRoute: typeof CriarContaRoute
   EntrarRoute: typeof EntrarRoute
   FormacaoRoute: typeof FormacaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
@@ -289,6 +385,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/criar-conta': {
+      id: '/criar-conta'
+      path: '/criar-conta'
+      fullPath: '/criar-conta'
+      preLoaderRoute: typeof CriarContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -331,12 +441,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoModuloRouteImport
       parentRoute: typeof FormacaoRoute
     }
+    '/_authenticated/painel': {
+      id: '/_authenticated/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof AuthenticatedPainelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/formacao/$modulo/': {
       id: '/formacao/$modulo/'
       path: '/'
       fullPath: '/formacao/$modulo/'
       preLoaderRoute: typeof FormacaoModuloIndexRouteImport
       parentRoute: typeof FormacaoModuloRoute
+    }
+    '/_authenticated/painel/': {
+      id: '/_authenticated/painel/'
+      path: '/'
+      fullPath: '/painel/'
+      preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
     }
     '/ologa/instituicoes/$id': {
       id: '/ologa/instituicoes/$id'
@@ -366,6 +490,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoModuloCertificadoRouteImport
       parentRoute: typeof FormacaoModuloRoute
     }
+    '/_authenticated/painel/utilizadores': {
+      id: '/_authenticated/painel/utilizadores'
+      path: '/utilizadores'
+      fullPath: '/painel/utilizadores'
+      preLoaderRoute: typeof AuthenticatedPainelUtilizadoresRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/permissoes': {
+      id: '/_authenticated/painel/permissoes'
+      path: '/permissoes'
+      fullPath: '/painel/permissoes'
+      preLoaderRoute: typeof AuthenticatedPainelPermissoesRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/equipa': {
+      id: '/_authenticated/painel/equipa'
+      path: '/equipa'
+      fullPath: '/painel/equipa'
+      preLoaderRoute: typeof AuthenticatedPainelEquipaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/auditoria': {
+      id: '/_authenticated/painel/auditoria'
+      path: '/auditoria'
+      fullPath: '/painel/auditoria'
+      preLoaderRoute: typeof AuthenticatedPainelAuditoriaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/formacao/$modulo/licao/$licao': {
       id: '/formacao/$modulo/licao/$licao'
       path: '/licao/$licao'
@@ -382,6 +534,36 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedPainelRouteChildren {
+  AuthenticatedPainelAuditoriaRoute: typeof AuthenticatedPainelAuditoriaRoute
+  AuthenticatedPainelEquipaRoute: typeof AuthenticatedPainelEquipaRoute
+  AuthenticatedPainelPermissoesRoute: typeof AuthenticatedPainelPermissoesRoute
+  AuthenticatedPainelUtilizadoresRoute: typeof AuthenticatedPainelUtilizadoresRoute
+  AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
+}
+
+const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
+  AuthenticatedPainelAuditoriaRoute: AuthenticatedPainelAuditoriaRoute,
+  AuthenticatedPainelEquipaRoute: AuthenticatedPainelEquipaRoute,
+  AuthenticatedPainelPermissoesRoute: AuthenticatedPainelPermissoesRoute,
+  AuthenticatedPainelUtilizadoresRoute: AuthenticatedPainelUtilizadoresRoute,
+  AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
+}
+
+const AuthenticatedPainelRouteWithChildren =
+  AuthenticatedPainelRoute._addFileChildren(AuthenticatedPainelRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPainelRoute: typeof AuthenticatedPainelRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPainelRoute: AuthenticatedPainelRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface FormacaoModuloRouteChildren {
   FormacaoModuloCertificadoRoute: typeof FormacaoModuloCertificadoRoute
@@ -433,6 +615,8 @@ const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  CriarContaRoute: CriarContaRoute,
   EntrarRoute: EntrarRoute,
   FormacaoRoute: FormacaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
