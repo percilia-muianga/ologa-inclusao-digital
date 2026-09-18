@@ -15,6 +15,13 @@
       "when": 1789761889768,
       "tag": "0001_add_program_courses_and_reusable_modules",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789763452883,
+      "tag": "0002_fase3_turmas_sessoes_inscricoes",
+      "breakpoints": true
     }
   ]
 }
