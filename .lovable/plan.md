@@ -1,96 +1,64 @@
-# Plataforma nacional visível primeiro, acessos no fim
+# Correcções ao Termo de Referência — plano faseado
 
-Decisão aceite: paramos de acrescentar trabalho a autenticação, papéis e registo de auditoria. Tudo o que já existe nessa frente fica intacto e a funcionar (`/entrar`, `/criar-conta`, área de painel, auditoria, matriz de permissões). Não se remove nada.
+Nada se apaga. Tudo o que está construído mantém-se; corrige-se e acrescenta-se.
 
-## Conflito que preciso de resolver consigo antes de começar
+## Primeiro, o que NÃO consigo fazer (regra 13)
 
-O endereço `/ologa` já está ocupado pela área de administração de instituições (lista, ficha de instituição, criar instituição manualmente). O pedido dá esse mesmo endereço ao conteúdo comercial.
+1. **Recolha real do inquérito de eficácia aos três meses.** Consigo criar o registo, o formulário e o indicador. Não consigo enviar nem recolher os inquéritos — a recolha é da ATDI, a plataforma só guarda e reporta o resultado.
+2. **Sincronização offline verdadeira do registo de participantes de workshop.** Consigo guardar no aparelho e enviar quando a ligação voltar. Não consigo garantir funcionamento offline instalável (app) nem resolver conflitos de duas pessoas a registar a mesma folha em simultâneo sem uma regra que me indique.
+3. **Conteúdo das 115 lições e das perguntas de pré/pós-teste.** Continua a ser fornecido pela Ologa. Crio a estrutura e a contagem "por fornecer"; não invento conteúdo (excepto o módulo legal já redigido).
+4. **Ambiguidade do TdR sobre Maputo.** A lista de distritos dá "Maputo Cidade e Província" como uma linha com 8 distritos, mas os locais de formação tratam Maputo Cidade e Maputo Província como duas entradas. Reproduzo fielmente as duas coisas como estão no TdR; a incoerência fica visível, não a corrijo.
+5. **Ecrãs de criação/edição de workshops e relatórios mensais sem acessos.** Vou construí-los abertos, como o resto da plataforma, e fecham-se na fase 8. Não os adio.
 
-Recomendação: o conteúdo comercial fica em `/ologa` como pediu, e a administração de instituições muda para `/gestao/instituicoes` (mesmos ecrãs, mesmo conteúdo, só o endereço muda). Alternativa: comercial em `/sobre-a-ologa` e a administração fica onde está.
+## Fase A — Cargas horárias e plano de produção (correcção 1)
 
-Escolha uma antes de eu avançar.
+- Inteligência Artificial: 20 h → **16 h**; lições por fornecer 10 → **8** (remoção de 2 lições vazias, nunca de lições com conteúdo).
+- Redes Avançadas: 80 h → **120 h**; lições por fornecer 40 → **60** (acrescentar 20 lições vazias).
+- Total geral do plano de produção: 97 → **115 lições**, actualizado em `/cursos` e na ficha de cada curso.
 
----
+## Fase B — Locais de formação e distritos (correcções 4 e 2, parte geográfica)
 
-## Fase 1 — A primeira impressão (Parte 1)
+- Tabela de referência com as 11 entradas provinciais e a capital/local exacto de formação, mantendo Maputo Cidade e Maputo Província separadas.
+- Tabela dos 77 distritos (a última linha com 8, como no TdR), agrupados por província.
+- Estas listas passam a alimentar os campos de província/distrito das turmas e dos workshops.
 
-O que muda para quem abre o endereço sem conta.
+## Fase C — Workshops (correcção 2)
 
-- Página principal passa a ser a plataforma do programa nacional de capacitação digital: identificação institucional, estado do programa, acesso directo a Cursos, Turmas, Presenças, Avaliação, Certificados, Painel Nacional e Conformidade.
-- Navegação principal nova, com essas sete entradas e um botão **Entrar** à direita. Sem "Solicitar Proposta".
-- Todo o conteúdo comercial actual — análise de mercado, inscrição de instituições, solicitar proposta, entregáveis, contacto, indicadores públicos comerciais — passa integralmente para o endereço próprio, com a navegação comercial actual preservada. Nenhuma secção, texto, número ou fonte se perde: é movido, não reescrito.
-- Rodapé da plataforma com ligação discreta **Sobre a Ologa**.
-- Aviso permanente de dados de demonstração (fica visível assim que a Fase 6 entrar; na Fase 1 já é construído o mecanismo).
-- Barra de acessibilidade, alto contraste, ouvir e saltar para o conteúdo em todos os ecrãs novos, sem excepção.
+- Entidade **Workshop**, distinta de Turma: tipo (provincial/distrital), província, distrito, local, data, duração (até 6 h), facilitador, participantes previstos e efectivos, estado.
+- **Participante de workshop**, registo leve: nome, entidade, província, distrito, género, contacto. Registo no próprio dia pelo facilitador, com folha que funciona sem ligação e sincroniza depois.
+- Sem certificação por nota nem regra dos 80 % de assiduidade — explícito no ecrã.
+- Ecrãs: lista de workshops com filtros, ficha do workshop, folha de registo de participantes.
+- Metas de referência: 11 provinciais (até 60 participantes) e 77 distritais (25–30), configuráveis.
 
-No fim desta fase a plataforma parece o que é, mesmo com os ecrãs seguintes ainda vazios — cada um com mensagem clara do que está a suceder.
+## Fase D — Pré-teste e pós-teste (correcção 3)
 
-## Fase 2 — Cursos e módulos (Parte 2)
+- Avaliação diagnóstica e avaliação de saída, curtas, geradas do mesmo banco de questões do curso ou do tema do workshop.
+- Aplicáveis a cursos e a workshops; pontuação de cada uma registada por pessoa.
+- Evolução em pontos percentuais por formando, turma, workshop, província e nacional.
+- Distintos do exame final de certificação; nenhum substitui o outro.
 
-- Estrutura Curso → Módulo → Lição. Os 11 módulos actuais passam a reutilizáveis, referenciáveis por vários cursos, sem perder conteúdo nem guião do formador. As rotas de formação actuais continuam a funcionar.
-- Os seis cursos do Termo de Referência, com objectivos, carga horária, modalidade, público-alvo, pré-requisitos, formandos previstos, materiais e progresso agregado.
-- Módulo transversal obrigatório nos seis: Governo Digital Inclusivo e Acessibilidade, 2 horas, deveres das instituições públicas ao abrigo da Lei n.º 10/2024.
-- Ecrãs: lista de cursos, ficha de curso, ficha de módulo.
+## Fase E — Painel Nacional pelos indicadores do TdR (correcção 5)
 
-Nota: eu não invento o conteúdo das lições dos seis cursos novos. Crio a estrutura, os objectivos e os dados que indicou; o conteúdo formativo fica por fornecer.
+Três blocos, com a tabela de dados sempre ao lado do gráfico e a regra dos cinco mantida:
+- **Desempenho da formação**: taxa de conclusão, taxa de certificação, melhoria pré→pós-teste.
+- **Satisfação**: índice apurado pelo questionário no fim de cada acção.
+- **Eficácia**: percentagem que aplica as competências três meses depois — registo do inquérito e do seu resultado.
+- Workshops realizados contra planeados, por província e por distrito.
 
-## Fase 3 — Turmas e cronogramas (Parte 3)
+## Fase F — Relatório mensal ASSS (correcção 6)
 
-- Turma: curso, código único de inscrição, província e distrito próprios e obrigatórios (local de formação), local, modalidade, formador principal e auxiliares, datas, limite de 30 formandos com aviso, estado.
-- Sessões com data, horas de início e fim, duração, tema e formador.
-- Verificação da soma das horas contra a carga horária do curso, com aviso visível quando não iguala.
-- Ecrãs: lista de turmas com filtros, ficha de turma, cronograma de sessões.
+- Relatório mensal com incidentes, reclamações recebidas, medidas correctivas e não conformidades.
+- Campo próprio de **acessibilidade das actividades**: acomodações razoáveis pedidas e concedidas, conteúdos em formatos alternativos, barreiras identificadas e resolvidas.
 
-## Fase 4 — Presenças (Parte 4)
+## Fase G — Turma: computadores e rácio (correcção 7)
 
-- Marcação presente / ausente / justificado por formando e sessão, em ecrã feito para telefone, com áreas de toque grandes.
-- Funciona sem internet e sincroniza quando a ligação voltar.
-- Sessões virtuais: presença calculada por tempo de permanência e progresso, corrigível pelo formador com justificação registada.
-- Taxa de assiduidade por formando sempre visível, com sinal claro abaixo de 80 por cento (cor e texto, nunca só cor).
+- Limite de 30 formandos confirmado e mantido.
+- Novo campo: número de computadores da sala; rácio formandos por computador na ficha, com sinal de aviso acima de dois por computador.
 
-## Fase 5 — Avaliação e certificação (Parte 5)
+## O que fica intacto
 
-- Banco de questões por curso e módulo, com pelo menos o triplo das questões usadas em cada exame. Cada questão com enunciado, tipologia, dificuldade, módulo, resposta correcta, explicação e estado. Cinco tipologias: escolha múltipla, verdadeiro ou falso, resposta curta, correspondência, ordenação.
-- Exame final gerado no momento em que o formando o inicia, com distribuição por módulo e dificuldade e ordem das opções aleatória — dois formandos nunca recebem o mesmo exame. Tempo limite, gravação automática, retoma segura.
-- Certificação automática: assiduidade ≥ 80 por cento **e** nota final ≥ 60 por cento. Segunda tentativa com exame novo. Prazo de 30 dias após o fim da formação, com contagem visível.
-- Certificado individual por formando e curso, com nome, curso, carga horária, província, turma, datas, nota final, assiduidade e código único — a reutilizar o mecanismo de verificação que já existe em `/verificar`.
+Número de turmas e de formandos por curso (ambiguidade em esclarecimento, valores configuráveis); acessibilidade, desenho universal, leitura em voz alta, alto contraste; autenticação, papéis e registo de auditoria; `/formacao`, `/verificar` e as lições existentes.
 
-## Fase 6 — Painel Nacional e dados de demonstração (Partes 6 e 7)
+## Nota técnica
 
-- Indicadores filtráveis e cruzáveis por curso, província, distrito, turma, formador, género, faixa etária e tipo de deficiência: previstos contra inscritos, taxa de conclusão, assiduidade média, taxa de aprovação, nota média, certificados emitidos, formandos em risco, sessões realizadas contra planeadas.
-- Progresso contratual contra as metas: 4000 formandos no total e a meta por curso, com os limiares de 25, 50, 75 e 100 por cento.
-- Vista por província, com as 11 províncias.
-- Exportação de qualquer vista em CSV, XLS e PDF.
-- Regra dos cinco aplicada na desagregação por género e tipo de deficiência, com a mesma redacção já usada na plataforma.
-- Cada gráfico acompanhado da tabela de dados equivalente.
-- Dados de demonstração, autorizados por si: os seis cursos, cerca de 20 turmas pelas 11 províncias, formandos com nomes moçambicanos plausíveis, sessões, presenças, tentativas de exame e certificados. Todos marcados `dados_de_demonstracao = verdadeiro`, aviso permanente visível na plataforma e um único comando que os remove sem tocar em mais nada.
-
-## Fase 7 — Conformidade e selector de papel (Parte 8)
-
-- Ecrã de Conformidade: Lei n.º 10/2024, desenho universal, acessibilidade, e a matriz de permissões já construída, em leitura.
-- Selector de papel visível no topo, para ver a plataforma como formando, formador, supervisor, coordenador, administrador ou auditor. Só muda a vista; não abre nem fecha nada na base de dados.
-- Nenhum ecrã fechado atrás de autenticação nesta entrega. Acções que exigiriam papel mostram-se completas para demonstração.
-
-## Fase 8 — Aplicar os acessos (fica para o fim, fora desta entrega)
-
-Ligar os papéis reais às regras da base de dados e fechar os ecrãs. Só depois de a plataforma estar completa e aprovada.
-
----
-
-## Obrigatório em todas as fases (Parte 9)
-
-Barra de acessibilidade, alto contraste, botão de ouvir e saltar para o conteúdo em todos os ecrãs, incluindo os que se seguem ao registo — a falha de ontem não se repete. Nenhum ecrã em branco: onde não há dados, mensagem clara em português a dizer o que está a suceder e o que fazer. Áreas de toque de 44 pixéis, navegação completa por teclado, compatível com leitor de ecrã, português de Moçambique.
-
-## Notas técnicas
-
-- Movimento do conteúdo comercial: ficheiro de rota movido, secções mantidas byte a byte. Cabeçalho comercial actual continua a servir esse endereço; cabeçalho institucional novo para a plataforma.
-- Módulos reutilizáveis: tabela de ligação curso ↔ módulo com ordem, sem alterar `modulos` nem `licoes`.
-- Presenças sem internet: fila local no dispositivo, sincronizada quando a ligação voltar, com estado visível por marcação.
-- Exame: geração no arranque da tentativa, guardada a composição exacta por tentativa para auditoria posterior.
-- Dados de demonstração: coluna `dados_de_demonstracao` em cada tabela nova, com filtro aplicado em todos os indicadores.
-
-## Preciso da sua confirmação
-
-1. Qual das duas opções para o conflito de endereço `/ologa`?
-2. Aceita as oito fases e esta ordem?
-3. Na Fase 2, confirma que o conteúdo formativo dos seis cursos novos me será fornecido por si (eu não o invento)?
+Alterações de base de dados são todas aditivas: novas tabelas (locais de formação, distritos, workshops, participantes, avaliações pré/pós, inquérito de eficácia, relatórios mensais) e novas colunas (computadores na turma). Nenhuma tabela ou coluna existente é removida ou renomeada. A carga horária dos dois cursos é uma actualização de valor, não uma alteração de estrutura.
