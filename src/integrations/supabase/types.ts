@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      avaliacoes_conhecimento: {
+        Row: {
+          curso_id: string | null
+          dados_de_demonstracao: boolean
+          distrito: string | null
+          formando_id: string | null
+          id: string
+          momento: Database["public"]["Enums"]["momento_avaliacao"]
+          participante_id: string | null
+          pontuacao: number
+          provincia: string | null
+          realizado_em: string
+          total: number
+          turma_id: string | null
+          workshop_id: string | null
+        }
+        Insert: {
+          curso_id?: string | null
+          dados_de_demonstracao?: boolean
+          distrito?: string | null
+          formando_id?: string | null
+          id?: string
+          momento: Database["public"]["Enums"]["momento_avaliacao"]
+          participante_id?: string | null
+          pontuacao: number
+          provincia?: string | null
+          realizado_em?: string
+          total: number
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Update: {
+          curso_id?: string | null
+          dados_de_demonstracao?: boolean
+          distrito?: string | null
+          formando_id?: string | null
+          id?: string
+          momento?: Database["public"]["Enums"]["momento_avaliacao"]
+          participante_id?: string | null
+          pontuacao?: number
+          provincia?: string | null
+          realizado_em?: string
+          total?: number
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avaliacoes_conhecimento_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_conhecimento_formando_id_fkey"
+            columns: ["formando_id"]
+            isOneToOne: false
+            referencedRelation: "formandos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_conhecimento_participante_id_fkey"
+            columns: ["participante_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_participantes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_conhecimento_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_conhecimento_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "workshops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificados: {
         Row: {
           codigo_verificacao: string
@@ -61,6 +145,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      configuracoes_programa: {
+        Row: {
+          actualizado_em: string
+          chave: string
+          descricao: string | null
+          valor: string
+        }
+        Insert: {
+          actualizado_em?: string
+          chave: string
+          descricao?: string | null
+          valor: string
+        }
+        Update: {
+          actualizado_em?: string
+          chave?: string
+          descricao?: string | null
+          valor?: string
+        }
+        Relationships: []
       }
       curso_modulos: {
         Row: {
@@ -152,6 +257,30 @@ export type Database = {
         }
         Relationships: []
       }
+      distritos_tdr: {
+        Row: {
+          id: string
+          nome: string
+          ordem: number
+          ordem_provincia: number
+          provincia: string
+        }
+        Insert: {
+          id?: string
+          nome: string
+          ordem: number
+          ordem_provincia: number
+          provincia: string
+        }
+        Update: {
+          id?: string
+          nome?: string
+          ordem?: number
+          ordem_provincia?: number
+          provincia?: string
+        }
+        Relationships: []
+      }
       formandos: {
         Row: {
           apoios_acessibilidade:
@@ -204,6 +333,73 @@ export type Database = {
             columns: ["instituicao_id"]
             isOneToOne: false
             referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inqueritos_eficacia: {
+        Row: {
+          aplica_competencias: boolean
+          criado_em: string
+          curso_id: string | null
+          dados_de_demonstracao: boolean
+          id: string
+          nome_participante: string | null
+          observacoes: string | null
+          provincia: string | null
+          realizado_em: string
+          registado_por: string | null
+          turma_id: string | null
+          workshop_id: string | null
+        }
+        Insert: {
+          aplica_competencias: boolean
+          criado_em?: string
+          curso_id?: string | null
+          dados_de_demonstracao?: boolean
+          id?: string
+          nome_participante?: string | null
+          observacoes?: string | null
+          provincia?: string | null
+          realizado_em?: string
+          registado_por?: string | null
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Update: {
+          aplica_competencias?: boolean
+          criado_em?: string
+          curso_id?: string | null
+          dados_de_demonstracao?: boolean
+          id?: string
+          nome_participante?: string | null
+          observacoes?: string | null
+          provincia?: string | null
+          realizado_em?: string
+          registado_por?: string | null
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inqueritos_eficacia_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inqueritos_eficacia_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inqueritos_eficacia_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "workshops"
             referencedColumns: ["id"]
           },
         ]
@@ -420,6 +616,27 @@ export type Database = {
           },
         ]
       }
+      locais_formacao: {
+        Row: {
+          id: string
+          local: string
+          ordem: number
+          provincia: string
+        }
+        Insert: {
+          id?: string
+          local: string
+          ordem: number
+          provincia: string
+        }
+        Update: {
+          id?: string
+          local?: string
+          ordem?: number
+          provincia?: string
+        }
+        Relationships: []
+      }
       metas_historico: {
         Row: {
           alterado_em: string
@@ -623,6 +840,54 @@ export type Database = {
           },
         ]
       }
+      questionarios_satisfacao: {
+        Row: {
+          comentario: string | null
+          dados_de_demonstracao: boolean
+          id: string
+          pontuacao: number
+          provincia: string | null
+          respondido_em: string
+          turma_id: string | null
+          workshop_id: string | null
+        }
+        Insert: {
+          comentario?: string | null
+          dados_de_demonstracao?: boolean
+          id?: string
+          pontuacao: number
+          provincia?: string | null
+          respondido_em?: string
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Update: {
+          comentario?: string | null
+          dados_de_demonstracao?: boolean
+          id?: string
+          pontuacao?: number
+          provincia?: string | null
+          respondido_em?: string
+          turma_id?: string | null
+          workshop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionarios_satisfacao_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionarios_satisfacao_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "workshops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_perguntas: {
         Row: {
           id: string
@@ -721,6 +986,60 @@ export type Database = {
           utilizador_id?: string | null
           valor_anterior?: Json | null
           valor_novo?: Json | null
+        }
+        Relationships: []
+      }
+      relatorios_mensais: {
+        Row: {
+          acomodacoes_concedidas: string | null
+          acomodacoes_solicitadas: string | null
+          ano: number
+          barreiras_identificadas: string | null
+          barreiras_resolvidas: string | null
+          criado_em: string
+          dados_de_demonstracao: boolean
+          formatos_alternativos: string | null
+          id: string
+          incidentes: string | null
+          medidas_correctivas: string | null
+          mes: number
+          nao_conformidades: string | null
+          provincia: string | null
+          reclamacoes: string | null
+        }
+        Insert: {
+          acomodacoes_concedidas?: string | null
+          acomodacoes_solicitadas?: string | null
+          ano: number
+          barreiras_identificadas?: string | null
+          barreiras_resolvidas?: string | null
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          formatos_alternativos?: string | null
+          id?: string
+          incidentes?: string | null
+          medidas_correctivas?: string | null
+          mes: number
+          nao_conformidades?: string | null
+          provincia?: string | null
+          reclamacoes?: string | null
+        }
+        Update: {
+          acomodacoes_concedidas?: string | null
+          acomodacoes_solicitadas?: string | null
+          ano?: number
+          barreiras_identificadas?: string | null
+          barreiras_resolvidas?: string | null
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          formatos_alternativos?: string | null
+          id?: string
+          incidentes?: string | null
+          medidas_correctivas?: string | null
+          mes?: number
+          nao_conformidades?: string | null
+          provincia?: string | null
+          reclamacoes?: string | null
         }
         Relationships: []
       }
@@ -840,6 +1159,7 @@ export type Database = {
           limite_formandos: number
           local_formacao: string | null
           modalidade: string
+          num_computadores: number | null
           observacoes: string | null
           provincia: string
         }
@@ -860,6 +1180,7 @@ export type Database = {
           limite_formandos?: number
           local_formacao?: string | null
           modalidade?: string
+          num_computadores?: number | null
           observacoes?: string | null
           provincia: string
         }
@@ -880,6 +1201,7 @@ export type Database = {
           limite_formandos?: number
           local_formacao?: string | null
           modalidade?: string
+          num_computadores?: number | null
           observacoes?: string | null
           provincia?: string
         }
@@ -931,6 +1253,137 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workshop_participantes: {
+        Row: {
+          contacto: string | null
+          dados_de_demonstracao: boolean
+          distrito: string | null
+          duplicado_provavel: boolean
+          entidade: string | null
+          genero: Database["public"]["Enums"]["genero_utilizador"] | null
+          id: string
+          nome: string
+          origem_offline: boolean
+          provincia: string | null
+          registado_em: string
+          workshop_id: string
+        }
+        Insert: {
+          contacto?: string | null
+          dados_de_demonstracao?: boolean
+          distrito?: string | null
+          duplicado_provavel?: boolean
+          entidade?: string | null
+          genero?: Database["public"]["Enums"]["genero_utilizador"] | null
+          id?: string
+          nome: string
+          origem_offline?: boolean
+          provincia?: string | null
+          registado_em?: string
+          workshop_id: string
+        }
+        Update: {
+          contacto?: string | null
+          dados_de_demonstracao?: boolean
+          distrito?: string | null
+          duplicado_provavel?: boolean
+          entidade?: string | null
+          genero?: Database["public"]["Enums"]["genero_utilizador"] | null
+          id?: string
+          nome?: string
+          origem_offline?: boolean
+          provincia?: string | null
+          registado_em?: string
+          workshop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_participantes_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "workshops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workshop_perguntas: {
+        Row: {
+          criado_em: string
+          id: string
+          opcoes: Json
+          pergunta: string
+          resposta_correta_indice: number
+          tema: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          opcoes: Json
+          pergunta: string
+          resposta_correta_indice: number
+          tema: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          opcoes?: Json
+          pergunta?: string
+          resposta_correta_indice?: number
+          tema?: string
+        }
+        Relationships: []
+      }
+      workshops: {
+        Row: {
+          criado_em: string
+          dados_de_demonstracao: boolean
+          data: string | null
+          distrito: string | null
+          duracao_horas: number
+          estado: Database["public"]["Enums"]["estado_workshop"]
+          facilitador_nome: string | null
+          id: string
+          local: string | null
+          observacoes: string | null
+          participantes_efectivos: number
+          participantes_previstos: number
+          provincia: string
+          tipo: Database["public"]["Enums"]["tipo_workshop"]
+        }
+        Insert: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          data?: string | null
+          distrito?: string | null
+          duracao_horas?: number
+          estado?: Database["public"]["Enums"]["estado_workshop"]
+          facilitador_nome?: string | null
+          id?: string
+          local?: string | null
+          observacoes?: string | null
+          participantes_efectivos?: number
+          participantes_previstos?: number
+          provincia: string
+          tipo: Database["public"]["Enums"]["tipo_workshop"]
+        }
+        Update: {
+          criado_em?: string
+          dados_de_demonstracao?: boolean
+          data?: string | null
+          distrito?: string | null
+          duracao_horas?: number
+          estado?: Database["public"]["Enums"]["estado_workshop"]
+          facilitador_nome?: string | null
+          id?: string
+          local?: string | null
+          observacoes?: string | null
+          participantes_efectivos?: number
+          participantes_previstos?: number
+          provincia?: string
+          tipo?: Database["public"]["Enums"]["tipo_workshop"]
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -1002,6 +1455,7 @@ export type Database = {
         | "a_decorrer"
         | "concluida"
         | "cancelada"
+      estado_workshop: "planeado" | "confirmado" | "realizado" | "cancelado"
       genero: "feminino" | "masculino" | "prefere_nao_indicar"
       genero_utilizador:
         | "feminino"
@@ -1010,6 +1464,7 @@ export type Database = {
         | "prefere_nao_indicar"
       meio_instituicao: "urbano" | "peri_urbano" | "rural"
       modalidade: "presencial" | "virtual" | "misto"
+      momento_avaliacao: "pre" | "pos"
       natureza_instituicao:
         | "orgao_central"
         | "direcao_provincial"
@@ -1044,6 +1499,7 @@ export type Database = {
         | "sociedade_civil_ong"
         | "setor_privado"
         | "outro"
+      tipo_workshop: "provincial" | "distrital"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1187,6 +1643,7 @@ export const Constants = {
         "concluida",
         "cancelada",
       ],
+      estado_workshop: ["planeado", "confirmado", "realizado", "cancelado"],
       genero: ["feminino", "masculino", "prefere_nao_indicar"],
       genero_utilizador: [
         "feminino",
@@ -1196,6 +1653,7 @@ export const Constants = {
       ],
       meio_instituicao: ["urbano", "peri_urbano", "rural"],
       modalidade: ["presencial", "virtual", "misto"],
+      momento_avaliacao: ["pre", "pos"],
       natureza_instituicao: [
         "orgao_central",
         "direcao_provincial",
@@ -1233,6 +1691,7 @@ export const Constants = {
         "setor_privado",
         "outro",
       ],
+      tipo_workshop: ["provincial", "distrital"],
     },
   },
 } as const
