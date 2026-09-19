@@ -4,7 +4,7 @@ import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { listarTurmas, ESTADOS_TURMA, rotuloEstadoTurma } from "@/lib/turmas.functions";
 import { PROVINCIAS } from "@/lib/inscricao-schema";
 
-export const Route = createFileRoute("/turmas")({
+export const Route = createFileRoute("/turmas/")({
   loader: () => listarTurmas(),
   head: () => ({
     meta: [

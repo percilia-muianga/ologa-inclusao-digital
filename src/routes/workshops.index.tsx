@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { listarWorkshops, rotuloEstadoWorkshop } from "@/lib/workshops.functions";
 
-export const Route = createFileRoute("/workshops")({
+export const Route = createFileRoute("/workshops/")({
   loader: () => listarWorkshops(),
   head: () => ({
     meta: [

@@ -27,6 +27,8 @@ import { Route as CertificadosRouteImport } from './routes/certificados'
 import { Route as AvaliacaoRouteImport } from './routes/avaliacao'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorkshopsIndexRouteImport } from './routes/workshops.index'
+import { Route as TurmasIndexRouteImport } from './routes/turmas.index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
@@ -142,6 +144,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const WorkshopsIndexRoute = WorkshopsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WorkshopsRoute,
+} as any)
+const TurmasIndexRoute = TurmasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TurmasRoute,
 } as any)
 const OlogaIndexRoute = OlogaIndexRouteImport.update({
   id: '/',
@@ -311,6 +323,8 @@ export interface FileRoutesByFullPath {
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/turmas/': typeof TurmasIndexRoute
+  '/workshops/': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -341,9 +355,7 @@ export interface FileRoutesByTo {
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
-  '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
-  '/workshops': typeof WorkshopsRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
@@ -352,6 +364,8 @@ export interface FileRoutesByTo {
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
+  '/turmas': typeof TurmasIndexRoute
+  '/workshops': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -399,6 +413,8 @@ export interface FileRoutesById {
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/turmas/': typeof TurmasIndexRoute
+  '/workshops/': typeof WorkshopsIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
@@ -446,6 +462,8 @@ export interface FileRouteTypes {
     | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
+    | '/turmas/'
+    | '/workshops/'
     | '/painel/auditoria'
     | '/painel/equipa'
     | '/painel/permissoes'
@@ -476,9 +494,7 @@ export interface FileRouteTypes {
     | '/painel-nacional'
     | '/presencas'
     | '/relatorios-mensais'
-    | '/turmas'
     | '/verificar'
-    | '/workshops'
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
@@ -487,6 +503,8 @@ export interface FileRouteTypes {
     | '/workshops/novo'
     | '/formacao'
     | '/ologa'
+    | '/turmas'
+    | '/workshops'
     | '/painel/auditoria'
     | '/painel/equipa'
     | '/painel/permissoes'
@@ -533,6 +551,8 @@ export interface FileRouteTypes {
     | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
+    | '/turmas/'
+    | '/workshops/'
     | '/_authenticated/painel/auditoria'
     | '/_authenticated/painel/equipa'
     | '/_authenticated/painel/permissoes'
@@ -701,6 +721,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/workshops/': {
+      id: '/workshops/'
+      path: '/'
+      fullPath: '/workshops/'
+      preLoaderRoute: typeof WorkshopsIndexRouteImport
+      parentRoute: typeof WorkshopsRoute
+    }
+    '/turmas/': {
+      id: '/turmas/'
+      path: '/'
+      fullPath: '/turmas/'
+      preLoaderRoute: typeof TurmasIndexRouteImport
+      parentRoute: typeof TurmasRoute
     }
     '/ologa/': {
       id: '/ologa/'
@@ -990,12 +1024,14 @@ const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 interface TurmasRouteChildren {
   TurmasCodigoRoute: typeof TurmasCodigoRoute
   TurmasNovaRoute: typeof TurmasNovaRoute
+  TurmasIndexRoute: typeof TurmasIndexRoute
   TurmasEditarCodigoRoute: typeof TurmasEditarCodigoRoute
 }
 
 const TurmasRouteChildren: TurmasRouteChildren = {
   TurmasCodigoRoute: TurmasCodigoRoute,
   TurmasNovaRoute: TurmasNovaRoute,
+  TurmasIndexRoute: TurmasIndexRoute,
   TurmasEditarCodigoRoute: TurmasEditarCodigoRoute,
 }
 
@@ -1005,12 +1041,14 @@ const TurmasRouteWithChildren =
 interface WorkshopsRouteChildren {
   WorkshopsIdRoute: typeof WorkshopsIdRoute
   WorkshopsNovoRoute: typeof WorkshopsNovoRoute
+  WorkshopsIndexRoute: typeof WorkshopsIndexRoute
   WorkshopsEditarIdRoute: typeof WorkshopsEditarIdRoute
 }
 
 const WorkshopsRouteChildren: WorkshopsRouteChildren = {
   WorkshopsIdRoute: WorkshopsIdRoute,
   WorkshopsNovoRoute: WorkshopsNovoRoute,
+  WorkshopsIndexRoute: WorkshopsIndexRoute,
   WorkshopsEditarIdRoute: WorkshopsEditarIdRoute,
 }
 
