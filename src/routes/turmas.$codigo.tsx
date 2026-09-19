@@ -136,7 +136,56 @@ function TurmaPage() {
                 : ""}
             </dd>
           </div>
+          <div>
+            <dt className="text-sm text-navy-2">Computadores disponíveis na sala</dt>
+            <dd className="font-bold text-navy">{turma.num_computadores ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="text-sm text-navy-2">Formandos por computador</dt>
+            <dd className="font-bold text-navy">
+              {turma.num_computadores && turma.num_computadores > 0 && inscritos > 0
+                ? `${Math.round((inscritos / turma.num_computadores) * 100) / 100} por computador`
+                : "—"}
+            </dd>
+          </div>
         </dl>
+
+        {turma.num_computadores && turma.num_computadores > 0 && inscritos > 0
+          ? (() => {
+              const racio = inscritos / turma.num_computadores;
+              const excede = racio > 2;
+              return (
+                <p
+                  role="status"
+                  className={
+                    excede
+                      ? "mt-4 rounded-md border border-amber-300 bg-amber-50 p-4 text-base text-navy"
+                      : "mt-4 rounded-md border border-line bg-page p-4 text-base text-navy"
+                  }
+                >
+                  {excede ? (
+                    <>
+                      <strong>Atenção: o rácio de equipamento excede o máximo admitido.</strong> São{" "}
+                      {Math.round(racio * 100) / 100} formandos por computador e o Termo de
+                      Referência admite no máximo dois. Faltam{" "}
+                      {Math.ceil(inscritos / 2) - turma.num_computadores} computadores.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Rácio de equipamento conforme.</strong> São{" "}
+                      {Math.round(racio * 100) / 100} formandos por computador, dentro do máximo de
+                      dois admitido pelo Termo de Referência.
+                    </>
+                  )}
+                </p>
+              );
+            })()
+          : null}
+
+        <p className="mt-3 text-sm text-navy-2">
+          A turma mantém-se limitada a {turma.limite_formandos} formandos, conforme o Termo de
+          Referência.
+        </p>
       </section>
 
       <section aria-labelledby="cronograma" className="mt-10">
