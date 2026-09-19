@@ -20,13 +20,13 @@ export const Route = createFileRoute("/ologa/")({
       {
         name: "description",
         content:
-          "Capacitação digital para instituições moçambicanas, alinhada com a Lei n.º 10/2024 e desenhada segundo os princípios do desenho universal.",
+          "Capacitação digital para instituições moçambicanas, desenhada segundo os princípios do desenho universal.",
       },
       { property: "og:title", content: "Ologa | Plataforma de Literacia Digital" },
       {
         property: "og:description",
         content:
-          "Um único pacote: capacita as equipas e reduz o risco de incumprimento. Presencial e virtual, desenhado para todas as pessoas.",
+          "Um único pacote: capacita as equipas e garante que ninguém fica de fora. Presencial e virtual, desenhado para todas as pessoas.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -35,12 +35,12 @@ export const Route = createFileRoute("/ologa/")({
   component: HomePage,
 });
 
-const HERO_EYEBROW = "Capacitação Digital Alinhada com a Lei n.º 10/2024";
+const HERO_EYEBROW = "Capacitação Digital com Desenho Universal";
 const HERO_TITLE_A = "Literacia digital que sustenta a ";
 const HERO_TITLE_HIGHLIGHT = "transformação do Estado";
 const HERO_TITLE_B = " moçambicano";
 const HERO_DESC =
-  "Um único pacote: capacita as equipas e, ao mesmo tempo, reduz o risco de incumprimento. Presencial e virtual, desenhado para todas as pessoas — porque digitalizar sem desenho universal é reproduzir a exclusão em formato digital.";
+  "Um único pacote: capacita as equipas e garante que ninguém fica de fora. Presencial e virtual, desenhado para todas as pessoas — porque digitalizar sem desenho universal é reproduzir a exclusão em formato digital.";
 
 type Src = { url: string; ref: string };
 
