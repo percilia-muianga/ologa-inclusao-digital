@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as TurmasRouteImport } from './routes/turmas'
+import { Route as RelatoriosMensaisRouteImport } from './routes/relatorios-mensais'
 import { Route as PresencasRouteImport } from './routes/presencas'
 import { Route as PainelNacionalRouteImport } from './routes/painel-nacional'
 import { Route as OlogaRouteImport } from './routes/ologa'
@@ -27,6 +29,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
+import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
+import { Route as WorkshopsIdRouteImport } from './routes/workshops.$id'
 import { Route as TurmasCodigoRouteImport } from './routes/turmas.$codigo'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
@@ -47,6 +51,11 @@ import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_auth
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
 
+const WorkshopsRoute = WorkshopsRouteImport.update({
+  id: '/workshops',
+  path: '/workshops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerificarRoute = VerificarRouteImport.update({
   id: '/verificar',
   path: '/verificar',
@@ -55,6 +64,11 @@ const VerificarRoute = VerificarRouteImport.update({
 const TurmasRoute = TurmasRouteImport.update({
   id: '/turmas',
   path: '/turmas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosMensaisRoute = RelatoriosMensaisRouteImport.update({
+  id: '/relatorios-mensais',
+  path: '/relatorios-mensais',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PresencasRoute = PresencasRouteImport.update({
@@ -135,6 +149,16 @@ const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FormacaoRoute,
+} as any)
+const WorkshopsNovoRoute = WorkshopsNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => WorkshopsRoute,
+} as any)
+const WorkshopsIdRoute = WorkshopsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => WorkshopsRoute,
 } as any)
 const TurmasCodigoRoute = TurmasCodigoRouteImport.update({
   id: '/$codigo',
@@ -255,13 +279,17 @@ export interface FileRoutesByFullPath {
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
+  '/workshops': typeof WorkshopsRouteWithChildren
   '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
+  '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -291,11 +319,15 @@ export interface FileRoutesByTo {
   '/inscricao': typeof InscricaoRoute
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
+  '/workshops': typeof WorkshopsRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
+  '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -329,13 +361,17 @@ export interface FileRoutesById {
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
+  '/workshops': typeof WorkshopsRouteWithChildren
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
+  '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -369,13 +405,17 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
+    | '/workshops'
     | '/painel'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
+    | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
     | '/painel/auditoria'
@@ -405,11 +445,15 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
+    | '/workshops'
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
+    | '/workshops/novo'
     | '/formacao'
     | '/ologa'
     | '/painel/auditoria'
@@ -442,13 +486,17 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
+    | '/workshops'
     | '/_authenticated/painel'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
+    | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
     | '/_authenticated/painel/auditoria'
@@ -482,14 +530,23 @@ export interface RootRouteChildren {
   OlogaRoute: typeof OlogaRouteWithChildren
   PainelNacionalRoute: typeof PainelNacionalRoute
   PresencasRoute: typeof PresencasRoute
+  RelatoriosMensaisRoute: typeof RelatoriosMensaisRoute
   TurmasRoute: typeof TurmasRouteWithChildren
   VerificarRoute: typeof VerificarRoute
+  WorkshopsRoute: typeof WorkshopsRouteWithChildren
   IndicadoresTokenRoute: typeof IndicadoresTokenRoute
   ApiPublicDocumentosTipoTokenRoute: typeof ApiPublicDocumentosTipoTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/workshops': {
+      id: '/workshops'
+      path: '/workshops'
+      fullPath: '/workshops'
+      preLoaderRoute: typeof WorkshopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verificar': {
       id: '/verificar'
       path: '/verificar'
@@ -502,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/turmas'
       fullPath: '/turmas'
       preLoaderRoute: typeof TurmasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios-mensais': {
+      id: '/relatorios-mensais'
+      path: '/relatorios-mensais'
+      fullPath: '/relatorios-mensais'
+      preLoaderRoute: typeof RelatoriosMensaisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/presencas': {
@@ -615,6 +679,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/formacao/'
       preLoaderRoute: typeof FormacaoIndexRouteImport
       parentRoute: typeof FormacaoRoute
+    }
+    '/workshops/novo': {
+      id: '/workshops/novo'
+      path: '/novo'
+      fullPath: '/workshops/novo'
+      preLoaderRoute: typeof WorkshopsNovoRouteImport
+      parentRoute: typeof WorkshopsRoute
+    }
+    '/workshops/$id': {
+      id: '/workshops/$id'
+      path: '/$id'
+      fullPath: '/workshops/$id'
+      preLoaderRoute: typeof WorkshopsIdRouteImport
+      parentRoute: typeof WorkshopsRoute
     }
     '/turmas/$codigo': {
       id: '/turmas/$codigo'
@@ -863,6 +941,20 @@ const TurmasRouteChildren: TurmasRouteChildren = {
 const TurmasRouteWithChildren =
   TurmasRoute._addFileChildren(TurmasRouteChildren)
 
+interface WorkshopsRouteChildren {
+  WorkshopsIdRoute: typeof WorkshopsIdRoute
+  WorkshopsNovoRoute: typeof WorkshopsNovoRoute
+}
+
+const WorkshopsRouteChildren: WorkshopsRouteChildren = {
+  WorkshopsIdRoute: WorkshopsIdRoute,
+  WorkshopsNovoRoute: WorkshopsNovoRoute,
+}
+
+const WorkshopsRouteWithChildren = WorkshopsRoute._addFileChildren(
+  WorkshopsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -878,8 +970,10 @@ const rootRouteChildren: RootRouteChildren = {
   OlogaRoute: OlogaRouteWithChildren,
   PainelNacionalRoute: PainelNacionalRoute,
   PresencasRoute: PresencasRoute,
+  RelatoriosMensaisRoute: RelatoriosMensaisRoute,
   TurmasRoute: TurmasRouteWithChildren,
   VerificarRoute: VerificarRoute,
+  WorkshopsRoute: WorkshopsRouteWithChildren,
   IndicadoresTokenRoute: IndicadoresTokenRoute,
   ApiPublicDocumentosTipoTokenRoute: ApiPublicDocumentosTipoTokenRoute,
 }

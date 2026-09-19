@@ -32,7 +32,20 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Sessões com data, horas, duração, tema e formador; verificação da soma contra a carga horária do curso
 - [x] Lista com filtros por província, curso, estado e formador
 - [x] Soma por província: turmas e formandos inscritos (embrião do Painel Nacional)
-- [ ] Ecrãs de criação/edição de turmas e sessões (dependem da fase 8 — acessos)
+- [ ] Ecrãs de criação/edição de turmas e sessões (por fazer — não adiar por acessos, regra 14)
+
+## Correcções do Termo de Referência — fases A a G (concluídas)
+- [x] A — Cargas horárias: IA 16 h (8 lições), Redes 120 h (60 lições); total 115 lições por fornecer
+- [x] B — Workshops: entidade própria, provinciais e distritais, lista com filtros, ficha e criação
+- [x] B — Registo leve de participantes, no próprio dia, funciona sem ligação e sincroniza depois; duplicados prováveis assinalados, nunca apagados
+- [x] C — Pré-teste e pós-teste distintos do exame final, com evolução em pontos percentuais
+- [x] D — Locais de formação: as 11 capitais, com Maputo Cidade e Maputo Província separadas
+- [x] D — 77 distritos do TdR, reproduzidos fielmente (última linha com 8, incoerência mantida)
+- [x] E — Painel Nacional por tipos do TdR: desempenho, satisfação, eficácia aos três meses, workshops por província e distrito
+- [x] F — Relatório mensal com incidentes, reclamações, medidas correctivas, não conformidades e acessibilidade das actividades
+- [x] G — Limite de 30 formandos confirmado; computadores da sala e rácio com aviso acima de 2 por computador
+- [x] Plano de produção soma lições e perguntas de pré e pós-teste em falta
+
 ## Fase 4 — Presenças (offline e telefone)
 ## Fase 5 — Avaliação e certificação individual
 ## Fase 6 — Painel Nacional e dados de demonstração

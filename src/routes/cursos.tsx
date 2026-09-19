@@ -9,12 +9,28 @@ export const Route = createFileRoute("/cursos")({
 });
 
 function CursosPage() {
-  const { cursos, totalGeralPorFornecer } = Route.useLoaderData();
+  const {
+    cursos,
+    totalGeralPorFornecer,
+    minimoPerguntasPorCurso,
+    perguntasPorFornecerCursos,
+    perguntasPorFornecerWorkshops,
+  } = Route.useLoaderData();
   return (
     <PlataformaPagina titulo="Cursos do programa" introducao="Seis cursos de capacitação, mais um módulo transversal obrigatório sobre Governo Digital Inclusivo e Acessibilidade. Cada curso organiza-se em módulos reutilizáveis e lições.">
       <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-amber-300 bg-amber-50 p-5">
         <h2 id="plano-conteudo" className="text-lg font-bold text-navy">Plano de produção de conteúdo</h2>
         <p className="mt-2 text-base text-navy-2"><strong>{totalGeralPorFornecer} lições</strong> aguardam conteúdo da equipa Ologa. As seis lições do módulo transversal legal já estão disponíveis e não entram nesta contagem.</p>
+        <p className="mt-2 text-base text-navy-2">
+          Perguntas de pré-teste e pós-teste em falta:{" "}
+          <strong>{perguntasPorFornecerCursos} para os seis cursos</strong> e{" "}
+          <strong>{perguntasPorFornecerWorkshops} para os workshops</strong>, contando um mínimo de{" "}
+          {minimoPerguntasPorCurso} perguntas por banco — o triplo das usadas em cada prova.
+        </p>
+        <p className="mt-2 text-base font-bold text-navy">
+          Volume total por fornecer:{" "}
+          {totalGeralPorFornecer + perguntasPorFornecerCursos + perguntasPorFornecerWorkshops} itens.
+        </p>
       </section>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {cursos.map((curso) => (
@@ -26,6 +42,7 @@ function CursosPage() {
             <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4 text-sm">
               <div><dt className="text-navy-2">Módulos</dt><dd className="font-bold text-navy">{curso.totalModulos}</dd></div>
               <div><dt className="text-navy-2">Por fornecer</dt><dd className="font-bold text-amber-800">{curso.licoesPorFornecer} lições</dd></div>
+              <div><dt className="text-navy-2">Perguntas em falta</dt><dd className="font-bold text-amber-800">{curso.perguntasPorFornecer}</dd></div>
             </dl>
             <Link to="/cursos/$curso" params={{ curso: curso.slug }} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground">Ver estrutura do curso</Link>
           </article>
