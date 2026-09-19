@@ -29,6 +29,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
+import { Route as WorkshopsIdRouteImport } from './routes/workshops.$id'
 import { Route as TurmasCodigoRouteImport } from './routes/turmas.$codigo'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
@@ -146,6 +147,11 @@ const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
 const WorkshopsNovoRoute = WorkshopsNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
+  getParentRoute: () => WorkshopsRoute,
+} as any)
+const WorkshopsIdRoute = WorkshopsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
   getParentRoute: () => WorkshopsRoute,
 } as any)
 const TurmasCodigoRoute = TurmasCodigoRouteImport.update({
@@ -275,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByTo {
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
@@ -353,6 +361,7 @@ export interface FileRoutesById {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
@@ -395,6 +404,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
@@ -431,6 +441,7 @@ export interface FileRouteTypes {
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao'
     | '/ologa'
@@ -472,6 +483,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao/'
     | '/ologa/'
@@ -653,6 +665,13 @@ declare module '@tanstack/react-router' {
       path: '/novo'
       fullPath: '/workshops/novo'
       preLoaderRoute: typeof WorkshopsNovoRouteImport
+      parentRoute: typeof WorkshopsRoute
+    }
+    '/workshops/$id': {
+      id: '/workshops/$id'
+      path: '/$id'
+      fullPath: '/workshops/$id'
+      preLoaderRoute: typeof WorkshopsIdRouteImport
       parentRoute: typeof WorkshopsRoute
     }
     '/turmas/$codigo': {
@@ -903,10 +922,12 @@ const TurmasRouteWithChildren =
   TurmasRoute._addFileChildren(TurmasRouteChildren)
 
 interface WorkshopsRouteChildren {
+  WorkshopsIdRoute: typeof WorkshopsIdRoute
   WorkshopsNovoRoute: typeof WorkshopsNovoRoute
 }
 
 const WorkshopsRouteChildren: WorkshopsRouteChildren = {
+  WorkshopsIdRoute: WorkshopsIdRoute,
   WorkshopsNovoRoute: WorkshopsNovoRoute,
 }
 
