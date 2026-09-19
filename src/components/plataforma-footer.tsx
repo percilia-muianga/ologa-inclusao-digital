@@ -23,6 +23,12 @@ export function PlataformaFooter() {
           <Link to="/verificar" className={link}>
             Verificar certificado
           </Link>
+          <Link to="/workshops" className={link}>
+            Workshops
+          </Link>
+          <Link to="/relatorios-mensais" className={link}>
+            Relatórios mensais
+          </Link>
           <Link to="/conformidade" className={link}>
             Conformidade
           </Link>

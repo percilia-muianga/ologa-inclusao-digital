@@ -2,14 +2,29 @@ import { createServerFn } from "@tanstack/react-start";
 
 export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const [cursosRes, relacoesRes, licoesRes] = await Promise.all([
-    supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia").order("ordem"),
-    supabaseAdmin.from("curso_modulos").select("curso_id,modulo_id"),
-    supabaseAdmin.from("licoes").select("modulo_id,estado_conteudo"),
-  ]);
+  const [cursosRes, relacoesRes, licoesRes, perguntasRes, wsPerguntasRes, configRes] =
+    await Promise.all([
+      supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia").order("ordem"),
+      supabaseAdmin.from("curso_modulos").select("curso_id,modulo_id"),
+      supabaseAdmin.from("licoes").select("modulo_id,estado_conteudo"),
+      supabaseAdmin.from("quiz_perguntas").select("modulo_id"),
+      supabaseAdmin.from("workshop_perguntas").select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("configuracoes_programa").select("chave,valor"),
+    ]);
   if (cursosRes.error) throw cursosRes.error;
   if (relacoesRes.error) throw relacoesRes.error;
   if (licoesRes.error) throw licoesRes.error;
+  if (perguntasRes.error) throw perguntasRes.error;
+  if (wsPerguntasRes.error) throw wsPerguntasRes.error;
+  if (configRes.error) throw configRes.error;
+
+  const config: Record<string, string> = {};
+  for (const c of configRes.data ?? []) config[c.chave] = c.valor;
+  const minimoPorCurso = Number(config["banco_perguntas_minimo_por_curso"] ?? 30);
+
+  const perguntasPorModulo = new Map<string, number>();
+  for (const p of perguntasRes.data ?? [])
+    perguntasPorModulo.set(p.modulo_id, (perguntasPorModulo.get(p.modulo_id) ?? 0) + 1);
 
   const licoesPorModulo = new Map<string, { porFornecer: number; disponiveis: number }>();
   for (const licao of licoesRes.data ?? []) {
