@@ -82,6 +82,15 @@ function TurmasPage() {
       titulo="Turmas e cronogramas"
       introducao="Cada turma pertence a um curso e tem província e distrito próprios — o local de formação —, código único de inscrição, formador principal e auxiliares, datas e limite de trinta formandos. O Painel Nacional reporta pelo local de formação, não pela província de registo do formando."
     >
+      <p className="mb-6">
+        <Link
+          to="/turmas/nova"
+          className="inline-flex min-h-11 items-center rounded-md bg-navy px-5 text-base font-semibold text-navy-foreground"
+        >
+          Criar turma
+        </Link>
+      </p>
+
       <section aria-labelledby="filtros" className="rounded-lg border border-line bg-white p-5">
         <h2 id="filtros" className="text-lg font-bold text-navy">
           Filtrar turmas
@@ -245,7 +254,17 @@ function TurmasPage() {
               descricao={
                 comFiltros
                   ? "Nenhuma turma corresponde à combinação escolhida. Limpe os filtros para ver todas as turmas registadas."
-                  : "A estrutura de turmas, sessões e verificação da carga horária já está criada. Assim que a coordenação nacional registar a primeira turma, ela aparece aqui com o seu código de inscrição, província e distrito de formação."
+                  : "Ainda não há nenhuma turma registada. Crie a primeira turma: o código de inscrição é gerado automaticamente e, dentro da turma, agenda-se o cronograma de sessões."
+              }
+              accao={
+                comFiltros ? undefined : (
+                  <Link
+                    to="/turmas/nova"
+                    className="inline-flex min-h-11 items-center rounded-md bg-navy px-5 text-base font-semibold text-navy-foreground"
+                  >
+                    Criar turma
+                  </Link>
+                )
               }
             />
           </div>

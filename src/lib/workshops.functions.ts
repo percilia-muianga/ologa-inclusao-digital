@@ -329,3 +329,41 @@ export const registarInqueritoEficacia = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+/** Actualiza um workshop. A alteração fica no registo de auditoria. */
+export const actualizarWorkshop = createServerFn({ method: "POST" })
+  .validator(
+    (dados: {
+      id: string;
+      tipo: "provincial" | "distrital";
+      provincia: string;
+      distrito: string | null;
+      local: string | null;
+      data: string | null;
+      duracaoHoras: number;
+      facilitador: string | null;
+      previstos: number;
+      estado: string;
+      observacoes: string | null;
+    }) => dados,
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("workshops")
+      .update({
+        tipo: data.tipo,
+        provincia: data.provincia,
+        distrito: data.distrito,
+        local: data.local,
+        data: data.data,
+        duracao_horas: data.duracaoHoras,
+        facilitador_nome: data.facilitador,
+        participantes_previstos: data.previstos,
+        estado: data.estado as never,
+        observacoes: data.observacoes,
+      })
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });

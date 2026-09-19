@@ -31,6 +31,7 @@ import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
 import { Route as WorkshopsIdRouteImport } from './routes/workshops.$id'
+import { Route as TurmasNovaRouteImport } from './routes/turmas.nova'
 import { Route as TurmasCodigoRouteImport } from './routes/turmas.$codigo'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
@@ -39,6 +40,8 @@ import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated
 import { Route as GestaoInstituicoesIndexRouteImport } from './routes/gestao.instituicoes.index'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
+import { Route as WorkshopsEditarIdRouteImport } from './routes/workshops.editar.$id'
+import { Route as TurmasEditarCodigoRouteImport } from './routes/turmas.editar.$codigo'
 import { Route as GestaoInstituicoesNovaRouteImport } from './routes/gestao.instituicoes.nova'
 import { Route as GestaoInstituicoesIdRouteImport } from './routes/gestao.instituicoes.$id'
 import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
@@ -160,6 +163,11 @@ const WorkshopsIdRoute = WorkshopsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => WorkshopsRoute,
 } as any)
+const TurmasNovaRoute = TurmasNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => TurmasRoute,
+} as any)
 const TurmasCodigoRoute = TurmasCodigoRouteImport.update({
   id: '/$codigo',
   path: '/$codigo',
@@ -201,6 +209,16 @@ const AuthenticatedPainelIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const WorkshopsEditarIdRoute = WorkshopsEditarIdRouteImport.update({
+  id: '/editar/$id',
+  path: '/editar/$id',
+  getParentRoute: () => WorkshopsRoute,
+} as any)
+const TurmasEditarCodigoRoute = TurmasEditarCodigoRouteImport.update({
+  id: '/editar/$codigo',
+  path: '/editar/$codigo',
+  getParentRoute: () => TurmasRoute,
+} as any)
 const GestaoInstituicoesNovaRoute = GestaoInstituicoesNovaRouteImport.update({
   id: '/instituicoes/nova',
   path: '/instituicoes/nova',
@@ -288,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
@@ -301,6 +320,8 @@ export interface FileRoutesByFullPath {
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
   '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
+  '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
+  '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
@@ -326,6 +347,7 @@ export interface FileRoutesByTo {
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao': typeof FormacaoIndexRoute
@@ -339,6 +361,8 @@ export interface FileRoutesByTo {
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
   '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
+  '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
+  '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes': typeof GestaoInstituicoesIndexRoute
@@ -370,6 +394,7 @@ export interface FileRoutesById {
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
+  '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
   '/formacao/': typeof FormacaoIndexRoute
@@ -383,6 +408,8 @@ export interface FileRoutesById {
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
   '/gestao/instituicoes/$id': typeof GestaoInstituicoesIdRoute
   '/gestao/instituicoes/nova': typeof GestaoInstituicoesNovaRoute
+  '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
+  '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
@@ -414,6 +441,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao/'
@@ -427,6 +455,8 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/quiz'
     | '/gestao/instituicoes/$id'
     | '/gestao/instituicoes/nova'
+    | '/turmas/editar/$codigo'
+    | '/workshops/editar/$id'
     | '/painel/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
@@ -452,6 +482,7 @@ export interface FileRouteTypes {
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao'
@@ -465,6 +496,8 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/quiz'
     | '/gestao/instituicoes/$id'
     | '/gestao/instituicoes/nova'
+    | '/turmas/editar/$codigo'
+    | '/workshops/editar/$id'
     | '/painel'
     | '/formacao/$modulo'
     | '/gestao/instituicoes'
@@ -495,6 +528,7 @@ export interface FileRouteTypes {
     | '/formacao/$modulo'
     | '/indicadores/$token'
     | '/turmas/$codigo'
+    | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
     | '/formacao/'
@@ -508,6 +542,8 @@ export interface FileRouteTypes {
     | '/formacao/$modulo/quiz'
     | '/gestao/instituicoes/$id'
     | '/gestao/instituicoes/nova'
+    | '/turmas/editar/$codigo'
+    | '/workshops/editar/$id'
     | '/_authenticated/painel/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
@@ -694,6 +730,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkshopsIdRouteImport
       parentRoute: typeof WorkshopsRoute
     }
+    '/turmas/nova': {
+      id: '/turmas/nova'
+      path: '/nova'
+      fullPath: '/turmas/nova'
+      preLoaderRoute: typeof TurmasNovaRouteImport
+      parentRoute: typeof TurmasRoute
+    }
     '/turmas/$codigo': {
       id: '/turmas/$codigo'
       path: '/$codigo'
@@ -749,6 +792,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/painel/'
       preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/workshops/editar/$id': {
+      id: '/workshops/editar/$id'
+      path: '/editar/$id'
+      fullPath: '/workshops/editar/$id'
+      preLoaderRoute: typeof WorkshopsEditarIdRouteImport
+      parentRoute: typeof WorkshopsRoute
+    }
+    '/turmas/editar/$codigo': {
+      id: '/turmas/editar/$codigo'
+      path: '/editar/$codigo'
+      fullPath: '/turmas/editar/$codigo'
+      preLoaderRoute: typeof TurmasEditarCodigoRouteImport
+      parentRoute: typeof TurmasRoute
     }
     '/gestao/instituicoes/nova': {
       id: '/gestao/instituicoes/nova'
@@ -932,10 +989,14 @@ const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 
 interface TurmasRouteChildren {
   TurmasCodigoRoute: typeof TurmasCodigoRoute
+  TurmasNovaRoute: typeof TurmasNovaRoute
+  TurmasEditarCodigoRoute: typeof TurmasEditarCodigoRoute
 }
 
 const TurmasRouteChildren: TurmasRouteChildren = {
   TurmasCodigoRoute: TurmasCodigoRoute,
+  TurmasNovaRoute: TurmasNovaRoute,
+  TurmasEditarCodigoRoute: TurmasEditarCodigoRoute,
 }
 
 const TurmasRouteWithChildren =
@@ -944,11 +1005,13 @@ const TurmasRouteWithChildren =
 interface WorkshopsRouteChildren {
   WorkshopsIdRoute: typeof WorkshopsIdRoute
   WorkshopsNovoRoute: typeof WorkshopsNovoRoute
+  WorkshopsEditarIdRoute: typeof WorkshopsEditarIdRoute
 }
 
 const WorkshopsRouteChildren: WorkshopsRouteChildren = {
   WorkshopsIdRoute: WorkshopsIdRoute,
   WorkshopsNovoRoute: WorkshopsNovoRoute,
+  WorkshopsEditarIdRoute: WorkshopsEditarIdRoute,
 }
 
 const WorkshopsRouteWithChildren = WorkshopsRoute._addFileChildren(
