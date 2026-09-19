@@ -37,6 +37,7 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
   const relacoes = relacoesRes.data ?? [];
   const cursos = (cursosRes.data ?? []).map((curso) => {
     const modulos = relacoes.filter((r) => r.curso_id === curso.id);
+    const perguntas = modulos.reduce((s, r) => s + (perguntasPorModulo.get(r.modulo_id) ?? 0), 0);
     return {
       id: curso.id, ordem: curso.ordem, slug: curso.slug, titulo: curso.titulo,
       cargaHoraria: curso.carga_horaria, modalidade: curso.modalidade,
@@ -44,9 +45,19 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
       totalModulos: modulos.length,
       licoesPorFornecer: modulos.reduce((s, r) => s + (licoesPorModulo.get(r.modulo_id)?.porFornecer ?? 0), 0),
       licoesDisponiveis: modulos.reduce((s, r) => s + (licoesPorModulo.get(r.modulo_id)?.disponiveis ?? 0), 0),
+      perguntas,
+      perguntasPorFornecer: Math.max(0, minimoPorCurso - perguntas),
     };
   });
-  return { cursos, totalGeralPorFornecer: cursos.reduce((s, c) => s + c.licoesPorFornecer, 0) };
+  const perguntasWorkshops = wsPerguntasRes.count ?? 0;
+  return {
+    cursos,
+    totalGeralPorFornecer: cursos.reduce((s, c) => s + c.licoesPorFornecer, 0),
+    minimoPerguntasPorCurso: minimoPorCurso,
+    perguntasPorFornecerCursos: cursos.reduce((s, c) => s + c.perguntasPorFornecer, 0),
+    perguntasWorkshops,
+    perguntasPorFornecerWorkshops: Math.max(0, minimoPorCurso - perguntasWorkshops),
+  };
 });
 
 export const obterCursoPrograma = createServerFn({ method: "GET" })
