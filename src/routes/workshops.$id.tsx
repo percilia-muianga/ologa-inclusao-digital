@@ -92,11 +92,20 @@ function WorkshopPage() {
     <PlataformaPagina
       titulo={`Workshop ${workshop.tipo === "provincial" ? "provincial" : "distrital"} — ${workshop.provincia}`}
     >
-      <p className="-mt-4 mb-6 inline-flex items-center rounded-md bg-navy px-4 py-2 text-base font-bold text-navy-foreground">
-        <span className="sr-only">Local de realização: </span>
-        {workshop.provincia}
-        {workshop.distrito ? ` · ${workshop.distrito}` : ""}
-      </p>
+      <div className="-mt-4 mb-6 flex flex-wrap items-center gap-3">
+        <p className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 py-2 text-base font-bold text-navy-foreground">
+          <span className="sr-only">Local de realização: </span>
+          {workshop.provincia}
+          {workshop.distrito ? ` · ${workshop.distrito}` : ""}
+        </p>
+        <Link
+          to="/workshops/editar/$id"
+          params={{ id }}
+          className="inline-flex min-h-11 items-center rounded-md border border-line bg-white px-4 text-base font-semibold text-navy hover:bg-page"
+        >
+          Editar workshop
+        </Link>
+      </div>
 
       <section aria-labelledby="ficha" className="rounded-lg border border-line bg-white p-5">
         <h2 id="ficha" className="text-xl font-bold text-navy">

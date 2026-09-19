@@ -29,6 +29,13 @@
       "when": 1789856209374,
       "tag": "0003_tdr_workshops_pre_pos_indicadores",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789858658638,
+      "tag": "0004_auditar_turmas_sessoes_workshops",
+      "breakpoints": true
     }
   ]
 }

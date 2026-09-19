@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
+import { GestaoSessoes, InscricaoFormandos } from "@/components/gestao-turma";
 import { obterTurma, rotuloEstadoTurma } from "@/lib/turmas.functions";
 
 export const Route = createFileRoute("/turmas/$codigo")({
@@ -56,15 +57,23 @@ function TurmaPage() {
     );
   }
 
-  const { turma, curso, sessoes, inscritos, horasAgendadas, cargaHorariaCurso, cargaConfere } =
-    dados;
+  const { turma, curso, sessoes, inscritos, cargaHorariaCurso } = dados;
 
   return (
     <PlataformaPagina titulo={turma.designacao}>
-      <p className="-mt-4 mb-6 inline-flex items-center rounded-md bg-navy px-4 py-2 text-base font-bold text-navy-foreground">
-        <span className="sr-only">Local de formação: </span>
-        {turma.provincia} · {turma.distrito}
-      </p>
+      <div className="-mt-4 mb-6 flex flex-wrap items-center gap-3">
+        <p className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 py-2 text-base font-bold text-navy-foreground">
+          <span className="sr-only">Local de formação: </span>
+          {turma.provincia} · {turma.distrito}
+        </p>
+        <Link
+          to="/turmas/editar/$codigo"
+          params={{ codigo: turma.codigo_inscricao }}
+          className="inline-flex min-h-11 items-center rounded-md border border-line bg-white px-4 text-base font-semibold text-navy hover:bg-page"
+        >
+          Editar turma
+        </Link>
+      </div>
 
       <section aria-labelledby="ficha" className="rounded-lg border border-line bg-white p-5">
         <h2 id="ficha" className="text-xl font-bold text-navy">
@@ -188,85 +197,17 @@ function TurmaPage() {
         </p>
       </section>
 
-      <section aria-labelledby="cronograma" className="mt-10">
-        <h2 id="cronograma" className="text-xl font-bold text-navy">
-          Cronograma de sessões
-        </h2>
+      <GestaoSessoes
+        turmaId={turma.id}
+        sessoes={sessoes}
+        cargaHorariaCurso={cargaHorariaCurso}
+      />
 
-        {cargaHorariaCurso > 0 ? (
-          <p
-            role="status"
-            className={
-              cargaConfere
-                ? "mt-3 rounded-md border border-line bg-page p-4 text-base text-navy"
-                : "mt-3 rounded-md border border-amber-300 bg-amber-50 p-4 text-base text-navy"
-            }
-          >
-            {cargaConfere ? (
-              <>
-                <strong>Carga horária conferida.</strong> As sessões somam {horasAgendadas} horas,
-                exactamente a carga horária do curso.
-              </>
-            ) : (
-              <>
-                <strong>Atenção: a carga horária não confere.</strong> As sessões somam{" "}
-                {horasAgendadas} horas e o curso exige {cargaHorariaCurso} horas. Faltam{" "}
-                {Math.round((cargaHorariaCurso - horasAgendadas) * 100) / 100} horas por agendar.
-              </>
-            )}
-          </p>
-        ) : null}
-
-        {sessoes.length === 0 ? (
-          <div className="mt-4">
-            <EstadoVazio
-              titulo="Ainda não há sessões agendadas"
-              descricao="Assim que a coordenação agendar as sessões, aparecem aqui com data, horas, duração, tema e formador, e a soma das horas é comparada com a carga horária do curso."
-            />
-          </div>
-        ) : (
-          <div className="mt-4 overflow-x-auto rounded-md border border-line">
-            <table className="min-w-full border-collapse text-left text-sm">
-              <caption className="sr-only">Sessões da turma, por ordem cronológica</caption>
-              <thead className="bg-page text-navy">
-                <tr>
-                  {["#", "Data", "Início", "Fim", "Duração", "Tema", "Formador"].map((h) => (
-                    <th
-                      key={h}
-                      scope="col"
-                      className="px-3 py-2 text-xs font-bold uppercase tracking-wide"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {sessoes.map((s) => {
-                  const [hi, mi] = s.hora_inicio.split(":").map(Number);
-                  const [hf, mf] = s.hora_fim.split(":").map(Number);
-                  const minutos = hf * 60 + mf - (hi * 60 + mi);
-                  return (
-                    <tr key={s.id} className="border-t border-line">
-                      <th scope="row" className="px-3 py-2 text-left font-semibold text-navy">
-                        {s.ordem}
-                      </th>
-                      <td className="px-3 py-2 text-navy-2">{formatarData(s.data)}</td>
-                      <td className="px-3 py-2 text-navy-2">{s.hora_inicio.slice(0, 5)}</td>
-                      <td className="px-3 py-2 text-navy-2">{s.hora_fim.slice(0, 5)}</td>
-                      <td className="px-3 py-2 text-navy-2">
-                        {Math.floor(minutos / 60)}h{String(minutos % 60).padStart(2, "0")}
-                      </td>
-                      <td className="px-3 py-2 text-navy-2">{s.tema}</td>
-                      <td className="px-3 py-2 text-navy-2">{s.formador_nome ?? "—"}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      <InscricaoFormandos
+        turmaId={turma.id}
+        inscritos={inscritos}
+        limite={turma.limite_formandos}
+      />
 
       <p className="mt-8 text-sm">
         <Link to="/turmas" className="font-semibold text-navy underline">

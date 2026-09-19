@@ -134,3 +134,207 @@ export const obterTurma = createServerFn({ method: "GET" })
       cargaConfere: cargaCurso > 0 && Math.abs(minutos / 60 - cargaCurso) < 0.01,
     };
   });
+
+export type DadosTurma = {
+  cursoId: string;
+  designacao: string;
+  provincia: string;
+  distrito: string;
+  localFormacao: string | null;
+  modalidade: string;
+  formadorPrincipal: string | null;
+  formadoresAuxiliares: string[];
+  dataInicio: string | null;
+  dataFim: string | null;
+  numComputadores: number | null;
+  estado: string;
+};
+
+/** Listas de apoio aos formulários de turma: cursos, locais e distritos. */
+export const referenciasTurma = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const [cursosRes, locaisRes, distritosRes] = await Promise.all([
+    supabaseAdmin.from("cursos").select("id,titulo,carga_horaria,modalidade").order("ordem"),
+    supabaseAdmin.from("locais_formacao").select("provincia,local").order("ordem"),
+    supabaseAdmin
+      .from("distritos_tdr")
+      .select("provincia,nome,ordem_provincia,ordem")
+      .order("ordem_provincia")
+      .order("ordem"),
+  ]);
+  if (cursosRes.error) throw cursosRes.error;
+  if (locaisRes.error) throw locaisRes.error;
+  if (distritosRes.error) throw distritosRes.error;
+
+  const porProvincia = new Map<string, string[]>();
+  for (const d of distritosRes.data ?? []) {
+    const lista = porProvincia.get(d.provincia) ?? [];
+    lista.push(d.nome);
+    porProvincia.set(d.provincia, lista);
+  }
+  return {
+    cursos: cursosRes.data ?? [],
+    locais: locaisRes.data ?? [],
+    distritos: [...porProvincia.entries()].map(([provincia, nomes]) => ({ provincia, nomes })),
+  };
+});
+
+/** Cria uma turma. O código de inscrição é gerado pela base de dados. */
+export const criarTurma = createServerFn({ method: "POST" })
+  .validator((dados: DadosTurma) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: criada, error } = await supabaseAdmin
+      .from("turmas")
+      .insert({
+        curso_id: data.cursoId,
+        designacao: data.designacao.trim(),
+        provincia: data.provincia,
+        distrito: data.distrito,
+        local_formacao: data.localFormacao,
+        modalidade: data.modalidade,
+        formador_principal_nome: data.formadorPrincipal,
+        formadores_auxiliares: data.formadoresAuxiliares,
+        data_inicio: data.dataInicio,
+        data_fim: data.dataFim,
+        num_computadores: data.numComputadores,
+        estado: data.estado as never,
+      })
+      .select("id,codigo_inscricao,designacao")
+      .single();
+    if (error) throw error;
+    return criada;
+  });
+
+/** Actualiza uma turma. A alteração fica no registo de auditoria (gatilho na base de dados). */
+export const actualizarTurma = createServerFn({ method: "POST" })
+  .validator((dados: DadosTurma & { id: string }) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: actualizada, error } = await supabaseAdmin
+      .from("turmas")
+      .update({
+        curso_id: data.cursoId,
+        designacao: data.designacao.trim(),
+        provincia: data.provincia,
+        distrito: data.distrito,
+        local_formacao: data.localFormacao,
+        modalidade: data.modalidade,
+        formador_principal_nome: data.formadorPrincipal,
+        formadores_auxiliares: data.formadoresAuxiliares,
+        data_inicio: data.dataInicio,
+        data_fim: data.dataFim,
+        num_computadores: data.numComputadores,
+        estado: data.estado as never,
+      })
+      .eq("id", data.id)
+      .select("codigo_inscricao")
+      .single();
+    if (error) throw error;
+    return actualizada;
+  });
+
+export type DadosSessao = {
+  data: string;
+  horaInicio: string;
+  horaFim: string;
+  tema: string;
+  formadorNome: string | null;
+  modalidade: string;
+};
+
+/** Acrescenta uma sessão ao cronograma, na ordem seguinte. */
+export const criarSessao = createServerFn({ method: "POST" })
+  .validator((dados: DadosSessao & { turmaId: string }) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existentes, error: erroOrdem } = await supabaseAdmin
+      .from("turma_sessoes")
+      .select("ordem")
+      .eq("turma_id", data.turmaId)
+      .order("ordem", { ascending: false })
+      .limit(1);
+    if (erroOrdem) throw erroOrdem;
+    const ordem = (existentes?.[0]?.ordem ?? 0) + 1;
+
+    const { error } = await supabaseAdmin.from("turma_sessoes").insert({
+      turma_id: data.turmaId,
+      ordem,
+      data: data.data,
+      hora_inicio: data.horaInicio,
+      hora_fim: data.horaFim,
+      tema: data.tema.trim(),
+      formador_nome: data.formadorNome,
+      modalidade: data.modalidade,
+    });
+    if (error) throw error;
+    return { ordem };
+  });
+
+/** Altera uma sessão do cronograma. */
+export const actualizarSessao = createServerFn({ method: "POST" })
+  .validator((dados: DadosSessao & { id: string }) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("turma_sessoes")
+      .update({
+        data: data.data,
+        hora_inicio: data.horaInicio,
+        hora_fim: data.horaFim,
+        tema: data.tema.trim(),
+        formador_nome: data.formadorNome,
+        modalidade: data.modalidade,
+      })
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+/** Remove uma sessão do cronograma. A remoção fica registada na auditoria. */
+export const removerSessao = createServerFn({ method: "POST" })
+  .validator((dados: { id: string }) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("turma_sessoes").delete().eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+/**
+ * Inscreve um formando numa turma. A inscrição é recusada quando a turma já
+ * atingiu o limite de formandos definido no Termo de Referência.
+ */
+export const inscreverFormando = createServerFn({ method: "POST" })
+  .validator((dados: { turmaId: string; nome: string; email: string | null }) => dados)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const turmaRes = await supabaseAdmin
+      .from("turmas")
+      .select("id,limite_formandos")
+      .eq("id", data.turmaId)
+      .maybeSingle();
+    if (turmaRes.error) throw turmaRes.error;
+    if (!turmaRes.data) return { ok: false as const, motivo: "Turma não encontrada." };
+
+    const inscritosRes = await supabaseAdmin
+      .from("turma_inscricoes")
+      .select("id,estado")
+      .eq("turma_id", data.turmaId);
+    if (inscritosRes.error) throw inscritosRes.error;
+    const activos = (inscritosRes.data ?? []).filter((i) => i.estado !== "desistiu").length;
+    if (activos >= turmaRes.data.limite_formandos) {
+      return {
+        ok: false as const,
+        motivo: `A turma está cheia: já tem ${activos} formandos, que é o limite de ${turmaRes.data.limite_formandos}. Não é possível inscrever mais ninguém nesta turma.`,
+      };
+    }
+
+    const { error } = await supabaseAdmin.from("turma_inscricoes").insert({
+      turma_id: data.turmaId,
+      nome: data.nome.trim(),
+      email: data.email,
+    });
+    if (error) throw error;
+    return { ok: true as const, inscritos: activos + 1 };
+  });
