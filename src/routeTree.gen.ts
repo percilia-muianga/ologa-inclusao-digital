@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as TurmasRouteImport } from './routes/turmas'
+import { Route as RelatoriosMensaisRouteImport } from './routes/relatorios-mensais'
 import { Route as PresencasRouteImport } from './routes/presencas'
 import { Route as PainelNacionalRouteImport } from './routes/painel-nacional'
 import { Route as OlogaRouteImport } from './routes/ologa'
@@ -63,6 +64,11 @@ const VerificarRoute = VerificarRouteImport.update({
 const TurmasRoute = TurmasRouteImport.update({
   id: '/turmas',
   path: '/turmas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosMensaisRoute = RelatoriosMensaisRouteImport.update({
+  id: '/relatorios-mensais',
+  path: '/relatorios-mensais',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PresencasRoute = PresencasRouteImport.update({
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/inscricao': typeof InscricaoRoute
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
@@ -353,6 +361,7 @@ export interface FileRoutesById {
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRoute
+  '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
     | '/workshops'
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
     | '/workshops'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
     | '/workshops'
@@ -518,6 +530,7 @@ export interface RootRouteChildren {
   OlogaRoute: typeof OlogaRouteWithChildren
   PainelNacionalRoute: typeof PainelNacionalRoute
   PresencasRoute: typeof PresencasRoute
+  RelatoriosMensaisRoute: typeof RelatoriosMensaisRoute
   TurmasRoute: typeof TurmasRouteWithChildren
   VerificarRoute: typeof VerificarRoute
   WorkshopsRoute: typeof WorkshopsRouteWithChildren
@@ -546,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/turmas'
       fullPath: '/turmas'
       preLoaderRoute: typeof TurmasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios-mensais': {
+      id: '/relatorios-mensais'
+      path: '/relatorios-mensais'
+      fullPath: '/relatorios-mensais'
+      preLoaderRoute: typeof RelatoriosMensaisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/presencas': {
@@ -950,6 +970,7 @@ const rootRouteChildren: RootRouteChildren = {
   OlogaRoute: OlogaRouteWithChildren,
   PainelNacionalRoute: PainelNacionalRoute,
   PresencasRoute: PresencasRoute,
+  RelatoriosMensaisRoute: RelatoriosMensaisRoute,
   TurmasRoute: TurmasRouteWithChildren,
   VerificarRoute: VerificarRoute,
   WorkshopsRoute: WorkshopsRouteWithChildren,

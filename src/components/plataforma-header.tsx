@@ -7,6 +7,7 @@ type Item = { to: string; label: string };
 export const NAV_PLATAFORMA: Item[] = [
   { to: "/cursos", label: "Cursos" },
   { to: "/turmas", label: "Turmas" },
+  { to: "/workshops", label: "Workshops" },
   { to: "/presencas", label: "Presenças" },
   { to: "/avaliacao", label: "Avaliação" },
   { to: "/certificados", label: "Certificados" },
@@ -132,6 +133,13 @@ export function PlataformaHeader() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              to="/relatorios-mensais"
+              onClick={fechar}
+              className="min-h-11 rounded-md px-3 py-2.5 text-base font-semibold text-navy-2 hover:bg-page hover:text-brand-dark"
+            >
+              Relatórios mensais
+            </Link>
             <Link
               to="/verificar"
               onClick={fechar}
