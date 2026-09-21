@@ -33,7 +33,8 @@ export const Route = createFileRoute("/cursos/$curso")({
 });
 
 function CursoPage() {
-  const { curso, modulos, totalPorFornecer } = Route.useLoaderData();
+  const { curso, modulos, totalPorFornecer, minutosAvaliacao, horasCurriculo, propostaPorValidar } =
+    Route.useLoaderData();
   const campos = [
     ["Objectivos", curso.objectivos],
     ["Público-alvo", curso.publico_alvo],
