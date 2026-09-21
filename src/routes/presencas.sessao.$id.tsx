@@ -545,10 +545,13 @@ function SessaoVirtual({
       minutosPermanencia: number;
       progressoPct: number;
     }>,
+    introduzidoPorNome: string | null,
   ) => Promise<number>;
 }) {
   const [valores, setValores] = useState<Record<string, { minutos: string; progresso: string }>>({});
+  const [quem, setQuem] = useState("");
   const [aviso, setAviso] = useState<string | null>(null);
+
 
   return (
     <section aria-labelledby="virtual" className="mt-10">
@@ -613,6 +616,22 @@ function SessaoVirtual({
           </div>
         ))}
       </div>
+      <div className="mt-4">
+        <label className="block text-sm font-semibold text-navy-2" htmlFor="quem-introduziu">
+          Nome de quem está a introduzir estes valores (obrigatório)
+        </label>
+        <p className="text-sm text-navy-2">
+          Estes minutos e este progresso são escritos à mão pelo formador. Fica registado na ficha
+          desta sessão quem os escreveu e quando, para o dado não passar por automático.
+        </p>
+        <input
+          id="quem-introduziu"
+          type="text"
+          value={quem}
+          onChange={(e) => setQuem(e.target.value)}
+          className="mt-2 min-h-11 w-full max-w-md rounded-md border border-line bg-white px-3 text-base text-navy"
+        />
+      </div>
       <div role="status" aria-live="polite" className="mt-3 text-base font-semibold text-navy">
         {aviso}
       </div>
@@ -631,10 +650,17 @@ function SessaoVirtual({
             setAviso("Escreva os minutos de permanência de pelo menos um formando.");
             return;
           }
-          const n = await aoCalcular(registos);
+          if (quem.trim().length < 3) {
+            setAviso("Escreva o nome de quem está a introduzir estes valores.");
+            return;
+          }
+          const n = await aoCalcular(registos, quem.trim());
           setValores({});
-          setAviso(`${n} presenças calculadas e gravadas. Pode corrigir qualquer uma acima.`);
+          setAviso(
+            `${n} presenças calculadas e gravadas, com o registo de que os valores foram introduzidos por ${quem.trim()}. Pode corrigir qualquer uma acima.`,
+          );
         }}
+
         className="mt-4 inline-flex min-h-11 items-center rounded-md bg-navy px-5 text-base font-semibold text-navy-foreground"
       >
         Calcular presenças desta sessão virtual
