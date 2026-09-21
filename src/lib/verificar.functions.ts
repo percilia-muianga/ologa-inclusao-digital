@@ -27,6 +27,7 @@ export const verificarCodigo = createServerFn({ method: "GET" })
             data_fim: string | null;
             nota_final_pct: string;
             assiduidade_pct: string;
+            base_assiduidade: string;
           },
         },
       };
@@ -36,7 +37,7 @@ export const verificarCodigo = createServerFn({ method: "GET" })
     const { data: certCurso } = await supabaseAdmin
       .from("certificados_curso")
       .select(
-        "nome_formando, titulo_curso, carga_horaria, provincia, turma_designacao, data_inicio, data_fim, nota_final_pct, assiduidade_pct, emitido_em",
+        "nome_formando, titulo_curso, carga_horaria, provincia, turma_designacao, data_inicio, data_fim, nota_final_pct, assiduidade_pct, base_assiduidade, emitido_em",
       )
       .eq("codigo_verificacao", codigo)
       .maybeSingle();
@@ -56,7 +57,9 @@ export const verificarCodigo = createServerFn({ method: "GET" })
           data_fim: certCurso.data_fim,
           nota_final_pct: String(certCurso.nota_final_pct),
           assiduidade_pct: String(certCurso.assiduidade_pct),
+          base_assiduidade: String(certCurso.base_assiduidade),
         },
+
       },
     };
   });
