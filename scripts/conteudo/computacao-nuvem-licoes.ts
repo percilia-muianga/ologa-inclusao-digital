@@ -192,8 +192,9 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "uma grelha com as cinco características avaliadas e justificadas, e uma conclusão fundamentada sobre a natureza do sistema escolhido.",
     },
     sintese: [
-      "Nuvem é pedir capacidade informática pela rede, quando é precisa, e pagar o que se usou.",
-      "São cinco as características essenciais: peço sozinho; chego pela rede; a capacidade é partilhada; cresce e diminui depressa; o consumo é medido.",
+      "Nuvem é pedir capacidade informática pela rede, quando é precisa, com o consumo medido.",
+      "Medir o consumo não é o mesmo que pagar por consumo: a cobrança depende do contrato e pode ser fixa, ou nem existir numa nuvem privada.",
+      "São cinco as características essenciais: peço sozinho; chego pela rede; a capacidade é partilhada por vários consumidores, que podem ser áreas da própria organização; cresce e diminui depressa; o consumo é medido.",
       "Estar alojado fora da instituição não é, por si, nuvem.",
       "O modelo evoluiu da sala de servidores própria para a virtualização, depois para serviços geridos e para a execução sem servidor visível.",
     ],
