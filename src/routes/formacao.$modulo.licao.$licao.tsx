@@ -232,7 +232,60 @@ function LicaoView() {
         </section>
       )}
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+      {/* Estado do progresso: sempre em texto, nunca só por cor. */}
+      <div
+        className="mt-6 rounded-xl border border-line bg-page/60 p-4 text-sm text-navy-2"
+        aria-live="polite"
+      >
+        {prog.aCarregar ? (
+          <p>A carregar o seu progresso…</p>
+        ) : prog.matricula ? (
+          <>
+            <p>
+              <strong>Progresso ligado à sua matrícula</strong> na turma{" "}
+              {prog.matricula.turmaDesignacao}. Fica guardado na sua conta e
+              continua em qualquer aparelho onde entrar.
+            </p>
+            <p className="mt-1">
+              {prog.estado === "a-guardar"
+                ? "A guardar…"
+                : prog.estado === "guardado"
+                  ? "Guardado."
+                  : prog.estado === "erro"
+                    ? "Não foi possível guardar. O progresso não ficou registado na sua matrícula."
+                    : prog.concluidas.has(licaoId)
+                      ? "Esta lição já está marcada como feita."
+                      : "Esta lição ainda não está marcada como feita."}
+            </p>
+            {prog.estado === "erro" ? (
+              <button
+                type="button"
+                onClick={prog.tentarDeNovo}
+                className="mt-2 min-h-[44px] rounded-lg border border-line px-4 font-semibold text-navy underline"
+              >
+                Tentar guardar de novo
+              </button>
+            ) : null}
+          </>
+        ) : prog.falhaLeitura ? (
+          <p>
+            Não foi possível verificar a sua matrícula. O que marcar fica apenas
+            neste aparelho até conseguirmos ligar à sua conta.
+          </p>
+        ) : (
+          <p>
+            <strong>Progresso apenas neste aparelho.</strong> Sem sessão iniciada
+            com matrícula numa turma deste curso, o que marcar fica guardado só
+            aqui e não conta para a sua formação.
+          </p>
+        )}
+        <p className="mt-2">
+          Marcar uma lição como feita não regista presença, não dá aprovação nem
+          emite certificado.
+        </p>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           {anterior ? (
             <Link
