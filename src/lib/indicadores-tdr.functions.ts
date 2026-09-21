@@ -158,6 +158,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     const posP = mediaPct(avaliacoesP.filter((a) => a.momento === "pos"));
     const censurado = avaliacoesP.length > 0 && avaliacoesP.length < LIMITE_DIVULGACAO;
     const wsP = workshops.filter((w) => w.provincia === provincia);
+    const linhasP = linhasAssiduidade.filter((l) => l.provincia === provincia);
     return {
       provincia,
       turmas: turmasP.length,
@@ -166,6 +167,9 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       posMedia: censurado ? null : posP,
       evolucaoPp: censurado || preP === null || posP === null ? null : Math.round((posP - preP) * 10) / 10,
       censurado,
+      assiduidadeEstritaPct: mediaTaxa(linhasP, "taxaEstritaPct"),
+      assiduidadeAjustadaPct: mediaTaxa(linhasP, "taxaAjustadaPct"),
+      faltasJustificadas: linhasP.reduce((a, l) => a + l.justificadas, 0),
       workshopsProvinciaisRealizados: wsP.filter(
         (w) => w.tipo === "provincial" && w.estado === "realizado",
       ).length,
@@ -179,6 +183,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       workshopsDistritaisPlaneados: distritosPorProvincia.get(provincia)?.length ?? 7,
     };
   });
+
 
   const porDistrito = [...distritosPorProvincia.entries()].flatMap(([provincia, nomes]) =>
     nomes.map((nome) => ({
