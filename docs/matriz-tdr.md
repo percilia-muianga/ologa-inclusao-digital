@@ -301,7 +301,7 @@ vez, + 2 h de diagnóstico, revisão e exame.
 | Componentes de infra-estrutura: computação e armazenamento | M2L1 Recursos de computação e armazenamento | Criar bucket privado (Amazon S3) e preparar por escrito a máquina virtual | Captura do bloqueio de acesso público e do «acesso negado» em janela anónima; ficha de preparação da máquina |
 | Criar um bucket de armazenamento | M2L1 | Amazon S3, com convenção de nomes do laboratório e ligação à regra oficial | Listagem do objecto fictício; registo da limpeza objectos → bucket |
 | Criar uma rede virtual | M2L2 Redes e conectividade na nuvem | Rede virtual com três sub-redes (Azure), criada ANTES de qualquer máquina | Captura das sub-redes com intervalos e grupos associados |
-| Criar regras de segurança | M2L2 | Três grupos de segurança, permissões em prioridade 100 e negação explícita em 4000 | Regras de entrada com origens restritas; avaliação de fluxo do portal nomeando a regra que decidiu |
+| Criar regras de segurança | M2L2 | Três grupos de segurança, permissões em prioridade 100 e negação explícita em 4000 | Regras de entrada com origens restritas nas permissões (as negações têm origem qualquer, por função); avaliação de fluxo na interface da máquina de aplicação. A sub-rede de dados não tem máquina nesta sessão: configuração revista, conectividade **não testada** |
 | Criar uma máquina virtual | M2L2 | Máquina Linux criada dentro da sub-rede de aplicação, acesso remoto só do endereço de saída da sala | Teste positivo (sessão estabelecida) e teste negativo por avaliação de regras |
 | Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service em Linux; exemplo Node.js sem dependências fornecido no projecto (`public/exemplos/paas-node/`), testado localmente, publicado por `az webapp deploy --type zip` | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
 | Serviços das plataformas populares; IaaS/PaaS/SaaS | M2L1 e M2L3 | — | Tabela de responsabilidades do fornecedor e da instituição |
@@ -339,7 +339,10 @@ serviço.
   rede virtual, pelo que cada grupo tem permissão específica em prioridade 100
   e negação explícita em 4000. A verificação usa teste positivo e avaliação de
   fluxo do portal; um tempo de espera esgotado não prova filtragem. Distingue-se
-  regra desenhada, regra configurada e ligação testada.
+  regra desenhada, regra configurada e ligação testada. A máquina é criada com
+  a interface de rede sem grupo de segurança próprio, para não acumular com o
+  da sub-rede. A ferramenta de avaliação de fluxo e as suas permissões são
+  preparadas pelo formador; se faltar, o teste fica registado como pendente.
 - Limpeza por ordem de dependências, restrita aos recursos do exercício, sem
   afirmar que o grupo de recursos fica vazio quando contém infra-estrutura
   partilhada anterior.
