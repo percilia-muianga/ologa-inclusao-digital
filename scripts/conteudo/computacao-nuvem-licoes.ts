@@ -497,4 +497,87 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
   },
+
+  m1l5: {
+    objectivos: [
+      "Aplicar critérios explícitos para escolher modelo de serviço e modelo de implantação para um serviço público concreto.",
+      "Registar por escrito os pressupostos e as informações em falta que condicionam a escolha.",
+      "Apresentar e defender uma recomendação fundamentada perante o grupo.",
+    ],
+    explicacao: [
+      "Esta lição fecha o módulo com a única pergunta que interessa na prática: dado este serviço, que modelo escolher. A resposta não sai de uma tabela universal; sai de critérios aplicados com honestidade, e de dizer o que ainda não se sabe.",
+      "Seis critérios cobrem a maior parte dos casos. Primeiro, a natureza dos dados: há dados pessoais ou sensíveis, e que exigências se aplicam ao seu tratamento e localização. Segundo, o padrão de procura: é constante, tem picos previsíveis, ou é imprevisível. Terceiro, a ligação à internet nos locais onde o serviço é usado, incluindo o que acontece ao atendimento quando ela cai. Quarto, as competências da equipa hoje e as que se conseguem formar num horizonte razoável. Quinto, a dependência do fornecedor e o custo de sair: que formatos, que dados, que reescrita seriam precisos para mudar. Sexto, o custo total, que inclui migração, formação e operação, e não apenas a factura mensal de capacidade.",
+      "Ao aplicar estes critérios, três regras ajudam a não errar por hábito. Subir na escala de gestão sempre que não houver razão para descer: escolher o serviço mais gerido que sirva. Não decidir a arquitectura antes de conhecer a ligação à internet dos locais de uso. E escrever os pressupostos: «assumimos que os dados de identificação podem ser tratados por operador contratado» é uma frase que tem de ser confirmada por quem tem competência para isso, não pelo técnico que desenha a solução.",
+      "Uma recomendação útil tem sempre quatro partes: a opção escolhida; as opções descartadas e porquê; os pressupostos assumidos; e a lista do que falta apurar, com indicação de quem pode responder. Uma recomendação sem a quarta parte costuma ser uma recomendação que esconde o que não se sabe.",
+      "Por fim, uma nota de método: a escolha não é definitiva. Serviços começam num modelo e mudam quando as condições mudam — quando a aplicação antiga é reescrita, quando a ligação melhora, quando a equipa ganha competências. Registar a decisão com data e com os pressupostos permite revê-la sem recomeçar do zero.",
+    ],
+    exemplo: {
+      titulo: "O cadastro de agricultores do Serviço Provincial de Tuvane (cenário fictício)",
+      corpo: [
+        "O Serviço Provincial de Tuvane quer informatizar o cadastro de agricultores. Os dados incluem nome, documento de identificação e localização das parcelas. O registo é feito por extensionistas em dez postos, quatro deles com ligação à internet instável. A consulta central é feita por seis técnicos na capital provincial. A equipa informática tem duas pessoas, sem experiência de administração de servidores.",
+        "Aplicados os critérios, a proposta é: aplicação em plataforma como serviço, por causa da equipa pequena; base de dados sob controlo directo em nuvem privada do sector, por causa dos dados de identificação, ficando a arquitectura híbrida; e registo nos postos com funcionamento local que sincroniza quando há ligação, por causa dos quatro postos instáveis.",
+        "Pressupostos escritos: que existe capacidade disponível na nuvem privada do sector; e que a sincronização diferida é aceitável para o processo de cadastro. Por apurar: o prazo legal de conservação dos dados e quem autoriza o tratamento por operador contratado. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de quatro, com apresentação",
+      enunciado: [
+        "Escolham um serviço real da vossa instituição que ainda não esteja em nuvem — sem usar dados reais de pessoas no exercício.",
+        "Apliquem os seis critérios, um a um, e escrevam uma linha de conclusão por critério.",
+        "Escrevam a recomendação com as quatro partes: opção escolhida, opções descartadas e porquê, pressupostos assumidos, e o que falta apurar com indicação de quem responde.",
+        "Apresentem em três minutos. O grupo que ouve faz uma pergunta que ponha à prova um pressuposto.",
+      ],
+      produto:
+        "uma ficha de recomendação de uma página com os seis critérios aplicados, a opção escolhida, as descartadas, os pressupostos e a lista do que falta apurar.",
+    },
+    sintese: [
+      "A escolha do modelo faz-se com critérios escritos, não por hábito nem por moda.",
+      "Seis critérios: natureza dos dados, padrão de procura, ligação à internet, competências, dependência do fornecedor e custo total.",
+      "Escolher o serviço mais gerido que sirva, e descer na escala só com razão.",
+      "Uma boa recomendação diz também o que ainda não se sabe e quem pode responder.",
+      "A decisão tem data e pressupostos, e revê-se quando as condições mudarem.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Numa recomendação, por que motivo é indispensável a lista do que falta apurar?",
+        resposta:
+          "Porque torna visível o que a decisão está a assumir e permite que quem tem competência confirme ou corrija esses pressupostos.",
+        feedback:
+          "Sem esta lista, um pressuposto por confirmar passa a decisão tomada sem que ninguém repare.",
+      },
+      {
+        pergunta:
+          "Um serviço usado em postos com ligação instável: que critério tem de ser avaliado antes de escolher a arquitectura?",
+        resposta:
+          "A ligação à internet nos locais de uso, incluindo o que acontece ao atendimento quando ela cai.",
+        feedback:
+          "Este critério manda muitas vezes mais do que a preferência tecnológica: determina se é preciso funcionamento local com sincronização posterior.",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Imprimir a ficha de recomendação com os seis critérios e as quatro partes, uma por grupo.",
+        "Combinar antes com os participantes que serviços podem ser usados no exercício, para evitar dados reais de pessoas.",
+        "Preparar o cronómetro das apresentações de três minutos e a regra de uma pergunta por grupo.",
+      ],
+      conducao: [
+        "Acolhimento, retoma dos três blocos do módulo — características, modelos de serviço, modelos de implantação — e objectivos desta lição.",
+        "Exposição dos seis critérios, das três regras de método e da estrutura da recomendação em quatro partes.",
+        "Actividade em grupos de quatro: aplicação dos critérios e redacção da ficha de recomendação.",
+        "Apresentações de três minutos com uma pergunta por grupo, e síntese final do módulo em leitura fácil.",
+      ],
+      criterios: [
+        "Aplica os seis critérios e não apenas os dois mais fáceis.",
+        "A recomendação tem as quatro partes, incluindo o que falta apurar.",
+        "Os pressupostos estão escritos como pressupostos, e não como factos.",
+        "Responde à pergunta do outro grupo sem abandonar a fundamentação nem a defender de forma rígida.",
+      ],
+      errosComuns: [
+        "Escolher o modelo primeiro e procurar os critérios que o justificam depois.",
+        "Deixar de fora o custo de migração e de formação na comparação.",
+        "Apresentar pressupostos por confirmar como se fossem decisões já tomadas.",
+      ],
+    },
+  },
 };
