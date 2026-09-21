@@ -15,10 +15,41 @@ secção do Termo de Referência for trabalhada.
 | Redes Avançadas e Introdução à Segurança Cibernética | 80 h | presencial | 80 h (era 120) | corrigido e verificado |
 | Tecnologias Digitais do Governo | 10 h | presencial | 10 h | implementado |
 
+**Referência provisória, pendente de esclarecimento da ATDI.** O documento de
+concurso contém divergências internas: a secção 6.2 (pág. 13) indica um máximo
+de 16 h para Introdução à IA e a tabela da secção 14 (pág. 29) indica 20 h; a
+descrição de Redes (pág. 16) indica 120 h e a secção 14 indica 80 h. A
+plataforma segue **por agora** os valores da tabela da secção 14 (20 h e 80 h),
+identificados como referência provisória. Não escolhemos qual das secções tem
+autoridade e não afirmamos conformidade integral. Nenhum outro curso foi
+alterado por causa desta questão.
+
 **Pendente — revisão pedagógica.** A soma dos minutos dos módulos não coincide
 com a carga horária oficial de vários cursos. Nenhum módulo ou lição foi
 apagado para fazer a conta bater certo; a divergência fica assinalada na área
-de gestão (Avaliação) e aguarda revisão pedagógica da Ologa.
+de gestão (Avaliação) e aguarda revisão pedagógica da Ologa. Excepção já
+fechada: **Princípios da Transformação Digital**, cujo plano soma exactamente
+24 h (1320 minutos de módulos + 120 minutos de avaliação e orientação), com
+verificação por teste automático.
+
+## Curso Princípios da Transformação Digital — proposta pedagógica
+
+Detalhe completo em `docs/plano-curricular-transformacao-digital.md`.
+
+| Requisito | Estado |
+| --- | --- |
+| 24 h, virtual (secção 14) | implementado; soma verificada por teste |
+| Âmbito mínimo da secção 6.1 coberto pelas 12 lições | implementado; cobertura verificada por teste |
+| Conteúdo original em cada lição: objectivos, explicação, exemplo, actividade com tempo e produto, síntese em leitura fácil, verificação formativa e guião do formador | implementado (12 de 12 lições) |
+| Identificadores das lições preservados (sem perda de progresso) | implementado; o seed actualiza, nunca apaga |
+| Objectivos, público-alvo, pré-requisitos e materiais do curso | implementado |
+| Banco do exame final com 60 questões (triplo de 20) | implementado; **inactivo (rascunho)** |
+| Pré-teste e pós-teste de 10 questões, instrumento separado | implementado; **inactivo (rascunho)** |
+| Gabaritos fora do pacote do navegador | implementado e verificado (vivem em `scripts/conteudo/` e na base) |
+| Todo o conteúdo marcado «Proposta pedagógica — por validar pela Ologa/ATDI» | implementado |
+| Casos reais ou estatísticas | **não existem** — todos os cenários são fictícios e assinalados como tal |
+| Revisão de acessibilidade pela REMOTELINE | **pendente** — proposta, não realizada |
+| Vídeo, legendagem e Língua de Sinais Moçambicana | **por produzir** — deixaram de ser apresentados como disponíveis |
 
 ## Secção 10 — banco de questões e exame final
 
