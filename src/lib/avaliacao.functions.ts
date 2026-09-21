@@ -882,39 +882,36 @@ export const iniciarExame = createServerFn({ method: "POST" })
 
     const turma = turmaDoExame;
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();
-    const { data: tentativa, error: eT } = await s
-      .from("exame_tentativas")
-      .insert({
-        formando_id: formando.id,
-        curso_id: data.cursoId,
-        turma_id: turma?.id ?? null,
-        numero: (existentes?.length ?? 0) + 1,
-        limite_em: limite,
-        total: seleccionadas.length,
-      })
-      .select("id")
-      .single();
-    if (eT) throw eT;
-
     const linhas = seleccionadas.map((q, i) => {
       const { apresentacao, respostaCorrecta } = apresentar(q)!;
       return {
-        tentativa_id: tentativa.id,
         questao_id: q.id,
         ordem: i + 1,
         modulo_id: q.modulo_id,
         tipologia: q.tipologia,
         dificuldade: q.dificuldade,
         enunciado: q.enunciado,
-        apresentacao: apresentacao as never,
-        resposta_correcta: respostaCorrecta as never,
+        apresentacao,
+        resposta_correcta: respostaCorrecta,
         explicacao: q.explicacao,
       };
     });
-    const { error: eQ } = await s.from("exame_tentativa_questoes").insert(linhas);
-    if (eQ) throw eQ;
 
-    return { tentativaId: tentativa.id, retomada: false };
+    // Abertura da tentativa e gravação das questões sorteadas numa só
+    // operação, com actor verificado e vínculo confirmado na base.
+    const { data: tentativaId, error: eT } = await s.rpc("rpc_exame_tentativa_criar", {
+      _actor: (context as unknown as ContextoAutenticado).userId,
+      _formando_id: formando.id,
+      _curso_id: data.cursoId,
+      _turma_id: turma?.id ?? null,
+      _numero: (existentes?.length ?? 0) + 1,
+      _limite_em: limite,
+      _total: seleccionadas.length,
+      _questoes: linhas,
+    } as never);
+    if (eT) throw eT;
+
+    return { tentativaId: tentativaId as unknown as string, retomada: false };
   });
 
 export const obterTentativa = createServerFn({ method: "GET" })
