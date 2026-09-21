@@ -1025,7 +1025,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         {
           ficheiro: "index.js",
           descarregarEm: "/exemplos/paas-node/index.js",
-          corpo: "// Exemplo mínimo para o laboratório de plataforma como serviço.\n// Proposta pedagógica — por validar pela Ologa/ATDI. Sem dependências externas.\n// Usa apenas o módulo http do Node.js.\n\nconst http = require(\"http\");\n\nconst port = process.env.PORT || 8080;\nconst mensagem = process.env.MENSAGEM_EXEMPLO || \"Mensagem por definir na configuração do serviço.\";\n\nconst servidor = http.createServer((pedido, resposta) => {\n  // Registo simples: método e caminho. Não regista cabeçalhos, corpo,\n  // endereços nem qualquer dado que possa identificar uma pessoa.\n  console.log(`${pedido.method} ${pedido.url}`);\n\n  resposta.writeHead(200, { \"Content-Type\": \"text/plain; charset=utf-8\" });\n  resposta.end(\n    \"Laboratório de plataforma como serviço — exemplo de formação.\\n\" +\n      `Mensagem configurada: ${mensagem}\\n`,\n  );\n});\n\n// Escuta em todas as interfaces: exigido pela plataforma.\nservidor.listen(port, \"0.0.0.0\", () => {\n  console.log(`Servidor de exemplo à escuta na porta ${port}`);\n});\n",
+          corpo: "// Exemplo mínimo para o laboratório de plataforma como serviço.\n// Proposta pedagógica — por validar pela Ologa/ATDI. Sem dependências externas.\n// Usa apenas o módulo http do Node.js.\n\nconst http = require(\"http\");\n\nconst port = process.env.PORT || 8080;\nconst mensagem = process.env.MENSAGEM_EXEMPLO || \"Mensagem por definir na configuração do serviço.\";\n\nconst servidor = http.createServer((pedido, resposta) => {\n  // Registo mínimo: apenas o método HTTP. Não regista o caminho nem os\n  // parâmetros do endereço, que podem conter dados pessoais; não regista\n  // cabeçalhos, corpo, endereços nem qualquer dado que possa identificar\n  // uma pessoa.\n  console.log(pedido.method);\n\n  resposta.writeHead(200, { \"Content-Type\": \"text/plain; charset=utf-8\" });\n  resposta.end(\n    \"Laboratório de plataforma como serviço — exemplo de formação.\\n\" +\n      `Mensagem configurada: ${mensagem}\\n`,\n  );\n});\n\n// Escuta em todas as interfaces: exigido pela plataforma.\nservidor.listen(port, \"0.0.0.0\", () => {\n  console.log(`Servidor de exemplo à escuta na porta ${port}`);\n});\n",
         },
         {
           ficheiro: "package.json",
@@ -1045,7 +1045,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Nas definições da aplicação, criar a variável de configuração MENSAGEM_EXEMPLO com um valor fictício, guardar, aguardar o reinício e recarregar a página: o texto apresentado muda. A variável não é segredo, mas demonstra o mecanismo — é assim que se tratam também as palavras-passe, fora do código.",
         "Confirmar nos registos da aplicação que o pedido feito no navegador aparece registado.",
         "Registar na ficha o endereço público, a hora da publicação e o escalão usado.",
-        "Limpeza: apagar a aplicação Web e o respectivo plano de serviço. O plano continua a consumir mesmo sem aplicação, por isso é apagado também.",
+        "Limpeza: apagar a aplicação Web. Quanto ao plano de serviço, apagar apenas se tiver sido criado para este exercício; se for partilhado ou já existisse, NÃO se apaga e regista-se na ficha. O plano continua a consumir mesmo sem aplicação, por isso o formador confirma no fim que não ficou nenhum plano exclusivo esquecido.",
       ],
       verificacao: [
         "O endereço público da aplicação abre no navegador e mostra a página de exemplo.",
@@ -1066,7 +1066,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Captura de ecrã da execução local do exemplo, antes de qualquer publicação.",
         "Captura de ecrã da página publicada, com o endereço visível.",
         "Captura de ecrã das definições de configuração mostrando a variável de exemplo, com valores fictícios apenas.",
-        "Captura de ecrã da lista de recursos depois da limpeza, mostrando que a aplicação e o plano de serviço já não constam.",
+        "Captura de ecrã da lista de recursos depois da limpeza, mostrando que a aplicação já não consta; se o plano de serviço era exclusivo do exercício, a captura mostra também que ele já não consta.",
         "Linha na ficha com endereço, escalão, hora de publicação e hora de eliminação.",
       ],
       limpeza: [
@@ -1120,7 +1120,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Organizar a sala em pares, com alternância de executante; se o ambiente falhar, registar a prática como pendente e reagendar, em vez de a substituir por demonstração.",
         "Indicar por escrito o escalão de serviço e a região autorizados, e não deixar a escolha aos grupos.",
         "Confirmar os limites de consumo e alertas da conta de formação antes de abrir o exercício.",
-        "Reservar os últimos minutos do laboratório para apagar aplicação e plano de serviço, com verificação recurso a recurso.",
+        "Reservar os últimos minutos do laboratório para apagar a aplicação e, apenas quando o plano de serviço tiver sido criado para o exercício, também o plano, com verificação recurso a recurso.",
         "Executar o percurso sozinho antes da aula: este guião ainda não foi executado.",
       ],
       conducao: [

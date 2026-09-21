@@ -8,9 +8,11 @@ const port = process.env.PORT || 8080;
 const mensagem = process.env.MENSAGEM_EXEMPLO || "Mensagem por definir na configuração do serviço.";
 
 const servidor = http.createServer((pedido, resposta) => {
-  // Registo simples: método e caminho. Não regista cabeçalhos, corpo,
-  // endereços nem qualquer dado que possa identificar uma pessoa.
-  console.log(`${pedido.method} ${pedido.url}`);
+  // Registo mínimo: apenas o método HTTP. Não regista o caminho nem os
+  // parâmetros do endereço, que podem conter dados pessoais; não regista
+  // cabeçalhos, corpo, endereços nem qualquer dado que possa identificar
+  // uma pessoa.
+  console.log(pedido.method);
 
   resposta.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
   resposta.end(
