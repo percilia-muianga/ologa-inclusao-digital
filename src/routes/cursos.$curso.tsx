@@ -161,7 +161,7 @@ function CursoPage() {
                 <li key={licao.id} className="rounded-md border border-line p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3>
-                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span>
+                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : propostaPorValidar ? "Conteúdo por fornecer" : "Em preparação"}</span>
                   </div>
                   <p className="mt-1 text-sm text-navy-2">
                     {licao.duracao ?? "Duração por definir"}
