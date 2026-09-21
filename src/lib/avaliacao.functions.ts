@@ -656,14 +656,17 @@ async function carregarConfig(cursoId: string) {
   return data ?? { curso_id: cursoId, ...CONFIG_PADRAO };
 }
 
-async function formandoPorToken(token: string) {
+async function formandoPorToken(token: string, perfilId: string) {
   const s = await admin();
   const { data } = await s
     .from("formandos")
-    .select("id, nome, token_pessoal")
+    .select("id, nome, token_pessoal, perfil_id")
     .eq("token_pessoal", token)
     .maybeSingle();
   if (!data) throw new Error("TOKEN_INVALIDO");
+  // Conhecer o token nao e prova de titularidade: exige-se o vinculo com a
+  // conta autenticada (formandos.perfil_id).
+  if (!data.perfil_id || data.perfil_id !== perfilId) throw new Error("TOKEN_NAO_VINCULADO");
   return data;
 }
 
@@ -743,12 +746,13 @@ async function turmaDoFormando(nome: string, cursoId: string) {
 }
 
 export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z.object({ token: z.string().uuid(), cursoId: z.string().uuid() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const cfg = await carregarConfig(data.cursoId);
     const turma = await turmaDoFormando(formando.nome, data.cursoId);
 
@@ -821,12 +825,13 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
   });
 
 export const iniciarExame = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z.object({ token: z.string().uuid(), cursoId: z.string().uuid() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const cfg = await carregarConfig(data.cursoId);
 
     const { data: existentes } = await s
@@ -909,12 +914,13 @@ export const iniciarExame = createServerFn({ method: "POST" })
   });
 
 export const obterTentativa = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z.object({ token: z.string().uuid(), tentativaId: z.string().uuid() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const { data: tentativa } = await s
       .from("exame_tentativas")
       .select("id,formando_id,curso_id,numero,estado,iniciado_em,limite_em,submetido_em,pontuacao,total,nota_pct")
@@ -957,6 +963,7 @@ export const obterTentativa = createServerFn({ method: "GET" })
   });
 
 export const guardarResposta = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
       .object({
@@ -967,9 +974,9 @@ export const guardarResposta = createServerFn({ method: "POST" })
       })
       .parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const { data: tentativa } = await s
       .from("exame_tentativas")
       .select("id,formando_id,estado,limite_em")
@@ -1025,12 +1032,13 @@ function corrigir(
 }
 
 export const submeterExame = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z.object({ token: z.string().uuid(), tentativaId: z.string().uuid() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const { data: tentativa } = await s
       .from("exame_tentativas")
       .select("id,formando_id,estado,limite_em")
@@ -1076,6 +1084,7 @@ export const submeterExame = createServerFn({ method: "POST" })
 // ---------- certificação por curso ----------
 
 export const emitirCertificadoCurso = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
       .object({
@@ -1084,9 +1093,9 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
       })
       .parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token);
+    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
     const cfg = await carregarConfig(data.cursoId);
 
     const { data: existente } = await s
