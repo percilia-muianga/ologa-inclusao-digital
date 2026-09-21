@@ -282,7 +282,7 @@ describe("handlers de gestão: quem não pode, não chega à base", () => {
       explicacao: "Explicação de teste.",
       autorNome: "Teste",
       activa: false,
-      verdadeiro: true,
+      valorVerdadeiro: true,
     } as any;
     const chamadas: Array<[string, (ctx: any) => Promise<any>, string]> = [
       ["criarQuestao", (ctx) => (criarQuestao as any).__executar({ data: questao, context: ctx }), "banco_questoes.insert"],
@@ -377,13 +377,13 @@ describe("fluxos pessoais: sessão e titularidade", () => {
     const { ctx } = contexto("formando", extra);
     await expect(
       (iniciarExame as any).__executar({
-        data: { tokenPessoal: "tok", cursoId: "11111111-1111-1111-1111-111111111111" },
+        data: { token: "tok", cursoId: "11111111-1111-1111-1111-111111111111" },
         context: ctx,
       }),
     ).rejects.toThrow();
     await expect(
       (submeterExame as any).__executar({
-        data: { tokenPessoal: "tok", tentativaId: "33333333-3333-3333-3333-333333333333" },
+        data: { token: "tok", tentativaId: "33333333-3333-3333-3333-333333333333" },
         context: ctx,
       }),
     ).rejects.toThrow();
@@ -399,6 +399,7 @@ describe("inventário: nenhuma função mutadora fica sem sessão e sem guarda",
     "registarProgresso",
     "registarProgressoMatricula",
     "inscreverInstituicao",
+    "criarInscricao",
     "guardarInteresse",
   ]);
 
@@ -413,7 +414,7 @@ describe("inventário: nenhuma função mutadora fica sem sessão e sem guarda",
         if (publicasIntencionais.has(nome)) continue;
         const temSessao = /\.middleware\(\[/.test(bloco);
         const temGuarda =
-          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|perfil_id|context\.userId/.test(bloco);
+          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|exigirAdministrador\(|formandoPorToken\(|perfil_id|context\.userId/.test(bloco);
         if (!temSessao || !temGuarda) falhas.push(`${ficheiro}:${nome}`);
       }
     }
