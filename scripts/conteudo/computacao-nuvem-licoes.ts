@@ -15,12 +15,27 @@
 
 import type { TemposLicao } from "../../src/lib/plano-computacao-nuvem";
 
+export type Laboratorio = {
+  titulo: string;
+  /** Percurso didáctico escolhido; o fornecedor é exemplo, não imposição. */
+  percurso: string;
+  preRequisitos: string[];
+  passos: string[];
+  verificacao: string[];
+  problemas: string[];
+  evidencia: string[];
+  limpeza: string[];
+  /** Quando a limpeza é adiada por outro exercício depender deste recurso. */
+  limpezaAdiada?: string;
+};
+
 export type ConteudoLicao = {
   objectivos: string[];
   explicacao: string[];
   exemplo: { titulo: string; corpo: string[] };
   /** Os minutos não são escritos aqui: vêm de TemposLicao (fonte única). */
   actividade: { formato: string; enunciado: string[]; produto: string };
+  laboratorio?: Laboratorio;
   sintese: string[];
   verificacao: { pergunta: string; resposta: string; feedback: string }[];
   referencias?: { titulo: string; url: string; consultadoEm: string }[];
@@ -92,6 +107,41 @@ function referenciasHtml(c: ConteudoLicao): string {
   );
 }
 
+const AVISO_LAB =
+  '<p class="aviso-proposta"><strong>Laboratório por executar.</strong> Este guião ainda ' +
+  "não foi executado por nós. O ambiente de formação está por preparar: a conta " +
+  "institucional de formação, os limites de consumo e as permissões são definidos pelo " +
+  "formador antes da sessão. Nunca se usam dados reais de pessoas, nunca se escrevem " +
+  "credenciais no material e nada é adquirido durante a aula. A leitura deste guião é " +
+  "preparação; não substitui a prática no ambiente real.</p>";
+
+function laboratorioHtml(c: ConteudoLicao): string {
+  const l = c.laboratorio;
+  if (!l) return "";
+  return [
+    `<h3>Laboratório — ${esc(l.titulo)}</h3>`,
+    AVISO_LAB,
+    `<p><strong>Percurso didáctico:</strong> ${esc(l.percurso)} O fornecedor é exemplo de ensino, escolhido pela clareza da documentação, e não uma imposição do Termo de Referência nem uma recomendação de compra.</p>`,
+    "<h4>Pré-requisitos</h4>",
+    lista(l.preRequisitos),
+    "<h4>Passos</h4>",
+    `<ol>${l.passos.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`,
+    "<h4>Como verificar o resultado</h4>",
+    lista(l.verificacao),
+    "<h4>Problemas comuns</h4>",
+    lista(l.problemas),
+    "<h4>Evidência a recolher</h4>",
+    "<p>A evidência não pode conter segredos: sem chaves, sem palavras-passe, sem tokens, sem dados pessoais. Tapar identificadores de subscrição nas imagens.</p>",
+    lista(l.evidencia),
+    "<h4>Limpeza</h4>",
+    l.limpezaAdiada
+      ? `<p>${esc(l.limpezaAdiada)}</p>`
+      : "",
+    lista(l.limpeza),
+    "<p>Apagar apenas os recursos criados neste exercício, dentro do grupo de recursos do exercício. Não apagar nada fora dele.</p>",
+  ].join("");
+}
+
 export function montarElearning(
   c: ConteudoLicao,
   minutos: number,
@@ -112,6 +162,7 @@ export function montarElearning(
     `<p>Trabalho ${esc(c.actividade.formato)}, com ${tempos.actividade} minutos de trabalho, seguidos de ${tempos.partilha} minutos de partilha e síntese em plenário.</p>`,
     paragrafos(c.actividade.enunciado),
     `<p><strong>Produto esperado:</strong> ${esc(c.actividade.produto)}</p>`,
+    laboratorioHtml(c),
     "<h3>Síntese em leitura fácil</h3>",
     lista(c.sintese),
     "<h3>Verificação formativa</h3>",
@@ -164,6 +215,7 @@ export function montarGuiao(
  * escrito. Rascunho: escrito, por validar pela Ologa/ATDI.
  */
 export const DESCRICOES_MODULO: Record<string, string> = {
+  m2: "Conteúdo escrito, em rascunho por validar pela Ologa/ATDI. Cinco lições com guiões de laboratório ainda POR EXECUTAR, em ambiente de formação a preparar pelo formador: recursos de computação e armazenamento, com criação de uma máquina virtual e de um recipiente de objectos privado; redes e conectividade, com criação de rede virtual, sub-redes e regras de segurança restritas; bases de dados e aplicações, com publicação de uma aplicação simples numa plataforma como serviço; disponibilidade, cópias de segurança e recuperação; e desenho de uma arquitectura simples, incluindo microserviços, práticas cloud-native, DevOps e etapas de modernização.",
   m1: "Conteúdo escrito, em rascunho por validar pela Ologa/ATDI. Cinco lições: o que é computação em nuvem e as cinco características essenciais; modelos de serviço (infra-estrutura, plataforma e programa como serviço); modelos de implantação (pública, privada, comunitária, híbrida) e multinuvem; vantagens, limites, componentes de infra-estrutura e responsabilidade partilhada; e escolha fundamentada do modelo para um serviço público.",
 };
 
@@ -585,6 +637,606 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Escolher o modelo primeiro e procurar os critérios que o justificam depois.",
         "Deixar de fora o custo de migração e de formação na comparação.",
         "Apresentar pressupostos por confirmar como se fossem decisões já tomadas.",
+      ],
+    },
+  },
+  m2l1: {
+    objectivos: [
+      "Distinguir as famílias de recursos de computação — máquina virtual, contentor e execução sem servidor — e indicar quando cada uma serve.",
+      "Distinguir armazenamento de blocos, de ficheiros e de objectos, e escolher o tipo adequado a um caso de serviço público.",
+      "Executar, em ambiente de formação, a criação de uma máquina virtual e de um contentor de objectos, verificando o resultado e limpando o que foi criado.",
+    ],
+    explicacao: [
+      "Os recursos de computação são as várias formas de correr código na nuvem. A máquina virtual é a mais próxima do que já se conhece: um computador lógico, com sistema operativo próprio, ao qual se liga por acesso remoto e onde se instala o que for preciso. Dá liberdade total e, em troca, deixa à instituição a responsabilidade pelas actualizações, pela segurança do sistema operativo e pelo que lá corre. O contentor é uma forma mais leve: empacota a aplicação com as bibliotecas de que ela precisa e corre sobre um sistema operativo partilhado, arrancando em segundos e sendo fácil de replicar. A execução sem servidor visível, por vezes chamada serverless, vai mais longe: escreve-se uma função, o fornecedor trata de a executar quando é chamada e de a dimensionar, e a equipa deixa de gerir servidores. Serverless não quer dizer que não existam servidores; quer dizer que não são geridos por quem usa o serviço, e o custo tem normalmente várias componentes — execuções, tempo de execução, memória atribuída, tráfego e serviços associados — e não apenas o tempo de execução.",
+      "Estas três formas correspondem a graus diferentes de controlo e de trabalho. Uma aplicação antiga, que exige uma versão específica do sistema operativo, tende a ir para máquina virtual. Uma aplicação nova, feita em partes independentes, encaixa melhor em contentores, que são a base do estilo cloud-native e das práticas de integração e entrega contínuas, assunto retomado na última lição do módulo. Uma tarefa esporádica — converter um ficheiro, enviar uma notificação, tratar um formulário — é bom candidato à execução sem servidor.",
+      "Do lado do armazenamento há três tipos que não se substituem entre si. O armazenamento de blocos é o disco da máquina virtual: rápido, ligado a uma máquina de cada vez, é onde vive o sistema operativo e a base de dados. O armazenamento de ficheiros é uma pasta partilhada em rede, acessível por vários computadores ao mesmo tempo, útil para documentos de trabalho de uma equipa. O armazenamento de objectos guarda ficheiros inteiros, cada um com um nome e com informação descritiva associada, acedidos por interface de rede em vez de sistema de ficheiros: é a escolha natural para digitalizações, fotografias, cópias de segurança e registos que crescem sem fim, porque cresce sem limite prático e custa menos por unidade guardada.",
+      "Nos serviços de objectos a terminologia difere entre fornecedores e convém não a baralhar. Na Amazon Web Services, o recipiente chama-se bucket e faz parte do serviço S3. No Azure, o recipiente equivalente chama-se contentor e vive dentro de uma conta de armazenamento, no serviço Blob Storage. São conceitos equivalentes no papel que desempenham — recipiente nomeado de objectos — mas não são a mesma coisa nem têm as mesmas regras de nomes, de permissões e de níveis de acesso. Dizer «bucket» a um contentor do Azure é impreciso; o que se pode dizer é que um corresponde ao outro.",
+      "Duas regras atravessam toda esta lição. Primeira: o armazenamento é privado por defeito e só se abre o que tiver mesmo de estar aberto, com justificação escrita. Segunda: tudo o que é criado num exercício é apagado no fim do exercício, excepto quando um exercício seguinte depender desse recurso — nesse caso a limpeza é adiada e fica registada por escrito quem a faz e quando.",
+    ],
+    exemplo: {
+      titulo: "O arquivo de digitalizações do Serviço Distrital de Ondela (cenário fictício)",
+      corpo: [
+        "O Serviço Distrital de Ondela digitaliza processos de licenciamento. Hoje os ficheiros estão no disco de um computador do gabinete e são copiados à mão para um disco externo, às sextas-feiras, quando alguém se lembra.",
+        "A equipa propõe três mudanças. A aplicação de consulta dos processos passa a correr numa máquina virtual, porque depende de uma versão antiga de um componente. As digitalizações passam para armazenamento de objectos, privado, porque são ficheiros que só crescem e raramente mudam depois de criados. A pasta partilhada de minutas de despacho, essa, continua a fazer sentido como armazenamento de ficheiros, acessível a vários postos ao mesmo tempo.",
+        "Cenário fictício, para exercício. Não descreve nenhum serviço existente e não indica preços.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de três, com um computador por grupo e um máximo de dois participantes por computador quando a turma for maior",
+      enunciado: [
+        "Primeira parte, em papel, 10 minutos: para o caso fictício de Ondela, decidam que tipo de computação e que tipo de armazenamento servem cada uma das três necessidades, com uma linha de justificação em cada.",
+        "Segunda parte, no ambiente de formação, 40 minutos: executar o laboratório abaixo, pela ordem indicada, registando a evidência à medida que avançam.",
+        "Quem ficar bloqueado num passo escreve o número do passo e a mensagem de erro exacta na ficha, e passa ao passo seguinte que não dependa dele.",
+      ],
+      produto:
+        "ficha do grupo com as três decisões justificadas, as evidências recolhidas nos dois laboratórios e a lista do que foi apagado no fim.",
+    },
+    laboratorio: {
+      titulo: "Criar uma máquina virtual e um recipiente de objectos",
+      percurso:
+        "Máquina virtual no Microsoft Azure e recipiente de objectos no Amazon S3, para que a turma veja a mesma ideia em dois fornecedores e compare a terminologia.",
+      preRequisitos: [
+        "Conta institucional de formação, criada e paga pela entidade formadora, com limites de consumo e alertas de custo já definidos pelo formador.",
+        "Utilizador de formação com permissões mínimas: criar e apagar recursos apenas dentro do grupo de recursos do exercício.",
+        "Grupo de recursos do exercício já criado, com nome que identifique a turma e a data, por exemplo rg-formacao-nuvem-turma01.",
+        "Nenhum participante introduz dados pessoais reais, credenciais próprias ou cartões de pagamento. Os dados usados são fictícios.",
+        "Navegador actualizado e ligação à internet estável. Em alternativa, o formador executa no seu ecrã e a turma acompanha.",
+      ],
+      passos: [
+        "Parte A, máquina virtual. Entrar no portal do Azure com o utilizador de formação e confirmar, no canto superior, que está seleccionada a subscrição de formação e não outra.",
+        "Criar uma máquina virtual Linux dentro do grupo de recursos do exercício, com um nome que identifique o grupo, por exemplo vm-grupo03. Escolher um tamanho pequeno, dos indicados pelo formador.",
+        "Escolher autenticação por chave e deixar o portal gerar o par de chaves. Guardar a chave privada na pasta local do exercício. A chave privada nunca é enviada por correio electrónico, nem colada na ficha, nem fotografada.",
+        "Nas portas de entrada, não abrir nada ao mundo neste passo: deixar a máquina sem porta pública aberta. O acesso administrativo é tratado na lição seguinte, com regras de segurança restritas à origem necessária.",
+        "Rever e criar. Aguardar a conclusão da implantação e abrir a página do recurso criado.",
+        "Parte B, recipiente de objectos. Entrar na consola da Amazon Web Services com o utilizador de formação e abrir o serviço S3.",
+        "Criar um bucket com um nome único global, em minúsculas, que identifique a turma e o grupo, por exemplo formacao-nuvem-t01-g03. Escolher a região indicada pelo formador.",
+        "Manter activo o bloqueio de todo o acesso público. O bucket fica privado; nenhum exercício deste curso torna público um recipiente de objectos.",
+        "Carregar um ficheiro fictício pequeno, preparado antes pelo formador — por exemplo digitalizacao-exemplo.pdf, sem dados de pessoas — e confirmar que aparece na lista de objectos.",
+        "Registar na ficha, para cada parte, o nome do recurso, a região e a hora de criação.",
+      ],
+      verificacao: [
+        "A máquina virtual aparece com estado «em execução» na lista de recursos do grupo de recursos do exercício.",
+        "A máquina virtual não tem nenhuma regra de entrada aberta a «qualquer origem»; nesta fase é esperado que não se consiga ligar a ela a partir do exterior.",
+        "O bucket aparece na lista do S3 e o painel indica que o acesso público está bloqueado.",
+        "O objecto carregado aparece na listagem do bucket, com o tamanho esperado.",
+        "Tentar abrir o endereço do objecto numa janela anónima devolve acesso negado — é esse o resultado correcto.",
+      ],
+      problemas: [
+        "Nome de bucket recusado: os nomes são únicos em todo o mundo e só admitem minúsculas, números e hífenes. Acrescentar o código da turma e do grupo.",
+        "Falta de permissão para criar: confirmar que se está na subscrição ou conta de formação e no grupo de recursos do exercício, e chamar o formador se persistir.",
+        "Tamanho de máquina indisponível na região: escolher outro tamanho pequeno da lista autorizada pelo formador, sem subir de escalão.",
+        "Implantação demorada: é normal a criação levar alguns minutos; não repetir o pedido, para não criar recursos duplicados que depois ficam esquecidos a consumir.",
+        "Chave privada perdida: não tentar recuperar; apagar a máquina e repetir o exercício, registando a ocorrência na ficha.",
+      ],
+      evidencia: [
+        "Captura de ecrã da lista de recursos do grupo de recursos, mostrando a máquina virtual criada, com o identificador da subscrição tapado.",
+        "Captura de ecrã das propriedades do bucket mostrando o bloqueio de acesso público activo.",
+        "Captura de ecrã da listagem de objectos com o ficheiro fictício carregado.",
+        "Linha na ficha do grupo com nome dos recursos, região e horas de criação e de eliminação.",
+      ],
+      limpeza: [
+        "Apagar o objecto carregado e depois o bucket, no fim da lição, porque nenhum exercício seguinte depende dele.",
+        "Confirmar, no fim, que o grupo de recursos do exercício não contém recursos além dos previstos para a lição seguinte.",
+      ],
+      limpezaAdiada:
+        "A máquina virtual NÃO é apagada no fim desta lição: a lição seguinte, sobre redes e regras de segurança, trabalha sobre ela. A eliminação da máquina e de tudo o que lhe está associado faz-se no fim da lição 2, e o formador regista quem apagou e a que horas.",
+    },
+    sintese: [
+      "Máquina virtual dá mais controlo e mais trabalho; contentor é mais leve; sem servidor visível é para tarefas curtas e ocasionais.",
+      "Sem servidor visível não significa sem servidores: significa que não somos nós a geri-los, e o custo tem várias componentes.",
+      "Blocos é o disco de uma máquina; ficheiros é a pasta partilhada; objectos é para ficheiros que só crescem, como digitalizações e cópias.",
+      "Bucket na Amazon e contentor no Azure desempenham o mesmo papel, mas não são a mesma coisa.",
+      "O armazenamento é privado por defeito, e o que se cria num exercício apaga-se no fim — salvo quando o exercício seguinte precisar dele.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Um serviço recebe pedidos de certidão duas ou três vezes por dia e limita-se a enviar um aviso por correio electrónico. Que forma de computação estudar primeiro?",
+        resposta:
+          "A execução sem servidor visível, porque a tarefa é curta, esporádica e não exige manter um servidor sempre ligado.",
+        feedback:
+          "Antes de decidir, conviria ainda verificar os requisitos de protecção de dados e se o volume se mantém baixo ao longo do ano.",
+      },
+      {
+        pergunta:
+          "Porque é que não se deve chamar bucket ao contentor de uma conta de armazenamento do Azure?",
+        resposta:
+          "Porque bucket é o nome do recipiente do serviço S3 da Amazon; o contentor do Azure é equivalente na função, mas tem regras próprias de nome, permissões e níveis de acesso.",
+        feedback:
+          "Nos cadernos de encargos, escrever «armazenamento de objectos» e descrever o comportamento exigido evita ficar preso ao vocabulário de um fornecedor.",
+      },
+    ],
+    referencias: [
+      {
+        titulo: "Azure — Quickstart: criar uma máquina virtual Linux no portal",
+        url: "https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+      {
+        titulo: "Amazon S3 — Getting started with Amazon S3",
+        url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Preparar antes da sessão: grupo de recursos do exercício, utilizador de formação com permissões mínimas, limites de consumo e alertas de custo, e lista de tamanhos de máquina autorizados.",
+        "Criar e distribuir o ficheiro fictício de exemplo para carregamento, sem dados de pessoas.",
+        "Executar o laboratório sozinho antes da aula, uma vez, para confirmar nomes de ecrã e tempos; este guião ainda não foi executado.",
+        "Ter pronto um plano alternativo: se a ligação falhar, o formador projecta a execução e a turma preenche a ficha a partir da demonstração.",
+        "Combinar quem regista, no fim da sessão, os recursos que ficam por apagar até à lição seguinte.",
+      ],
+      conducao: [
+        "Acolhimento, retoma do módulo anterior numa frase e apresentação dos objectivos, com aviso claro de que o laboratório usa conta de formação e dados fictícios.",
+        "Exposição das três formas de computação e dos três tipos de armazenamento, com a distinção entre bucket e contentor e as duas regras de segurança e limpeza.",
+        "Actividade: 10 minutos de decisão em papel e 40 minutos de laboratório, incluindo a verificação dos resultados e o registo da evidência; o formador circula e desbloqueia.",
+        "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese e de instruções de limpeza. As fichas dos restantes grupos são recolhidas para apreciação escrita.",
+      ],
+      criterios: [
+        "As três decisões de tipo de computação e de armazenamento estão justificadas, e não apenas nomeadas.",
+        "O bucket ficou privado e a máquina ficou sem porta aberta ao mundo.",
+        "A evidência recolhida não contém chaves, palavras-passe nem identificadores de subscrição visíveis.",
+        "A ficha regista o que foi apagado e o que ficou propositadamente por apagar até à lição seguinte.",
+      ],
+      errosComuns: [
+        "Abrir uma porta administrativa a qualquer origem «só para testar».",
+        "Desactivar o bloqueio de acesso público do bucket para conseguir abrir o ficheiro no navegador.",
+        "Confundir contentor de objectos com contentor de aplicação: são coisas diferentes com o mesmo nome em português.",
+        "Deixar recursos criados por engano fora do grupo de recursos do exercício, onde ninguém os vai procurar.",
+      ],
+    },
+  },
+  m2l2: {
+    objectivos: [
+      "Explicar o que é uma rede virtual na nuvem, o que são sub-redes e endereçamento privado, e porque é que os recursos não devem estar directamente expostos à internet.",
+      "Descrever as formas de ligar a rede da instituição à rede na nuvem e o que cada uma exige.",
+      "Executar a criação de uma rede virtual com sub-redes e aplicar regras de segurança restritas, sem qualquer acesso administrativo aberto ao mundo.",
+    ],
+    explicacao: [
+      "Uma rede virtual na nuvem é o espaço de rede privado da instituição dentro da infra-estrutura do fornecedor. Define-se um intervalo de endereços privados — por exemplo 10.20.0.0/16 — e dentro dele criam-se sub-redes, cada uma com o seu pedaço de endereços. As sub-redes servem para separar responsabilidades: uma para os servidores de aplicação, outra para a base de dados, outra para a administração. Essa separação é a primeira linha de defesa, porque permite dizer que só a sub-rede da aplicação fala com a da base de dados, e mais ninguém.",
+      "O endereçamento tem de ser pensado antes e não durante. Se a instituição já usa 10.20.0.0/16 na sua rede interna, escolher o mesmo intervalo na nuvem impede depois a ligação entre as duas redes, porque os endereços colidem. A escolha de intervalos é, por isso, uma decisão de arquitectura que se documenta.",
+      "Sobre o tráfego aplicam-se regras de segurança. No Azure chamam-se grupos de segurança de rede e podem estar associadas a uma sub-rede ou à interface de rede de uma máquina. Cada regra tem prioridade, origem, destino, porta e protocolo, e é avaliada por ordem de prioridade até uma delas corresponder ao tráfego. Existem regras por omissão que negam a entrada vinda da internet; abrir alguma coisa significa criar uma regra explícita com prioridade mais alta. A boa prática, e a regra deste curso, é a permissão mínima: abre-se apenas a porta necessária, apenas para a origem necessária — um endereço ou um intervalo conhecido — e nunca acesso administrativo a partir de qualquer origem.",
+      "Para administrar máquinas sem as expor, há caminhos melhores do que abrir a porta de acesso remoto: um serviço de acesso intermediado pelo portal, um posto de salto dentro da própria rede, ou acesso por rede privada virtual. Todos partilham a mesma ideia: a porta de administração não está visível na internet.",
+      "Para ligar a rede da instituição à rede na nuvem há três caminhos habituais. A ligação por rede privada virtual sobre a internet é a mais simples e depende da qualidade da ligação disponível. A ligação dedicada, contratada a um operador, dá largura de banda e latência previsíveis, a custo maior e com prazos de instalação. E há a ligação entre redes virtuais, quando a instituição tem mais do que uma rede na nuvem, ou usa mais do que um fornecedor, num desenho multinuvem. Em Moçambique, a escolha depende muito da ligação efectivamente disponível no local: um distrito com ligação intermitente exige que o serviço continue a funcionar localmente e sincronize depois.",
+      "Por último, o acesso de saída também conta. Nem toda a máquina precisa de falar com a internet; quando precisa, convém que o faça por um caminho controlado, e não por endereço público próprio. Menos endereços públicos significa menos superfície exposta.",
+    ],
+    exemplo: {
+      titulo: "A rede do portal de licenciamento de Ondela (cenário fictício)",
+      corpo: [
+        "A equipa de Ondela desenha a rede do portal com três sub-redes: uma para os servidores de aplicação, uma para a base de dados e uma para administração. A base de dados não tem endereço público e só aceita ligações vindas da sub-rede da aplicação, na porta da base de dados.",
+        "A administração das máquinas faz-se a partir de um posto de salto na sub-rede de administração, alcançável apenas a partir do endereço da rede do próprio serviço distrital. Não existe nenhuma regra que permita acesso remoto a partir de qualquer origem.",
+        "Numa revisão, alguém propõe abrir temporariamente a porta de administração ao mundo para resolver uma avaria num fim-de-semana. A resposta da equipa é registar a necessidade, autorizar um acesso a partir do endereço concreto de quem vai intervir e fechá-lo depois, com registo. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "nos mesmos grupos de três da lição anterior",
+      enunciado: [
+        "Primeira parte, em papel, 10 minutos: desenhem o plano de endereçamento das três sub-redes do caso de Ondela e escrevam, em forma de tabela, as regras de segurança mínimas — origem, destino, porta e razão de ser de cada uma.",
+        "Segunda parte, no ambiente de formação, 45 minutos: executar o laboratório abaixo, que cria a rede virtual, liga-a à máquina criada na lição anterior e aplica as regras.",
+        "Terceira parte, 10 minutos dentro do tempo de laboratório: apagar os recursos, incluindo a máquina virtual da lição anterior, e registar a eliminação.",
+      ],
+      produto:
+        "plano de endereçamento e tabela de regras justificadas, mais a evidência de que nenhuma regra permite acesso administrativo a partir de qualquer origem, e o registo da limpeza.",
+    },
+    laboratorio: {
+      titulo: "Criar uma rede virtual e aplicar regras de segurança restritas",
+      percurso:
+        "Rede virtual e grupo de segurança de rede no Microsoft Azure, dando continuidade à máquina virtual criada na lição anterior.",
+      preRequisitos: [
+        "A máquina virtual da lição anterior ainda existe, no grupo de recursos do exercício. Este laboratório depende dela e por isso a limpeza da lição anterior foi adiada.",
+        "Conta institucional de formação com limites de consumo definidos, e utilizador de formação com permissões limitadas ao grupo de recursos do exercício.",
+        "O formador anota antes da sessão o endereço público de saída da sala de formação, para ser usado como origem autorizada nas regras. Esse endereço é escrito no quadro, não em documento partilhado publicamente.",
+        "Plano de endereçamento decidido na primeira parte da actividade, para não improvisar intervalos.",
+      ],
+      passos: [
+        "No portal do Azure, dentro do grupo de recursos do exercício, criar uma rede virtual com o intervalo combinado, por exemplo 10.20.0.0/16, na mesma região da máquina virtual.",
+        "Criar três sub-redes dentro dessa rede: aplicacao (10.20.1.0/24), dados (10.20.2.0/24) e administracao (10.20.3.0/24).",
+        "Criar um grupo de segurança de rede para a sub-rede de aplicação e outro para a sub-rede de dados, com nomes que identifiquem o grupo de trabalho.",
+        "No grupo de segurança da sub-rede de dados, criar uma regra de entrada que permita apenas o tráfego vindo do intervalo 10.20.1.0/24, na porta da base de dados, e nada mais. Confirmar que as regras por omissão continuam a negar o resto.",
+        "No grupo de segurança da sub-rede de administração, criar uma regra de entrada para a porta de acesso remoto que aceite APENAS o endereço de saída da sala, indicado pelo formador. Não usar «qualquer origem» em nenhuma circunstância.",
+        "Associar cada grupo de segurança à respectiva sub-rede.",
+        "Verificar as regras efectivas na interface de rede da máquina virtual criada na lição anterior e confirmar que não existe entrada aberta ao mundo.",
+        "Registar na ficha o intervalo de cada sub-rede e cada regra criada, com a razão de ser em uma linha.",
+        "Limpeza final: apagar as associações, os grupos de segurança, a rede virtual, a máquina virtual da lição anterior, o disco e a interface de rede associados, todos dentro do grupo de recursos do exercício.",
+      ],
+      verificacao: [
+        "A rede virtual mostra as três sub-redes com os intervalos planeados, sem sobreposição.",
+        "Na lista de regras efectivas da sub-rede de dados, o único acesso de entrada permitido vem de 10.20.1.0/24 na porta indicada.",
+        "Nenhuma regra tem origem «qualquer» numa porta administrativa; a verificação faz-se lendo a coluna de origem de todas as regras de entrada.",
+        "A partir de uma ligação fora da sala, a tentativa de acesso remoto falha — resultado esperado.",
+        "No fim, a lista de recursos do grupo de recursos do exercício está vazia.",
+      ],
+      problemas: [
+        "Intervalos de sub-rede sobrepostos: a criação é recusada; recalcular a divisão antes de tentar de novo.",
+        "Regra criada mas sem efeito: confirmar que o grupo de segurança está associado à sub-rede certa e que nenhuma regra de prioridade mais baixa em número corresponde primeiro ao mesmo tráfego.",
+        "Perda de acesso depois de aplicar as regras: é o comportamento esperado quando se fecha tudo; reabrir apenas a origem autorizada, nunca «qualquer origem».",
+        "Endereço de saída da sala muda durante a sessão: acontece com ligações móveis; pedir ao formador o novo endereço e actualizar a regra, em vez de a alargar.",
+        "Eliminação incompleta: o disco e a interface de rede podem sobreviver à eliminação da máquina; conferir a lista do grupo de recursos no fim.",
+      ],
+      evidencia: [
+        "Captura de ecrã do desenho da rede virtual com as três sub-redes e respectivos intervalos.",
+        "Captura de ecrã da lista de regras de entrada de cada grupo de segurança, mostrando as origens restritas.",
+        "Captura de ecrã da lista de recursos vazia no fim, como prova de limpeza.",
+        "Linha na ficha com hora de eliminação e nome de quem a executou.",
+      ],
+      limpeza: [
+        "Apagar, por esta ordem: associações dos grupos de segurança, grupos de segurança, máquina virtual, disco e interface de rede, e por fim a rede virtual.",
+        "Conferir que o grupo de recursos do exercício fica sem recursos e comunicar ao formador.",
+      ],
+    },
+    sintese: [
+      "A rede virtual é o espaço de rede privado da instituição na nuvem; as sub-redes separam aplicação, dados e administração.",
+      "O plano de endereços decide-se antes, e não pode colidir com os endereços já usados na instituição.",
+      "As regras de segurança seguem a permissão mínima: só a porta necessária e só a origem necessária.",
+      "Nunca se abre acesso administrativo a qualquer origem; usa-se posto de salto, acesso intermediado ou rede privada virtual.",
+      "Ligar a instituição à nuvem faz-se por rede privada virtual, por ligação dedicada ou entre redes virtuais, e a escolha depende da ligação disponível no local.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Uma regra permite entrada na porta de acesso remoto a partir de qualquer origem, com a justificação de que a palavra-passe é forte. Está correcta?",
+        resposta:
+          "Não. A porta administrativa não deve estar visível na internet, independentemente da robustez da palavra-passe.",
+        feedback:
+          "Uma palavra-passe forte protege contra adivinhação, mas não contra falhas do próprio serviço exposto. A alternativa é restringir a origem ou usar acesso intermediado.",
+      },
+      {
+        pergunta:
+          "Porque é que o plano de endereços da rede na nuvem tem de considerar os endereços já usados na instituição?",
+        resposta:
+          "Porque intervalos coincidentes impedem a ligação entre as duas redes, já que o mesmo endereço passaria a existir dos dois lados.",
+        feedback:
+          "Este erro costuma aparecer tarde, quando se tenta ligar a rede local à da nuvem, e obriga a refazer trabalho.",
+      },
+    ],
+    referencias: [
+      {
+        titulo: "Azure — Quickstart: criar uma rede virtual",
+        url: "https://learn.microsoft.com/en-us/azure/virtual-network/quickstart-create-virtual-network",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+      {
+        titulo: "Azure — Descrição geral dos grupos de segurança de rede",
+        url: "https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Apurar e escrever no quadro o endereço público de saída da sala, antes da sessão.",
+        "Confirmar que as máquinas virtuais da lição anterior ainda existem e que ninguém as apagou por engano.",
+        "Preparar a tabela de regras em branco para distribuir, com colunas para origem, destino, porta, prioridade e razão de ser.",
+        "Reservar os últimos 10 minutos do tempo de laboratório para a limpeza, e não deixá-la para o intervalo.",
+        "Executar o percurso sozinho antes da aula: este guião ainda não foi executado.",
+      ],
+      conducao: [
+        "Acolhimento, ligação à lição anterior — a máquina existe, falta dar-lhe rede — e objectivos.",
+        "Exposição de redes virtuais, sub-redes, plano de endereços, regras por prioridade e caminhos de ligação à instituição, com a regra da permissão mínima.",
+        "Actividade: 10 minutos de plano em papel, 35 minutos de laboratório e 10 minutos de limpeza verificada recurso a recurso.",
+        "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese. As tabelas de regras dos restantes grupos são recolhidas para apreciação escrita.",
+      ],
+      criterios: [
+        "O plano de endereços não tem sobreposições e está justificado.",
+        "Cada regra tem razão de ser escrita e origem restrita; não existe «qualquer origem» em portas administrativas.",
+        "A verificação foi feita lendo as regras efectivas, e não apenas assumindo que ficaram aplicadas.",
+        "A limpeza está completa e registada, incluindo disco e interface de rede.",
+      ],
+      errosComuns: [
+        "Criar regras e esquecer de as associar à sub-rede.",
+        "Alargar a origem em vez de actualizar o endereço quando o acesso falha.",
+        "Apagar a máquina e deixar o disco e a interface de rede a consumir.",
+        "Planear os endereços durante a execução, gerando sobreposições que obrigam a recomeçar.",
+      ],
+    },
+  },
+  m2l3: {
+    objectivos: [
+      "Distinguir uma base de dados instalada numa máquina virtual de uma base de dados gerida pelo fornecedor, indicando o que muda em responsabilidade e em trabalho.",
+      "Explicar o que a plataforma como serviço assume por nós e o que continua do nosso lado.",
+      "Publicar uma aplicação simples numa plataforma como serviço, no ambiente de formação, verificando o resultado e apagando o que foi criado.",
+    ],
+    explicacao: [
+      "Uma base de dados pode correr de duas maneiras na nuvem. Instalada por nós numa máquina virtual, damos-lhe a versão que quisermos e mandamos em tudo — e ficamos com as actualizações, as cópias de segurança, a alta disponibilidade e a afinação a nosso cargo. Gerida pelo fornecedor, recebemos um ponto de ligação e o fornecedor trata do sistema operativo, das actualizações do motor, das cópias automáticas e, se for contratado, da réplica noutra zona. Continua a ser nossa a modelação dos dados, o desempenho das consultas, quem tem acesso e o cumprimento das regras de protecção de dados.",
+      "A escolha entre relacional e não relacional mantém-se igual à de sempre: dados com estrutura estável e necessidade de consistência forte — processos, licenças, pagamentos — pedem base relacional; dados de forma variável e volume grande — registos de eventos, documentos, leituras de sensores — encaixam melhor em bases não relacionais. Na nuvem os dois tipos existem em versão gerida.",
+      "A plataforma como serviço aplica a mesma ideia à aplicação. Entrega-se o código e a plataforma trata do servidor, do sistema operativo, do servidor de aplicação e do certificado de segurança do endereço, além de permitir aumentar o número de instâncias quando a procura sobe. Do nosso lado ficam o código, a configuração da aplicação, os segredos — que não vão no código, mas na configuração do serviço ou num cofre de segredos — e as ligações à base de dados. É o modelo que dá mais resultado por menos trabalho a equipas pequenas, e é por isso que interessa a serviços públicos com poucas pessoas na área informática.",
+      "As limitações também se devem conhecer. A plataforma impõe versões de linguagem suportadas, tempos máximos de resposta, e por vezes não permite instalar componentes de sistema. Uma aplicação antiga pode não caber sem alterações. É aí que entra a modernização: dividir a aplicação em partes independentes, os microserviços, trocar componentes locais por serviços geridos, e adoptar práticas de integração e entrega contínuas, em que cada alteração é construída e publicada por um processo automático e repetível. Modernizar tem custo e risco, e faz-se por etapas — nunca é obrigatório modernizar tudo para começar a usar nuvem.",
+      "Uma nota sobre custos que vale para todo o módulo: manter uma aplicação publicada numa plataforma consome, mesmo com pouco tráfego, porque há capacidade reservada. Por isso, no laboratório, o que se cria é apagado no fim.",
+    ],
+    exemplo: {
+      titulo: "A consulta pública de estado do processo, em Ondela (cenário fictício)",
+      corpo: [
+        "Ondela quer uma página onde o munícipe introduz o número do processo e vê o estado: recebido, em análise, deferido ou indeferido. Não há dados pessoais na resposta, apenas o estado.",
+        "A equipa decide publicar essa página numa plataforma como serviço, ligada a uma base de dados gerida onde os estados são actualizados pelo sistema interno. O sistema interno, mais antigo, continua onde está: não é preciso modernizar tudo para pôr esta consulta no ar.",
+        "Ficam definidos três pontos antes de avançar: quem pode alterar os estados, quanto tempo ficam guardados os registos de acesso e o que acontece à consulta quando a ligação do distrito cai. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "nos mesmos grupos de três",
+      enunciado: [
+        "Primeira parte, em papel, 10 minutos: para a consulta de estado de Ondela, escrevam o que fica do lado do fornecedor e o que fica do lado da instituição, em duas colunas, incluindo segredos, cópias de segurança e controlo de acesso.",
+        "Segunda parte, no ambiente de formação, 45 minutos: executar o laboratório de publicação de uma aplicação simples numa plataforma como serviço.",
+        "Terceira parte, dentro do tempo de laboratório: apagar tudo o que foi criado e registar a eliminação.",
+      ],
+      produto:
+        "tabela de responsabilidades partilhadas e evidência da aplicação publicada e depois eliminada, com o endereço público e as horas de publicação e de eliminação.",
+    },
+    laboratorio: {
+      titulo: "Publicar uma aplicação simples numa plataforma como serviço",
+      percurso:
+        "Azure App Service com uma aplicação Node.js mínima, seguindo o guia rápido oficial actual. O antigo guia de aplicação estática já não serve este objectivo, porque encaminha para outro serviço.",
+      preRequisitos: [
+        "Conta institucional de formação com limites de consumo e alertas definidos pelo formador, e grupo de recursos do exercício criado.",
+        "Aplicação de exemplo preparada antes pelo formador: uma página que devolve texto fixo, sem base de dados, sem dados de pessoas e sem segredos no código.",
+        "Nenhum participante associa cartão de pagamento nem cria subscrição própria. O escalão de serviço a usar é o indicado pelo formador; o material não promete gratuitidade.",
+        "Se a turma não tiver ambiente de desenvolvimento, o formador disponibiliza o código já preparado num arquivo, para carregamento directo.",
+      ],
+      passos: [
+        "No portal do Azure, dentro do grupo de recursos do exercício, criar uma aplicação Web indicando pilha de execução Node.js e sistema operativo Linux, com nome que identifique a turma e o grupo.",
+        "Escolher o plano de serviço indicado pelo formador e a região combinada. Não subir de escalão por iniciativa própria.",
+        "Rever e criar. Esperar pela conclusão e abrir a página do recurso.",
+        "Publicar o código de exemplo pelo método combinado na sessão: implantação a partir de arquivo comprimido, ou a partir de um repositório preparado pelo formador.",
+        "Abrir o endereço público atribuído à aplicação e confirmar que a página responde.",
+        "Nas definições da aplicação, criar uma variável de configuração de exemplo, com um valor fictício, e mostrar que a aplicação a lê sem que ela esteja escrita no código. É assim que se tratam segredos: fora do código.",
+        "Confirmar nos registos da aplicação que o pedido feito no navegador aparece registado.",
+        "Registar na ficha o endereço público, a hora da publicação e o escalão usado.",
+        "Limpeza: apagar a aplicação Web e o respectivo plano de serviço. O plano continua a consumir mesmo sem aplicação, por isso é apagado também.",
+      ],
+      verificacao: [
+        "O endereço público da aplicação abre no navegador e mostra a página de exemplo.",
+        "A variável de configuração definida no portal é visível no comportamento da aplicação, sem constar do código.",
+        "Os registos mostram o pedido correspondente ao acesso feito.",
+        "Depois da limpeza, o endereço deixa de responder e o grupo de recursos do exercício fica vazio.",
+      ],
+      problemas: [
+        "Nome de aplicação já usado: o endereço é único; acrescentar o código da turma e do grupo.",
+        "A página mostra erro de aplicação: quase sempre falta o ficheiro de arranque esperado ou a pilha de execução escolhida não corresponde ao código; verificar os registos antes de repetir a publicação.",
+        "Publicação concluída mas página antiga: aguardar o reinício da aplicação ou forçá-lo; não publicar várias vezes seguidas às cegas.",
+        "Escalão indisponível na região: escolher outra região da lista autorizada, mantendo o mesmo escalão.",
+        "Plano de serviço esquecido depois de apagar a aplicação: é um recurso separado e continua a consumir.",
+      ],
+      evidencia: [
+        "Captura de ecrã da página publicada, com o endereço visível.",
+        "Captura de ecrã das definições de configuração mostrando a variável de exemplo, com valores fictícios apenas.",
+        "Captura de ecrã da lista de recursos vazia depois da limpeza.",
+        "Linha na ficha com endereço, escalão, hora de publicação e hora de eliminação.",
+      ],
+      limpeza: [
+        "Apagar a aplicação Web.",
+        "Apagar o plano de serviço associado, que é um recurso distinto.",
+        "Confirmar que o grupo de recursos do exercício fica sem recursos.",
+      ],
+    },
+    sintese: [
+      "Base de dados gerida: o fornecedor trata do motor e das cópias; nós tratamos dos dados, dos acessos e das consultas.",
+      "Plataforma como serviço: entregamos código, a plataforma trata do servidor e do certificado do endereço.",
+      "Os segredos ficam na configuração do serviço ou num cofre, nunca no código.",
+      "A plataforma impõe limites, como versões suportadas; aplicações antigas podem precisar de alterações.",
+      "Modernizar — microserviços, serviços geridos, entrega automática — faz-se por etapas e não é condição para começar.",
+      "Uma aplicação publicada consome mesmo sem tráfego, por isso o que se cria no exercício apaga-se no fim, incluindo o plano de serviço.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Com uma base de dados gerida, deixamos de ser responsáveis pela protecção dos dados pessoais que lá estão?",
+        resposta:
+          "Não. O fornecedor trata da infra-estrutura e do motor; a instituição continua responsável pelos dados, por quem lhes acede e pelo cumprimento das regras aplicáveis.",
+        feedback:
+          "Esta é a linha de responsabilidade partilhada que já apareceu no módulo 1 e que volta no módulo sobre protecção de dados.",
+      },
+      {
+        pergunta:
+          "Onde deve ficar a palavra-passe de ligação à base de dados numa aplicação publicada em plataforma como serviço?",
+        resposta:
+          "Na configuração do serviço ou num cofre de segredos, nunca escrita no código nem no material de formação.",
+        feedback:
+          "Segredos no código acabam quase sempre em repositórios partilhados, e a partir daí deixam de ser segredos.",
+      },
+    ],
+    referencias: [
+      {
+        titulo: "Azure App Service — Quickstart: criar uma aplicação Web Node.js",
+        url: "https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Preparar a aplicação de exemplo e o arquivo de publicação, testados antes da sessão.",
+        "Indicar por escrito o escalão de serviço e a região autorizados, e não deixar a escolha aos grupos.",
+        "Confirmar os limites de consumo e alertas da conta de formação antes de abrir o exercício.",
+        "Reservar os últimos minutos do laboratório para apagar aplicação e plano de serviço, com verificação recurso a recurso.",
+        "Executar o percurso sozinho antes da aula: este guião ainda não foi executado.",
+      ],
+      conducao: [
+        "Acolhimento, ligação às duas lições anteriores — já temos máquina e rede, agora vemos o caminho com menos gestão — e objectivos.",
+        "Exposição de bases de dados geridas, plataforma como serviço, fronteira de responsabilidades, limites da plataforma e modernização por etapas.",
+        "Actividade: 10 minutos de tabela de responsabilidades e 45 minutos de laboratório, com limpeza incluída e verificada.",
+        "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese. As tabelas dos restantes grupos são recolhidas para apreciação escrita.",
+      ],
+      criterios: [
+        "A tabela separa correctamente o que é do fornecedor e o que é da instituição, incluindo segredos e acessos.",
+        "A aplicação foi publicada e o endereço respondeu, com evidência recolhida.",
+        "A variável de configuração foi usada em vez de valor escrito no código.",
+        "A limpeza inclui o plano de serviço e está registada.",
+      ],
+      errosComuns: [
+        "Apagar a aplicação e deixar o plano de serviço activo.",
+        "Escrever valores sensíveis, ainda que fictícios, no código do exemplo.",
+        "Concluir que a plataforma serve para tudo, sem verificar versões e limites.",
+        "Confundir modernizar com refazer: a modernização faz-se por etapas.",
+      ],
+    },
+  },
+  m2l4: {
+    objectivos: [
+      "Distinguir disponibilidade, cópia de segurança e recuperação de desastre, e explicar porque é que uma não substitui a outra.",
+      "Definir, para um serviço concreto, o tempo máximo de paragem aceitável e a perda máxima de dados aceitável.",
+      "Elaborar um plano de cópias e um procedimento de restauro testável, com responsáveis e periodicidade.",
+    ],
+    explicacao: [
+      "Três conceitos costumam ser confundidos. Disponibilidade é a capacidade de o serviço continuar a responder quando uma peça falha: consegue-se com várias instâncias, distribuídas por zonas diferentes, com um distribuidor de carga à frente. Cópia de segurança é a existência de uma versão anterior dos dados, que permite voltar atrás quando alguém apaga ou corrompe informação. Recuperação de desastre é a capacidade de repor o serviço inteiro noutro sítio quando o primeiro deixa de existir. Ter três instâncias da aplicação não protege contra alguém apagar a tabela de processos; ter cópias diárias não evita que o serviço esteja em baixo durante a manhã.",
+      "Para planear, usam-se duas medidas. A primeira é o tempo máximo de paragem aceitável: quanto tempo pode o serviço estar indisponível sem consequência inaceitável. A segunda é a perda máxima de dados aceitável: quanto trabalho se admite perder, medido em tempo — uma hora, um dia. Estas duas medidas não são escolhas técnicas: são decisões de quem dirige o serviço, porque determinam custo. Um serviço que admite meio dia de paragem e uma hora de perda tem um desenho muito mais barato do que um que não admite paragem nenhuma.",
+      "Do lado técnico, os instrumentos habituais são: várias instâncias em zonas diferentes da mesma região, para falhas locais; réplica noutra região, para desastre; cópias automáticas com retenção definida, para erro humano; e versões de objectos no armazenamento, para recuperar ficheiros apagados. Muitos serviços geridos oferecem cópias automáticas com um período de retenção, mas o período por omissão pode não corresponder ao que a instituição precisa — e a retenção por omissão nunca deve ser assumida sem verificação.",
+      "Há uma regra que vale mais do que toda a tecnologia: uma cópia de segurança que nunca foi restaurada não é uma cópia de segurança, é uma esperança. O restauro tem de ser ensaiado, com periodicidade definida, para um ambiente separado, e o ensaio tem de ser registado: quem fez, quando, quanto tempo demorou e o que correu mal. É esse registo que permite dizer, com honestidade, quanto tempo demora a repor o serviço.",
+      "Por fim, o plano tem de prever a comunicação. Quando um serviço público pára, as pessoas continuam a precisar dele. Saber quem avisa, por que meio e o que se faz manualmente enquanto o sistema não volta é parte do plano, e não um detalhe administrativo. Em contextos com ligação intermitente, o procedimento manual de recurso é especialmente importante.",
+    ],
+    exemplo: {
+      titulo: "A manhã em que o portal de Ondela ficou em baixo (cenário fictício)",
+      corpo: [
+        "Numa terça-feira de manhã, o portal de licenciamento de Ondela deixa de responder. A equipa descobre que uma actualização mal sucedida corrompeu parte dos dados às 22 horas do dia anterior.",
+        "A cópia automática mais recente é das 20 horas. Restaurar significa perder duas horas de registos, que terão de ser reintroduzidos a partir dos formulários em papel. O restauro demora 40 minutos, mas ninguém tinha ensaiado antes e passa-se mais uma hora a perceber o procedimento.",
+        "Na revisão, o serviço define: perda máxima aceitável de uma hora, o que obriga a cópias de hora a hora; tempo máximo de paragem de duas horas; ensaio de restauro trimestral com registo; e um procedimento em papel para o atendimento continuar enquanto o sistema não volta. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de quatro",
+      enunciado: [
+        "Escolham um serviço da vossa instituição, real na função mas descrito sem dados de pessoas.",
+        "Definam e justifiquem o tempo máximo de paragem aceitável e a perda máxima de dados aceitável, dizendo quem, na instituição, tem competência para aprovar esses valores.",
+        "Escrevam o plano de cópias: o que se copia, com que periodicidade, quanto tempo se guarda, onde fica guardado e quem verifica que a cópia foi feita.",
+        "Escrevam o procedimento de restauro em passos numerados, incluindo como se confirma que o restauro correu bem, e marquem no calendário o primeiro ensaio.",
+        "Acrescentem meia página de plano de comunicação e de recurso manual: quem avisa, por que meio, e o que o atendimento faz enquanto o serviço não volta.",
+      ],
+      produto:
+        "plano de continuidade de duas páginas com as duas medidas justificadas, plano de cópias, procedimento de restauro numerado e plano de comunicação e recurso manual.",
+    },
+    sintese: [
+      "Disponibilidade é continuar a responder; cópia é poder voltar atrás; recuperação de desastre é repor noutro sítio. São três coisas diferentes.",
+      "Decidir quanto tempo o serviço pode estar parado e quanto trabalho se pode perder é decisão de direcção, porque determina o custo.",
+      "Cópia que nunca foi restaurada não conta: o ensaio de restauro faz-se com periodicidade e fica registado.",
+      "A retenção por omissão do fornecedor pode não servir; verifica-se sempre.",
+      "O plano inclui avisar as pessoas e ter um procedimento manual enquanto o serviço não volta.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Um serviço corre em três instâncias, em zonas diferentes. Está protegido contra a eliminação acidental de uma tabela de dados?",
+        resposta:
+          "Não. Várias instâncias protegem contra falha de infra-estrutura, não contra erro humano nos dados. Para isso é preciso cópia de segurança com retenção.",
+        feedback:
+          "As três instâncias replicariam a eliminação de imediato. É exactamente por isso que disponibilidade e cópia são planeadas em separado.",
+      },
+      {
+        pergunta:
+          "Quem deve decidir que o serviço pode estar parado no máximo duas horas?",
+        resposta:
+          "A direcção responsável pelo serviço, porque é uma decisão sobre risco e custo, informada pela equipa técnica.",
+        feedback:
+          "Quando esta decisão fica implícita, acaba por ser tomada por omissão, e descobre-se o valor real no dia da avaria.",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Imprimir a grelha do plano de continuidade, uma por grupo, com espaço para as duas medidas, o plano de cópias, o restauro e a comunicação.",
+        "Preparar dois exemplos contrastantes para a exposição: um serviço que admite meio dia de paragem e outro que não admite nenhuma.",
+        "Combinar com os grupos que nenhum serviço é descrito com dados de pessoas.",
+        "Não há laboratório nesta lição: o tempo de actividade é integralmente de trabalho de planeamento em grupo.",
+      ],
+      conducao: [
+        "Acolhimento, retoma do que já foi criado nas três lições anteriores e objectivos desta.",
+        "Exposição dos três conceitos, das duas medidas, dos instrumentos técnicos e da regra do ensaio de restauro.",
+        "Actividade em grupos de quatro: elaboração do plano de continuidade, com o formador a circular e a desafiar valores irrealistas.",
+        "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese. Os planos dos restantes grupos são recolhidos para apreciação escrita.",
+      ],
+      criterios: [
+        "As duas medidas estão quantificadas e justificadas, e está identificado quem as aprova.",
+        "O plano de cópias diz o que, quando, onde, por quanto tempo e quem verifica.",
+        "O procedimento de restauro está em passos numerados e inclui como confirmar que correu bem.",
+        "Existe plano de comunicação e procedimento manual de recurso.",
+      ],
+      errosComuns: [
+        "Escrever «sem paragem e sem perda» sem considerar o custo que isso implica.",
+        "Confundir replicação com cópia de segurança.",
+        "Guardar a cópia no mesmo sítio do original.",
+        "Planear cópias e nunca ensaiar restauros.",
+      ],
+    },
+  },
+  m2l5: {
+    objectivos: [
+      "Desenhar uma arquitectura simples para um serviço público, indicando componentes, fluxos e fronteiras de segurança.",
+      "Justificar, em cada componente, a escolha entre máquina virtual, contentor, execução sem servidor e serviço gerido.",
+      "Identificar onde entram microserviços, práticas cloud-native e entrega automática, e o que fica para uma etapa posterior de modernização.",
+    ],
+    explicacao: [
+      "Desenhar uma arquitectura é responder, por escrito, a cinco perguntas: que componentes existem, por onde entra o pedido, onde ficam os dados, que fronteiras de segurança separam as partes e o que acontece quando uma parte falha. Um desenho que não responda a estas cinco perguntas é um diagrama bonito, não uma arquitectura.",
+      "A arquitectura mais comum num serviço público simples tem quatro camadas: entrada — o endereço público, com certificado e, se necessário, filtragem de pedidos; aplicação — uma ou mais instâncias, em plataforma como serviço ou em contentores; dados — base de dados gerida numa sub-rede privada, sem endereço público; e armazenamento de objectos, privado, para documentos e digitalizações. Entre camadas, regras de permissão mínima, como se viu na lição de redes.",
+      "Microserviços são a divisão da aplicação em partes pequenas e independentes, cada uma com a sua responsabilidade e o seu ritmo de actualização. Resolvem problemas de equipas grandes e de sistemas que crescem; introduzem em troca complexidade de comunicação, de observação e de resolução de problemas. Para um serviço distrital com uma aplicação e duas pessoas na informática, uma aplicação única bem organizada é normalmente a decisão certa, e dividir só quando houver razão concreta.",
+      "Cloud-native descreve o estilo de construir para este ambiente: componentes substituíveis, configuração fora do código, estado guardado em serviços próprios e não no disco da máquina, e capacidade de arrancar mais instâncias sem intervenção manual. DevOps é a prática de trabalho que acompanha: mesma equipa responsável por construir e por manter, alterações pequenas e frequentes, e um processo automático que constrói, testa e publica sempre da mesma maneira. O ganho não é a moda: é que a publicação deixa de depender da memória de uma pessoa.",
+      "A modernização faz-se por etapas e cada etapa tem de valer por si. Uma sequência frequente: primeiro mover a aplicação como está, depois trocar componentes instalados por serviços geridos, depois automatizar a publicação, e só então, se houver razão, separar partes em serviços independentes. Escrever a ordem das etapas, com o benefício esperado de cada uma, é tão importante como o desenho final — e evita a promessa de que tudo muda ao mesmo tempo.",
+      "Por último, o desenho tem de dizer o que fica de fora. Um bom documento de arquitectura tem uma secção de pressupostos e outra de pontos por apurar: ligação disponível no local, volume esperado, exigências de localização dos dados, competências da equipa. Nenhum deles é detalhe técnico — todos podem inverter a decisão.",
+    ],
+    exemplo: {
+      titulo: "Arquitectura da consulta de processos de Ondela (cenário fictício)",
+      corpo: [
+        "Entrada: endereço público com certificado, apenas para a página de consulta. Aplicação: uma aplicação única em plataforma como serviço, com duas instâncias. Dados: base de dados gerida em sub-rede privada, sem endereço público, acessível apenas a partir da sub-rede da aplicação. Documentos: armazenamento de objectos privado, com acesso concedido à aplicação e a mais ninguém.",
+        "Falhas previstas: se uma instância cair, a outra responde; se a base de dados falhar, a página mostra aviso e o atendimento passa ao procedimento manual; se a ligação do distrito cair, a consulta interna fica indisponível e o balcão usa a listagem impressa do dia.",
+        "Etapas de modernização propostas: primeiro publicar a consulta; depois automatizar a publicação; só mais tarde, se o volume crescer, separar a componente de digitalizações. Pressupostos por confirmar: volume diário de consultas e exigências sobre onde os dados podem residir. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de quatro, com apresentação por amostra",
+      enunciado: [
+        "Escolham um dos dois casos fictícios propostos pelo formador, ou o serviço que trabalharam na lição anterior.",
+        "Desenhem a arquitectura em papel A3: componentes, setas de fluxo, fronteiras de rede e o que é privado.",
+        "Numa folha à parte, justifiquem cada componente — porquê máquina virtual, contentor, execução sem servidor ou serviço gerido — em uma linha cada.",
+        "Escrevam as etapas de modernização por ordem, com o benefício esperado de cada uma, e a secção de pressupostos e pontos por apurar.",
+        "Verifiquem o desenho contra as cinco perguntas da exposição, e corrijam o que faltar.",
+      ],
+      produto:
+        "desenho de arquitectura em A3, folha de justificações por componente, lista ordenada de etapas de modernização e secção de pressupostos e pontos por apurar.",
+    },
+    sintese: [
+      "Uma arquitectura responde a cinco perguntas: que componentes, por onde entra, onde ficam os dados, que fronteiras e o que falha.",
+      "O desenho simples tem quatro camadas: entrada, aplicação, dados privados e armazenamento de objectos privado.",
+      "Microserviços resolvem problemas de escala e de equipa; para serviços pequenos, uma aplicação única bem organizada costuma bastar.",
+      "Cloud-native e DevOps significam configuração fora do código, estado fora da máquina e publicação automática e repetível.",
+      "A modernização faz-se por etapas, cada uma com benefício próprio.",
+      "Um bom documento diz também o que ainda não se sabe.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Um serviço distrital com uma aplicação e duas pessoas na informática deve começar por dividir o sistema em microserviços?",
+        resposta:
+          "Normalmente não. A divisão acrescenta complexidade de comunicação e de manutenção; justifica-se quando há razão concreta, como partes com ritmos de mudança muito diferentes.",
+        feedback:
+          "A decisão certa depende do problema a resolver, e não da modernidade do vocabulário.",
+      },
+      {
+        pergunta:
+          "Porque é que a base de dados não deve ter endereço público, mesmo com palavra-passe forte?",
+        resposta:
+          "Porque a exposição amplia a superfície de ataque sem necessidade: o acesso deve vir apenas da sub-rede da aplicação, por regra de permissão mínima.",
+        feedback:
+          "É a mesma regra da lição de redes, aplicada agora ao desenho global.",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Preparar folhas A3 e marcadores, e dois casos fictícios escritos, com volume e restrições diferentes.",
+        "Afixar as cinco perguntas da arquitectura num cartaz visível durante toda a actividade.",
+        "Recolher e devolver, no início, uma apreciação breve dos planos de continuidade da lição anterior.",
+        "Não há laboratório nesta lição; o tempo de actividade é de desenho e justificação.",
+        "Preparar a ponte para o módulo seguinte, sobre governação, segurança e custos, sem entrar no conteúdo.",
+      ],
+      conducao: [
+        "Acolhimento, síntese do módulo até aqui — computação, armazenamento, rede, plataforma, continuidade — e objectivos.",
+        "Exposição das cinco perguntas, do desenho de quatro camadas, de microserviços, cloud-native, DevOps e etapas de modernização.",
+        "Actividade em grupos de quatro: desenho em A3, justificações, etapas e pressupostos, com verificação final contra as cinco perguntas.",
+        "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese do módulo. Os desenhos dos restantes grupos ficam afixados e recebem apreciação escrita.",
+      ],
+      criterios: [
+        "O desenho responde às cinco perguntas, incluindo o que acontece quando uma parte falha.",
+        "Cada componente tem justificação própria e não apenas o nome de uma tecnologia.",
+        "As etapas de modernização estão ordenadas e cada uma tem benefício próprio.",
+        "Existem pressupostos e pontos por apurar escritos como tal.",
+      ],
+      errosComuns: [
+        "Desenhar componentes sem indicar as fronteiras de rede nem o que é privado.",
+        "Propor microserviços por defeito, sem problema concreto que os justifique.",
+        "Apresentar pressupostos por confirmar como se fossem requisitos aprovados.",
+        "Esquecer o comportamento do serviço em caso de falha e de ligação intermitente.",
       ],
     },
   },

@@ -137,10 +137,12 @@ const M2_LICOES: LicaoPlano[] = [
     "vantagens_e_componentes_infraestruturais",
     "servicos_das_plataformas_populares",
     "laboratorio_maquina_virtual",
+    "laboratorio_armazenamento_bucket",
   ]),
   licao("m2l2", 2, "Redes e conectividade na nuvem", T110, [
     "vantagens_e_componentes_infraestruturais",
     "laboratorio_rede_virtual",
+    "laboratorio_regras_de_seguranca",
   ]),
   licao("m2l3", 3, "Bases de dados e aplicações na nuvem", T110, [
     "modelos_de_servico_iaas_paas_saas",

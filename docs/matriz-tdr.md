@@ -281,3 +281,54 @@ dos conteúdos, revisão de acessibilidade por entidade externa e aprovação do
 plano de entrega. Escrever rascunhos dos cinco cursos, produzir vídeo e
 legendagem, preparar o plano de entrega e medir desempenho é trabalho nosso e
 está por agendar, não bloqueado.
+
+## A14 — Computação em Nuvem, módulo 2 «Serviços e Arquitectura na Nuvem»
+
+Estado: **proposta pedagógica, rascunho por validar pela Ologa/ATDI**. As cinco
+lições existentes foram preenchidas com conteúdo original, preservando os
+identificadores. Nenhum laboratório foi executado por nós e o ambiente de
+formação está por preparar.
+
+Tempos (fonte única: `src/lib/plano-computacao-nuvem.ts`): 105 + 110 + 110 +
+110 + 105 = **540 minutos = 9 horas**, confirmado por consulta à base. O curso
+mantém 30 horas = 26 h de módulos temáticos + 2 h do transversal, contado uma
+vez, + 2 h de diagnóstico, revisão e exame.
+
+### Mapa requisito → lição → laboratório → evidência
+
+| Requisito (sec. 6.3) | Lição | Laboratório | Evidência a recolher |
+| --- | --- | --- | --- |
+| Componentes de infra-estrutura: computação e armazenamento | M2L1 Recursos de computação e armazenamento | Criar máquina virtual (Azure) | Captura da máquina criada, com subscrição tapada; ficha com nome, região e horas |
+| Criar um bucket de armazenamento | M2L1 | Criar bucket privado (Amazon S3) | Captura do bloqueio de acesso público activo e da listagem do objecto fictício |
+| Criar uma rede virtual | M2L2 Redes e conectividade na nuvem | Rede virtual com três sub-redes (Azure) | Captura do desenho da rede com intervalos sem sobreposição |
+| Criar regras de segurança | M2L2 | Grupos de segurança de rede com permissão mínima | Captura das regras de entrada mostrando origens restritas; nenhuma origem «qualquer» em porta administrativa |
+| Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service, aplicação Node.js | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
+| Serviços das plataformas populares; IaaS/PaaS/SaaS | M2L1 e M2L3 | — | Tabela de responsabilidades do fornecedor e da instituição |
+| Disponibilidade, cópias e recuperação | M2L4 Disponibilidade, cópias e recuperação | Sem laboratório: planeamento | Plano de continuidade com as duas medidas, plano de cópias, restauro numerado e comunicação |
+| Serverless, microserviços, cloud-native, DevOps, modernização | M2L5 Planear uma arquitectura simples | Sem laboratório: desenho | Desenho A3, justificações por componente, etapas de modernização, pressupostos |
+
+Referências oficiais citadas nas lições, consultadas em 21 de Setembro de 2026:
+guia rápido de máquina virtual Linux e de rede virtual do Azure, descrição
+geral dos grupos de segurança de rede, guia rápido de aplicação Node.js no
+Azure App Service, e guia de introdução ao Amazon S3. O antigo guia de
+aplicação estática do App Service não foi usado por já encaminhar para outro
+serviço.
+
+### Regras aplicadas aos laboratórios
+
+- Guiões **a executar**, não executados. Cada laboratório abre com esse aviso.
+- Conta institucional de formação, permissões mínimas, limites de consumo e
+  alertas definidos pelo formador. Sem cartões, sem aquisições, sem
+  credenciais no material, sem promessa de gratuitidade.
+- Armazenamento privado por defeito; nenhum acesso administrativo aberto ao
+  mundo em nenhum passo.
+- Limpeza apenas dos recursos do exercício. A máquina virtual da lição 1 é
+  propositadamente mantida até ao fim da lição 2, porque esta depende dela; a
+  eliminação fica registada com autor e hora.
+- Material offline é preparação e não substitui a prática no ambiente real.
+
+### Estado das lições do curso
+
+10 lições temáticas escritas (módulos 1 e 2), 5 por fornecer (módulo 3), mais
+as 6 lições do módulo transversal já existentes. O banco de questões deste
+curso continua por escrever e o exame continua bloqueado.
