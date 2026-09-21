@@ -21,6 +21,7 @@ import {
 import {
   MODULOS_PLANO,
   MINUTOS_AVALIACAO_ORIENTACAO,
+  FICHA_CURSO,
 } from "../src/lib/plano-computacao-nuvem";
 
 /** «8 h 40 min», «9 horas» — sem arredondar para horas inteiras. */
