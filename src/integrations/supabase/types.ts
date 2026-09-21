@@ -104,54 +104,69 @@ export type Database = {
           actualizado_em: string
           autor_id: string | null
           autor_nome: string
+          cenario: boolean
           conteudo: Json
           criado_em: string
           curso_id: string
           dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
           enunciado: string
+          estado_revisao: string
           explicacao: string
           id: string
           instrumento: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id: string | null
           objectivo_associado: string | null
           resposta: Json
+          retirada_em: string | null
+          retirada_motivo: string | null
           tipologia: Database["public"]["Enums"]["tipologia_questao"]
+          versao: string
         }
         Insert: {
           activa?: boolean
           actualizado_em?: string
           autor_id?: string | null
           autor_nome?: string
+          cenario?: boolean
           conteudo?: Json
           criado_em?: string
           curso_id: string
           dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
           enunciado: string
+          estado_revisao?: string
           explicacao?: string
           id?: string
           instrumento?: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id?: string | null
           objectivo_associado?: string | null
           resposta?: Json
+          retirada_em?: string | null
+          retirada_motivo?: string | null
           tipologia: Database["public"]["Enums"]["tipologia_questao"]
+          versao?: string
         }
         Update: {
           activa?: boolean
           actualizado_em?: string
           autor_id?: string | null
           autor_nome?: string
+          cenario?: boolean
           conteudo?: Json
           criado_em?: string
           curso_id?: string
           dificuldade?: Database["public"]["Enums"]["dificuldade_questao"]
           enunciado?: string
+          estado_revisao?: string
           explicacao?: string
           id?: string
           instrumento?: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id?: string | null
           objectivo_associado?: string | null
           resposta?: Json
+          retirada_em?: string | null
+          retirada_motivo?: string | null
           tipologia?: Database["public"]["Enums"]["tipologia_questao"]
+          versao?: string
         }
         Relationships: [
           {

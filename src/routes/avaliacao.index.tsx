@@ -105,10 +105,32 @@ function AvaliacaoPage() {
           />
         ) : (
           <div className="space-y-4">
+            {data.totalRetiradas > 0 ? (
+              <section className="rounded-lg border border-line bg-white p-5">
+                <h2 className="text-lg font-bold text-navy">
+                  Versões retiradas: {data.totalRetiradas} questões
+                </h2>
+                <p className="mt-2 text-base text-navy-2">
+                  Estas questões continuam guardadas, com as suas respostas e explicações, mas estão
+                  fora do sorteio e do rácio, e não podem ser activadas. Só contam como utilizáveis
+                  as questões em rascunho que não foram retiradas. A renovação do conteúdo entra como
+                  versão nova.
+                </p>
+              </section>
+            ) : null}
+
             {data.totalEscritas === 0 && data.totalDiagnostico === 0 ? (
               <EstadoVazio
-                titulo="O banco de questões ainda está vazio"
-                descricao="Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                titulo={
+                  data.totalRetiradas > 0
+                    ? "Sem questões utilizáveis: as que existiam foram retiradas"
+                    : "O banco de questões ainda está vazio"
+                }
+                descricao={
+                  data.totalRetiradas > 0
+                    ? "As questões que existiam foram retiradas e continuam guardadas, mas não podem ser usadas nem activadas. É preciso escrever uma versão nova, que a Ologa/ATDI depois valida. Enquanto não houver questões utilizáveis, nenhum exame é gerado. Onde se lê «por fornecer» por curso ou por módulo, isso conta apenas as questões utilizáveis."
+                    : "Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                }
               />
             ) : data.totalActivas === 0 ? (
               <section className="rounded-lg border border-amber-300 bg-amber-50 p-5">
@@ -164,6 +186,15 @@ function AvaliacaoPage() {
                   <div>
                     <dt className="font-semibold text-navy-2">Em rascunho, por validar</dt>
                     <dd className="text-navy">{curso.rascunhos}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-navy-2">Retiradas (fora do sorteio)</dt>
+                    <dd className="text-navy">
+                      {curso.retiradas.total}
+                      {curso.retiradas.total > 0
+                        ? ` (${curso.retiradas.exame} de exame, ${curso.retiradas.diagnostico} de diagnóstico; versões ${curso.retiradas.versoes.join(", ")})`
+                        : ""}
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-navy-2">Diagnóstico e pós-teste</dt>
