@@ -51,6 +51,9 @@ CREATE POLICY perfis_proprio_actualizar ON public.perfis FOR UPDATE TO authentic
 CREATE POLICY papeis_proprio_ler ON public.utilizador_papeis FOR SELECT TO authenticated
   USING (utilizador_id = auth.uid());
 CREATE POLICY papeis_inserir ON public.utilizador_papeis FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY papeis_apagar ON public.utilizador_papeis FOR DELETE TO authenticated USING (true);
+CREATE POLICY perfis_admin ON public.perfis FOR ALL TO authenticated
+  USING (public.is_admin(auth.uid())) WITH CHECK (public.is_admin(auth.uid()));
 
 -- Mesmas assinaturas das funções reais.
 CREATE OR REPLACE FUNCTION public.is_admin(_uid uuid) RETURNS boolean
