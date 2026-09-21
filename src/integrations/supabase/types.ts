@@ -1293,6 +1293,48 @@ export type Database = {
           },
         ]
       }
+      progresso_licoes_matricula: {
+        Row: {
+          concluida_em: string
+          id: string
+          inscricao_id: string
+          licao_id: string
+          origem: string
+          registado_por: string | null
+        }
+        Insert: {
+          concluida_em?: string
+          id?: string
+          inscricao_id: string
+          licao_id: string
+          origem?: string
+          registado_por?: string | null
+        }
+        Update: {
+          concluida_em?: string
+          id?: string
+          inscricao_id?: string
+          licao_id?: string
+          origem?: string
+          registado_por?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progresso_licoes_matricula_inscricao_id_fkey"
+            columns: ["inscricao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_inscricoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progresso_licoes_matricula_licao_id_fkey"
+            columns: ["licao_id"]
+            isOneToOne: false
+            referencedRelation: "licoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       progresso_quizzes: {
         Row: {
           formando_id: string
