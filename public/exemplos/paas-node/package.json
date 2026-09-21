@@ -1,0 +1,14 @@
+{
+  "name": "exemplo-paas-formacao",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Exemplo mínimo de aplicação Node.js para o laboratório de plataforma como serviço do curso Computação em Nuvem.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {}
+}
