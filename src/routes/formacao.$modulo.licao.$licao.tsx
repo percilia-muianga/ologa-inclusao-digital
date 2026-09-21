@@ -36,7 +36,7 @@ function LicaoView() {
   const { curso } = useSearch({ from: "/formacao/$modulo" });
   const navigate = useNavigate();
   const { data: licao } = useSuspenseQuery(licaoQuery(licaoId));
-  const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
+  const { data: mod } = useSuspenseQuery(moduloQuery(moduloId, curso));
   const [aba, setAba] = useState<Aba>("elearning");
 
   // Paragem automática ao mudar de separador ou de lição
@@ -58,9 +58,10 @@ function LicaoView() {
       navigate({
         to: "/formacao/$modulo/licao/$licao",
         params: { modulo: moduloId, licao: proxima.id },
+        search: { curso },
       });
     } else {
-      navigate({ to: "/formacao/$modulo", params: { modulo: moduloId } });
+      navigate({ to: "/formacao/$modulo", params: { modulo: moduloId }, search: { curso } });
     }
   }
 
