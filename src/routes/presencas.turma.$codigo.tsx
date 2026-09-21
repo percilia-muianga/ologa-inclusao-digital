@@ -1,7 +1,13 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { assiduidadeDaTurma, LIMIAR_ASSIDUIDADE } from "@/lib/presencas.functions";
+import {
+  assiduidadeDaTurma,
+  rotuloEstadoSessao,
+  formulaBaseAssiduidade,
+  LIMIAR_ASSIDUIDADE,
+} from "@/lib/presencas.functions";
+
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 
 export const Route = createFileRoute("/presencas/turma/$codigo")({
@@ -71,16 +77,29 @@ function AssiduidadeTurmaPage() {
     );
 
   const emRisco = d.linhas.filter((l) => l.emRisco);
+  const baseAjustada = d.base === "ajustada";
 
   return (
     <PlataformaPagina
       titulo={`Presenças — ${d.turma.designacao}`}
-      introducao={`${d.cursoTitulo} · ${d.turma.provincia}, ${d.turma.distrito} · ${d.inscritos} formandos inscritos. A taxa de assiduidade é o número de sessões em que o formando esteve presente sobre o número de sessões já realizadas. O limiar para certificação é de ${LIMIAR_ASSIDUIDADE} por cento.`}
+      introducao={`${d.cursoTitulo} · ${d.turma.provincia}, ${d.turma.distrito} · ${d.inscritos} formandos inscritos. Só as sessões marcadas como realizadas entram no cálculo da assiduidade. O limiar para certificação é de ${LIMIAR_ASSIDUIDADE} por cento.`}
     >
       <section aria-labelledby="sessoes">
         <h2 id="sessoes" className="text-xl font-bold text-navy">
           Sessões
         </h2>
+
+        {d.porRegularizar > 0 ? (
+          <p
+            role="status"
+            className="mt-3 rounded-md border border-[#C20400] bg-[#FFF4F4] p-4 text-base font-semibold text-[#C20400]"
+          >
+            Por regularizar: {d.porRegularizar} sessões com a data já passada continuam agendadas.
+            Abra cada uma e diga se foi realizada, cancelada ou adiada. O estado nunca muda sozinho,
+            e enquanto estiver agendada a sessão não entra no cálculo da assiduidade.
+          </p>
+        ) : null}
+
         {d.sessoes.length === 0 ? (
           <EstadoVazio
             titulo="Esta turma ainda não tem sessões no cronograma"
@@ -105,16 +124,23 @@ function AssiduidadeTurmaPage() {
                 <p className="mt-1 text-base text-navy-2">
                   {formatarData(s.data)} · {s.hora_inicio.slice(0, 5)} às {s.hora_fim.slice(0, 5)} ·{" "}
                   {s.modalidade === "virtual" ? "Virtual" : s.modalidade === "misto" ? "Misto" : "Presencial"} ·{" "}
-                  {s.realizada ? "já realizada" : "ainda por realizar"} · {s.marcadas} de{" "}
-                  {d.inscritos} formandos marcados
+                  {rotuloEstadoSessao(s.estado)}
+                  {s.motivo_estado ? ` (${s.motivo_estado})` : ""} · {s.marcadas} de {d.inscritos}{" "}
+                  formandos marcados
                 </p>
+                {s.porRegularizar ? (
+                  <p className="mt-2 text-base font-semibold text-[#C20400]">
+                    Data já passada e ainda agendada: falta dizer se foi realizada, cancelada ou
+                    adiada.
+                  </p>
+                ) : null}
                 <div className="mt-3 flex flex-wrap gap-3">
                   <Link
                     to="/presencas/sessao/$id"
                     params={{ id: s.id }}
                     className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
                   >
-                    Marcar presenças
+                    Marcar presenças e estado
                   </Link>
                   <Link
                     to="/presencas/folha/$id"
@@ -134,6 +160,20 @@ function AssiduidadeTurmaPage() {
         <h2 id="assiduidade" className="text-xl font-bold text-navy">
           Assiduidade por formando
         </h2>
+
+        <div className="mt-3 rounded-md border border-line bg-page p-4 text-base text-navy">
+          <p>
+            <strong>Assiduidade estrita:</strong> {formulaBaseAssiduidade("estrita")}
+          </p>
+          <p className="mt-2">
+            <strong>Assiduidade ajustada:</strong> {formulaBaseAssiduidade("ajustada")}
+          </p>
+          <p className="mt-2 font-semibold">
+            Para efeitos de certificação, neste curso vale a{" "}
+            {baseAjustada ? "assiduidade ajustada" : "assiduidade estrita"}. A escolha entre as duas
+            é uma decisão em aberto, a confirmar pela ATDI; a plataforma mostra sempre as duas.
+          </p>
+        </div>
 
         {emRisco.length > 0 ? (
           <p
@@ -155,7 +195,9 @@ function AssiduidadeTurmaPage() {
           <div className="mt-4 overflow-x-auto">
             <table className="w-full border-collapse text-left text-base">
               <caption className="sr-only">
-                Assiduidade por formando: sessões presentes sobre sessões realizadas
+                Assiduidade por formando, nas duas taxas: a estrita, que é as sessões presentes a
+                dividir pelas sessões realizadas, e a ajustada, que é as sessões presentes a dividir
+                pelas sessões realizadas menos as justificadas
               </caption>
               <thead>
                 <tr className="border-b border-line text-navy-2">
@@ -164,7 +206,8 @@ function AssiduidadeTurmaPage() {
                   <th scope="col" className="py-2 pr-4">Faltas</th>
                   <th scope="col" className="py-2 pr-4">Justificadas</th>
                   <th scope="col" className="py-2 pr-4">Por marcar</th>
-                  <th scope="col" className="py-2 pr-4">Taxa</th>
+                  <th scope="col" className="py-2 pr-4">Assiduidade estrita</th>
+                  <th scope="col" className="py-2 pr-4">Assiduidade ajustada</th>
                   <th scope="col" className="py-2">Situação</th>
                 </tr>
               </thead>
@@ -186,7 +229,19 @@ function AssiduidadeTurmaPage() {
                     <td className="py-3 pr-4 text-navy">{l.justificadas}</td>
                     <td className="py-3 pr-4 text-navy">{l.porMarcar}</td>
                     <td className="py-3 pr-4 text-navy">
-                      {l.taxaPct === null ? "—" : `${l.taxaPct}%`}
+                      {l.taxaEstritaPct === null ? "—" : `${l.taxaEstritaPct}%`}
+                      <span className="block text-sm text-navy-2">
+                        {l.presentes} presenças em {l.realizadas} sessões realizadas
+                        {!baseAjustada ? " — é esta que conta para a certificação" : ""}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4 text-navy">
+                      {l.taxaAjustadaPct === null ? "—" : `${l.taxaAjustadaPct}%`}
+                      <span className="block text-sm text-navy-2">
+                        {l.presentes} presenças em {Math.max(0, l.realizadas - l.justificadas)}{" "}
+                        sessões realizadas, tirando as {l.justificadas} justificadas
+                        {baseAjustada ? " — é esta que conta para a certificação" : ""}
+                      </span>
                     </td>
                     <td
                       className={
@@ -213,3 +268,4 @@ function AssiduidadeTurmaPage() {
     </PlataformaPagina>
   );
 }
+
