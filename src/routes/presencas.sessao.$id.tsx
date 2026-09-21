@@ -58,6 +58,8 @@ function MarcarSessaoPage() {
   const enviar = useServerFn(registarPresencas);
   const corrigir = useServerFn(corrigirPresenca);
   const calcular = useServerFn(calcularPresencasVirtuais);
+  const mudarEstado = useServerFn(definirEstadoSessao);
+
 
   const q = useQuery({ queryKey: ["folha-sessao", id], queryFn: () => carregar({ data: id }) });
 
@@ -216,6 +218,21 @@ function MarcarSessaoPage() {
         {estadoEnvio === "erro" ? " Houve um erro no último envio." : ""}
       </p>
 
+      <EstadoDaSessao
+        estado={d.sessao.estado as EstadoSessao}
+        motivo={d.sessao.motivo_estado}
+        actualizadoEm={d.sessao.estado_actualizado_em}
+        actualizadoPor={d.sessao.estado_actualizado_por_nome}
+        dataSessao={d.sessao.data}
+        aoDefinir={async (estado, motivo, porNome) => {
+          const r = await mudarEstado({ data: { sessaoId: id, estado, motivo, porNome } });
+          if (!r.ok) return r.motivo;
+          await q.refetch();
+          return null;
+        }}
+      />
+
+
       {porEnviar.length > 0 && online ? (
         <button
           type="button"
@@ -263,6 +280,19 @@ function MarcarSessaoPage() {
                         }`
                       : "Ainda sem marcação nesta sessão."}
                   </p>
+                  {f.introducaoManual ? (
+                    <p className="mt-1 text-base text-navy-2">
+                      Valor da sessão virtual introduzido manualmente
+                      {f.introducaoManual.porNome ? ` por ${f.introducaoManual.porNome}` : ""}
+                      {f.introducaoManual.em
+                        ? ` em ${new Date(f.introducaoManual.em).toLocaleString("pt-PT")}`
+                        : ""}
+                      : {f.introducaoManual.minutos ?? "—"} minutos de permanência e{" "}
+                      {f.introducaoManual.progresso ?? "—"} por cento de progresso. Não foi recolhido
+                      automaticamente por nenhuma plataforma de videoconferência.
+                    </p>
+                  ) : null}
+
                   {f.conflito ? (
                     <p className="mt-1 text-base font-semibold text-[#C20400]">
                       Marcações contraditórias nesta sessão, guardadas todas — precisa de revisão
@@ -358,11 +388,12 @@ function MarcarSessaoPage() {
             permanencia: d.configuracao.limiar_permanencia_pct,
             progresso: d.configuracao.limiar_progresso_pct,
           }}
-          aoCalcular={async (registos) => {
-            const r = await calcular({ data: { sessaoId: id, registos } });
+          aoCalcular={async (registos, introduzidoPorNome) => {
+            const r = await calcular({ data: { sessaoId: id, introduzidoPorNome, registos } });
             await q.refetch();
             return r.gravadas;
           }}
+
         />
       ) : null}
 
