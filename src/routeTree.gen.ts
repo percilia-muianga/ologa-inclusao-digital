@@ -39,6 +39,8 @@ import { Route as TurmasCodigoRouteImport } from './routes/turmas.$codigo'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as CursosCursoRouteImport } from './routes/cursos.$curso'
+import { Route as AvaliacaoExameRouteImport } from './routes/avaliacao.exame'
+import { Route as AvaliacaoBancoRouteImport } from './routes/avaliacao.banco'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as GestaoInstituicoesIndexRouteImport } from './routes/gestao.instituicoes.index'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
@@ -206,6 +208,16 @@ const CursosCursoRoute = CursosCursoRouteImport.update({
   path: '/$curso',
   getParentRoute: () => CursosRoute,
 } as any)
+const AvaliacaoExameRoute = AvaliacaoExameRouteImport.update({
+  id: '/exame',
+  path: '/exame',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
+const AvaliacaoBancoRoute = AvaliacaoBancoRouteImport.update({
+  id: '/banco',
+  path: '/banco',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -320,6 +332,8 @@ export interface FileRoutesByFullPath {
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
   '/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
+  '/avaliacao/exame': typeof AvaliacaoExameRoute
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
@@ -362,6 +376,8 @@ export interface FileRoutesByTo {
   '/presencas': typeof PresencasRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/verificar': typeof VerificarRoute
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
+  '/avaliacao/exame': typeof AvaliacaoExameRoute
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
@@ -411,6 +427,8 @@ export interface FileRoutesById {
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
+  '/avaliacao/exame': typeof AvaliacaoExameRoute
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
@@ -461,6 +479,8 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/workshops'
     | '/painel'
+    | '/avaliacao/banco'
+    | '/avaliacao/exame'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
@@ -503,6 +523,8 @@ export interface FileRouteTypes {
     | '/presencas'
     | '/relatorios-mensais'
     | '/verificar'
+    | '/avaliacao/banco'
+    | '/avaliacao/exame'
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
@@ -551,6 +573,8 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/workshops'
     | '/_authenticated/painel'
+    | '/avaliacao/banco'
+    | '/avaliacao/exame'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
@@ -816,6 +840,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CursosCursoRouteImport
       parentRoute: typeof CursosRoute
     }
+    '/avaliacao/exame': {
+      id: '/avaliacao/exame'
+      path: '/exame'
+      fullPath: '/avaliacao/exame'
+      preLoaderRoute: typeof AvaliacaoExameRouteImport
+      parentRoute: typeof AvaliacaoRoute
+    }
+    '/avaliacao/banco': {
+      id: '/avaliacao/banco'
+      path: '/banco'
+      fullPath: '/avaliacao/banco'
+      preLoaderRoute: typeof AvaliacaoBancoRouteImport
+      parentRoute: typeof AvaliacaoRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -969,10 +1007,14 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface AvaliacaoRouteChildren {
+  AvaliacaoBancoRoute: typeof AvaliacaoBancoRoute
+  AvaliacaoExameRoute: typeof AvaliacaoExameRoute
   AvaliacaoIndexRoute: typeof AvaliacaoIndexRoute
 }
 
 const AvaliacaoRouteChildren: AvaliacaoRouteChildren = {
+  AvaliacaoBancoRoute: AvaliacaoBancoRoute,
+  AvaliacaoExameRoute: AvaliacaoExameRoute,
   AvaliacaoIndexRoute: AvaliacaoIndexRoute,
 }
 
