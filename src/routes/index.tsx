@@ -149,9 +149,13 @@ function PlataformaHome() {
               Áreas da plataforma
             </h2>
             <p className="mt-2 max-w-3xl text-base text-navy-2">
-              Todas as áreas estão abertas para consulta. Onde ainda não existem dados, o
-              ecrã explica o que está a suceder e o que se segue.
+              Os cursos, as lições e o teste de literacia digital estão abertos a
+              qualquer pessoa, sem conta. As áreas de gestão — turmas, presenças,
+              workshops, relatórios, indicadores e documentos — só abrem com conta
+              autorizada da equipa. Onde ainda não existem dados, o ecrã explica o
+              que está a suceder e o que se segue.
             </p>
+
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {AREAS.map((a) => (
                 <Link
