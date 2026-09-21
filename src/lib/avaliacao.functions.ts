@@ -559,7 +559,21 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
       : null;
 
+    const condicoes = avaliarCondicoesCertificacao({
+      assiduidadePct: assiduidade?.usadaPct ?? null,
+      notaPct: melhorNota,
+      minimoAssiduidadePct: cfg.assiduidade_minima_pct,
+      minimoNotaPct: cfg.nota_minima_pct,
+      dataFim: fim,
+      prazoDias: cfg.prazo_dias,
+      agora: new Date(),
+    });
+
     return {
+      prazoExpirado: condicoes.prazoExpirado,
+      assiduidadeCumpre: condicoes.assiduidadeCumpre,
+      notaCumpre: condicoes.notaCumpre,
+      podeCertificar: condicoes.podeCertificar,
       formando: { nome: formando.nome },
       turma,
       tentativas: tentativas ?? [],
