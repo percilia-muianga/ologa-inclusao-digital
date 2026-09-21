@@ -94,7 +94,11 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   const s = await admin();
   const [cursosRes, questoesRes, configRes, relacoesRes, modulosRes] = await Promise.all([
     s.from("cursos").select("id,slug,titulo,ordem").order("ordem"),
-    s.from("banco_questoes").select("curso_id,modulo_id,activa,dificuldade"),
+    // Só o instrumento certificador: o pré/pós-teste é contado à parte.
+    s
+      .from("banco_questoes")
+      .select("curso_id,modulo_id,activa,dificuldade")
+      .eq("instrumento", "exame_final"),
     s.from("exame_configuracoes").select("*"),
     s.from("curso_modulos").select("curso_id,modulo_id,ordem").order("ordem"),
     s.from("modulos").select("id,titulo"),
@@ -636,6 +640,7 @@ export const iniciarExame = createServerFn({ method: "POST" })
       .from("banco_questoes")
       .select("id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao")
       .eq("curso_id", data.cursoId)
+      .eq("instrumento", "exame_final")
       .eq("activa", true);
     if (error) throw error;
     const banco = (questoesBanco ?? []) as unknown as QuestaoBanco[];
