@@ -32,11 +32,15 @@ function CursosPage() {
   const { cursos, totalGeralPorFornecer } = Route.useLoaderData();
   return (
     <PlataformaPagina titulo="Cursos do programa" introducao="Seis cursos de capacitação, mais um módulo transversal obrigatório sobre Governo Digital Inclusivo e Acessibilidade. Cada curso organiza-se em módulos reutilizáveis e lições.">
-      <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-amber-300 bg-amber-50 p-5">
-        <h2 id="plano-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
-        <p className="mt-2 text-base text-navy-2"><strong>{totalGeralPorFornecer} lições</strong> aguardam conteúdo da equipa Ologa. As seis lições do módulo transversal legal já estão disponíveis e não entram nesta contagem.</p>
+      <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-line bg-page p-5">
+        <h2 id="plano-conteudo" className="text-lg font-bold text-navy">Como está organizado o programa</h2>
         <p className="mt-2 text-base text-navy-2">
-          As contagens do banco de questões e do exame final ficam na área de{" "}
+          Cada curso tem uma carga horária própria, módulos temáticos e o módulo transversal
+          de Governo Digital Inclusivo e Acessibilidade, obrigatório e contado uma única vez.
+          Os módulos assinalados como <b>em preparação</b> ainda não têm lições publicadas.
+        </p>
+        <p className="mt-2 text-base text-navy-2">
+          O acompanhamento do banco de questões e do exame final fica na área de{" "}
           <Link to="/avaliacao" className="font-semibold text-navy underline">Avaliação</Link>.
         </p>
       </section>
