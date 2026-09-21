@@ -29,7 +29,7 @@ export const Route = createFileRoute("/cursos/")({
 });
 
 function CursosPage() {
-  const { cursos, totalGeralPorFornecer } = Route.useLoaderData();
+  const { cursos } = Route.useLoaderData();
   return (
     <PlataformaPagina titulo="Cursos do programa" introducao="Seis cursos de capacitação, mais um módulo transversal obrigatório sobre Governo Digital Inclusivo e Acessibilidade. Cada curso organiza-se em módulos reutilizáveis e lições.">
       <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-line bg-page p-5">
