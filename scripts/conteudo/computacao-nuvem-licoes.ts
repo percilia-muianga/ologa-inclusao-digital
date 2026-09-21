@@ -533,7 +533,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Escolham um serviço real da vossa instituição que ainda não esteja em nuvem — sem usar dados reais de pessoas no exercício.",
         "Apliquem os seis critérios, um a um, e escrevam uma linha de conclusão por critério.",
         "Escrevam a recomendação com as quatro partes: opção escolhida, opções descartadas e porquê, pressupostos assumidos, e o que falta apurar com indicação de quem responde.",
-        "Apresentem em três minutos. O grupo que ouve faz uma pergunta que ponha à prova um pressuposto.",
+        "Na partilha ouvem-se dois grupos, escolhidos por amostra: 3 minutos de exposição e 1 minuto de comentário cada, seguidos de 2 minutos de síntese. Os restantes grupos entregam a ficha ao formador, que devolve apreciação escrita.",
       ],
       produto:
         "uma ficha de recomendação de uma página com os seis critérios aplicados, a opção escolhida, as descartadas, os pressupostos e a lista do que falta apurar.",
