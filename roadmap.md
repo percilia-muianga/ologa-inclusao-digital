@@ -79,3 +79,17 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Corrigir metadados de Cursos e restantes metadados comerciais da plataforma
 - [x] Garantir que Avaliação nunca fica presa no carregamento e mantém contagens no estado vazio
 - [x] Exportar qualquer vista do Painel Nacional em CSV, XLS e PDF imprimível sem navegação
+
+## A9 — Percurso dos cursos, secção 14, banco e certificação (sem publicar)
+
+- [x] `/cursos` passou a layout; lista em `cursos.index.tsx`; fichas dos seis cursos abrem
+- [x] Cargas horárias da secção 14: IA 16→20 h, Redes 120→80 h (sem apagar módulos)
+- [x] Divergências entre carga oficial e soma dos módulos assinaladas na área de gestão
+- [x] Banco: catálogo já não mistura pré/pós-teste com exame final; mínimo = 3× questões do exame
+- [x] Prazo de 30 dias validado no servidor (início do exame e emissão do certificado)
+- [x] Leitura de exames, presenças e certificados restringida à equipa de formação (migração 0008)
+- [x] `docs/matriz-tdr.md` com implementado/testado/pendente
+- [x] 14 testes automáticos (79/80 %, 59/60 %, prazo 30/31 dias, estados de sessão)
+- [ ] Questões reais do banco — por fornecer pela Ologa
+- [ ] Revisão pedagógica da distribuição curricular
+- [ ] Restantes recomendações de segurança fora de exames e presenças
