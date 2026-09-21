@@ -683,7 +683,7 @@ export const EXAME: QuestaoNuvem[] = [
   },
   {
     m: "transversal", t: "em", cen: true, d: "me",
-    e: "Caso fictício: numa turma de 30 formandos há 12 computadores disponíveis. Que decisão respeita as regras da formação?",
+    e: "Caso fictício: numa sessão prática do módulo 2, na Direcção Provincial de Muariva, a turma tem 30 formandos inscritos e a sala disponibiliza 12 computadores em funcionamento. O formador precisa que todos executem os passos do guião e não apenas assistam. Que decisão respeita as regras da formação?",
     opts: [
       "Formar grupos de três por computador para todos praticarem",
       "Reorganizar a sessão para no máximo dois formandos por computador, o que implica rever a composição da turma ou o número de postos, e registar a limitação",
@@ -695,7 +695,7 @@ export const EXAME: QuestaoNuvem[] = [
   },
   {
     m: "transversal", t: "em", cen: true, d: "di",
-    e: "Caso fictício: numa partilha final, o formador tem 15 minutos e 15 grupos com produtos escritos. Que procedimento está previsto?",
+    e: "Caso fictício: na partilha final de uma lição, restam 15 minutos de sessão e existem 15 grupos, cada um com o seu produto escrito concluído. Dar a palavra a todos ultrapassaria largamente o tempo previsto e comprometeria o encerramento. Que procedimento está previsto neste curso?",
     opts: [
       "Cada grupo apresenta em um minuto",
       "Seleccionar dois grupos para apresentação oral e recolher os restantes produtos por escrito, com devolução posterior",
