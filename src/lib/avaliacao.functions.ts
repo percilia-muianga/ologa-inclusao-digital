@@ -871,10 +871,13 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
 
     // A assiduidade é sempre apurada no servidor, a partir das presenças
     // marcadas — nunca aceite do lado de quem pede o certificado.
-    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
-    if (assiduidadePct === null) throw new Error("ASSIDUIDADE_POR_APURAR");
-    if (assiduidadePct < cfg.assiduidade_minima_pct) throw new Error("ASSIDUIDADE_INSUFICIENTE");
-
+    const assiduidade = turma
+      ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
+      : null;
+    if (!assiduidade || assiduidade.usadaPct === null)
+      throw new Error("ASSIDUIDADE_POR_APURAR");
+    if (assiduidade.usadaPct < cfg.assiduidade_minima_pct)
+      throw new Error("ASSIDUIDADE_INSUFICIENTE");
 
     const { data: cert, error } = await s
       .from("certificados_curso")
@@ -892,10 +895,14 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
         data_inicio: turma?.data_inicio ?? null,
         data_fim: turma?.data_fim ?? null,
         nota_final_pct: melhor.nota,
-        assiduidade_pct: assiduidadePct,
+        assiduidade_pct: assiduidade.usadaPct,
+        base_assiduidade: assiduidade.base as never,
+        assiduidade_estrita_pct: assiduidade.estritaPct,
+        assiduidade_ajustada_pct: assiduidade.ajustadaPct,
       })
       .select("codigo_verificacao, emitido_em")
       .single();
     if (error) throw error;
     return { ...cert, jaExistia: false };
   });
+
