@@ -1,49 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const TIPOS = ["relatorio", "certificado", "declaracao"] as const;
-type Tipo = (typeof TIPOS)[number];
-
-async function servir(tipo: string, token: string): Promise<Response> {
-  if (!TIPOS.includes(tipo as Tipo)) return new Response("Tipo inválido", { status: 404 });
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)) {
-    return new Response("Token inválido", { status: 400 });
-  }
-  const {
-    carregarDadosPorToken,
-    gerarRelatorio,
-    gerarCertificadoInstituicao,
-    gerarDeclaracaoDesenhoUniversal,
-  } = await import("@/lib/documentos.server");
-
-  const d = await carregarDadosPorToken(token);
-  if (!d) return new Response("Não encontrado", { status: 404 });
-
-  let bytes: Uint8Array;
-  let nome: string;
-  if (tipo === "relatorio") {
-    bytes = await gerarRelatorio(d);
-    nome = "relatorio-capacitacao.pdf";
-  } else if (tipo === "certificado") {
-    bytes = await gerarCertificadoInstituicao(d);
-    nome = "certificado-instituicao.pdf";
-  } else {
-    bytes = await gerarDeclaracaoDesenhoUniversal(d);
-    nome = "declaracao-desenho-universal.pdf";
-  }
-
-  return new Response(bytes as BodyInit, {
-    headers: {
-      "content-type": "application/pdf",
-      "content-disposition": `inline; filename="${nome}"`,
-      "cache-control": "no-store",
-    },
-  });
-}
-
+/**
+ * Antiga via pública destes documentos. Os PDF nomeiam pessoas, por isso
+ * deixaram de ser servidos só com a posse da ligação: passam a exigir sessão
+ * iniciada e permissão de gestão (ver src/lib/documentos.functions.ts).
+ */
 export const Route = createFileRoute("/api/public/documentos/$tipo/$token")({
   server: {
     handlers: {
-      GET: async ({ params }) => servir(params.tipo, params.token),
+      GET: async () =>
+        new Response(
+          "Estes documentos passaram a exigir sessão iniciada com uma conta autorizada.",
+          { status: 401, headers: { "content-type": "text/plain; charset=utf-8" } },
+        ),
     },
   },
 });
