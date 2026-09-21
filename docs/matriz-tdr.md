@@ -121,3 +121,39 @@ coordenação nacional, supervisão provincial, formador ou auditoria).
 
 **Pendente:** revisão das restantes recomendações do analisador de segurança
 que não dizem respeito a exames e presenças.
+
+## Consolidação do curso Princípios da Transformação Digital (A11)
+
+| Item | Estado | Referência |
+| --- | --- | --- |
+| Ordem do módulo dentro do curso (1 de 4) em vez do índice interno | Implementado e testado | sec. 6.1 |
+| «Voltar ao curso» preserva o contexto `?curso=` em todas as ligações do módulo | Implementado e testado | sec. 6.1 |
+| Módulo transversal continua partilhado, sem curso-pai único | Implementado e testado | sec. 6.1 |
+| Formação aberta sem contexto mantém-se (fallback «formação aberta») | Implementado e testado | sec. 6.1 |
+| Tempos de acolhimento, exposição, actividade e partilha de fonte única, iguais no conteúdo e no guião | Implementado e testado | sec. 6.1 |
+| Soma verificada: 1320 min de módulos + 120 min de avaliação e orientação = 24 h | Implementado e testado | sec. 14 |
+| Estado real do conteúdo (rascunho por validar) em vez de «será fornecido» | Implementado | sec. 6.1 |
+| Recursos por produzir com forma, traço e texto distintos — nunca só cor | Implementado | acessibilidade |
+| Guião do formador sem enunciados do exame certificador | Implementado e testado | sec. 10 |
+| Banco 60 + 10 inactivo, gabaritos fora do pacote do navegador | Implementado e testado | sec. 10 |
+
+### Percurso ainda em falta para um teste isolado de ponta a ponta
+
+Do percurso «formando matriculado → progresso central → presenças → exame →
+certificado», falta:
+
+1. **Progresso central.** O progresso das lições é local e anónimo
+   (`formacaoStore`, no aparelho). Não existe registo de progresso por
+   inscrição no servidor; o progresso local não é, nem deve ser, prova de
+   participação.
+2. **Ligação matrícula ↔ percurso.** Não existe ecrã que ligue a lição aberta
+   a uma inscrição em turma; a pessoa autenticada percorre o conteúdo do mesmo
+   modo que a anónima.
+3. **Ambiente isolado de demonstração.** Testar exame e certificado exige
+   turma, sessões e inscrição reais; não foram criados dados fictícios na base
+   partilhada.
+4. **Activação do banco.** O exame permanece bloqueado enquanto as 70 questões
+   estiverem inactivas, à espera de validação pedagógica.
+
+Marcar uma lição como feita nunca conta como presença nem dispensa os 80 % de
+assiduidade, os 60 % de nota e os 30 dias de prazo.
