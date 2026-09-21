@@ -68,15 +68,20 @@ function CursoPage() {
           </p>
         )}
         <p className="mt-2 text-navy-2">
-          Carga oficial do curso: {curso.carga_horaria} horas. Soma do plano curricular:{" "}
-          {horasCurriculo} horas
-          {minutosAvaliacao > 0
-            ? `, das quais ${Math.round((minutosAvaliacao / 60) * 10) / 10} horas de avaliação e orientação fora dos módulos`
-            : ""}
-          .{" "}
+          Carga fixada nos Termos de Referência para o curso: {curso.carga_horaria} horas.
+          Soma da distribuição proposta: {horasCurriculo} horas ={" "}
+          {horas(minutosTematicos)} horas de módulos temáticos +{" "}
+          {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
+          {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame, fora dos módulos.{" "}
           {horasCurriculo === curso.carga_horaria
             ? "As duas somas coincidem."
-            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}
+            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
+          A distribuição por módulos e lições é proposta pedagógica por validar; os Termos
+          de Referência fixam o total do curso, não o tempo de cada módulo.
+        </p>
+        <p className="mt-2 text-navy-2">
+          Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
+          {totalLicoes - totalPorFornecer}. Por fornecer: {totalPorFornecer}.
         </p>
       </section>
       <section aria-labelledby="ficha-curso" className="mt-6">
