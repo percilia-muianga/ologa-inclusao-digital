@@ -281,20 +281,23 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
         instituicaoIdResolvido = inst.id
       }
 
-      const { data: novo, error } = await s.from('formandos').insert({
-        nome: nomeDoPerfil,
-        perfil_id: perfilId,
-        instituicao_id: instituicaoIdResolvido,
-        genero: data.genero ?? null,
-        nivel_partida: data.nivelPartida ?? null,
-        precisa_apoio: data.precisaApoio ?? null,
-        apoios_acessibilidade: data.apoiosAcessibilidade ?? null,
-        diagnostico_pontuacao: data.diagnostico?.pontuacao ?? null,
-        diagnostico_total: data.diagnostico?.total ?? null,
-      }).select('id, token_pessoal, instituicao_id').single()
+      // Operação específica do servidor: recebe o actor já autenticado aqui e
+      // vai buscar o nome ao perfil. O nome do cliente nunca é usado.
+      const { data: novo, error } = await s.rpc('rpc_formando_criar', {
+        _actor: perfilId,
+        _instituicao_id: instituicaoIdResolvido,
+        _genero: data.genero ?? null,
+        _nivel_partida: data.nivelPartida ?? null,
+        _precisa_apoio: data.precisaApoio ?? null,
+        _apoios: data.apoiosAcessibilidade ?? null,
+        _diagnostico_pontuacao: data.diagnostico?.pontuacao ?? null,
+        _diagnostico_total: data.diagnostico?.total ?? null,
+      } as never)
       if (error) throw error
-      formandoId = novo.id
-      tokenPessoal = novo.token_pessoal
+      const linha = (novo as unknown as { form_id: string; form_token: string }[])[0]
+      if (!linha) throw new Error('FORMANDO_NAO_CRIADO')
+      formandoId = linha.form_id
+      tokenPessoal = linha.form_token
     }
 
     // certificado já emitido para este módulo: devolve-o, não cria outro
@@ -312,64 +315,41 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       }
     }
 
-    // 4. gravar progresso (idempotente: ignorar duplicados no upsert)
-    if (data.progresso.licoesConcluidasIds.length) {
-      const { error } = await s.from('progresso_licoes').upsert(
-        data.progresso.licoesConcluidasIds.map(id => ({
-          formando_id: formandoId, licao_id: id,
-        })),
-        { onConflict: 'formando_id,licao_id', ignoreDuplicates: true },
-      )
-      if (error) throw error
-    }
-    // grava só a nota do módulo que se está a certificar (a nota final validada)
+    // 4. gravar progresso e a nota apurada no servidor, com actor verificado
     {
-      const { error } = await s.from('progresso_quizzes').insert({
-        formando_id: formandoId,
-        modulo_id: data.moduloId,
-        pontuacao: pontuacaoModulo,
-        total: totalModulo,
-      })
+      const { error } = await s.rpc('rpc_progresso_certificacao', {
+        _actor: perfilId,
+        _formando_id: formandoId,
+        _licoes: data.progresso.licoesConcluidasIds,
+        _modulo_id: data.moduloId,
+        _pontuacao: pontuacaoModulo,
+        _total: totalModulo,
+      } as never)
       if (error) throw error
     }
 
-    // 5. buscar nome do módulo e da instituição (snapshot no certificado)
-    const { data: modulo } = await s.from('modulos')
-      .select('titulo').eq('id', data.moduloId).single()
-
-    let nomeInstituicao = ''
-    const { data: f } = await s.from('formandos')
-      .select('nome, instituicao_id').eq('id', formandoId).single()
-    const nomeFormando = f?.nome ?? (data.nome ?? '')
-    if (f?.instituicao_id) {
-      const { data: inst } = await s.from('instituicoes')
-        .select('nome').eq('id', f.instituicao_id).single()
-      nomeInstituicao = inst?.nome ?? ''
-    }
-
-    // 6. emitir certificado — retry em colisão de codigo_verificacao (UNIQUE)
+    // 5. emitir certificado — nome, instituição e título do módulo são lidos
+    // dentro da operação, na base. Retry em colisão de codigo_verificacao.
     for (let tentativa = 0; tentativa < 5; tentativa++) {
-      const codigo = gerarCodigo()
-      const { data: cert, error } = await s.from('certificados').insert({
-        formando_id: formandoId,
-        modulo_id: data.moduloId,
-        codigo_verificacao: codigo,
-        nome_formando: nomeFormando,
-        nome_instituicao: nomeInstituicao,
-        titulo_modulo: modulo?.titulo ?? '',
-      }).select('codigo_verificacao, emitido_em').single()
+      const { data: linhas, error } = await s.rpc('rpc_certificado_modulo_emitir', {
+        _actor: perfilId,
+        _formando_id: formandoId,
+        _modulo_id: data.moduloId,
+        _codigo: gerarCodigo(),
+      } as never)
 
-      if (!error) {
+      const cert = (linhas as unknown as { cert_codigo: string; cert_emitido_em: string }[] | null)?.[0]
+      if (!error && cert) {
         return {
           tokenPessoal,
-          codigoVerificacao: cert.codigo_verificacao,
-          emitidoEm: cert.emitido_em,
+          codigoVerificacao: cert.cert_codigo,
+          emitidoEm: cert.cert_emitido_em,
           jaExistia: false,
         }
       }
       // 23505 = unique_violation
-      const code = (error as { code?: string }).code
-      if (code !== '23505') throw error
+      const code = (error as { code?: string } | null)?.code
+      if (error && code !== '23505') throw error
 
       // se colidiu em (formando_id, modulo_id), devolve o existente
       const { data: existente } = await s.from('certificados')

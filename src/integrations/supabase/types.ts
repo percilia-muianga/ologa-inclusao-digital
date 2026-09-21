@@ -1973,6 +1973,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      actor_auditoria: { Args: never; Returns: string }
+      actor_e_administracao: { Args: { _actor: string }; Returns: boolean }
+      actor_e_titular: {
+        Args: { _actor: string; _formando_id: string }
+        Returns: boolean
+      }
       e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
       e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
       e_equipa_formacao: { Args: { _uid: string }; Returns: boolean }
@@ -2008,6 +2014,7 @@ export type Database = {
           tabela: string
         }[]
       }
+      marcar_actor_confiavel: { Args: { _actor: string }; Returns: undefined }
       pode_gerir_programa: { Args: { _uid: string }; Returns: boolean }
       pode_ler_gestao: { Args: { _uid: string }; Returns: boolean }
       registar_acesso_sensivel: {
@@ -2015,6 +2022,98 @@ export type Database = {
           _campos: string[]
           _contexto: string
           _perfil_consultado: string
+        }
+        Returns: undefined
+      }
+      rpc_certificado_curso_emitir: {
+        Args: {
+          _actor: string
+          _assiduidade_ajustada_pct: number
+          _assiduidade_estrita_pct: number
+          _assiduidade_pct: number
+          _base: Database["public"]["Enums"]["base_assiduidade"]
+          _codigo: string
+          _curso_id: string
+          _formando_id: string
+          _nota_final_pct: number
+          _tentativa_id: string
+          _turma_id: string
+        }
+        Returns: {
+          cert_codigo: string
+          cert_emitido_em: string
+        }[]
+      }
+      rpc_certificado_modulo_emitir: {
+        Args: {
+          _actor: string
+          _codigo: string
+          _formando_id: string
+          _modulo_id: string
+        }
+        Returns: {
+          cert_codigo: string
+          cert_emitido_em: string
+        }[]
+      }
+      rpc_exame_resposta_guardar: {
+        Args: {
+          _actor: string
+          _questao_id: string
+          _resposta: Json
+          _tentativa_id: string
+        }
+        Returns: undefined
+      }
+      rpc_exame_tentativa_criar: {
+        Args: {
+          _actor: string
+          _curso_id: string
+          _formando_id: string
+          _limite_em: string
+          _numero: number
+          _questoes: Json
+          _total: number
+          _turma_id: string
+        }
+        Returns: string
+      }
+      rpc_exame_tentativa_submeter: {
+        Args: {
+          _actor: string
+          _correccoes: Json
+          _estado: Database["public"]["Enums"]["estado_tentativa"]
+          _nota_pct: number
+          _pontuacao: number
+          _tentativa_id: string
+          _total: number
+        }
+        Returns: undefined
+      }
+      rpc_formando_criar: {
+        Args: {
+          _actor: string
+          _apoios: Database["public"]["Enums"]["apoio_acessibilidade"][]
+          _diagnostico_pontuacao: number
+          _diagnostico_total: number
+          _genero: Database["public"]["Enums"]["genero"]
+          _instituicao_id: string
+          _nivel_partida: Database["public"]["Enums"]["nivel_partida"]
+          _precisa_apoio: boolean
+        }
+        Returns: {
+          form_id: string
+          form_token: string
+        }[]
+      }
+      rpc_progresso_certificacao: {
+        Args: {
+          _actor: string
+          _formando_id: string
+          _licoes: string[]
+          _modulo_id: string
+          _pontuacao: number
+          _total: number
         }
         Returns: undefined
       }

@@ -115,6 +115,88 @@ espera_recusa "auditor não altera configuração de exame" \
 espera_ok "coordenação guarda configuração de exame" \
   "$(como authenticated "$COORD" "INSERT INTO public.exame_configuracoes(curso_id) VALUES ('00000000-0000-0000-0000-00000000c001');")"
 
+MODULO=00000000-0000-0000-0000-00000000d001
+FORM_VINC=00000000-0000-0000-0000-00000000fe01
+FORM_SEM=00000000-0000-0000-0000-00000000fe02
+
+echo "— certificação, tentativas e formandos: actor verificado —"
+
+espera_recusa "anónimo não executa a operação de emissão" \
+  "$(como anon "" "SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_VINC','$MODULO','AAA1');")"
+
+espera_recusa "conta autenticada não executa a operação de emissão" \
+  "$(como authenticated "$FORMANDO" "SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_VINC','$MODULO','AAA2');")"
+
+espera_recusa "conta autenticada não marca actor de confiança (sem falsificação)" \
+  "$(como authenticated "$FORMANDO" "SELECT public.marcar_actor_confiavel('$ADMIN');")"
+
+espera_recusa "contexto forjado sem operação de confiança não é aceite pela auditoria" \
+  "$(como postgres "" "SET LOCAL ROLE authenticated; SET LOCAL request.jwt.claim.sub='$FORMANDO';
+  SELECT set_config('app.actor_id','$ADMIN',true);
+  SELECT set_config('app.actor_confianca','service_role',true);
+  RESET ROLE;
+  DO \$\$ BEGIN
+    IF public.actor_auditoria() <> '$FORMANDO' THEN RAISE EXCEPTION 'contexto forjado sobrepôs a sessão'; END IF;
+  END \$\$;
+  SET LOCAL ROLE authenticated; SET LOCAL request.jwt.claim.sub=''; SELECT public.marcar_actor_confiavel('$ADMIN');")"
+
+espera_ok "servidor com actor vinculado emite e a auditoria guarda o actor certo" \
+  "$(como postgres "" "SET LOCAL ROLE service_role;
+  SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_VINC','$MODULO','AAA3');
+  RESET ROLE;
+  DO \$\$ DECLARE r record; BEGIN
+    SELECT * INTO r FROM public.registo_auditoria WHERE entidade='certificados' ORDER BY ocorrido_em DESC LIMIT 1;
+    IF r.utilizador_id <> '$FORMANDO' THEN RAISE EXCEPTION 'actor nao registado'; END IF;
+    IF r.contexto_actor <> 'servidor_rpc_actor_verificado' THEN RAISE EXCEPTION 'contexto errado: %', r.contexto_actor; END IF;
+    IF r.valor_novo::text LIKE '%Formando Vinculado%' THEN RAISE EXCEPTION 'nome gravado na auditoria'; END IF;
+    IF NOT (r.valor_novo ? 'colunas') THEN RAISE EXCEPTION 'faltam nomes de colunas'; END IF;
+  END \$\$;")"
+
+espera_recusa "actor errado (sem vínculo ao formando) é recusado" \
+  "$(como postgres "" "SET LOCAL ROLE service_role; SELECT public.rpc_certificado_modulo_emitir('$COORD','$FORM_VINC','$MODULO','AAA4');")"
+
+espera_recusa "formando sem conta associada não pode ser certificado por ninguém" \
+  "$(como postgres "" "SET LOCAL ROLE service_role; SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_SEM','$MODULO','AAA5');")"
+
+espera_ok "administração pode emitir com actor verificado" \
+  "$(como postgres "" "SET LOCAL ROLE service_role; SELECT public.rpc_certificado_modulo_emitir('$ADMIN','$FORM_VINC','$MODULO','AAA6');")"
+
+espera_recusa "formando não grava certificado por SQL directo" \
+  "$(como authenticated "$FORMANDO" "INSERT INTO public.certificados(formando_id, modulo_id, codigo_verificacao, nome_formando, nome_instituicao, titulo_modulo) VALUES ('$FORM_VINC','$MODULO','ZZZ1','x','y','z');")"
+
+espera_recusa "formando não altera notas nem estado de tentativas por SQL directo" \
+  "$(como authenticated "$FORMANDO" "UPDATE public.exame_tentativas SET nota_pct=100, estado='submetida';")"
+
+espera_ok "abertura de tentativa com vínculo verificado fica auditada com o actor" \
+  "$(como postgres "" "SET LOCAL ROLE service_role;
+  SELECT public.rpc_exame_tentativa_criar('$FORMANDO','$FORM_VINC','00000000-0000-0000-0000-00000000c001',NULL,1,now()+interval '1 hour',0,'[]'::jsonb);
+  RESET ROLE;
+  DO \$\$ DECLARE r record; BEGIN
+    SELECT * INTO r FROM public.registo_auditoria WHERE entidade='exame_tentativas' ORDER BY ocorrido_em DESC LIMIT 1;
+    IF r.utilizador_id <> '$FORMANDO' THEN RAISE EXCEPTION 'actor nao registado'; END IF;
+  END \$\$;")"
+
+espera_recusa "abertura de tentativa em nome de outro formando é recusada" \
+  "$(como postgres "" "SET LOCAL ROLE service_role; SELECT public.rpc_exame_tentativa_criar('$COORD','$FORM_VINC','00000000-0000-0000-0000-00000000c001',NULL,1,now()+interval '1 hour',0,'[]'::jsonb);")"
+
+espera_recusa "submissão de tentativa alheia é recusada" \
+  "$(como postgres "" "SET LOCAL ROLE service_role;
+  SELECT public.rpc_exame_tentativa_criar('$FORMANDO','$FORM_VINC','00000000-0000-0000-0000-00000000c001',NULL,2,now()+interval '1 hour',0,'[]'::jsonb) AS t \\gset
+  SELECT public.rpc_exame_tentativa_submeter('$COORD', :'t', '[]'::jsonb, 1, 1, 100, 'submetida');")"
+
+espera_ok "criação do próprio formando usa o nome do perfil, não o do cliente" \
+  "$(como postgres "" "SET LOCAL ROLE service_role;
+  SELECT public.rpc_formando_criar('$COORD',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+  RESET ROLE;
+  DO \$\$ DECLARE n text; BEGIN
+    SELECT nome INTO n FROM public.formandos WHERE perfil_id='$COORD';
+    IF n <> 'Conta C' THEN RAISE EXCEPTION 'nome nao veio do perfil: %', n; END IF;
+  END \$\$;")"
+
+espera_recusa "se a auditoria falhar, o certificado não fica gravado" \
+  "$(como postgres "" "ALTER TABLE public.registo_auditoria ADD CONSTRAINT falha_forcada2 CHECK (false) NOT VALID;
+  SET LOCAL ROLE service_role; SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_VINC','$MODULO','AAA7');")"
+
 echo
 echo "passaram: $OK   falharam: $MAU"
 [ "$MAU" -eq 0 ] || exit 1

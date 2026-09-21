@@ -19,3 +19,10 @@ INSERT INTO public.utilizador_papeis(utilizador_id, papel) VALUES
 
 INSERT INTO public.cursos(id, ordem, slug, titulo, carga_horaria, modalidade, formandos_previstos)
 VALUES ('00000000-0000-0000-0000-00000000c001', 99, 'curso-teste', 'Curso de teste', 10, 'presencial', 10);
+
+-- Fixtures para as operações específicas de certificação/tentativas/formandos.
+INSERT INTO public.modulos(id, ordem, titulo) VALUES
+  ('00000000-0000-0000-0000-00000000d001', 1, 'Módulo de teste');
+INSERT INTO public.formandos(id, nome, perfil_id) VALUES
+  ('00000000-0000-0000-0000-00000000fe01', 'Formando Vinculado', '00000000-0000-0000-0000-0000000000f1'),
+  ('00000000-0000-0000-0000-00000000fe02', 'Formando Sem Conta', NULL);
