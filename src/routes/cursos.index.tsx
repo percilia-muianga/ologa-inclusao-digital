@@ -29,14 +29,18 @@ export const Route = createFileRoute("/cursos/")({
 });
 
 function CursosPage() {
-  const { cursos, totalGeralPorFornecer } = Route.useLoaderData();
+  const { cursos } = Route.useLoaderData();
   return (
     <PlataformaPagina titulo="Cursos do programa" introducao="Seis cursos de capacitação, mais um módulo transversal obrigatório sobre Governo Digital Inclusivo e Acessibilidade. Cada curso organiza-se em módulos reutilizáveis e lições.">
-      <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-amber-300 bg-amber-50 p-5">
-        <h2 id="plano-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
-        <p className="mt-2 text-base text-navy-2"><strong>{totalGeralPorFornecer} lições</strong> aguardam conteúdo da equipa Ologa. As seis lições do módulo transversal legal já estão disponíveis e não entram nesta contagem.</p>
+      <section aria-labelledby="plano-conteudo" className="mb-8 rounded-lg border border-line bg-page p-5">
+        <h2 id="plano-conteudo" className="text-lg font-bold text-navy">Como está organizado o programa</h2>
         <p className="mt-2 text-base text-navy-2">
-          As contagens do banco de questões e do exame final ficam na área de{" "}
+          Cada curso tem uma carga horária própria, módulos temáticos e o módulo transversal
+          de Governo Digital Inclusivo e Acessibilidade, obrigatório e contado uma única vez.
+          Os módulos assinalados como <b>em preparação</b> ainda não têm lições publicadas.
+        </p>
+        <p className="mt-2 text-base text-navy-2">
+          O acompanhamento do banco de questões e do exame final fica na área de{" "}
           <Link to="/avaliacao" className="font-semibold text-navy underline">Avaliação</Link>.
         </p>
       </section>
@@ -49,7 +53,17 @@ function CursosPage() {
             <p className="mt-1 text-sm text-navy-2">Meta: {curso.formandosPrevistos.toLocaleString("pt-PT")} formandos</p>
             <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4 text-sm">
               <div><dt className="text-navy-2">Módulos</dt><dd className="font-bold text-navy">{curso.totalModulos}</dd></div>
-              <div><dt className="text-navy-2">Lições por fornecer</dt><dd className="font-bold text-amber-800">{curso.licoesPorFornecer}</dd></div>
+              <div>
+                <dt className="text-navy-2">Lições disponíveis</dt>
+                <dd className="font-bold text-navy">
+                  {curso.licoesDisponiveis}
+                  {curso.licoesPorFornecer > 0 ? (
+                    <span className="ml-2 text-xs font-semibold text-navy-2">
+                      · {curso.licoesPorFornecer} em preparação
+                    </span>
+                  ) : null}
+                </dd>
+              </div>
             </dl>
             <Link to="/cursos/$curso" params={{ curso: curso.slug }} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground">Ver estrutura do curso</Link>
           </article>

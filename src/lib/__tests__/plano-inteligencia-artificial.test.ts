@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   BLOCOS_AVALIACAO,
   CARGA_HORARIA_PROVISORIA_HORAS,
-  DIVERGENCIA_CARGA,
+  DIVERGENCIA_CARGA_INTERNA,
+  ESTADO_EDITORIAL_INTERNO,
   FICHA_CURSO,
   MINUTOS_AVALIACAO_ORIENTACAO,
   MINUTOS_MODULOS,
@@ -52,17 +53,34 @@ describe("plano de Introdução à Inteligência Artificial", () => {
     }
   });
 
-  it("declara a divergência sem afirmar que as 20 horas estão fixadas", () => {
-    const textos = [DIVERGENCIA_CARGA, FICHA_CURSO.nota, FICHA_CURSO.objectivos];
-    expect(DIVERGENCIA_CARGA).toMatch(/PROVISÓRIA/);
-    expect(DIVERGENCIA_CARGA).toMatch(/16 horas/);
-    expect(DIVERGENCIA_CARGA).toMatch(/secção 6\.2/);
-    expect(DIVERGENCIA_CARGA).toMatch(/secção 14/);
-    expect(DIVERGENCIA_CARGA).toMatch(/13\.1/);
-    for (const t of textos) {
-      expect(t).not.toMatch(/20 horas fixad/i);
-      expect(t).not.toMatch(/carga fixada/i);
-      expect(t).not.toMatch(/definitiv[ao]s? 20/i);
+  it("guarda a divergência real no registo interno, com decisão e pendência", () => {
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/16 horas/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/secção 6\.2/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/secção 14/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/13\.1/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/Decisão operacional/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/Pendente: confirmação pela ATDI/);
+    expect(DIVERGENCIA_CARGA_INTERNA).toMatch(/não constitui aprovação da ATDI/);
+    expect(ESTADO_EDITORIAL_INTERNO).toMatch(/Língua de Sinais/);
+    expect(ESTADO_EDITORIAL_INTERNO).toMatch(/Banco de avaliação por preparar/);
+  });
+
+  it("apresenta as 20 horas como configuração actual, sem rótulos editoriais", () => {
+    const publicos = [
+      FICHA_CURSO.nota,
+      FICHA_CURSO.objectivos,
+      FICHA_CURSO.materiais,
+      FICHA_CURSO.preRequisitos,
+      FICHA_CURSO.publicoAlvo,
+    ];
+    expect(FICHA_CURSO.nota).toMatch(/Carga horária de 20 horas/);
+    for (const t of publicos) {
+      expect(t).not.toMatch(/provisóri/i);
+      expect(t).not.toMatch(/por validar|rascunho|proposta pedagógica/i);
+      expect(t).not.toMatch(/ATDI não|confirmar pela ATDI|aprovado pela ATDI/i);
+      expect(t).not.toMatch(/16 horas/);
+      expect(t).not.toMatch(/Língua de Sinais|legendagem|vídeo/i);
+      expect(t).not.toMatch(/inactiv/i);
     }
   });
 
@@ -72,13 +90,12 @@ describe("plano de Introdução à Inteligência Artificial", () => {
     expect(PLANO_ALTERNATIVO_16H.blocos.reduce((s, b) => s + b.minutos, 0)).toBe(960);
   });
 
-  it("diz na ficha que o banco de avaliação continua por preparar e inactivo", () => {
-    expect(FICHA_CURSO.nota).toMatch(/por preparar, inactivo/);
-    expect(FICHA_CURSO.nota).toMatch(/não emite certificados/);
+  it("não anuncia a avaliação final como disponível", () => {
+    expect(FICHA_CURSO.nota).toMatch(/disponibilizada em fase posterior/);
   });
 
   it("não afirma que o EU AI Act se aplica automaticamente a Moçambique", () => {
-    expect(FICHA_CURSO.objectivos).toMatch(/não se afirma que se aplica automaticamente/);
+    expect(FICHA_CURSO.objectivos).toMatch(/não se aplica automaticamente a Moçambique/);
   });
 });
 
@@ -87,7 +104,8 @@ describe("conteúdo escrito do módulo 1", () => {
 
   it("escreve as quatro lições do módulo 1 e nenhuma do módulo 2", () => {
     expect(Object.keys(LICOES).sort()).toEqual(chaves);
-    expect(DESCRICOES_MODULO["m2"]).toBeUndefined();
+    // O módulo 2 tem descrição de plano, mas nenhuma lição escrita.
+    expect(DESCRICOES_MODULO["m2"]).toMatch(/Em preparação/);
   });
 
   it("dá a cada lição objectivos, explicação desenvolvida, caso, actividade e duas questões", () => {
@@ -171,7 +189,8 @@ describe("conteúdo escrito do módulo 1", () => {
         partilha: 15,
       });
       expect(html).not.toMatch(/laboratório realizado|prática realizada|vídeo em Língua de Sinais/i);
-      expect(html).toContain("Proposta pedagógica");
+      expect(html).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho por validar/i);
+      expect(html).toContain("são fictícios e servem apenas de exercício");
       expect(html).toContain("Acolhimento e objectivos: 10 minutos");
       expect(html).toContain("Actividade prática: 60 minutos");
     }
@@ -181,7 +200,7 @@ describe("conteúdo escrito do módulo 1", () => {
       actividade: 60,
       partilha: 15,
     });
-    expect(html4).toContain("Prática ainda NÃO EXECUTADA");
+    expect(html4).toContain("Condições desta prática");
   });
 
   it("gera guiões cujos tempos somam 120 minutos e que não expõem o exame", () => {
@@ -196,7 +215,8 @@ describe("conteúdo escrito do módulo 1", () => {
       expect(g).toContain("10–45 min");
       expect(g).toContain("45–105 min");
       expect(g).toContain("105–120 min");
-      expect(g).toMatch(/banco de questões deste curso ainda NÃO está preparado/);
+      expect(g).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho por validar/i);
+      expect(g).toMatch(/gabarito fica sempre apenas no servidor/);
     }
   });
 });

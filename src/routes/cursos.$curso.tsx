@@ -52,55 +52,79 @@ function CursoPage() {
   return (
     <PlataformaPagina titulo={curso.titulo} introducao={`${curso.carga_horaria} horas · ${curso.modalidade} · Meta de ${curso.formandos_previstos.toLocaleString("pt-PT")} formandos.`}>
       <Link to="/cursos" className="inline-flex min-h-11 items-center font-semibold text-navy underline">← Voltar aos seis cursos</Link>
-      <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
-        <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
-        {propostaPorValidar ? (
+      {propostaPorValidar ? (
+        <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
+          <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
           <p className="mt-2 text-navy-2">
             <strong>Proposta pedagógica — por validar pela Ologa/ATDI.</strong> O conteúdo
             das lições é um rascunho preparado pela equipa. Estar disponível nesta página
             não significa estar aprovado. Todos os casos apresentados são fictícios e
             servem apenas de exercício.
           </p>
-        ) : null}
-        {totalPorFornecer > 0 ? (
+          {totalPorFornecer > 0 ? (
+            <p className="mt-2 text-navy-2">
+              <strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os
+              títulos organizam o plano de produção; o conteúdo temático será fornecido
+              pela equipa Ologa.
+            </p>
+          ) : (
+            <p className="mt-2 text-navy-2">
+              <strong>Todas as lições deste curso já têm conteúdo escrito.</strong> O
+              conteúdo está em rascunho, por validar. Não existe aprovação da Ologa, da
+              ATDI nem revisão de acessibilidade por terceiros.
+            </p>
+          )}
+          {curso.carga_horaria_nota ? (
+            <p className="mt-2 text-navy-2">
+              <strong>Carga horária por confirmar.</strong> {curso.carga_horaria_nota}
+            </p>
+          ) : null}
           <p className="mt-2 text-navy-2">
-            <strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os
-            títulos organizam o plano de produção; o conteúdo temático será fornecido
-            pela equipa Ologa.
+            Carga fixada nos Termos de Referência para o curso: {curso.carga_horaria} horas.
+            Soma da distribuição proposta: {horasCurriculo} horas ={" "}
+            {horas(minutosTematicos)} horas de módulos temáticos +{" "}
+            {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
+            {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame, fora dos módulos.{" "}
+            {horasCurriculo === curso.carga_horaria
+              ? "As duas somas coincidem."
+              : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
+            A distribuição por módulos e lições é proposta pedagógica por validar.
           </p>
-        ) : (
           <p className="mt-2 text-navy-2">
-            <strong>Todas as lições deste curso já têm conteúdo escrito.</strong> O
-            conteúdo está em rascunho, por validar. Não existe aprovação da Ologa, da
-            ATDI nem revisão de acessibilidade por terceiros.
+            Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
+            {totalLicoes - totalPorFornecer}. Por fornecer: {totalPorFornecer}.
           </p>
-        )}
-        {curso.carga_horaria_nota ? (
-          <p className="mt-2 text-navy-2">
-            <strong>Carga horária por confirmar.</strong> {curso.carga_horaria_nota}
+        </section>
+      ) : (
+        <section aria-labelledby="estrutura-curso" className="mt-5 rounded-lg border border-line bg-page p-5">
+          <h2 id="estrutura-curso" className="text-lg font-bold text-navy">
+            Organização do curso
+          </h2>
+          <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <dt className="text-sm text-navy-2">Carga horária</dt>
+              <dd className="text-xl font-extrabold text-navy">{curso.carga_horaria} horas</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-navy-2">Regime</dt>
+              <dd className="text-xl font-extrabold text-navy">{curso.modalidade}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-navy-2">Módulos</dt>
+              <dd className="text-xl font-extrabold text-navy">{modulos.length}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-navy-2">Lições</dt>
+              <dd className="text-xl font-extrabold text-navy">{totalLicoes}</dd>
+            </div>
+          </dl>
+          <p className="mt-4 text-navy-2">
+            O módulo transversal de Governo Digital Inclusivo e Acessibilidade é
+            obrigatório e conta uma única vez. O diagnóstico, a revisão e o exame final
+            ocupam {horas(minutosAvaliacao)} horas, fora dos módulos.
           </p>
-        ) : null}
-        <p className="mt-2 text-navy-2">
-          {curso.carga_horaria_nota
-            ? `Carga horária usada a título provisório neste plano: ${curso.carga_horaria} horas.`
-            : `Carga fixada nos Termos de Referência para o curso: ${curso.carga_horaria} horas.`}{" "}
-          Soma da distribuição proposta: {horasCurriculo} horas ={" "}
-          {horas(minutosTematicos)} horas de módulos temáticos +{" "}
-          {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
-          {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame, fora dos módulos.{" "}
-          {horasCurriculo === curso.carga_horaria
-            ? "As duas somas coincidem."
-            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
-          A distribuição por módulos e lições é proposta pedagógica por validar.{" "}
-          {curso.carga_horaria_nota
-            ? "O total do curso está por confirmar, conforme a nota acima."
-            : "Os Termos de Referência fixam o total do curso, não o tempo de cada módulo."}
-        </p>
-        <p className="mt-2 text-navy-2">
-          Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
-          {totalLicoes - totalPorFornecer}. Por fornecer: {totalPorFornecer}.
-        </p>
-      </section>
+        </section>
+      )}
       <section aria-labelledby="ficha-curso" className="mt-6">
         <h2 id="ficha-curso" className="text-xl font-extrabold text-navy">Ficha do curso</h2>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -123,7 +147,9 @@ function CursoPage() {
               <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-dark">{modulo.transversal ? "Módulo transversal obrigatório" : `Módulo ${modulo.ordem}`}</p><h2 id={`modulo-${modulo.id}`} className="mt-1 text-xl font-extrabold text-navy">{modulo.titulo}</h2>{modulo.descricao ? <p className="mt-2 max-w-3xl text-navy-2">{modulo.descricao}</p> : null}</div>
               <span className="rounded-full bg-page px-3 py-1 text-sm font-bold text-navy">
                 {modulo.porFornecer > 0
-                  ? `${modulo.porFornecer} lições por fornecer`
+                  ? propostaPorValidar
+                    ? `${modulo.porFornecer} lições por fornecer`
+                    : "Em preparação"
                   : modulo.licoes.some((l) => l.proposta_por_validar)
                     ? "Conteúdo escrito, em rascunho por validar"
                     : "Conteúdo disponível"}
@@ -134,7 +160,7 @@ function CursoPage() {
                 <li key={licao.id} className="rounded-md border border-line p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3>
-                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span>
+                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : propostaPorValidar ? "Conteúdo por fornecer" : "Em preparação"}</span>
                   </div>
                   <p className="mt-1 text-sm text-navy-2">
                     {licao.duracao ?? "Duração por definir"}
@@ -158,7 +184,11 @@ function CursoPage() {
                       </details>
                     </>
                   ) : (
-                    <p className="mt-2 text-sm text-navy-2">Título definido; conteúdo temático ainda por escrever.</p>
+                    <p className="mt-2 text-sm text-navy-2">
+                      {propostaPorValidar
+                        ? "Título definido; conteúdo temático ainda por escrever."
+                        : "Lição em preparação."}
+                    </p>
                   )}
                 </li>
               ))}

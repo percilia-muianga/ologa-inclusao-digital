@@ -25,7 +25,6 @@ import {
   MODULOS_PLANO,
   MINUTOS_AVALIACAO_ORIENTACAO,
   FICHA_CURSO,
-  DIVERGENCIA_CARGA,
 } from "../src/lib/plano-inteligencia-artificial";
 
 /** «8 horas», «1 h 30 min» — sem arredondar para horas inteiras. */
@@ -85,7 +84,8 @@ async function main() {
         publico_alvo: FICHA_CURSO.publicoAlvo,
         pre_requisitos: FICHA_CURSO.preRequisitos,
         materiais: `${FICHA_CURSO.materiais} ${FICHA_CURSO.nota}`,
-        carga_horaria_nota: DIVERGENCIA_CARGA,
+        // A divergência documental fica em docs/pontos-por-validar.md, não aqui.
+        carga_horaria_nota: null,
       })
       .eq("id", curso.id)
       .select("id"),
@@ -165,7 +165,8 @@ async function main() {
             conteudo_elearning: montarElearning(conteudo, l.minutos, l.tempos),
             guiao_formador: montarGuiao(conteudo, l.titulo, l.minutos, l.tempos),
             estado_conteudo: "disponivel",
-            proposta_por_validar: true,
+            // Estado editorial guardado nos registos internos, não na plataforma.
+            proposta_por_validar: false,
           })
           .eq("id", existente.id)
           .select("id"),
@@ -173,9 +174,8 @@ async function main() {
       actualizadas.push(`${l.chave} (${existente.id})`);
     }
 
-    const todasEscritas = plano.licoes.every((l) => LICOES[l.chave]);
     const descricao = DESCRICOES_MODULO[plano.chave];
-    if (todasEscritas && descricao) {
+    if (descricao) {
       must(await sb.from("modulos").update({ descricao }).eq("id", rel.modulo_id).select("id"));
       descricoes.push(plano.chave);
     }

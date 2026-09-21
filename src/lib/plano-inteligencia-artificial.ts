@@ -18,7 +18,8 @@
  * equipa e não é explicação da divergência acima: a divergência está nos
  * documentos do concurso, não na nossa repartição.
  *
- * Estado geral: rascunho por validar pela Ologa/ATDI.
+ * Estado editorial (validação pedagógica, materiais por produzir, decisões
+ * por confirmar) fica em docs/pontos-por-validar.md, não na plataforma.
  */
 
 /** Âmbito do conteúdo programático da secção 6.2 (páginas 13 e 14). */
@@ -167,7 +168,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
     "m1",
     1,
     "Fundamentos de Inteligência Artificial",
-    "Quatro lições sobre os fundamentos: o que é e o que não é inteligência artificial, com uma breve história e a distinção entre automação por regras e sistemas que inferem a partir de dados; dados, características, rótulos, qualidade e representatividade, e a diferença entre algoritmo e modelo; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo; e aplicações ao trabalho administrativo, com verificação humana obrigatória. Rascunho por validar pela Ologa/ATDI.",
+    "Quatro lições sobre os fundamentos: o que é e o que não é inteligência artificial, com uma breve história e a distinção entre automação por regras e sistemas que inferem a partir de dados; dados, características, rótulos, qualidade e representatividade, e a diferença entre algoritmo e modelo; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo; e aplicações ao trabalho administrativo, com verificação humana obrigatória.",
     M1_LICOES,
   ),
   modulo(
@@ -240,26 +241,32 @@ export const PLANO_ALTERNATIVO_16H = {
   ],
 } as const;
 
-/** Texto único da divergência. Usado na ficha, no seed e na matriz. */
-export const DIVERGENCIA_CARGA =
-  "Carga horária PROVISÓRIA de 20 horas, por confirmar pela ATDI. Os documentos do concurso divergem: a secção 6.2 (p. 13) indica um máximo de 16 horas, incluindo a prática; a tabela da secção 14 (p. 29) indica 20 horas em regime presencial; e a secção 13.1 (p. 27) remete a tabela de cargas horárias para as propostas dos concorrentes. A equipa trabalha com 20 horas a título provisório, por autorização da gestora do projecto, enquanto a ATDI não decide. Existe um plano alternativo adaptável a 16 horas, documentado e não activo. A divisão interna por módulos e lições é proposta da equipa e não explica nem resolve esta divergência.";
+/**
+ * Texto da divergência documental. USO INTERNO — documentação de gestão do
+ * projecto (docs/pontos-por-validar.md). NÃO é gravado na base de dados nem
+ * apresentado ao formando: a experiência pública apresenta simplesmente as 20
+ * horas como configuração actual do curso.
+ */
+export const DIVERGENCIA_CARGA_INTERNA =
+  "Carga horária operacional: 20 horas. Os documentos do concurso divergem: a secção 6.2 (p. 13) indica um máximo de 16 horas, incluindo a prática; a tabela da secção 14 (p. 29) indica 20 horas em regime presencial; e a secção 13.1 (p. 27) remete a tabela de cargas horárias para as propostas dos concorrentes. Decisão operacional da gestora do projecto: trabalhar com 20 horas. Pendente: confirmação pela ATDI. Existe plano alternativo adaptável a 16 horas, interno e não activo. Esta decisão não constitui aprovação da ATDI.";
 
-export const AVISO_PROPOSTA =
-  "Proposta pedagógica — por validar pela Ologa/ATDI. A disponibilidade deste rascunho não equivale a aprovação.";
+/** USO INTERNO. Estado editorial; não é apresentado na plataforma. */
+export const ESTADO_EDITORIAL_INTERNO =
+  "Conteúdo do módulo 1 escrito pela equipa e ainda não validado pela Ologa/ATDI. Módulo 2 por escrever. Banco de avaliação por preparar; exame não activo. Prática assistida da lição 4 por executar. Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: inexistentes, não anunciados na plataforma.";
 
 /**
- * Ficha do curso. Distingue sempre o que vem do Termo de Referência do que é
- * proposta da equipa por validar.
+ * Ficha do curso, tal como é apresentada. Apresenta a configuração actual do
+ * curso, sem rótulos editoriais nem observações de processo interno.
  */
 export const FICHA_CURSO = {
   objectivos:
-    "Objectivos assentes no conteúdo programático da secção 6.2 (páginas 13 e 14) do Termo de Referência: compreender o conceito de inteligência artificial e os seus fundamentos; distinguir dados, algoritmos e modelos e perceber, em linguagem simples, o que é a aprendizagem automática; utilizar ferramentas de inteligência artificial no trabalho administrativo, com verificação humana; reconhecer aplicações, oportunidades e riscos para a organização e para a economia; tratar ética, riscos e protecção de dados; e conhecer a governação da inteligência artificial, incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act), os actores nacionais e internacionais e a política e diplomacia da inteligência artificial. Estado real nesta data: os fundamentos estão escritos no módulo 1 (quatro lições, em rascunho). O módulo 2 — casos de uso no serviço público, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana e prestação de contas — está planeado e por fornecer; é aí que a governação, incluindo o EU AI Act, os actores e a política e diplomacia serão desenvolvidos, com fontes oficiais actualizadas à data em que forem escritos. O EU AI Act é legislação da União Europeia: é estudado como referência internacional de governação e não se afirma que se aplica automaticamente a Moçambique; qualquer leitura jurídica cabe à área jurídica da instituição.",
+    "Objectivos assentes no conteúdo programático da secção 6.2 (páginas 13 e 14) do Termo de Referência: compreender o conceito de inteligência artificial e os seus fundamentos; distinguir dados, algoritmos e modelos e perceber, em linguagem simples, o que é a aprendizagem automática; utilizar ferramentas de inteligência artificial no trabalho administrativo, com verificação humana; reconhecer aplicações, oportunidades e riscos para a organização e para a economia; tratar ética, riscos e protecção de dados; e conhecer a governação da inteligência artificial, incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act), os actores nacionais e internacionais e a política e diplomacia da inteligência artificial. O módulo 1 desenvolve os fundamentos. O módulo 2 — casos de uso no serviço público, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana e prestação de contas — está em preparação e é aí que a governação, incluindo o EU AI Act, os actores e a política e diplomacia são desenvolvidos. O EU AI Act é legislação da União Europeia: é estudado como referência internacional de governação e não se aplica automaticamente a Moçambique; qualquer leitura jurídica cabe à área jurídica da instituição.",
   publicoAlvo:
     "Servidores públicos seleccionados pela entidade beneficiária, segundo os critérios da própria entidade. Não é exigida formação anterior em informática, matemática ou programação.",
   preRequisitos:
-    "Pré-requisitos digitais propostos pela equipa, por validar: utilizar o computador de forma autónoma, abrir e guardar ficheiros, navegar na internet e usar uma conta de correio electrónico institucional. Não é exigido saber programar. Pré-requisitos de ambiente, da responsabilidade da entidade anfitriã: sala com energia estável, computadores em número suficiente, ligação à internet utilizável em simultâneo pela turma e projecção visível de todos os lugares.",
+    "Pré-requisitos digitais: utilizar o computador de forma autónoma, abrir e guardar ficheiros, navegar na internet e usar uma conta de correio electrónico institucional. Não é exigido saber programar. Pré-requisitos de ambiente, da responsabilidade da entidade anfitriã: sala com energia estável, computadores em número suficiente, ligação à internet utilizável em simultâneo pela turma e projecção visível de todos os lugares.",
   materiais:
-    "Materiais e condições propostos, por validar: um computador por pessoa formanda como recomendação e, quando não for possível, no máximo duas pessoas por computador, alternando quem executa; conteúdos e guiões na plataforma, em texto navegável por teclado e com leitura em voz alta; fichas de trabalho em papel para os exercícios de análise, que não exigem computador; e, para a prática da lição 4, uma ferramenta de inteligência artificial institucional previamente autorizada pela entidade, preparada pelo formador antes da sessão, com contas e permissões já criadas. Não se pede a ninguém que crie conta pessoal, nem que pague, e não se promete que qualquer ferramenta seja gratuita. Não se introduzem dados reais de pessoas em nenhuma ferramenta: todos os textos usados são fictícios e fornecidos no material.",
+    "Um computador por pessoa formanda como recomendação e, quando não for possível, no máximo duas pessoas por computador, alternando quem executa; conteúdos e guiões na plataforma, em texto navegável por teclado e com leitura em voz alta; fichas de trabalho em papel para os exercícios de análise, que não exigem computador; e, para a prática da lição 4, uma ferramenta de inteligência artificial institucional previamente autorizada pela entidade, preparada pelo formador antes da sessão, com contas e permissões já criadas. Não se pede a ninguém que crie conta pessoal, nem que pague, e não se promete que qualquer ferramenta seja gratuita. Não se introduzem dados reais de pessoas em nenhuma ferramenta: todos os textos usados são fictícios e fornecidos no material.",
   nota:
-    "Carga horária provisória de 20 horas, por confirmar pela ATDI — ver a nota de divergência da ficha. Distribuição proposta pela equipa, por validar: 8 horas no módulo 1, 8 horas no módulo 2, 2 horas do módulo transversal contadas uma única vez e 2 horas de diagnóstico, revisão e exame, fora dos módulos. Banco de avaliação deste curso: ainda por preparar, inactivo. O exame deste curso não está activo e não emite certificados. Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros continuam pendentes e não são reclamados como feitos.",
+    "Carga horária de 20 horas, em regime presencial: 8 horas no módulo 1, 8 horas no módulo 2, 2 horas do módulo transversal de Governo Digital Inclusivo e Acessibilidade, contadas uma única vez, e 2 horas de diagnóstico, revisão e exame final, fora dos módulos. A avaliação final deste curso é disponibilizada em fase posterior.",
 } as const;

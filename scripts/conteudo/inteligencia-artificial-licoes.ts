@@ -1,7 +1,8 @@
 /**
  * Conteúdo original das lições do curso «Introdução à Inteligência Artificial».
  *
- * Estado: PROPOSTA PEDAGÓGICA — por validar pela Ologa/ATDI.
+ * Estado editorial (validação pedagógica pendente, materiais por produzir):
+ * registado em docs/pontos-por-validar.md, não exibido na plataforma.
  * Todos os casos, nomes, instituições, números e textos de exemplo são
  * FICTÍCIOS e servem apenas de exercício. Não há pessoas reais, não há
  * estatísticas oficiais e não há conclusões jurídicas.
@@ -56,11 +57,14 @@ const lista = (itens: string[]) => `<ul>${itens.map((i) => `<li>${esc(i)}</li>`)
 
 const paragrafos = (itens: string[]) => itens.map((p) => `<p>${esc(p)}</p>`).join("");
 
-export const AVISO_HTML =
-  '<p class="aviso-proposta"><strong>Proposta pedagógica — por validar pela Ologa/ATDI.</strong> ' +
-  "Este conteúdo é um rascunho preparado pela equipa. A sua disponibilidade na plataforma " +
-  "não significa aprovação nem validação técnica. Os casos são fictícios. A carga horária " +
-  "deste curso está por confirmar pela ATDI.</p>";
+/**
+ * Nota factual que acompanha cada lição. O estado editorial (validação
+ * pedagógica, materiais por produzir, decisões por confirmar) NÃO é exibido ao
+ * formando: fica registado em docs/pontos-por-validar.md.
+ */
+export const NOTA_CASOS_HTML =
+  "<p><em>Todos os casos, nomes, instituições e números usados nesta lição são " +
+  "fictícios e servem apenas de exercício.</em></p>";
 
 export const BLOCOS_TEMPO = [
   "Acolhimento e objectivos",
@@ -119,13 +123,12 @@ function anexosHtml(c: ConteudoLicao): string {
     .join("");
 }
 
-const AVISO_PRATICA =
-  '<p class="aviso-proposta"><strong>Prática ainda NÃO EXECUTADA por nós.</strong> ' +
-  "Este guião está escrito e por executar. A ferramenta de inteligência artificial tem " +
-  "de ser institucional e previamente autorizada pela entidade; as contas e as permissões " +
-  "são preparadas pelo formador antes da sessão. Não se pede a ninguém que crie conta " +
-  "pessoal nem que pague, e não se promete que qualquer ferramenta seja gratuita. Nunca " +
-  "se introduzem dados reais de pessoas: todos os textos usados são fictícios e estão " +
+const CONDICOES_PRATICA =
+  "<p><strong>Condições desta prática.</strong> A ferramenta de inteligência artificial é " +
+  "institucional e previamente autorizada pela entidade; as contas e as permissões são " +
+  "preparadas pelo formador antes da sessão. Não se pede a ninguém que crie conta pessoal " +
+  "nem que pague, e não se promete que qualquer ferramenta seja gratuita. Nunca se " +
+  "introduzem dados reais de pessoas: todos os textos usados são fictícios e estão " +
   "fornecidos no material.</p>";
 
 function praticaHtml(c: ConteudoLicao): string {
@@ -133,7 +136,7 @@ function praticaHtml(c: ConteudoLicao): string {
   if (!p) return "";
   return [
     `<h3>Prática assistida — ${esc(p.titulo)}</h3>`,
-    AVISO_PRATICA,
+    CONDICOES_PRATICA,
     `<p><strong>Objectivo:</strong> ${esc(p.objectivo)}</p>`,
     "<h4>Pré-requisitos preparados pelo formador</h4>",
     lista(p.preRequisitos),
@@ -162,8 +165,8 @@ function referenciasHtml(c: ConteudoLicao): string {
 
 export function montarElearning(c: ConteudoLicao, minutos: number, tempos: TemposLicao): string {
   return [
-    AVISO_HTML,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos, em sessão presencial.</p>`,
+    NOTA_CASOS_HTML,
     "<h3>Como o tempo desta lição está distribuído</h3>",
     grelhaTempos(tempos),
     ORGANIZACAO_HTML,
@@ -211,7 +214,6 @@ export function montarGuiao(
 ): string {
   const faixa = faixas(tempos);
   return [
-    AVISO_HTML,
     `<h3>Guião do formador — ${esc(titulo)}</h3>`,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos, em sessão presencial. Os tempos abaixo somam ${minutos} minutos e são os mesmos que a pessoa formanda vê no conteúdo da lição.</p>`,
     "<h4>Preparação</h4>",
@@ -232,10 +234,9 @@ export function montarGuiao(
       )
       .join("")}</ol>`,
     "<p><strong>Separação pedagógica:</strong> este guião não contém perguntas nem " +
-      "respostas do exame final. O banco de questões deste curso ainda NÃO está preparado, " +
-      "validado nem activado, pelo que o exame final deste curso não está disponível. " +
-      "Quando o banco for criado, validado e activado, o exame passa a ser gerado no " +
-      "momento em que a pessoa formanda o inicia e o gabarito fica apenas no servidor.</p>",
+      "respostas do exame final; as respostas acima são apenas da verificação formativa. " +
+      "O exame final é gerado no momento em que a pessoa formanda o inicia e o gabarito " +
+      "fica sempre apenas no servidor.</p>",
   ].join("");
 }
 
@@ -837,5 +838,6 @@ export const LICOES: Record<string, ConteudoLicao> = {
  * fornecer.
  */
 export const DESCRICOES_MODULO: Record<string, string> = {
-  m1: "Quatro lições sobre os fundamentos da inteligência artificial: o que é e o que não é, com a distinção entre automação por regras e sistemas que inferem a partir de dados, uma breve história e o facto de que texto fluente não é texto verdadeiro; dados, características, rótulos, qualidade, representatividade, vazamento de dados e a diferença entre algoritmo e modelo, sobre um mini-conjunto fictício fornecido por inteiro; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo calculados sobre uma tabela fornecida; e aplicações ao trabalho administrativo, com uma prática assistida de resumo de um documento fictício, ainda por executar. Rascunho por validar pela Ologa/ATDI.",
+  m1: "Quatro lições sobre os fundamentos da inteligência artificial: o que é e o que não é, com a distinção entre automação por regras e sistemas que inferem a partir de dados, uma breve história e o facto de que texto fluente não é texto verdadeiro; dados, características, rótulos, qualidade, representatividade, vazamento de dados e a diferença entre algoritmo e modelo, sobre um mini-conjunto fictício fornecido por inteiro; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo calculados sobre uma tabela fornecida; e aplicações ao trabalho administrativo, com uma prática assistida de resumo de um documento fictício.",
+  m2: "Quatro lições sobre a inteligência artificial no serviço público: casos de uso na administração, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana, governação e prestação de contas. Em preparação.",
 };

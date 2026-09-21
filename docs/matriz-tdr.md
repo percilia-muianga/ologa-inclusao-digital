@@ -807,3 +807,29 @@ Todos os operandos aparecem no enunciado e na rubrica.
 - **Banco de avaliação deste curso: ainda por preparar, inactivo.** O exame não está activo e não emite certificados.
 - Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: pendentes, não reclamados.
 - IDs de curso, módulos e lições preservados; nenhuma lição foi criada ou apagada; nenhum outro curso, banco de questões ou regra de autorização foi tocado. Nada foi publicado.
+
+## A22 — Apresentação pública do curso de Inteligência Artificial (21/09/2026)
+
+Por orientação da gestora do projecto, a experiência pública deste curso passa a
+apresentar simplesmente **20 horas** como configuração actual, sem rótulo de
+carga provisória, sem aviso comparativo com as 16 horas da secção 6.2 e sem os
+avisos repetidos de «proposta pedagógica — por validar» em cada lição e guião.
+
+Isto **não** afirma aprovação da ATDI: em lado nenhum se diz aprovado, fixado
+pelos Termos de Referência ou certificado conforme.
+
+A divergência documental real (secção 6.2 p. 13 — 16 h máx.; secção 14 p. 29 —
+20 h; secção 13.1 p. 27 — remissão para as propostas), a decisão operacional
+das 20 horas, o responsável, o estado «pendente de confirmação pela ATDI», o
+plano alternativo de 16 horas e todo o estado editorial (módulo 2 por escrever,
+banco de avaliação por preparar, prática da lição 4 por executar, Língua de
+Sinais, vídeo, legendagem e revisão por terceiros inexistentes) passam a estar
+registados em **`docs/pontos-por-validar.md`** e nas constantes internas
+`DIVERGENCIA_CARGA_INTERNA` e `ESTADO_EDITORIAL_INTERNO`.
+
+`cursos.carga_horaria_nota` fica nula para este curso e `licoes.proposta_por_validar`
+passa a `false` nas quatro lições escritas: o estado editorial vive nos registos
+internos, não na plataforma. O que não existe continua a não ser anunciado — o
+módulo 2 aparece como «Em preparação», sem ligação. Transformação Digital e
+Computação em Nuvem mantêm o aviso visível de proposta por validar, sem
+alteração de conteúdo.
