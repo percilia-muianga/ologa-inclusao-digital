@@ -596,3 +596,56 @@ causa, escassez de cenários, caso que um algoritmo ganancioso perderia, exclus�
 inactivas/retiradas/diagnóstico no carregamento do exame, retirada sem apagar,
 motor sem acesso à base nem a gabaritos. Gravação repetida do banco Cloud: 0
 inseridas, 0 actualizadas, 70 ignoradas por estarem retiradas. Nada foi publicado.
+
+---
+
+## A19 — Renovação dos bancos de questões (versão 2), 21/09/2026
+
+**Âmbito.** Renovação integral dos bancos dos dois cursos cuja versão 1 esteve
+exposta (ver A17 e A18). Conteúdo escrito de raiz, com identificadores novos, na
+versão `v2`: 60 questões de exame + 10 de diagnóstico por curso, 140 no total.
+**Todas inactivas** (rascunho por validar pela Ologa/ATDI). Nada foi activado,
+nenhum exame foi gerado, nenhum certificado emitido e nada foi publicado.
+
+**Ficheiros.** `scripts/conteudo/computacao-nuvem-questoes-v2.ts`,
+`scripts/conteudo/transformacao-digital-questoes-v2.ts`,
+`scripts/seed-questoes-v2.ts`, `src/lib/__tests__/bancos-v2.test.ts`.
+Gabaritos e justificações vivem fora de `src/` e de `public/`; nenhum ficheiro do
+site os importa.
+
+**Composição (proposta pedagógica, por validar — não é imposição do TdR).**
+
+| Curso | Módulos | Tipologias | Dificuldades |
+| --- | --- | --- | --- |
+| Computação em Nuvem | 18 M1, 21 M2, 15 M3, 6 transversal | 24 escolha múltipla, 12 V/F, 12 associação, 12 cenário | 24 fáceis, 24 médias, 12 difíceis |
+| Princípios da Transformação Digital | 21 M1, 21 M2, 18 M3 | 36 escolha múltipla, 15 V/F, 6 associação, 3 ordenação | 24 fáceis, 24 médias, 12 difíceis |
+
+Ambos cumprem o mínimo da secção 10 do TdR: 60 ÷ 20 = 3× a prova, e cada quota de
+módulo e de tipologia tem pelo menos o triplo do que a prova consome.
+
+**Limite declarado.** As quotas em vigor de Transformação Digital não incluem
+módulo transversal nem tipologia de cenário; por isso o banco novo desse curso não
+escreve questões desses tipos, que ficariam fora do sorteio. Se a Ologa/ATDI
+alterar as quotas, o banco tem de ser alargado em conformidade.
+
+**Ajuste no motor de sorteio.** A ordem de exploração das células passou a começar
+pelas mais escassas, com desempate ao acaso. Não retira soluções (o retrocesso
+continua completo) e não altera quotas nem aleatoriedade do resultado; reduz o
+trabalho. Antes do ajuste, 1 em 300 sementes esgotava o limite de trabalho com o
+banco real de Nuvem e bloqueava a prova; depois, 0 falhas em 2000 sementes.
+
+**Preservação do histórico.** As 140 linhas da versão 1 continuam na base,
+retiradas, com respostas e explicações, fora do sorteio, fora do rácio e não
+activáveis (bloqueio na base e recusa no servidor). Nada foi apagado. A semente
+nova ignora qualquer enunciado já retirado, mesmo que o texto coincida.
+
+**Verificações reais.** 106 testes e verificação de tipos limpa, incluindo:
+contagens 60+10 por curso; rácio ≥ 3× por total, por módulo e por tipologia;
+ausência de enunciados repetidos dentro e entre instrumentos; ausência de repetição
+dos enunciados da versão retirada de Nuvem; validade de gabaritos, opções
+distintas, pares de associação e sequências de ordenação; 100 provas simuladas por
+curso com os bancos reais em memória, todas viáveis, com módulos, tipologias e
+dificuldades exactamente nas quotas, sem repetição de questão e com mais de 80
+provas distintas em 100 sementes; diagnóstico separado e fora do sorteio. Gravação
+repetida: 0 inseridas, 70 actualizadas por curso, 0 duplicados. Estado na base:
+140 rascunhos utilizáveis (70 + 70), 140 retiradas, 0 activas.
