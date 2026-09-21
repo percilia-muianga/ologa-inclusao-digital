@@ -824,8 +824,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
     );
     if (!melhor) throw new Error("SEM_EXAME_SUBMETIDO");
     if (melhor.nota < cfg.nota_minima_pct) throw new Error("NOTA_INSUFICIENTE");
-    if (data.assiduidadePct < cfg.assiduidade_minima_pct)
-      throw new Error("ASSIDUIDADE_INSUFICIENTE");
 
     const { data: curso } = await s
       .from("cursos")
@@ -833,6 +831,13 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
       .eq("id", data.cursoId)
       .single();
     const turma = await turmaDoFormando(formando.nome, data.cursoId);
+
+    // A assiduidade é sempre apurada no servidor, a partir das presenças
+    // marcadas — nunca aceite do lado de quem pede o certificado.
+    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
+    if (assiduidadePct === null) throw new Error("ASSIDUIDADE_POR_APURAR");
+    if (assiduidadePct < cfg.assiduidade_minima_pct) throw new Error("ASSIDUIDADE_INSUFICIENTE");
+
 
     const { data: cert, error } = await s
       .from("certificados_curso")
