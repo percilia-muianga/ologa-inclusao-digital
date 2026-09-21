@@ -106,23 +106,22 @@ function CursoPage() {
               <dd className="text-xl font-extrabold text-navy">{curso.carga_horaria} horas</dd>
             </div>
             <div>
-              <dt className="text-sm text-navy-2">Módulos temáticos</dt>
-              <dd className="text-xl font-extrabold text-navy">{horas(minutosTematicos)} horas</dd>
+              <dt className="text-sm text-navy-2">Regime</dt>
+              <dd className="text-xl font-extrabold text-navy">{curso.modalidade}</dd>
             </div>
             <div>
-              <dt className="text-sm text-navy-2">Módulo transversal</dt>
-              <dd className="text-xl font-extrabold text-navy">
-                {horas(minutosTransversal)} horas
-              </dd>
+              <dt className="text-sm text-navy-2">Módulos</dt>
+              <dd className="text-xl font-extrabold text-navy">{modulos.length}</dd>
             </div>
             <div>
-              <dt className="text-sm text-navy-2">Diagnóstico, revisão e exame</dt>
-              <dd className="text-xl font-extrabold text-navy">{horas(minutosAvaliacao)} horas</dd>
+              <dt className="text-sm text-navy-2">Lições</dt>
+              <dd className="text-xl font-extrabold text-navy">{totalLicoes}</dd>
             </div>
           </dl>
           <p className="mt-4 text-navy-2">
-            O programa organiza-se em {totalLicoes} lições. O módulo transversal de Governo
-            Digital Inclusivo e Acessibilidade é obrigatório e conta uma única vez.
+            O módulo transversal de Governo Digital Inclusivo e Acessibilidade é
+            obrigatório e conta uma única vez. O diagnóstico, a revisão e o exame final
+            ocupam {horas(minutosAvaliacao)} horas, fora dos módulos.
           </p>
         </section>
       )}
