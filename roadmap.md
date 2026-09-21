@@ -62,7 +62,7 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Exame gerado no início, por módulo e dificuldade, com ordem aleatória e composição guardada para auditoria
 - [x] Tempo limite legível por leitor de ecrã, gravação automática e retoma segura
 - [x] Certificação com as duas condições em separado, segunda tentativa e prazo de 30 dias
-- [x] Certificado de curso verificável no mesmo ecrã /verificar
+- [x] Certificado individual (por formando e por curso) verificável no mesmo ecrã /verificar
 - [x] Assiduidade real: ligada à marcação de presenças (fase 4)
 - [ ] Conteúdo das questões: a fornecer pela Ologa
 ## Fase 6 — Painel Nacional e dados de demonstração
