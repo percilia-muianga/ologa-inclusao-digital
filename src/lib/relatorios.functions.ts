@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
+import {
+  sessaoObrigatoria,
+  exigirGestao,
+  clienteDeEscritaGestao,
+  type ContextoAutenticado,
+} from "@/lib/guardas";
 
 export type RelatorioMensal = {
   id: string;
@@ -36,8 +41,8 @@ export const criarRelatorioMensal = createServerFn({ method: "POST" })
   .validator((dados: Omit<RelatorioMensal, "id">) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("relatorios_mensais").insert(data);
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db.from("relatorios_mensais").insert(data);
     if (error) throw error;
     return { ok: true };
   });

@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
+import {
+  sessaoObrigatoria,
+  exigirGestao,
+  clienteDeEscritaGestao,
+  type ContextoAutenticado,
+} from "@/lib/guardas";
 import {
   calcularAssiduidade,
   marcacaoEfectiva,
@@ -209,7 +214,7 @@ export const definirEstadoSessao = createServerFn({ method: "POST" })
         motivo: "Cancelar ou adiar uma sessão exige um motivo escrito.",
       };
 
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s
       .from("turma_sessoes")
       .update({
@@ -319,7 +324,7 @@ export const registarPresencas = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id")
@@ -349,7 +354,7 @@ export const registarPresencas = createServerFn({ method: "POST" })
     if (error) throw error;
     return {
       gravadas: (inseridas ?? []).length,
-      conflitos: (inseridas ?? []).filter((i) => i.conflito).length,
+      conflitos: (inseridas ?? []).filter((i: { conflito: boolean }) => i.conflito).length,
       recusadas,
     };
   });
@@ -376,7 +381,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id,hora_inicio,hora_fim")
@@ -426,7 +431,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
     if (error) throw error;
     return {
       gravadas: (inseridas ?? []).length,
-      presentes: (inseridas ?? []).filter((i) => i.estado === "presente").length,
+      presentes: (inseridas ?? []).filter((i: { estado: string }) => i.estado === "presente").length,
       duracao,
       limiarPermanencia,
       limiarProgresso,
@@ -457,7 +462,7 @@ export const corrigirPresenca = createServerFn({ method: "POST" })
     if (data.estado === "justificado" && (data.motivo ?? "").trim().length === 0)
       return { ok: false as const, motivo: "Uma falta justificada exige o motivo por escrito." };
 
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id")
@@ -495,7 +500,7 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s.from("presenca_configuracoes").upsert(
       {
         curso_id: data.cursoId,

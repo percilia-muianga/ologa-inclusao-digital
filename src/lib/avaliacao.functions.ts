@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { clienteDeEscritaGestao } from "@/lib/guardas";
 import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
 import { sortearExame, type QuestaoSorteavel } from "@/lib/sorteio-exame";
 import { QUOTAS_POR_CURSO, quotasDificuldade } from "@/lib/quotas-exame";
@@ -370,7 +371,7 @@ export const criarQuestao = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => questaoSchema.parse(i))
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { conteudo, resposta } = montarConteudo(data);
     const { data: nova, error } = await s
       .from("banco_questoes")
@@ -399,7 +400,7 @@ export const actualizarQuestao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { conteudo, resposta } = montarConteudo(data);
     const { error } = await s
       .from("banco_questoes")
@@ -428,7 +429,7 @@ export const definirEstadoQuestao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     // Uma questão retirada nunca volta ao sorteio: a activação é recusada no
     // servidor (e também por travão na própria base de dados).
     if (data.activa) {
@@ -469,7 +470,7 @@ export const retirarVersaoBanco = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { data: linhas, error } = await s
       .from("banco_questoes")
       .update({
@@ -506,7 +507,7 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     if (data.pctFacil + data.pctMedia + data.pctDificil !== 100)
       throw new Error("PERCENTAGENS_NAO_SOMAM_100");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s.from("exame_configuracoes").upsert(
       {
         curso_id: data.cursoId,
@@ -699,12 +700,13 @@ async function assiduidadeDoFormando(
       .maybeSingle(),
   ]);
   const inscricao = (inscricoesRes.data ?? []).find(
-    (i) => normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
+    (i: { nome: string; estado: string; id: string }) =>
+      normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
   );
   if (!inscricao) return null;
   const base = (cfgRes.data?.base_assiduidade ?? "estrita") as "estrita" | "ajustada";
   const linhas = calcularAssiduidade(
-    (sessoesRes.data ?? []).map((x) => ({
+    (sessoesRes.data ?? []).map((x: { id: string; data: string; estado: string }) => ({
       id: x.id,
       data: x.data,
       estado: x.estado as never,
@@ -738,11 +740,13 @@ async function turmaDoFormando(nome: string, cursoId: string) {
     .select("turma_id, nome")
     .in(
       "turma_id",
-      turmas.map((t) => t.id),
+      turmas.map((t: { id: string }) => t.id),
     );
-  const minha = (inscricoes ?? []).find((i) => normalizar(i.nome) === normalizar(nome));
+  const minha = (inscricoes ?? []).find(
+    (i: { nome: string; turma_id: string }) => normalizar(i.nome) === normalizar(nome),
+  );
   if (!minha) return null;
-  return turmas.find((t) => t.id === minha.turma_id) ?? null;
+  return turmas.find((t: { id: string }) => t.id === minha.turma_id) ?? null;
 }
 
 export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })

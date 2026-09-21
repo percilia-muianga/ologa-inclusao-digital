@@ -21,6 +21,21 @@ export type ContextoAutenticado = {
   userId: string;
 };
 
+/**
+ * Cliente de escrita das áreas de gestão.
+ *
+ * É o cliente autenticado do próprio utilizador, não o servidor de confiança:
+ * assim `auth.uid()` fica verdadeiro dentro da base e os gatilhos de auditoria
+ * registam QUEM fez a alteração, em vez de "servidor". As políticas da base
+ * voltam a decidir, pelo que uma escrita indevida é recusada mesmo que algum
+ * caminho do código falhe. Usar sempre depois de `exigirGestao(..., "escrever")`.
+ */
+export function clienteDeEscritaGestao(context: ContextoAutenticado): any {
+  if (!context?.userId || !context?.supabase) throw new Error("SEM_SESSAO");
+  return context.supabase as any;
+}
+
+
 /** Papéis que podem alterar dados de gestão (turmas, presenças, workshops, relatórios). */
 export const PAPEIS_GESTAO_ESCRITA = ["admin_atdi", "coordenador_nacional"] as const;
 /** Papéis que podem ler dados de gestão. O auditor entra só aqui. */

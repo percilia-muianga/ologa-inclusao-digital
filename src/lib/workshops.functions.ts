@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
+import {
+  sessaoObrigatoria,
+  exigirGestao,
+  clienteDeEscritaGestao,
+  type ContextoAutenticado,
+} from "@/lib/guardas";
 
 export type WorkshopResumo = {
   id: string;
@@ -182,8 +187,8 @@ export const criarWorkshop = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: criado, error } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { data: criado, error } = await db
       .from("workshops")
       .insert({
         tipo: data.tipo,
@@ -225,7 +230,7 @@ export const registarParticipantes = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const linhas = data.participantes
       .filter((p) => p.nome.trim().length > 0)
       .map((p) => ({
@@ -240,24 +245,24 @@ export const registarParticipantes = createServerFn({ method: "POST" })
       }));
     if (linhas.length === 0) return { registados: 0, duplicados: 0 };
 
-    const { data: inseridos, error } = await supabaseAdmin
+    const { data: inseridos, error } = await db
       .from("workshop_participantes")
       .insert(linhas)
       .select("id,duplicado_provavel");
     if (error) throw error;
 
-    const { count } = await supabaseAdmin
+    const { count } = await db
       .from("workshop_participantes")
       .select("id", { count: "exact", head: true })
       .eq("workshop_id", data.workshopId);
-    await supabaseAdmin
+    await db
       .from("workshops")
       .update({ participantes_efectivos: count ?? 0 })
       .eq("id", data.workshopId);
 
     return {
       registados: (inseridos ?? []).length,
-      duplicados: (inseridos ?? []).filter((i) => i.duplicado_provavel).length,
+      duplicados: (inseridos ?? []).filter((i: { duplicado_provavel: boolean }) => i.duplicado_provavel).length,
     };
   });
 
@@ -277,8 +282,8 @@ export const registarAvaliacaoConhecimento = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("avaliacoes_conhecimento").insert({
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db.from("avaliacoes_conhecimento").insert({
       momento: data.momento,
       workshop_id: data.workshopId ?? null,
       turma_id: data.turmaId ?? null,
@@ -305,8 +310,8 @@ export const registarSatisfacao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("questionarios_satisfacao").insert({
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db.from("questionarios_satisfacao").insert({
       workshop_id: data.workshopId ?? null,
       turma_id: data.turmaId ?? null,
       provincia: data.provincia ?? null,
@@ -334,8 +339,8 @@ export const registarInqueritoEficacia = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("inqueritos_eficacia").insert({
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db.from("inqueritos_eficacia").insert({
       workshop_id: data.workshopId ?? null,
       turma_id: data.turmaId ?? null,
       curso_id: data.cursoId ?? null,
@@ -369,8 +374,8 @@ export const actualizarWorkshop = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db
       .from("workshops")
       .update({
         tipo: data.tipo,
