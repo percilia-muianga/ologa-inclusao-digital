@@ -194,8 +194,8 @@ export const criarTurma = createServerFn({ method: "POST" })
   .validator((dados: DadosTurma) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: criada, error } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { data: criada, error } = await db
       .from("turmas")
       .insert({
         curso_id: data.cursoId,
@@ -223,8 +223,8 @@ export const actualizarTurma = createServerFn({ method: "POST" })
   .validator((dados: DadosTurma & { id: string }) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: actualizada, error } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { data: actualizada, error } = await db
       .from("turmas")
       .update({
         curso_id: data.cursoId,
@@ -262,8 +262,8 @@ export const criarSessao = createServerFn({ method: "POST" })
   .validator((dados: DadosSessao & { turmaId: string }) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: existentes, error: erroOrdem } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { data: existentes, error: erroOrdem } = await db
       .from("turma_sessoes")
       .select("ordem")
       .eq("turma_id", data.turmaId)
@@ -272,7 +272,7 @@ export const criarSessao = createServerFn({ method: "POST" })
     if (erroOrdem) throw erroOrdem;
     const ordem = (existentes?.[0]?.ordem ?? 0) + 1;
 
-    const { error } = await supabaseAdmin.from("turma_sessoes").insert({
+    const { error } = await db.from("turma_sessoes").insert({
       turma_id: data.turmaId,
       ordem,
       data: data.data,
@@ -292,8 +292,8 @@ export const actualizarSessao = createServerFn({ method: "POST" })
   .validator((dados: DadosSessao & { id: string }) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db
       .from("turma_sessoes")
       .update({
         data: data.data,
@@ -314,8 +314,8 @@ export const removerSessao = createServerFn({ method: "POST" })
   .validator((dados: { id: string }) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("turma_sessoes").delete().eq("id", data.id);
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const { error } = await db.from("turma_sessoes").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
@@ -329,8 +329,8 @@ export const inscreverFormando = createServerFn({ method: "POST" })
   .validator((dados: { turmaId: string; nome: string; email: string | null }) => dados)
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const turmaRes = await supabaseAdmin
+    const db = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    const turmaRes = await db
       .from("turmas")
       .select("id,limite_formandos")
       .eq("id", data.turmaId)
@@ -338,7 +338,7 @@ export const inscreverFormando = createServerFn({ method: "POST" })
     if (turmaRes.error) throw turmaRes.error;
     if (!turmaRes.data) return { ok: false as const, motivo: "Turma não encontrada." };
 
-    const inscritosRes = await supabaseAdmin
+    const inscritosRes = await db
       .from("turma_inscricoes")
       .select("id,estado")
       .eq("turma_id", data.turmaId);
@@ -351,7 +351,7 @@ export const inscreverFormando = createServerFn({ method: "POST" })
       };
     }
 
-    const { error } = await supabaseAdmin.from("turma_inscricoes").insert({
+    const { error } = await db.from("turma_inscricoes").insert({
       turma_id: data.turmaId,
       nome: data.nome.trim(),
       email: data.email,

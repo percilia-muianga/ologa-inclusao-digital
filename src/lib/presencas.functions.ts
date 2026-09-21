@@ -209,7 +209,7 @@ export const definirEstadoSessao = createServerFn({ method: "POST" })
         motivo: "Cancelar ou adiar uma sessão exige um motivo escrito.",
       };
 
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s
       .from("turma_sessoes")
       .update({
@@ -319,7 +319,7 @@ export const registarPresencas = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id")
@@ -376,7 +376,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id,hora_inicio,hora_fim")
@@ -457,7 +457,7 @@ export const corrigirPresenca = createServerFn({ method: "POST" })
     if (data.estado === "justificado" && (data.motivo ?? "").trim().length === 0)
       return { ok: false as const, motivo: "Uma falta justificada exige o motivo por escrito." };
 
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const sessaoRes = await s
       .from("turma_sessoes")
       .select("id,turma_id")
@@ -495,7 +495,7 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
-    const s = await admin();
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s.from("presenca_configuracoes").upsert(
       {
         curso_id: data.cursoId,
