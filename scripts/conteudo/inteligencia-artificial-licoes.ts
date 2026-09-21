@@ -1,7 +1,8 @@
 /**
  * Conteúdo original das lições do curso «Introdução à Inteligência Artificial».
  *
- * Estado: PROPOSTA PEDAGÓGICA — por validar pela Ologa/ATDI.
+ * Estado editorial (validação pedagógica pendente, materiais por produzir):
+ * registado em docs/pontos-por-validar.md, não exibido na plataforma.
  * Todos os casos, nomes, instituições, números e textos de exemplo são
  * FICTÍCIOS e servem apenas de exercício. Não há pessoas reais, não há
  * estatísticas oficiais e não há conclusões jurídicas.

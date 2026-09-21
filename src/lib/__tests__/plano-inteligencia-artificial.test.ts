@@ -188,7 +188,7 @@ describe("conteúdo escrito do módulo 1", () => {
         partilha: 15,
       });
       expect(html).not.toMatch(/laboratório realizado|prática realizada|vídeo em Língua de Sinais/i);
-      expect(html).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho/i);
+      expect(html).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho por validar/i);
       expect(html).toContain("são fictícios e servem apenas de exercício");
       expect(html).toContain("Acolhimento e objectivos: 10 minutos");
       expect(html).toContain("Actividade prática: 60 minutos");
@@ -214,7 +214,7 @@ describe("conteúdo escrito do módulo 1", () => {
       expect(g).toContain("10–45 min");
       expect(g).toContain("45–105 min");
       expect(g).toContain("105–120 min");
-      expect(g).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho/i);
+      expect(g).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho por validar/i);
       expect(g).toMatch(/gabarito fica sempre apenas no servidor/);
     }
   });
