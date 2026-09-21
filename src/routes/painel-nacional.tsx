@@ -136,7 +136,9 @@ function PainelNacionalPage() {
     ]),
   ];
 
+  const distritos = [
     ["Província", "Distrito", "Realizados", "Previstos"],
+
     ...porDistrito.map((d) => [d.provincia, d.distrito, d.realizados, d.planeados]),
   ];
 
