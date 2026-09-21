@@ -205,3 +205,79 @@ Testado no navegador: a lição pública continua a funcionar sem conta e mostra
 aviso de progresso local. **Por testar num percurso real:** gravação, recarregar
 a página e continuidade noutro aparelho com a mesma conta — depende de existir
 uma turma e uma matrícula reais, que não criámos.
+
+## A13 — verificação da etapa do progresso por matrícula
+
+### Correcção ao que foi dito na secção A12
+
+Os 7 testes de `progresso-matricula.test.ts` são **validação pura**: exercitam
+apenas a regra de pertença (dono da matrícula, lição dentro do curso, módulo
+partilhado). **Não** exercitavam persistência, autorização nem políticas de
+acesso. Dizer que provavam «isolamento» era excessivo e fica corrigido aqui.
+
+### Teste de integração real, em base efémera
+
+Existe PostgreSQL 17 no ambiente de trabalho, por isso o teste integrado passou
+a ser possível e **foi feito**: `scripts/teste-rls/correr.sh` cria uma base
+temporária em `/tmp`, aplica a migração `0010` **tal e qual como está no
+repositório**, carrega duas identidades e três matrículas só nessa base, corre
+os testes e destrói tudo no fim. Nunca escreve na base partilhada do projecto.
+
+Resultado executado (14 verificações, todas a passar):
+
+| Verificação | Resultado |
+| --- | --- |
+| A grava na sua própria matrícula | passa |
+| A relê o que gravou, em ligação nova (persistência) | passa |
+| Segunda gravação da mesma lição é recusada pela unicidade | passa |
+| A não consegue gravar na matrícula de B (política de acesso) | passa |
+| B não vê o progresso de A | passa |
+| B não consegue apagar o progresso de A, que continua intacto | passa |
+| As duas matrículas de A não se contaminam | passa |
+| Equipa de formação lê, mas não grava em nome de um formando | passa |
+| Cada pessoa só vê as suas matrículas | passa |
+
+Limite honesto deste teste: a base efémera reproduz os papéis, o `auth.uid()` e
+as tabelas de que a migração depende, não é uma cópia integral do ambiente real.
+Prova as políticas da migração 0010; não substitui um percurso real com turma,
+sessões e certificação.
+
+### Falha de gravação e troca de conta
+
+Passam a estar cobertos por 4 testes de interface
+(`src/hooks/__tests__/use-progresso-matricula.test.tsx`): gravação falhada
+mostra erro e devolve falso (nunca «guardado»); «tentar de novo» volta a gravar
+a mesma lição e passa a guardado; resposta atrasada de uma matrícula anterior
+não altera o estado da matrícula actual depois de trocar de curso; sem matrícula
+não é feita nenhuma chamada ao servidor.
+
+Total executado nesta etapa: **41 testes automáticos** e **14 verificações de
+integração**, mais a confirmação no navegador da lição pública.
+
+### Matriz por área — resumo concreto
+
+Três colunas a não confundir: **código** (existe e corre), **evidência**
+(verificação mesmo executada) e **pendência**.
+
+| Área | Código existente | Evidência executada | Pendência | Prior. |
+| --- | --- | --- | --- | --- |
+| Seis cursos e cargas | 6 cursos com as horas da tabela sec. 14 | Consulta à base | Divergência IA 16/20 h e Redes 120/80 h: **decisão da ATDI** | P0 |
+| Currículos e materiais | Transformação Digital com 12 lições escritas; 5 cursos com estrutura, sem conteúdo | Testes de soma 24 h e de cobertura da sec. 6.1 | Rascunhos dos 5 cursos: **podemos preparar internamente**; só a validação é de terceiros | P0 |
+| Acesso público | Catálogo, módulos e lições sem conta | Navegador | — | — |
+| Acessibilidade | Barra, alto contraste, ouvir, teclado, 44 px, texto além da cor | Navegador | Revisão externa por marcar; vídeo, legendagem e LSM por produzir (produção nossa, validação externa) | P1 |
+| Contas, perfis, matrículas | Conta, perfil, papéis, inscrição em turma | Testes de integração das matrículas | Ecrã de auto‑matrícula por código (nosso) | P1 |
+| Progresso do formando | Progresso por matrícula no servidor | 14 verificações de integração + 4 de interface | Percurso com turma real | P1 |
+| Turmas, horários, presenças | Turmas, estados de sessão, três estados de presença, offline, folha | 5 testes de assiduidade | Dados reais; sessões virtuais sem ligação a videoconferência | P1 |
+| Avaliação e certificação | Banco 60+10, exame gerado no arranque, 80 %/60 %/30 dias no servidor | 20 testes de regra | Banco **inactivo** até validação pedagógica (terceiros) | P0 |
+| Gestão, indicadores, exportação | Painel nacional, CSV, XLS, PDF | Navegador | Validar com volumes reais | P2 |
+| Segurança e auditoria | RLS em todas as tabelas, leitura restrita, auditoria imutável | Políticas na base + integração 0010 | Recomendações fora de exames e presenças | P1 |
+| Desempenho, 99,5 %, 200 simultâneos | — | **Nenhuma** | Teste de carga e monitorização: **nosso**, por fazer | P1 |
+| Alojamento, entrega, suporte | Plataforma publicada, código no repositório | — | Rascunho do plano de entrega e suporte: **podemos escrever**; aprovação é da Ologa/ATDI | P1 |
+
+### O que depende mesmo de terceiros
+
+Só isto: esclarecimento das horas divergentes, validação pedagógica do banco e
+dos conteúdos, revisão de acessibilidade por entidade externa e aprovação do
+plano de entrega. Escrever rascunhos dos cinco cursos, produzir vídeo e
+legendagem, preparar o plano de entrega e medir desempenho é trabalho nosso e
+está por agendar, não bloqueado.
