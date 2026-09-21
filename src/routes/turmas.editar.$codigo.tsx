@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -11,6 +12,8 @@ import {
 } from "@/lib/turmas.functions";
 
 export const Route = createFileRoute("/turmas/editar/$codigo")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: async ({ params }) => {
     const [dados, referencias] = await Promise.all([
       obterTurma({ data: params.codigo }),

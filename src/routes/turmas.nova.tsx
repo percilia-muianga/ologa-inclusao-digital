@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -6,6 +7,8 @@ import { FormularioTurma, botaoPrimario, botaoSecundario } from "@/components/fo
 import { criarTurma, referenciasTurma, type DadosTurma } from "@/lib/turmas.functions";
 
 export const Route = createFileRoute("/turmas/nova")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => referenciasTurma(),
   head: () => ({
     meta: [

@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -5,6 +6,8 @@ import { PlataformaPagina } from "@/components/plataforma-pagina";
 import { criarWorkshop, listarReferenciasTdr } from "@/lib/workshops.functions";
 
 export const Route = createFileRoute("/workshops/novo")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarReferenciasTdr(),
   head: () => ({
     meta: [

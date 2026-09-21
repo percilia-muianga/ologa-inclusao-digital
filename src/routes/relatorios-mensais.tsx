@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -5,6 +6,8 @@ import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { listarRelatoriosMensais, criarRelatorioMensal } from "@/lib/relatorios.functions";
 
 export const Route = createFileRoute("/relatorios-mensais")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarRelatoriosMensais(),
   head: () => ({
     meta: [
