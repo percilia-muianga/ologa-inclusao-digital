@@ -18,6 +18,7 @@ function mediaPct(lista: Array<{ pontuacao: number; total: number }>): number | 
  */
 export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { calcularAssiduidade } = await import("@/lib/presencas.server");
 
   const [
     turmasRes,
@@ -31,9 +32,12 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     configRes,
     locaisRes,
     distritosRes,
+    sessoesRes,
+    presencasRes,
+    basesRes,
   ] = await Promise.all([
     supabaseAdmin.from("turmas").select("id,provincia,distrito,curso_id,estado"),
-    supabaseAdmin.from("turma_inscricoes").select("turma_id,estado"),
+    supabaseAdmin.from("turma_inscricoes").select("id,turma_id,nome,estado"),
     supabaseAdmin.from("certificados").select("id", { count: "exact", head: true }),
     supabaseAdmin
       .from("avaliacoes_conhecimento")
@@ -49,7 +53,11 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       .select("provincia,nome,ordem_provincia,ordem")
       .order("ordem_provincia")
       .order("ordem"),
+    supabaseAdmin.from("turma_sessoes").select("id,turma_id,data,estado"),
+    supabaseAdmin.from("presencas").select("*"),
+    supabaseAdmin.from("presenca_configuracoes").select("curso_id,base_assiduidade"),
   ]);
+
 
   for (const r of [
     turmasRes,
