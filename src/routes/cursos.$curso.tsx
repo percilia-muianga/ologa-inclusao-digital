@@ -123,6 +123,7 @@ function CursoPage() {
                       <Link
                         to="/formacao/$modulo/licao/$licao"
                         params={{ modulo: modulo.id, licao: licao.id }}
+                        search={{ curso: curso.slug }}
                         className="mt-3 inline-flex min-h-11 items-center font-semibold text-navy underline"
                       >
                         Abrir a lição, com leitura em voz alta e navegação entre lições
@@ -135,7 +136,7 @@ function CursoPage() {
                       </details>
                     </>
                   ) : (
-                    <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>
+                    <p className="mt-2 text-sm text-navy-2">Título definido; conteúdo temático ainda por escrever.</p>
                   )}
                 </li>
               ))}
