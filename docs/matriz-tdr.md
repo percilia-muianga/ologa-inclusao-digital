@@ -707,3 +707,103 @@ com os bancos reais, todas viáveis e com cobertura completa; 150 amostras com a
 composição real de Transformação Digital, todas com os quatro módulos, dois
 cenários e duas ordenações; exclusão de inactivos, retirados e diagnóstico do
 sorteio. Contagens confirmadas também por consulta directa à base.
+
+## A21 — Introdução à Inteligência Artificial, bloco 1 (21/09/2026)
+
+### Divergência de carga horária — POR RESOLVER com a ATDI
+
+Os documentos do concurso não coincidem quanto à duração deste curso:
+
+| Onde | O que diz |
+| --- | --- |
+| Secção 6.2, p. 13 | duração máxima de **16 horas**, incluindo a componente prática |
+| Secção 14, p. 29 (tabela) | **20 horas**, regime presencial |
+| Secção 13.1, p. 27 | remete a tabela de cargas horárias para as **propostas dos concorrentes** |
+
+Decisão em vigor: a equipa trabalha com **20 horas a título PROVISÓRIO**, por
+autorização da gestora do projecto, enquanto a ATDI não confirma. Em lado
+nenhum — ficha, plano, páginas do curso — se afirma que as 20 horas estão
+fixadas, são definitivas ou resultam inequivocamente dos Termos de Referência.
+
+A divisão interna que propomos (8 h + 8 h + 2 h + 2 h) **não é explicação da
+divergência acima**: é apenas a nossa repartição proposta, por validar. A
+divergência está nos documentos do concurso.
+
+Plano alternativo adaptável a **16 horas**: documentado em
+`src/lib/plano-inteligencia-artificial.ts` (`PLANO_ALTERNATIVO_16H`) e **NÃO
+activo** — 6 h módulo 1, 6 h módulo 2, 2 h transversal, 2 h avaliação. Reduz e
+reorganiza actividades sem retirar objectivos; nada do que for encurtado pode
+ser descrito como simulação prática executada.
+
+Correcção de apresentação: a página de curso dizia «Carga fixada nos Termos de
+Referência». Passou a ser condicionada por `cursos.carga_horaria_nota`
+(migração `0012_cursos_nota_carga_horaria.sql`). Quando essa nota existe, a
+página mostra «Carga horária por confirmar» e o texto da divergência, e diz
+«carga horária usada a título provisório neste plano». Os restantes cursos, que
+não têm nota, mantêm o texto anterior sem alteração.
+
+### Plano proposto (1200 minutos = 20 horas provisórias)
+
+| Bloco | Minutos | Estado |
+| --- | --- | --- |
+| Módulo 1 — Fundamentos de Inteligência Artificial (4 lições × 120) | 480 | escrito, rascunho |
+| Módulo 2 — Uso Responsável da Inteligência Artificial (4 lições × 120) | 480 | **apenas planeado, por fornecer** |
+| Transversal — Governo Digital Inclusivo e Acessibilidade (6 lições) | 120 | já existia, contado uma única vez |
+| Diagnóstico 20 + revisão 40 + exame 60 | 120 | fora dos módulos |
+| **Total** | **1200** | |
+
+Grelha de tempos de cada lição, fonte única em `plano-inteligencia-artificial.ts`:
+10 acolhimento + 35 exposição + 60 actividade + 15 síntese = 120 minutos. O
+conteúdo e o guião do formador são gerados daí, não escritos à mão em dois
+sítios.
+
+### Mapa requisito (secção 6.2, pp. 13-14) → lição → actividade → evidência
+
+| Requisito | Onde está | Actividade | Evidência |
+| --- | --- | --- | --- |
+| Conceito e fundamentos de IA | M1 L1 | classificar 8 casos: regra escrita vs. inferência | ficha por par, 8 casos classificados e justificados |
+| Dados, algoritmos e modelos | M1 L2 | mini-conjunto fictício de 10 linhas, fornecido por inteiro | lista de ≥5 problemas classificados e corrigidos |
+| Aprendizagem automática | M1 L3 | tabela de resultados de 200 casos, cálculos à mão | 4 valores calculados com operandos visíveis |
+| Uso de ferramentas de IA | M1 L4 | prática assistida com ferramenta institucional autorizada | folha de registo por execução, ou «PENDENTE» |
+| Aplicações e oportunidades | M1 L4 | 3 tarefas apoiáveis + 2 vedadas sem decisão superior | ficha por par |
+| Ética, riscos e protecção de dados | M1 L2 (introdução) e M2 L2 (por fornecer) | — | — |
+| Governação, EU AI Act, actores, política e diplomacia | **M2 L4 — planeado, por fornecer** | — | — |
+
+O EU AI Act é legislação da União Europeia. Fica registado, na ficha e aqui,
+que é estudado como referência internacional de governação e que **não se
+afirma** que se aplica automaticamente a Moçambique. Qualquer leitura jurídica
+cabe à área jurídica da instituição. A lição será escrita com fontes oficiais
+actualizadas à data em que for produzida; nada disso foi escrito neste bloco.
+
+### Cálculos verificados (M1 L3)
+
+Conjunto reservado de 200 casos: 30 verdadeiros positivos, 20 falsos positivos,
+10 falsos negativos, 140 verdadeiros negativos. 30+20+10+140 = 200.
+Taxa de acerto (30+140)/200 = 170/200 = 0,85 = 85 %.
+Incompletos apanhados 30/40 = 0,75 = 75 %.
+Sistema que nunca assinala: 160/200 = 0,80 = 80 %.
+Todos os operandos aparecem no enunciado e na rubrica.
+
+### Fontes primárias usadas (paráfrase original, sem cópia)
+
+- OECD AI Principles — https://oecd.ai/en/ai-principles (definição de sistema de IA, inferência, autonomia e adaptação variáveis).
+- NIST AI Risk Management Framework — https://www.nist.gov/itl/ai-risk-management-framework (quadro **voluntário** de gestão de risco; não é lei).
+
+### Rigor factual imposto às lições
+
+- Nem toda a regra nem todo o algoritmo é IA; automação por regras é distinguida de inferência a partir de dados.
+- Não se afirma que a IA aprende sempre durante a utilização; o treino é anterior e só muda com novo treino autorizado.
+- IA generativa não é uma quarta categoria mutuamente exclusiva de supervisionada/não supervisionada/reforço.
+- IA generativa não aprende automaticamente com cada conversa: memória da conversa ≠ alteração do modelo.
+- Aprendizagem por reforço não é «gosto/não gosto» do utilizador: é sinal de recompensa definido, com processo de treino.
+- Saída fluente não garante verdade — trabalhado em L1 e posto à prova em L4.
+
+### Estado honesto no fim deste bloco
+
+- Lições com conteúdo escrito neste curso: **10** (4 do módulo 1 + 6 do transversal, que já existiam). Por fornecer: **4** (módulo 2). Confirmado no navegador.
+- Todo o conteúdo é **rascunho, por validar pela Ologa/ATDI**. A disponibilidade na plataforma não é aprovação.
+- A prática da L4 está **por executar**: exige ferramenta institucional previamente autorizada, com contas e permissões preparadas pelo formador. Ninguém cria conta pessoal, ninguém paga, não se promete gratuitidade e não entram dados reais de pessoas. Se a ferramenta faltar, regista-se «prática com ferramenta: PENDENTE — a reagendar» e **não** se declara prática realizada.
+- O anexo B da L4 está etiquetado como **saída simulada**, escrita pela equipa; não foi produzida por nenhuma ferramenta.
+- **Banco de avaliação deste curso: ainda por preparar, inactivo.** O exame não está activo e não emite certificados.
+- Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: pendentes, não reclamados.
+- IDs de curso, módulos e lições preservados; nenhuma lição foi criada ou apagada; nenhum outro curso, banco de questões ou regra de autorização foi tocado. Nada foi publicado.

@@ -402,6 +402,7 @@ export type Database = {
         Row: {
           abrangencia: string | null
           carga_horaria: number
+          carga_horaria_nota: string | null
           criado_em: string
           formandos_previstos: number
           id: string
@@ -418,6 +419,7 @@ export type Database = {
         Insert: {
           abrangencia?: string | null
           carga_horaria: number
+          carga_horaria_nota?: string | null
           criado_em?: string
           formandos_previstos: number
           id?: string
@@ -434,6 +436,7 @@ export type Database = {
         Update: {
           abrangencia?: string | null
           carga_horaria?: number
+          carga_horaria_nota?: string | null
           criado_em?: string
           formandos_previstos?: number
           id?: string

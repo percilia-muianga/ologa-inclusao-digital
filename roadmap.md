@@ -131,3 +131,23 @@ de Sinais Moçambicana por produzir.
 
 Pendente: progresso certificável por inscrição; ambiente isolado de
 demonstração; activação do banco após validação pedagógica.
+
+## A21 — Introdução à Inteligência Artificial, bloco 1 (concluído)
+
+- Plano de 20 h **provisórias** em `src/lib/plano-inteligencia-artificial.ts`
+  (M1 480 + M2 480 + transversal 120 + avaliação 120 = 1200 min) e plano
+  alternativo de 16 h documentado e **não activo**.
+- Divergência 16 h (sec. 6.2, p. 13) / 20 h (sec. 14, p. 29) / propostas
+  (sec. 13.1, p. 27) declarada na ficha, no plano e na matriz. Nova coluna
+  `cursos.carga_horaria_nota`: a página do curso deixou de dizer «carga fixada»
+  para este curso.
+- Módulo 1 escrito (4 lições × 120 min), rascunho por validar. Módulo 2 apenas
+  planeado, por fornecer. Contagem: 10 escritas / 4 por fornecer.
+- Semente `scripts/seed-inteligencia-artificial.ts`; conteúdo em
+  `scripts/conteudo/inteligencia-artificial-licoes.ts`, fora de `src/`.
+- Testes: 123 no total (16 novos).
+
+Pendente: módulo 2 (incluindo governação e EU AI Act na lição 4, com fontes
+oficiais actualizadas); banco de avaliação deste curso, ainda por preparar e
+inactivo; confirmação da carga horária pela ATDI; prática assistida da lição 4
+por executar; LSM, vídeo, legendagem e revisão por terceiros.

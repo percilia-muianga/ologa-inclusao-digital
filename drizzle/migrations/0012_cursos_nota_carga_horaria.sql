@@ -1,0 +1,2 @@
+ALTER TABLE public.cursos ADD COLUMN IF NOT EXISTS carga_horaria_nota TEXT;
+COMMENT ON COLUMN public.cursos.carga_horaria_nota IS 'Nota honesta sobre a carga horária quando os documentos do concurso divergem. Quando preenchida, a ficha do curso deixa de apresentar a carga como fixada.';
