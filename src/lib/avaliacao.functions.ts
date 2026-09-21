@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
 
 const admin = async () =>
   (await import("@/integrations/supabase/client.server")).supabaseAdmin;
