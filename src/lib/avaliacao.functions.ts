@@ -855,7 +855,7 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
         data_inicio: turma?.data_inicio ?? null,
         data_fim: turma?.data_fim ?? null,
         nota_final_pct: melhor.nota,
-        assiduidade_pct: data.assiduidadePct,
+        assiduidade_pct: assiduidadePct,
       })
       .select("codigo_verificacao, emitido_em")
       .single();
