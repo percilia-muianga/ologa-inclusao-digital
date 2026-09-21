@@ -354,7 +354,7 @@ Os ficheiros `index.js` e `package.json` estão no projecto, em
 `public/exemplos/paas-node/`, servidos em `/exemplos/paas-node/…`, e o código
 completo está transcrito na lição. Usam apenas o módulo `http` do Node, sem
 dependências, escutam `process.env.PORT` em `0.0.0.0`, lêem a variável não
-secreta `MENSAGEM_EXEMPLO` e registam apenas método e caminho.
+secreta `MENSAGEM_EXEMPLO` e registam apenas o método HTTP, sem endereço nem parâmetros.
 
 Testado localmente nesta etapa: resposta HTTP 200 com a mensagem por omissão e,
 numa segunda execução, com o valor da variável definido; arquivo comprimido
@@ -371,6 +371,70 @@ partilhado nunca é apagado.
 
 ### Estado das lições do curso
 
-10 lições temáticas escritas (módulos 1 e 2), 5 por fornecer (módulo 3), mais
-as 6 lições do módulo transversal já existentes. O banco de questões deste
-curso continua por escrever e o exame continua bloqueado.
+15 lições temáticas escritas (módulos 1, 2 e 3), 0 por fornecer, mais as 6
+lições do módulo transversal já existentes: 21 escritas, 0 por fornecer,
+verificado por consulta à base. O banco de questões deste curso continua por
+escrever e o exame continua bloqueado.
+
+## A15 — Computação em Nuvem, módulo 3 «Governação, Segurança e Custos»
+
+Estado: **proposta pedagógica, rascunho por validar pela Ologa/ATDI**. As cinco
+lições já existentes foram preenchidas com conteúdo original, preservando
+identificadores, ordem e relações. **Nenhuma lição deste módulo tem
+laboratório**: todos os exercícios são de análise e de simulação documental, em
+papel ou em folha de cálculo. Não foi criado nenhum recurso em nenhuma nuvem e
+não foi criado nenhum formando, turma ou certificado fictício na base.
+
+Tempos (fonte única: `src/lib/plano-computacao-nuvem.ts`): 100 × 5 = **500
+minutos = 8 h 20**. As exibições antigas de «2 horas» por lição foram
+substituídas na base por «100 minutos». Plano do curso: M1 520 + M2 540 +
+M3 500 + transversal 120 (contado uma vez) + diagnóstico, revisão e exame 120 =
+**1800 minutos = 30 horas**. A repartição interna é proposta da equipa, por
+validar; o Termo de Referência fixa o total do curso, não o tempo de cada
+módulo.
+
+### Mapa requisito → lição → actividade → evidência
+
+| Requisito | Origem | Lição | Actividade (análise documental) | Evidência/produto |
+| --- | --- | --- | --- | --- |
+| Gestão de identidades e controlo de acesso | sec. 6.3 (exigência) | M3L1 Identidades e controlo de acesso | Matriz de permissões com 6 intervenientes × 7 colunas, separação de tarefas e limitação assumida | Matriz preenchida; rubrica de 10 pontos |
+| Criptografia | sec. 6.3 (exigência) | M3L2 Protecção de dados na nuvem | Plano de protecção em 5 partes, sem dados reais, com limites da criptografia escritos | Plano de protecção; rubrica de 10 pontos |
+| Monitoria e resposta a incidentes | desenvolvimento pedagógico, por validar | M3L3 Monitoria e resposta a incidentes | Análise de registos fictícios de uma madrugada; triagem, contenção autorizada, evidências, lições aprendidas. Sem técnicas ofensivas | Ficha de incidente; rubrica de 10 pontos |
+| Custos, consumo e optimização | desenvolvimento pedagógico, por validar | M3L4 Custos, consumo e optimização | Cálculo sobre tabela de preços **fictícios** com todos os operandos; medidas classificadas em três colunas; limites dos alertas de orçamento | Folha de cálculo com operandos visíveis; rubrica de 10 pontos |
+| Requisitos de contratação de serviços de nuvem | desenvolvimento pedagógico, por validar | M3L5 Requisitos para contratação | 8 requisitos mensuráveis, RPO/RTO, cláusulas de saída, comparação de duas propostas fictícias | Caderno de requisitos e recomendação; rubrica de 10 pontos |
+
+### Cálculo do exercício de custos (verificado em teste)
+
+Preços e consumo são FICTÍCIOS, definidos em
+`scripts/conteudo/computacao-nuvem-m3.ts` e usados para gerar o texto da lição,
+de modo a não haver dois números diferentes no mesmo material. Computação
+(720 h + 220 h) × 0,10 = 94,00; discos 192 GB × 0,12 = 23,04; objectos
+400 GB × 0,025 = 10,00; saída (150 − 10) GB × 0,09 = 12,60; cópias
+200 GB × 0,05 = 10,00; registos 30 GB × 0,50 = 15,00. Consumo = **164,64 USD**;
+suporte 10 % = 16,46, abaixo do mínimo, logo **25,00 USD**; total
+**189,64 USD**; ao câmbio assumido de 64 MZN/USD, **12 136,96 MZN**. A solução
+de referência está apenas no guião do formador. Verificado em
+`src/lib/__tests__/computacao-nuvem-modulo3.test.ts`.
+
+### Limites e rotulagem honesta
+
+- Repartição das cinco lições: proposta Ologa/ATDI por validar, não imposição
+  do Termo de Referência. Só identidade, acesso e criptografia constam da
+  secção 6.3.
+- Casos, instituições, registos, preços e propostas são fictícios e estão
+  identificados como tal no próprio texto.
+- Não há vídeo, não há interpretação em língua de sinais e não há aprovação
+  REMOTELINE associados a este módulo. Nada disso é afirmado no conteúdo.
+- Dois formandos por computador no máximo, com alternância de quem escreve; um
+  por pessoa é a recomendação. Os exercícios do módulo 3 podem ser feitos
+  integralmente em papel.
+- Partilha por amostra de dois grupos; os restantes recebem apreciação escrita.
+- M3L5 não aplica automaticamente a meta de 99,5 % do Termo de Referência, que
+  é da plataforma daquele concurso, a qualquer fornecedor; e não produz
+  conclusões jurídicas — a matéria legal fica remetida à área jurídica da
+  instituição.
+- Ficha do curso preenchida (objectivos, público-alvo, pré-requisitos e
+  materiais), distinguindo em cada campo a exigência do Termo de Referência da
+  proposta da equipa.
+- Banco de questões do curso: **pendente**. O exame deste curso continua
+  bloqueado e não foi criado nesta tarefa.

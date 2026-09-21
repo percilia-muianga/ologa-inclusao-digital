@@ -21,6 +21,7 @@ import {
 import {
   MODULOS_PLANO,
   MINUTOS_AVALIACAO_ORIENTACAO,
+  FICHA_CURSO,
 } from "../src/lib/plano-computacao-nuvem";
 
 /** «8 h 40 min», «9 horas» — sem arredondar para horas inteiras. */
@@ -61,6 +62,20 @@ async function main() {
 
   const relacoes = must(
     await sb.from("curso_modulos").select("modulo_id,ordem,carga_horaria_minutos").eq("curso_id", curso.id).order("ordem"),
+  );
+
+  // Ficha do curso. Distingue exigência do Termo de Referência de proposta da equipa.
+  must(
+    await sb
+      .from("cursos")
+      .update({
+        objectivos: FICHA_CURSO.objectivos,
+        publico_alvo: FICHA_CURSO.publicoAlvo,
+        pre_requisitos: FICHA_CURSO.preRequisitos,
+        materiais: `${FICHA_CURSO.materiais} ${FICHA_CURSO.nota}`,
+      })
+      .eq("id", curso.id)
+      .select("id"),
   );
 
   // Reconciliação dos metadados de duração com o plano (fonte única).

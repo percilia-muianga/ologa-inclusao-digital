@@ -263,5 +263,22 @@ export const LICOES_PLANO: LicaoPlano[] = MODULOS_PLANO.flatMap((m) => m.licoes)
 export const AVISO_PROPOSTA =
   "Proposta pedagógica — por validar pela Ologa/ATDI. A disponibilidade deste rascunho não equivale a aprovação.";
 
+/**
+ * Ficha do curso. Distingue sempre o que é exigência do Termo de Referência
+ * do que é proposta da equipa, por validar pela Ologa/ATDI.
+ */
+export const FICHA_CURSO = {
+  objectivos:
+    "Objectivos assentes no conteúdo programático da secção 6.3 do Termo de Referência (exigência): compreender o conceito de computação em nuvem, as suas cinco características essenciais, a história e a evolução do modelo; distinguir os modelos de serviço (infra-estrutura, plataforma e programa como serviço) e os modelos de implantação (pública, privada, comunitária e híbrida); identificar vantagens e componentes de infra-estrutura; conhecer multinuvem, nuvem híbrida, execução sem servidor, microserviços, práticas cloud-native, DevOps e modernização de aplicações; aplicar noções de gestão de identidades, controlo de acesso e criptografia; reconhecer os serviços das plataformas mais utilizadas; e realizar as cinco operações práticas exigidas — criar uma máquina virtual, criar uma rede virtual, configurar regras de segurança, criar um contentor de armazenamento de objectos e publicar uma aplicação numa plataforma como serviço. Proposta da equipa, por validar: os temas de monitoria e resposta a incidentes, custos e optimização, e requisitos de contratação de serviços de nuvem são desenvolvimento pedagógico acrescentado ao mínimo exigido.",
+  publicoAlvo:
+    "Servidores públicos seleccionados pela entidade beneficiária, segundo os critérios da própria entidade. O curso é presencial e a turma tem o limite de 30 formandos por grupo.",
+  preRequisitos:
+    "Pré-requisitos digitais propostos pela equipa, por validar: utilização autónoma de computador, ficheiros e pastas; navegação na internet e utilização de uma conta de correio electrónico institucional; noções básicas de folha de cálculo, úteis no exercício de custos. Não é exigida experiência anterior de administração de sistemas. Pré-requisitos de ambiente, da responsabilidade da entidade anfitriã: sala preparada com energia estável, computadores em número suficiente, ligação à internet com largura de banda utilizável em simultâneo por toda a turma e projecção visível de todos os lugares.",
+  materiais:
+    "Materiais e condições propostos, por validar: um computador por pessoa formanda como recomendação e, quando não for possível, no máximo duas pessoas por computador, alternando quem executa; ligação à internet para os laboratórios dos módulos 1 e 2; guiões do formador e conteúdos de cada lição disponíveis na plataforma; fichas de trabalho em papel para os exercícios de análise do módulo 3, que não exigem computador; e contas institucionais de formação com permissões limitadas e limites de consumo definidos pelo formador antes da sessão. Não se usam dados reais de pessoas, não se escrevem credenciais no material e nada é adquirido durante as aulas.",
+  nota:
+    "A carga de 30 horas e a modalidade presencial são exigência da tabela da secção 14 do Termo de Referência. A distribuição por módulos e por lições é proposta da equipa e está por validar pela Ologa/ATDI.",
+} as const;
+
 export const AVISO_LABORATORIOS =
   "Laboratórios escritos e ainda NÃO EXECUTADOS. O ambiente formativo está por preparar: exige conta institucional de ensaio, com permissões e limites de consumo definidos pelo formador. O material de preparação sem ligação à internet é complementar e não substitui a prática real exigida pela secção 6.3.";
