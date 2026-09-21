@@ -136,12 +136,35 @@ describe("bancos renovados — contagens e rácio", () => {
     for (const q of [...EXAME_V2, ...PRE_POS_V2]) expect(antigos.has(q.e.trim())).toBe(false);
   });
 
-  it("Transformação Digital: banco novo sem questões de cenário, coerente com as quotas", () => {
-    for (const q of [...EXAME_TD_V2, ...PRE_POS_TD_V2]) {
-      expect((q as Q).cen).toBeUndefined();
+  it("Transformação Digital: contagens exactas por módulo, tipologia e dificuldade", () => {
+    const porModulo: Record<string, number> = {};
+    const porTipo: Record<string, number> = {};
+    const porDificuldade: Record<string, number> = {};
+    for (const q of EXAME_TD_V2) {
+      porModulo[q.m] = (porModulo[q.m] ?? 0) + 1;
+      const t = q.cen ? "cenario" : TIPOLOGIA[q.t as keyof typeof TIPOLOGIA];
+      porTipo[t] = (porTipo[t] ?? 0) + 1;
+      porDificuldade[q.d] = (porDificuldade[q.d] ?? 0) + 1;
     }
-    expect(QUOTAS_POR_CURSO["principios-transformacao-digital"]!.tipos.cenario).toBeUndefined();
+    // Fundamentos 18 · Serviços centrados no cidadão 18 · Implementação 18 · Transversal 6
+    expect(porModulo).toEqual({ m1: 18, m2: 18, m3: 18, transversal: 6 });
+    expect(porTipo).toEqual({
+      escolha_multipla: 24,
+      verdadeiro_falso: 12,
+      correspondencia: 12,
+      ordenacao: 6,
+      cenario: 6,
+    });
+    expect(porDificuldade).toEqual({ f: 24, me: 24, di: 12 });
   });
+
+  it("Transformação Digital: quotas incluem o módulo transversal e cenários", () => {
+    const quotas = QUOTAS_POR_CURSO["principios-transformacao-digital"]!;
+    expect(quotas.modulosPorOrdem).toEqual({ 111: 6, 112: 6, 113: 6, 200: 2 });
+    expect(quotas.tipos.cenario).toBe(2);
+    expect(quotas.tipos.ordenacao).toBe(2);
+  });
+
 });
 
 describe("bancos renovados — viabilidade do sorteio com cobertura", () => {
