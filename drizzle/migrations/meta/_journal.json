@@ -92,6 +92,13 @@
       "when": 1790018239993,
       "tag": "0012_cursos_nota_carga_horaria",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790022127475,
+      "tag": "0013_seguranca_gestao_auditoria",
+      "breakpoints": true
     }
   ]
 }

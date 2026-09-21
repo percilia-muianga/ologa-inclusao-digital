@@ -1509,6 +1509,7 @@ export type Database = {
         Row: {
           accao: string
           campos_sensiveis_alterados: string[] | null
+          contexto_actor: string | null
           endereco_ip: string | null
           entidade: string
           id: string
@@ -1521,6 +1522,7 @@ export type Database = {
         Insert: {
           accao: string
           campos_sensiveis_alterados?: string[] | null
+          contexto_actor?: string | null
           endereco_ip?: string | null
           entidade: string
           id?: string
@@ -1533,6 +1535,7 @@ export type Database = {
         Update: {
           accao?: string
           campos_sensiveis_alterados?: string[] | null
+          contexto_actor?: string | null
           endereco_ip?: string | null
           entidade?: string
           id?: string
@@ -1992,6 +1995,8 @@ export type Database = {
           tabela: string
         }[]
       }
+      pode_gerir_programa: { Args: { _uid: string }; Returns: boolean }
+      pode_ler_gestao: { Args: { _uid: string }; Returns: boolean }
       registar_acesso_sensivel: {
         Args: {
           _campos: string[]
