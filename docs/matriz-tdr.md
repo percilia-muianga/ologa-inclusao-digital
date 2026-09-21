@@ -298,11 +298,12 @@ vez, + 2 h de diagnóstico, revisão e exame.
 
 | Requisito (sec. 6.3) | Lição | Laboratório | Evidência a recolher |
 | --- | --- | --- | --- |
-| Componentes de infra-estrutura: computação e armazenamento | M2L1 Recursos de computação e armazenamento | Criar máquina virtual (Azure) | Captura da máquina criada, com subscrição tapada; ficha com nome, região e horas |
-| Criar um bucket de armazenamento | M2L1 | Criar bucket privado (Amazon S3) | Captura do bloqueio de acesso público activo e da listagem do objecto fictício |
-| Criar uma rede virtual | M2L2 Redes e conectividade na nuvem | Rede virtual com três sub-redes (Azure) | Captura do desenho da rede com intervalos sem sobreposição |
-| Criar regras de segurança | M2L2 | Grupos de segurança de rede com permissão mínima | Captura das regras de entrada mostrando origens restritas; nenhuma origem «qualquer» em porta administrativa |
-| Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service, aplicação Node.js | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
+| Componentes de infra-estrutura: computação e armazenamento | M2L1 Recursos de computação e armazenamento | Criar bucket privado (Amazon S3) e preparar por escrito a máquina virtual | Captura do bloqueio de acesso público e do «acesso negado» em janela anónima; ficha de preparação da máquina |
+| Criar um bucket de armazenamento | M2L1 | Amazon S3, com convenção de nomes do laboratório e ligação à regra oficial | Listagem do objecto fictício; registo da limpeza objectos → bucket |
+| Criar uma rede virtual | M2L2 Redes e conectividade na nuvem | Rede virtual com três sub-redes (Azure), criada ANTES de qualquer máquina | Captura das sub-redes com intervalos e grupos associados |
+| Criar regras de segurança | M2L2 | Três grupos de segurança, permissões em prioridade 100 e negação explícita em 4000 | Regras de entrada com origens restritas; avaliação de fluxo do portal nomeando a regra que decidiu |
+| Criar uma máquina virtual | M2L2 | Máquina Linux criada dentro da sub-rede de aplicação, acesso remoto só do endereço de saída da sala | Teste positivo (sessão estabelecida) e teste negativo por avaliação de regras |
+| Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service, aplicação Node.js com Express, publicada por arquivo zip | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
 | Serviços das plataformas populares; IaaS/PaaS/SaaS | M2L1 e M2L3 | — | Tabela de responsabilidades do fornecedor e da instituição |
 | Disponibilidade, cópias e recuperação | M2L4 Disponibilidade, cópias e recuperação | Sem laboratório: planeamento | Plano de continuidade com as duas medidas, plano de cópias, restauro numerado e comunicação |
 | Serverless, microserviços, cloud-native, DevOps, modernização | M2L5 Planear uma arquitectura simples | Sem laboratório: desenho | Desenho A3, justificações por componente, etapas de modernização, pressupostos |
@@ -322,9 +323,26 @@ serviço.
   credenciais no material, sem promessa de gratuitidade.
 - Armazenamento privado por defeito; nenhum acesso administrativo aberto ao
   mundo em nenhum passo.
-- Limpeza apenas dos recursos do exercício. A máquina virtual da lição 1 é
-  propositadamente mantida até ao fim da lição 2, porque esta depende dela; a
-  eliminação fica registada com autor e hora.
+- Dois formandos por computador no máximo, um por computador sempre que o
+  equipamento chegue, com alternância de executante dentro do par (sec. 9). A
+  demonstração do formador não substitui a prática: se o ambiente falhar, a
+  prática fica registada como pendente e é reagendada.
+- Pré-requisitos e limpeza separados por fornecedor: subscrição e grupo de
+  recursos no Azure; conta e papel de formação com permissões limitadas aos
+  buckets com o prefixo da turma na Amazon. Um bucket não pertence a um grupo
+  de recursos do Azure.
+- Ordem corrigida: a lição 1 pratica o armazenamento de objectos e prepara os
+  parâmetros da máquina; a lição 2 cria rede, sub-redes e grupos de segurança
+  e só depois cria a máquina na sub-rede de aplicação, porque a interface de
+  rede não muda de rede virtual.
+- Regras de segurança: a regra por omissão 65000 PERMITE o tráfego interno da
+  rede virtual, pelo que cada grupo tem permissão específica em prioridade 100
+  e negação explícita em 4000. A verificação usa teste positivo e avaliação de
+  fluxo do portal; um tempo de espera esgotado não prova filtragem. Distingue-se
+  regra desenhada, regra configurada e ligação testada.
+- Limpeza por ordem de dependências, restrita aos recursos do exercício, sem
+  afirmar que o grupo de recursos fica vazio quando contém infra-estrutura
+  partilhada anterior.
 - Material offline é preparação e não substitui a prática no ambiente real.
 
 ### Estado das lições do curso
