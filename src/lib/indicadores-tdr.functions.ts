@@ -71,6 +71,9 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     configRes,
     locaisRes,
     distritosRes,
+    sessoesRes,
+    presencasRes,
+    basesRes,
   ]) {
     if (r.error) throw r.error;
   }
@@ -84,6 +87,39 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
   const avaliacoes = avaliacoesRes.data ?? [];
   const satisfacao = satisfacaoRes.data ?? [];
   const eficacia = eficaciaRes.data ?? [];
+
+  // Assiduidade por formando, turma a turma. Só as sessões marcadas como
+  // realizadas entram no denominador. Guardamos sempre as duas taxas.
+  const linhasAssiduidade = turmas.flatMap((t) => {
+    const sessoes = (sessoesRes.data ?? [])
+      .filter((s) => s.turma_id === t.id)
+      .map((s) => ({ id: s.id, data: s.data, estado: s.estado as never }));
+    const inscritosT = inscricoes.filter((i) => i.turma_id === t.id);
+    if (inscritosT.length === 0) return [];
+    const base =
+      ((basesRes.data ?? []).find((b) => b.curso_id === t.curso_id)?.base_assiduidade as
+        | "estrita"
+        | "ajustada") ?? "estrita";
+    return calcularAssiduidade(
+      sessoes,
+      inscritosT.map((i) => ({ id: i.id, nome: i.nome })),
+      ((presencasRes.data ?? []) as never[]).filter(
+        (m: { turma_id: string }) => m.turma_id === t.id,
+      ) as never,
+      base,
+    ).map((l) => ({ ...l, provincia: t.provincia }));
+  });
+
+  const mediaTaxa = (
+    lista: Array<{ taxaEstritaPct: number | null; taxaAjustadaPct: number | null }>,
+    chave: "taxaEstritaPct" | "taxaAjustadaPct",
+  ) => {
+    const uteis = lista.filter((l) => l[chave] !== null);
+    return uteis.length
+      ? Math.round((uteis.reduce((a, l) => a + (l[chave] ?? 0), 0) / uteis.length) * 10) / 10
+      : null;
+  };
+
 
   const inscritos = inscricoes.length;
   const certificados = certificadosRes.count ?? 0;
