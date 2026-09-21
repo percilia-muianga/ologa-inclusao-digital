@@ -149,8 +149,16 @@ describe("conteúdo escrito do módulo 1", () => {
     const tudo = Object.values(LICOES)
       .map((c) => JSON.stringify(c))
       .join(" ");
-    expect(tudo).not.toMatch(/ferramenta gratuita/i);
-    expect(tudo).toMatch(/não se promete que qualquer ferramenta seja gratuita/i);
+    expect(tudo).not.toMatch(/ferramenta gratuita|grátis/i);
+    const html4 = montarElearning(LICOES["m1l4"]!, 120, {
+      acolhimento: 10,
+      exposicao: 35,
+      actividade: 60,
+      partilha: 15,
+    });
+    expect(html4).toMatch(/não se promete que qualquer ferramenta seja gratuita/i);
+    expect(html4).toMatch(/Não se pede a ninguém que crie conta pessoal|não se cria conta pessoal/i);
+    expect(FICHA_CURSO.materiais).toMatch(/não se promete que qualquer ferramenta seja gratuita/i);
   });
 
   it("não afirma que a prática foi realizada nem inventa Língua de Sinais ou vídeo", () => {
