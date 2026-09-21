@@ -65,6 +65,7 @@ function DiagnosticoView() {
             <Link
               to="/formacao/$modulo"
               params={{ modulo: moduloId }}
+              search={{ curso }}
               className="btn-brand btn-brand-hover"
             >
               Começar as lições
@@ -124,6 +125,7 @@ function DiagnosticoView() {
           <Link
             to="/formacao/$modulo"
             params={{ modulo: moduloId }}
+            search={{ curso }}
             className="text-sm font-semibold text-navy-2 underline"
           >
             Saltar

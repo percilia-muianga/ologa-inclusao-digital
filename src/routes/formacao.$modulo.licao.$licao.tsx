@@ -99,6 +99,7 @@ function LicaoView() {
         <Link
           to="/formacao/$modulo"
           params={{ modulo: moduloId }}
+          search={{ curso }}
           className="text-navy-2 underline hover:text-brand-dark"
         >
           ← Voltar ao módulo
@@ -221,6 +222,7 @@ function LicaoView() {
             <Link
               to="/formacao/$modulo/licao/$licao"
               params={{ modulo: moduloId, licao: anterior.id }}
+              search={{ curso }}
               className="text-sm font-semibold text-navy-2 underline"
             >
               ← {anterior.titulo}

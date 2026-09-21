@@ -262,6 +262,7 @@ function CertificadoView() {
         <Link
           to="/formacao/$modulo"
           params={{ modulo: moduloId }}
+          search={{ curso }}
           className="text-navy-2 underline hover:text-brand"
         >
           ← Voltar ao módulo
@@ -287,6 +288,7 @@ function CertificadoView() {
             <Link
               to="/formacao/$modulo"
               params={{ modulo: moduloId }}
+              search={{ curso }}
               className="btn-brand btn-brand-hover"
             >
               Voltar ao módulo

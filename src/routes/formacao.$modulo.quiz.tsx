@@ -114,6 +114,7 @@ function QuizView() {
             <Link
               to="/formacao/$modulo"
               params={{ modulo: moduloId }}
+              search={{ curso }}
               className="text-sm font-semibold text-navy-2 underline"
             >
               Voltar ao módulo
@@ -208,6 +209,7 @@ function QuizView() {
           <Link
             to="/formacao/$modulo"
             params={{ modulo: moduloId }}
+            search={{ curso }}
             className="text-sm font-semibold text-navy-2 underline"
           >
             Cancelar

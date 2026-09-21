@@ -80,6 +80,7 @@ function ModuloOverview() {
                   <Link
                     to="/formacao/$modulo/licao/$licao"
                     params={{ modulo: moduloId, licao: l.id }}
+                    search={{ curso }}
                     className="flex items-center justify-between rounded-lg border border-line bg-white p-4 hover:border-brand"
                   >
                     <span className="flex items-center gap-3">
@@ -120,6 +121,7 @@ function ModuloOverview() {
             <Link
               to="/formacao/$modulo/quiz"
               params={{ modulo: moduloId }}
+              search={{ curso }}
               className="btn-brand btn-brand-hover"
             >
               {todasConcluidas ? "Fazer o teste" : "Fazer o teste na mesma"}
@@ -146,6 +148,7 @@ function ModuloOverview() {
             <Link
               to="/formacao/$modulo/diagnostico"
               params={{ modulo: moduloId }}
+              search={{ curso }}
               className="text-sm font-semibold text-brand-dark underline"
             >
               {diagnostico ? "Rever diagnóstico" : "Fazer diagnóstico"}
@@ -164,6 +167,7 @@ function ModuloOverview() {
           <Link
             to="/formacao/$modulo/certificado"
             params={{ modulo: moduloId }}
+            search={{ curso }}
             className="text-sm font-semibold text-brand-dark underline"
           >
             Ir para a página de certificado
