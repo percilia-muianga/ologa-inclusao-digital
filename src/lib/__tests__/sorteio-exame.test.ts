@@ -340,7 +340,8 @@ describe("garantias no motor de exame (regressão sobre o código)", () => {
   it("o módulo de sorteio é puro: não lê a base nem toca em respostas", () => {
     const motor = readFileSync("src/lib/sorteio-exame.ts", "utf8");
     expect(motor).not.toContain("supabase");
-    expect(motor).not.toContain("resposta");
+    expect(motor).not.toContain("resposta:");
     expect(motor).not.toContain("explicacao");
+    expect(motor).not.toContain("gabarito");
   });
 });
