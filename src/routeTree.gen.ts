@@ -31,6 +31,7 @@ import { Route as WorkshopsIndexRouteImport } from './routes/workshops.index'
 import { Route as TurmasIndexRouteImport } from './routes/turmas.index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
+import { Route as AvaliacaoIndexRouteImport } from './routes/avaliacao.index'
 import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
 import { Route as WorkshopsIdRouteImport } from './routes/workshops.$id'
 import { Route as TurmasNovaRouteImport } from './routes/turmas.nova'
@@ -165,6 +166,11 @@ const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FormacaoRoute,
 } as any)
+const AvaliacaoIndexRoute = AvaliacaoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
 const WorkshopsNovoRoute = WorkshopsNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
@@ -297,7 +303,7 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/avaliacao': typeof AvaliacaoRoute
+  '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -321,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/turmas/': typeof TurmasIndexRoute
@@ -344,7 +351,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/avaliacao': typeof AvaliacaoRoute
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -362,6 +368,7 @@ export interface FileRoutesByTo {
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao': typeof AvaliacaoIndexRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
   '/turmas': typeof TurmasIndexRoute
@@ -387,7 +394,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/avaliacao': typeof AvaliacaoRoute
+  '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -411,6 +418,7 @@ export interface FileRoutesById {
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/turmas/': typeof TurmasIndexRoute
@@ -460,6 +468,7 @@ export interface FileRouteTypes {
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
     | '/turmas/'
@@ -483,7 +492,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/avaliacao'
     | '/certificados'
     | '/conformidade'
     | '/criar-conta'
@@ -501,6 +509,7 @@ export interface FileRouteTypes {
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao'
     | '/formacao'
     | '/ologa'
     | '/turmas'
@@ -549,6 +558,7 @@ export interface FileRouteTypes {
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
     | '/turmas/'
@@ -574,7 +584,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AvaliacaoRoute: typeof AvaliacaoRoute
+  AvaliacaoRoute: typeof AvaliacaoRouteWithChildren
   CertificadosRoute: typeof CertificadosRoute
   ConformidadeRoute: typeof ConformidadeRoute
   CriarContaRoute: typeof CriarContaRoute
@@ -749,6 +759,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/formacao/'
       preLoaderRoute: typeof FormacaoIndexRouteImport
       parentRoute: typeof FormacaoRoute
+    }
+    '/avaliacao/': {
+      id: '/avaliacao/'
+      path: '/'
+      fullPath: '/avaliacao/'
+      preLoaderRoute: typeof AvaliacaoIndexRouteImport
+      parentRoute: typeof AvaliacaoRoute
     }
     '/workshops/novo': {
       id: '/workshops/novo'
@@ -951,6 +968,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AvaliacaoRouteChildren {
+  AvaliacaoIndexRoute: typeof AvaliacaoIndexRoute
+}
+
+const AvaliacaoRouteChildren: AvaliacaoRouteChildren = {
+  AvaliacaoIndexRoute: AvaliacaoIndexRoute,
+}
+
+const AvaliacaoRouteWithChildren = AvaliacaoRoute._addFileChildren(
+  AvaliacaoRouteChildren,
+)
+
 interface CursosRouteChildren {
   CursosCursoRoute: typeof CursosCursoRoute
 }
@@ -1059,7 +1088,7 @@ const WorkshopsRouteWithChildren = WorkshopsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AvaliacaoRoute: AvaliacaoRoute,
+  AvaliacaoRoute: AvaliacaoRouteWithChildren,
   CertificadosRoute: CertificadosRoute,
   ConformidadeRoute: ConformidadeRoute,
   CriarContaRoute: CriarContaRoute,
