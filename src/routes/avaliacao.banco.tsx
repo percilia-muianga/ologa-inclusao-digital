@@ -730,6 +730,7 @@ function BancoPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
+                  disabled={!podeEscrever}
                   onClick={() => abrirEdicao(q as unknown as Record<string, unknown>)}
                   className="min-h-11 rounded-md border border-line px-3 text-base font-semibold text-navy"
                 >
@@ -737,6 +738,7 @@ function BancoPage() {
                 </button>
                 <button
                   type="button"
+                  disabled={!podeEscrever}
                   onClick={() => void alternarEstado(q.id, !q.activa)}
                   className="min-h-11 rounded-md border border-line px-3 text-base font-semibold text-navy"
                 >
