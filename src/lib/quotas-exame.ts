@@ -30,15 +30,17 @@ export const QUOTAS_POR_CURSO: Record<string, QuotasCurso> = {
   },
   "principios-transformacao-digital": {
     total: 20,
-    modulosPorOrdem: { 111: 7, 112: 7, 113: 6 },
+    modulosPorOrdem: { 111: 6, 112: 6, 113: 6, 200: 2 },
     tipos: {
-      escolha_multipla: 12,
-      verdadeiro_falso: 5,
-      correspondencia: 2,
-      ordenacao: 1,
+      escolha_multipla: 8,
+      verdadeiro_falso: 4,
+      correspondencia: 4,
+      ordenacao: 2,
+      cenario: 2,
     },
-    nota: "Proposta pedagógica coerente com o banco actual (39 de escolha múltipla, 14 de verdadeiro/falso, 4 de associação e 3 de ordenação, 20 por módulo): 7+7+6 por módulo e 12/5/2/1 por tipologia. Este curso ainda não tem questões de cenário marcadas; se a renovação do banco as introduzir, a quota deve ser revista.",
+    nota: "Proposta pedagógica, por validar pela Ologa/ATDI: 6 de Fundamentos da Transformação Digital (111), 6 de Serviços Públicos Centrados no Cidadão (112), 6 de Implementação e Mudança Institucional (113) e 2 do módulo transversal Governo Digital Inclusivo e Acessibilidade (200); 8 de escolha múltipla, 4 de verdadeiro/falso, 4 de associação, 2 de ordenação e 2 de cenário. O cenário conta como categoria própria e exclui a classificação como escolha múltipla, mesmo usando esse formato de resposta.",
   },
+
 };
 
 /** Quotas de dificuldade a partir das percentagens configuradas. */

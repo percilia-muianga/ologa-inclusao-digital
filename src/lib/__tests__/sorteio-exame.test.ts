@@ -131,29 +131,52 @@ describe("sorteio com cobertura garantida — Computação em Nuvem", () => {
 });
 
 describe("sorteio com cobertura garantida — Transformação Digital", () => {
+  // Composição real do banco v2 de Transformação Digital:
+  // 111 Fundamentos 18 · 112 Serviços Centrados no Cidadão 18 ·
+  // 113 Implementação e Mudança 18 · 200 Governo Digital Inclusivo 6.
+  // "cenario" representa questão de cenário (formato de resposta escolha múltipla).
   const linhas: [string, string, string, number][] = [
-    ["111", "escolha_multipla", "facil", 6],
-    ["111", "escolha_multipla", "media", 4],
+    ["111", "escolha_multipla", "facil", 3],
+    ["111", "escolha_multipla", "media", 3],
     ["111", "escolha_multipla", "dificil", 2],
     ["111", "verdadeiro_falso", "facil", 2],
-    ["111", "verdadeiro_falso", "media", 3],
-    ["111", "correspondencia", "media", 2],
-    ["111", "ordenacao", "dificil", 1],
-    ["112", "escolha_multipla", "facil", 6],
+    ["111", "verdadeiro_falso", "media", 2],
+    ["111", "correspondencia", "facil", 1],
+    ["111", "correspondencia", "media", 1],
+    ["111", "correspondencia", "dificil", 1],
+    ["111", "ordenacao", "facil", 1],
+    ["111", "cenario", "media", 1],
+    ["111", "cenario", "dificil", 1],
+    ["112", "escolha_multipla", "facil", 3],
     ["112", "escolha_multipla", "media", 4],
-    ["112", "escolha_multipla", "dificil", 3],
-    ["112", "verdadeiro_falso", "facil", 3],
-    ["112", "verdadeiro_falso", "media", 2],
+    ["112", "escolha_multipla", "dificil", 1],
+    ["112", "verdadeiro_falso", "facil", 2],
+    ["112", "verdadeiro_falso", "media", 1],
+    ["112", "verdadeiro_falso", "dificil", 1],
+    ["112", "correspondencia", "facil", 1],
     ["112", "correspondencia", "media", 1],
+    ["112", "correspondencia", "dificil", 1],
+    ["112", "ordenacao", "facil", 1],
     ["112", "ordenacao", "media", 1],
-    ["113", "escolha_multipla", "facil", 7],
-    ["113", "escolha_multipla", "media", 5],
-    ["113", "escolha_multipla", "dificil", 2],
-    ["113", "verdadeiro_falso", "facil", 1],
-    ["113", "verdadeiro_falso", "media", 2],
+    ["112", "cenario", "dificil", 1],
+    ["113", "escolha_multipla", "facil", 2],
+    ["113", "escolha_multipla", "media", 3],
+    ["113", "escolha_multipla", "dificil", 1],
+    ["113", "verdadeiro_falso", "facil", 2],
+    ["113", "verdadeiro_falso", "media", 1],
     ["113", "verdadeiro_falso", "dificil", 1],
+    ["113", "correspondencia", "facil", 2],
     ["113", "correspondencia", "media", 1],
-    ["113", "ordenacao", "dificil", 1],
+    ["113", "correspondencia", "dificil", 1],
+    ["113", "ordenacao", "facil", 1],
+    ["113", "ordenacao", "media", 1],
+    ["113", "cenario", "media", 2],
+    ["200", "escolha_multipla", "facil", 1],
+    ["200", "escolha_multipla", "media", 1],
+    ["200", "correspondencia", "facil", 1],
+    ["200", "correspondencia", "media", 1],
+    ["200", "ordenacao", "facil", 1],
+    ["200", "cenario", "media", 1],
   ];
   const banco: QuestaoSorteavel[] = [];
   let n = 0;
@@ -162,10 +185,11 @@ describe("sorteio com cobertura garantida — Transformação Digital", () => {
       banco.push({
         id: `t${++n}`,
         moduloId: m,
-        tipologia: t as QuestaoSorteavel["tipologia"],
-        cenario: false,
+        tipologia: (t === "cenario" ? "escolha_multipla" : t) as QuestaoSorteavel["tipologia"],
+        cenario: t === "cenario",
         dificuldade: d as QuestaoSorteavel["dificuldade"],
       });
+
 
   const cfg = QUOTAS_POR_CURSO["principios-transformacao-digital"]!;
   const quotas: QuotasExame = {
@@ -175,17 +199,20 @@ describe("sorteio com cobertura garantida — Transformação Digital", () => {
     tipos: cfg.tipos,
   };
 
-  it("cumpre as quotas propostas em 150 amostras, preservando a ordenação", () => {
+  it("cumpre as quotas propostas em 150 amostras, com todos os módulos, tipos e cenários", () => {
     for (let semente = 1; semente <= 150; semente++) {
       const r = sortearExame(banco, quotas, geradorComSemente(semente));
       expect(r.ok, `semente ${semente}`).toBe(true);
       if (r.ok) {
         conferir(r.ids, banco, quotas);
         const escolhidas = r.ids.map((id) => banco.find((q) => q.id === id)!);
-        expect(escolhidas.filter((q) => q.tipologia === "ordenacao").length).toBe(1);
+        expect(escolhidas.filter((q) => q.tipologia === "ordenacao" && !q.cenario).length).toBe(2);
+        expect(escolhidas.filter((q) => q.cenario).length).toBe(2);
+        expect(new Set(escolhidas.map((q) => q.moduloId)).size).toBe(4);
       }
     }
   });
+
 });
 
 describe("bloqueios honestos, sem completar em silêncio", () => {

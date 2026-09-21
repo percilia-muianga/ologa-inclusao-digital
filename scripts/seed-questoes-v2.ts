@@ -98,11 +98,12 @@ const ALVOS: Alvo[] = [
   },
   {
     slug: "principios-transformacao-digital",
-    ordemPorChave: { m1: 1, m2: 2, m3: 3 },
+    ordemPorChave: { m1: 1, m2: 2, m3: 3, transversal: 4 },
     exame: EXAME_TD_V2 as QuestaoComOrdenacao[],
     prePos: PRE_POS_TD_V2 as QuestaoComOrdenacao[],
   },
 ];
+
 
 async function semearCurso(alvo: Alvo) {
   const curso = must<{ id: string; titulo: string } | null>(
@@ -201,6 +202,39 @@ async function semearCurso(alvo: Alvo) {
   await carregar(alvo.exame, "exame_final");
   await carregar(alvo.prePos, "pre_pos_teste");
 
+  // Reconciliação: uma linha v2 em uso cujo enunciado já não consta do ficheiro
+  // é retirada (nunca apagada), para não contar como utilizável nem entrar no
+  // sorteio. Idempotente: na segunda execução já não há sobrantes.
+  const noFicheiro = new Set<string>([
+    ...alvo.exame.map((q) => `exame_final::${q.e}`),
+    ...alvo.prePos.map((q) => `pre_pos_teste::${q.e}`),
+  ]);
+  const sobrantes = existentes.filter(
+    (q) =>
+      q.versao === VERSAO &&
+      q.estado_revisao !== "retirada" &&
+      !noFicheiro.has(`${q.instrumento}::${q.enunciado}`),
+  );
+  for (const q of sobrantes) {
+    must(
+      await sb
+        .from("banco_questoes")
+        .update({
+          estado_revisao: "retirada",
+          activa: false,
+          retirada_motivo:
+            "Substituída na revisão do banco v2 (quotas com módulo transversal e cenários).",
+          actualizado_em: new Date().toISOString(),
+        })
+        .eq("curso_id", curso.id)
+        .eq("versao", VERSAO)
+        .eq("instrumento", q.instrumento)
+        .eq("enunciado", q.enunciado)
+        .select("id"),
+    );
+  }
+
+
   const finais = must<
     { instrumento: string; activa: boolean; estado_revisao: string; versao: string }[]
   >(
@@ -214,7 +248,9 @@ async function semearCurso(alvo: Alvo) {
     curso: curso.titulo,
     inseridas,
     actualizadas,
+    sobrantesRetiradas: sobrantes.length,
     ignoradasPorEstaremRetiradas: ignoradasRetiradas,
+
     naBase: {
       total: finais.length,
       activas: finais.filter((q) => q.activa).length,

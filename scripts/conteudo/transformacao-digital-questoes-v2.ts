@@ -5,8 +5,9 @@
  * gestão do banco e foi retirada (continua guardada, fora do sorteio, sem
  * possibilidade de activação). Este conteúdo foi escrito de raiz — outros
  * casos, outros dados, outros distractores, outro raciocínio — e avalia
- * resultados de aprendizagem das 12 lições existentes do curso, nunca
- * instruções do guião do formador nem o estado do projecto.
+ * resultados de aprendizagem das lições existentes do curso, incluindo o
+ * módulo transversal partilhado, nunca instruções do guião do formador nem o
+ * estado do projecto.
  *
  * Instrumentos separados:
  * - EXAME_TD_V2: 60 questões para a prova proposta de 20 (banco ≥ 3×).
@@ -15,28 +16,37 @@
  *
  * Todas entram INACTIVAS (rascunho por validar pela Ologa/ATDI).
  *
- * Distribuição desenhada para as quotas em vigor em src/lib/quotas-exame.ts
- * (7 M1 + 7 M2 + 6 M3; 12 escolha múltipla + 5 verdadeiro/falso + 2 associação
- * + 1 ordenação; 8 fáceis + 8 médias + 4 difíceis):
- *   M1 21 = em 13 (5f/4me/4di) + vf 5 (3f/2me) + cor 2 (1f/1me) + ord 1 (1me)
- *   M2 21 = em 13 (5f/5me/3di) + vf 5 (2f/2me/1di) + cor 2 (1f/1me) + ord 1 (1f)
- *   M3 18 = em 10 (3f/4me/3di) + vf 5 (2f/2me/1di) + cor 2 (1f/1me) + ord 1 (1me)
- * Totais: 36 escolha múltipla, 15 verdadeiro/falso, 6 associação, 3 ordenação;
- * 24 fáceis, 24 médias, 12 difíceis.
+ * MÓDULOS, por nome (para evitar erro de mapeamento):
+ *   m1 = Fundamentos da Transformação Digital (ordem 111)
+ *   m2 = Serviços Públicos Centrados no Cidadão (ordem 112)
+ *   m3 = Implementação e Mudança Institucional (ordem 113)
+ *   transversal = Governo Digital Inclusivo e Acessibilidade (ordem 200)
  *
- * Limite conhecido e assumido: as quotas em vigor deste curso não incluem
- * módulo transversal nem tipologia de cenário; por isso este banco não escreve
- * questões desses tipos, que ficariam fora do sorteio. Se a Ologa/ATDI alterar
- * as quotas, o banco tem de ser alargado em conformidade.
+ * Distribuição desenhada para as quotas em vigor em src/lib/quotas-exame.ts
+ * (prova de 20: 6 Fundamentos + 6 Serviços Centrados no Cidadão +
+ * 6 Implementação e Mudança + 2 Transversal; 8 escolha múltipla + 4
+ * verdadeiro/falso + 4 associação + 2 ordenação + 2 cenários; 8 fáceis +
+ * 8 médias + 4 difíceis). O cenário é categoria pedagógica própria e exclui a
+ * classificação como escolha múltipla, mesmo usando esse formato de resposta.
+ *
+ * Banco: 18 + 18 + 18 + 6 por módulo; 24 escolha múltipla, 12 verdadeiro/falso,
+ * 12 associação, 6 ordenação, 6 cenários; 24 fáceis, 24 médias, 12 difíceis.
+ * Cada dimensão tem o triplo do que a prova consome, pelo que cada exame inclui
+ * todos os módulos, todos os formatos e cenários.
  *
  * Nomes de instituições e números são FICTÍCIOS e estão identificados.
  * Gabaritos e justificações vivem fora de src/ e de public/.
  */
 
 export type QuestaoTdV2 = {
-  /** m1 = Fundamentos, m2 = Serviços centrados no cidadão, m3 = Implementação */
-  m: "m1" | "m2" | "m3";
+  /**
+   * m1 = Fundamentos, m2 = Serviços centrados no cidadão,
+   * m3 = Implementação e mudança, transversal = Governo digital inclusivo
+   */
+  m: "m1" | "m2" | "m3" | "transversal";
   t: "em" | "vf" | "cor" | "ord";
+  /** Cenário: categoria pedagógica própria, exclusiva face a escolha múltipla. */
+  cen?: true;
   d: "f" | "me" | "di";
   e: string;
   opts?: string[];
@@ -50,9 +60,9 @@ export type QuestaoTdV2 = {
 
 export const EXAME_TD_V2: QuestaoTdV2[] = [
   // ==========================================================
-  // MÓDULO 1 — Fundamentos da Transformação Digital (21)
+  // MÓDULO 1 — Fundamentos da Transformação Digital (18)
+  // em 8 (3f/3me/2di) · vf 4 (2f/2me) · cor 3 (1f/1me/1di) · ord 1 (1f) · cen 2 (1me/1di)
   // ==========================================================
-  // -- escolha múltipla: 5 fáceis, 4 médias, 4 difíceis --
   {
     m: "m1", t: "em", d: "f",
     e: "Uma repartição passou a receber por correio electrónico o mesmo formulário que antes recebia em papel, mantendo exactamente os mesmos passos, carimbos e prazos. Como se classifica melhor esta mudança?",
@@ -63,7 +73,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Inovação de serviço centrada no cidadão",
     ], ind: 1,
     exp: "Trocar o suporte sem alterar o processo é digitalizar. Há transformação digital quando muda a forma como o serviço é concebido e prestado, com ganho para quem o usa: menos passos, menos deslocações, menos documentos repetidos.",
-    obj: "Distinguir digitalização de transformação digital. Lição 1 do módulo 1.",
+    obj: "Distinguir digitalização de transformação digital. Lição 1 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "f",
@@ -75,7 +85,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "A quantidade de formulários disponibilizados em linha",
     ], ind: 1,
     exp: "Valor público é o benefício efectivo produzido — tempo poupado às pessoas, acesso alargado, decisões melhor informadas, confiança. Investimento e número de sistemas são meios, não valor.",
-    obj: "Definir valor público. Lição 3 do módulo 1.",
+    obj: "Definir valor público. Lição 3 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "f",
@@ -87,31 +97,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Apenas o número de pedidos recebidos por mês",
     ], ind: 1,
     exp: "A maturidade digital é multidimensional: processos, competências das pessoas, qualidade e uso dos dados, tecnologia disponível e apoio da liderança. Olhar só para equipamento dá uma leitura falsa.",
-    obj: "Reconhecer as dimensões do diagnóstico de maturidade. Lição 4 do módulo 1.",
-  },
-  {
-    m: "m1", t: "em", d: "f",
-    e: "Porque é que a transformação digital no sector público não se resume a comprar tecnologia?",
-    opts: [
-      "Porque a tecnologia é dispensável no sector público",
-      "Porque sem alteração de processos, competências e regras internas, a tecnologia repete os problemas existentes mais depressa",
-      "Porque o sector público não pode adquirir tecnologia",
-      "Porque a tecnologia só funciona em instituições privadas",
-    ], ind: 1,
-    exp: "A tecnologia aplicada sobre um processo confuso produz um processo confuso automatizado. A mudança exige rever o processo, preparar as pessoas e ajustar as regras internas.",
-    obj: "Explicar porque a tecnologia não basta. Lição 2 do módulo 1.",
-  },
-  {
-    m: "m1", t: "em", d: "f",
-    e: "Qual destes é um impacto ambiental a considerar na digitalização de um serviço?",
-    opts: [
-      "O consumo de energia dos equipamentos e o destino do equipamento substituído",
-      "O número de páginas do manual de utilizador",
-      "A cor escolhida para o portal",
-      "O horário de atendimento do balcão",
-    ], ind: 0,
-    exp: "Consumo energético e destino final do equipamento são impactos ambientais concretos e mensuráveis da digitalização. Os restantes itens não têm relação com impacto ambiental.",
-    obj: "Identificar impactos ambientais da digitalização. Lição 3 do módulo 1.",
+    obj: "Reconhecer as dimensões do diagnóstico de maturidade. Lição 4 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "me",
@@ -123,7 +109,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "A maturidade depende apenas do número de funcionários formados",
     ], ind: 1,
     exp: "Um canal digital que obriga a deslocação para confirmar estado não substituiu o percurso antigo: acrescentou um passo. A maturidade mede-se pelo percurso completo da pessoa, não pela existência do formulário.",
-    obj: "Avaliar maturidade pelo percurso completo do serviço. Lições 2 e 4 do módulo 1.",
+    obj: "Avaliar maturidade pelo percurso completo do serviço. Lições 2 e 4 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "me",
@@ -135,7 +121,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "«Vamos formar a equipa em ferramentas digitais»",
     ], ind: 1,
     exp: "O valor público exprime-se como benefício mensurável para quem usa o serviço. Equipamento, aparência e formação são meios; podem ser necessários, mas não são o valor prometido.",
-    obj: "Formular valor público de forma mensurável. Lição 3 do módulo 1.",
+    obj: "Formular valor público de forma mensurável. Lição 3 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "me",
@@ -147,19 +133,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "A dimensão «dados» só interessa a serviços de estatística",
     ], ind: 1,
     exp: "Se os dados do serviço são incompletos ou inconsistentes, qualquer indicador construído sobre eles engana. Reconhecer essa fraqueza obriga a incluir no plano a correcção da recolha e do registo.",
-    obj: "Interpretar o resultado de um diagnóstico por dimensões. Lição 4 do módulo 1.",
-  },
-  {
-    m: "m1", t: "em", d: "me",
-    e: "Um responsável afirma: «a nossa transformação digital está concluída porque instalámos o novo sistema». Que resposta é mais rigorosa, à luz do módulo?",
-    opts: [
-      "Está correcta: a instalação do sistema conclui a transformação",
-      "A instalação é um marco; a transformação verifica-se quando o serviço prestado muda e o benefício é observado nas pessoas que o usam",
-      "Está errada porque nenhum sistema resolve problemas públicos",
-      "Está correcta se o sistema tiver sido comprado a um fornecedor internacional",
-    ], ind: 1,
-    exp: "A entrada em funcionamento de um sistema é um marco técnico. A transformação confirma-se no serviço prestado e no benefício observável, medido depois da entrada em funcionamento.",
-    obj: "Distinguir marco técnico de resultado do serviço. Lições 1 e 2 do módulo 1.",
+    obj: "Interpretar o resultado de um diagnóstico por dimensões. Lição 4 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "di",
@@ -171,19 +145,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Nenhuma produziu valor, porque não houve investimento em tecnologia",
     ], ind: 1,
     exp: "Prazo de emissão é resultado sentido por quem espera o documento. Visitas são medida de utilização do canal e podem até indicar dificuldade em encontrar informação. Sem efeito no prazo ou no esforço da pessoa, o aumento de visitas não demonstra benefício.",
-    obj: "Distinguir indicadores de uso de indicadores de resultado. Lições 3 e 4 do módulo 1.",
-  },
-  {
-    m: "m1", t: "em", d: "di",
-    e: "Uma instituição pretende digitalizar um serviço cujo processo actual exige três documentos que ela própria já possui noutros sistemas internos. Qual é a decisão mais coerente com os princípios estudados, e porquê?",
-    opts: [
-      "Digitalizar o pedido dos três documentos, para acelerar a entrega pelo cidadão",
-      "Deixar de pedir ao cidadão o que a instituição já tem, e só depois digitalizar o que restar do processo",
-      "Manter o pedido em papel, por segurança jurídica",
-      "Pedir os três documentos em papel e também em ficheiro digital",
-    ], ind: 1,
-    exp: "Digitalizar um pedido desnecessário perpetua o esforço imposto ao cidadão. O princípio é rever o processo primeiro: eliminar exigências que a instituição pode satisfazer internamente e só depois desenhar o canal digital.",
-    obj: "Aplicar a sequência rever-depois-digitalizar. Lições 1 e 2 do módulo 1.",
+    obj: "Distinguir indicadores de uso de indicadores de resultado. Lições 3 e 4 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "em", d: "di",
@@ -195,57 +157,36 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "As considerações éticas só dizem respeito à área jurídica",
     ], ind: 1,
     exp: "As escolhas com efeito ético ficam incorporadas no desenho: dados recolhidos, critérios aplicados, canais disponíveis e pessoas excluídas. Deixar para o fim significa, na prática, aceitar o que já foi decidido por omissão.",
-    obj: "Justificar o tratamento antecipado de questões éticas. Lição 3 do módulo 1.",
+    obj: "Justificar o tratamento antecipado de questões éticas. Lição 3 do módulo Fundamentos.",
   },
-  {
-    m: "m1", t: "em", d: "di",
-    e: "Num diagnóstico, a mesma pergunta obtém respostas opostas da direcção e do pessoal de atendimento. Qual é a conduta metodologicamente mais correcta?",
-    opts: [
-      "Adoptar a resposta da direcção, por ter visão de conjunto",
-      "Adoptar a resposta do atendimento, por estar mais próximo do cidadão",
-      "Registar a divergência como resultado do diagnóstico e verificar com evidência — registos, tempos, amostras de pedidos",
-      "Repetir o questionário até as respostas coincidirem",
-    ], ind: 2,
-    exp: "A divergência é informação: indica percepções diferentes sobre o mesmo processo. O diagnóstico ganha ao registá-la e ao confrontá-la com evidência observável, em vez de escolher uma versão por autoridade ou por proximidade.",
-    obj: "Tratar divergências de percepção num diagnóstico. Lição 4 do módulo 1.",
-  },
-  // -- verdadeiro/falso: 3 fáceis, 2 médias --
   {
     m: "m1", t: "vf", d: "f",
     e: "Verdadeiro ou falso: colocar um formulário em linha é suficiente para afirmar que o serviço foi transformado.",
     val: false,
     exp: "Falso. Sem alteração do processo e sem benefício observável para quem usa o serviço, trata-se de digitalização do formulário.",
-    obj: "Distinguir digitalização de transformação. Lição 1 do módulo 1.",
+    obj: "Distinguir digitalização de transformação. Lição 1 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "vf", d: "f",
     e: "Verdadeiro ou falso: a transformação digital de um serviço público deve ter em conta as pessoas que não têm acesso à internet.",
     val: true,
     exp: "Verdadeiro. Um serviço público é para toda a gente; ignorar quem não tem acesso transforma uma melhoria em exclusão.",
-    obj: "Reconhecer a exigência de inclusão. Lições 2 e 3 do módulo 1.",
-  },
-  {
-    m: "m1", t: "vf", d: "f",
-    e: "Verdadeiro ou falso: o diagnóstico de maturidade digital serve para escolher por onde começar, e não para classificar a instituição como boa ou má.",
-    val: true,
-    exp: "Verdadeiro. O objectivo é identificar pontos fracos e prioridades de intervenção; usado como julgamento, desincentiva respostas honestas e estraga o próprio diagnóstico.",
-    obj: "Compreender a finalidade do diagnóstico. Lição 4 do módulo 1.",
+    obj: "Reconhecer a exigência de inclusão. Lições 2 e 3 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "vf", d: "me",
     e: "Verdadeiro ou falso: um aumento no número de acessos ao portal demonstra, por si só, que o serviço melhorou para o cidadão.",
     val: false,
     exp: "Falso. Mais acessos podem resultar de dificuldade em encontrar informação, de repetição de tentativas ou de campanha de divulgação. Melhoria demonstra-se com indicadores de resultado, como prazo, número de deslocações ou taxa de pedidos concluídos.",
-    obj: "Distinguir uso de resultado. Lição 3 do módulo 1.",
+    obj: "Distinguir uso de resultado. Lição 3 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "vf", d: "me",
     e: "Verdadeiro ou falso: o apoio da liderança é uma das dimensões avaliadas no diagnóstico de maturidade digital, porque condiciona decisões, recursos e prioridades.",
     val: true,
     exp: "Verdadeiro. Sem decisão ao nível adequado, os projectos ficam dependentes do esforço individual e param quando surge o primeiro obstáculo de recursos ou de regra interna.",
-    obj: "Reconhecer a liderança como dimensão de maturidade. Lição 4 do módulo 1.",
+    obj: "Reconhecer a liderança como dimensão de maturidade. Lição 4 do módulo Fundamentos.",
   },
-  // -- associação: 1 fácil, 1 média --
   {
     m: "m1", t: "cor", d: "f",
     e: "Associe cada situação ao conceito que melhor a descreve.",
@@ -256,7 +197,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Avaliação de processos, pessoas, dados, tecnologia e liderança", direita: "Diagnóstico de maturidade" },
     ],
     exp: "Cada conceito tem uma marca distinta: mudança de suporte (digitalização), mudança do próprio serviço (transformação), benefício sentido (valor público) e avaliação multidimensional (maturidade).",
-    obj: "Associar conceitos fundamentais a situações. Lições 1, 3 e 4 do módulo 1.",
+    obj: "Associar conceitos fundamentais a situações. Lições 1, 3 e 4 do módulo Fundamentos.",
   },
   {
     m: "m1", t: "cor", d: "me",
@@ -269,11 +210,23 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Número de computadores instalados", direita: "Indicador de meios" },
     ],
     exp: "Meios e actividades descrevem o que a instituição fez; uso descreve a procura do canal; resultado descreve o efeito no percurso da pessoa. A prestação de contas séria apresenta resultados, sem esconder os meios.",
-    obj: "Classificar indicadores por tipo. Lições 3 e 4 do módulo 1.",
+    obj: "Classificar indicadores por tipo. Lições 3 e 4 do módulo Fundamentos.",
   },
-  // -- ordenação: 1 média --
   {
-    m: "m1", t: "ord", d: "me",
+    m: "m1", t: "cor", d: "di",
+    e: "Associe cada conclusão de um diagnóstico de maturidade à decisão que dela decorre com maior coerência.",
+    pares: [
+      { esquerda: "Processos escritos não correspondem ao que se faz no atendimento", direita: "Rever e actualizar o processo antes de o automatizar" },
+      { esquerda: "Registos do serviço incompletos e guardados em ficheiros dispersos", direita: "Corrigir a recolha e o registo antes de construir indicadores" },
+      { esquerda: "Pessoal sem competências para operar o novo sistema", direita: "Incluir formação e apoio no posto de trabalho no plano" },
+      { esquerda: "Decisões dependentes de despacho que demora semanas", direita: "Acordar com a liderança um circuito de decisão mais curto" },
+      { esquerda: "Equipamento insuficiente para o número de atendimentos", direita: "Dimensionar o investimento em meios com base na procura medida" },
+    ],
+    exp: "Cada fraqueza tem uma resposta própria, na dimensão onde foi detectada. O erro comum é responder a tudo com compra de equipamento ou com mais formação, deixando intactos o processo e o circuito de decisão.",
+    obj: "Converter conclusões do diagnóstico em decisões. Lição 4 do módulo Fundamentos.",
+  },
+  {
+    m: "m1", t: "ord", d: "f",
     e: "Ordene os passos de uma abordagem coerente de transformação de um serviço, do primeiro ao último.",
     seq: [
       "Compreender o serviço actual e quem o usa",
@@ -283,13 +236,37 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Medir os resultados e corrigir",
     ],
     exp: "A ordem evita o erro mais frequente: começar pela solução técnica. Primeiro compreende-se e diagnostica-se, depois simplifica-se, só então se implementa, e por fim mede-se para corrigir.",
-    obj: "Sequenciar uma abordagem de transformação. Lições 1, 2 e 4 do módulo 1.",
+    obj: "Sequenciar uma abordagem de transformação. Lições 1, 2 e 4 do módulo Fundamentos.",
+  },
+  {
+    m: "m1", t: "em", cen: true, d: "me",
+    e: "CENÁRIO (dados fictícios). A Direcção Distrital de Nhamacoa emite licenças de ocupação de bancas de mercado. O processo actual exige três documentos, dos quais um é uma certidão emitida pela própria Direcção, e obriga a duas deslocações. A direcção anuncia que vai «digitalizar o serviço este trimestre» colocando os três documentos num formulário em linha, mantendo o resto igual. Que apreciação é mais rigorosa e que decisão a acompanha?",
+    opts: [
+      "A decisão é adequada: com o formulário em linha, as deslocações desaparecem por si",
+      "A decisão trata do suporte e não do processo: convém primeiro deixar de exigir a certidão que a própria Direcção emite, e só depois desenhar o formulário para o que restar",
+      "A decisão é adequada, porque digitalizar é sempre melhor do que simplificar",
+      "A decisão deve ser abandonada, porque serviços de mercado não podem ser digitalizados",
+    ], ind: 1,
+    exp: "Colocar em linha um documento que a instituição já possui mantém o esforço do lado do cidadão e acrescenta um passo digital ao percurso antigo. A sequência correcta é rever o processo, eliminar a exigência interna e só depois digitalizar o que sobrar.",
+    obj: "Aplicar a sequência rever-depois-digitalizar a um caso concreto. Lições 1 e 2 do módulo Fundamentos.",
+  },
+  {
+    m: "m1", t: "em", cen: true, d: "di",
+    e: "CENÁRIO (dados fictícios). Numa autarquia, o diagnóstico de maturidade obtém respostas opostas: a direcção afirma que o prazo médio de resposta é de 3 dias e o pessoal de atendimento afirma que ronda as duas semanas. Não existe registo sistemático de datas de entrada e de saída dos pedidos. A equipa tem de apresentar o diagnóstico na próxima semana. Qual é a conduta mais defensável?",
+    opts: [
+      "Apresentar o prazo indicado pela direcção, por ter visão de conjunto do serviço",
+      "Apresentar a média das duas estimativas, para não tomar partido",
+      "Registar a divergência como resultado, declarar que não há dados fiáveis de prazo e propor a medição das datas de entrada e saída durante um período definido",
+      "Adiar o diagnóstico até existir um sistema informático que meça os prazos automaticamente",
+    ], ind: 2,
+    exp: "A divergência é, ela própria, um resultado do diagnóstico: mostra que o serviço não mede o que afirma. Escolher uma das versões ou fazer a média inventa um número; adiar tudo trava o trabalho. O caminho honesto é declarar a ausência de dados e propor uma medição simples e datada.",
+    obj: "Tratar divergências e ausência de dados num diagnóstico. Lição 4 do módulo Fundamentos.",
   },
 
   // ==========================================================
-  // MÓDULO 2 — Serviços Públicos Centrados no Cidadão (21)
+  // MÓDULO 2 — Serviços Públicos Centrados no Cidadão (18)
+  // em 8 (3f/4me/1di) · vf 4 (2f/1me/1di) · cor 3 (1f/1me/1di) · ord 2 (1f/1me) · cen 1 (1di)
   // ==========================================================
-  // -- escolha múltipla: 5 fáceis, 5 médias, 3 difíceis --
   {
     m: "m2", t: "em", d: "f",
     e: "Qual é a finalidade de mapear a jornada de um serviço público?",
@@ -300,7 +277,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Registar o orçamento gasto em cada etapa",
     ], ind: 1,
     exp: "A jornada é o percurso visto por quem usa o serviço: passos, documentos exigidos, deslocações, esperas e pontos de contacto. É isso que revela onde está o esforço desnecessário.",
-    obj: "Definir o propósito do mapa de jornada. Lição 2 do módulo 2.",
+    obj: "Definir o propósito do mapa de jornada. Lição 2 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "f",
@@ -312,31 +289,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Aumentar o número de funcionários afectos ao processo",
     ], ind: 1,
     exp: "Digitalizar o desperdício apenas o torna mais rápido a produzir-se. Primeiro elimina-se o que não acrescenta nada — sobretudo verificações repetidas — e só depois se automatiza o processo simplificado.",
-    obj: "Aplicar a simplificação antes da digitalização. Lição 3 do módulo 2.",
-  },
-  {
-    m: "m2", t: "em", d: "f",
-    e: "Qual das práticas ajuda a conhecer melhor as pessoas que usam um serviço?",
-    opts: [
-      "Observar e ouvir pessoas reais no atendimento e registar as dificuldades encontradas",
-      "Perguntar apenas à chefia qual é o perfil dos utentes",
-      "Usar apenas dados de outro país sobre serviços semelhantes",
-      "Supor o perfil a partir da experiência pessoal da equipa",
-    ], ind: 0,
-    exp: "Conhecer quem usa o serviço exige contacto com pessoas reais e registo sistemático das dificuldades. Supor ou perguntar apenas internamente reproduz a visão da instituição sobre si mesma.",
-    obj: "Escolher métodos para conhecer utilizadores. Lição 1 do módulo 2.",
-  },
-  {
-    m: "m2", t: "em", d: "f",
-    e: "No atendimento, qual é a prática correcta quanto aos dados pessoais recolhidos?",
-    opts: [
-      "Recolher o máximo possível, para eventuais necessidades futuras",
-      "Recolher apenas os dados necessários para prestar aquele serviço",
-      "Recolher tudo e apagar no fim do ano",
-      "Recolher os dados que o funcionário achar interessantes",
-    ], ind: 1,
-    exp: "A minimização é a regra prática: pede-se o que é necessário para aquele serviço. Cada dado a mais é risco a mais, esforço a mais para a pessoa e responsabilidade a mais para a instituição.",
-    obj: "Aplicar a minimização de dados no atendimento. Lição 4 do módulo 2.",
+    obj: "Aplicar a simplificação antes da digitalização. Lição 3 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "f",
@@ -348,7 +301,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Um documento emitido pela instituição",
     ], ind: 0,
     exp: "Ponto de dor é o momento do percurso onde a pessoa perde tempo, se confunde ou desiste. É o alvo prioritário da simplificação.",
-    obj: "Interpretar um mapa de jornada. Lição 2 do módulo 2.",
+    obj: "Interpretar um mapa de jornada. Lição 2 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "me",
@@ -360,7 +313,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "O mapa torna-se inválido ao fim de um mês",
     ], ind: 1,
     exp: "O regulamento descreve o que devia acontecer. O percurso real inclui esperas, idas e voltas, documentos pedidos duas vezes e informação que ninguém dá. Sem observação, o mapa confirma o que já se supunha.",
-    obj: "Reconhecer a diferença entre processo previsto e percurso real. Lição 2 do módulo 2.",
+    obj: "Reconhecer a diferença entre processo previsto e percurso real. Lição 2 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "me",
@@ -372,19 +325,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Criar um formulário em linha para pedir a certidão",
     ], ind: 1,
     exp: "A melhor simplificação elimina o passo em vez de o acelerar ou digitalizar. Como a informação já está na instituição, exigir a certidão transfere para o cidadão um trabalho interno.",
-    obj: "Escolher intervenções de simplificação eficazes. Lição 3 do módulo 2.",
-  },
-  {
-    m: "m2", t: "em", d: "me",
-    e: "Ao desenhar o atendimento de um serviço, que abordagem responde melhor à diversidade das pessoas utilizadoras?",
-    opts: [
-      "Desenhar para a pessoa média e tratar as excepções caso a caso",
-      "Considerar desde o início situações como baixa literacia, deficiência visual e ausência de internet, e prever alternativas",
-      "Desenhar apenas para quem usa telemóvel com dados",
-      "Desenhar apenas o canal presencial, por ser o mais usado",
-    ], ind: 1,
-    exp: "Prever a diversidade desde o início evita soluções improvisadas e tratamento desigual. O que se desenha para quem tem mais dificuldade costuma melhorar o serviço para toda a gente.",
-    obj: "Incorporar diversidade no desenho do atendimento. Lições 1 e 4 do módulo 2.",
+    obj: "Escolher intervenções de simplificação eficazes. Lição 3 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "me",
@@ -396,7 +337,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "É aceitável se o utente for cliente frequente",
     ], ind: 1,
     exp: "Cópias em pastas pessoais escapam ao controlo de acessos, às regras de conservação e ao registo de quem consultou. O dado deve viver no sistema do serviço, com acesso limitado e prazo definido.",
-    obj: "Avaliar práticas de tratamento de dados no atendimento. Lição 4 do módulo 2.",
+    obj: "Avaliar práticas de tratamento de dados no atendimento. Lição 4 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "me",
@@ -408,19 +349,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Verificar se o novo processo está escrito no regulamento",
     ], ind: 1,
     exp: "A comparação antes/depois de passos, documentos, deslocações e tempo mede exactamente aquilo que se pretendeu reduzir. Percepções internas e formalização não demonstram benefício para quem usa o serviço.",
-    obj: "Verificar o efeito de uma simplificação. Lições 2 e 3 do módulo 2.",
-  },
-  {
-    m: "m2", t: "em", d: "di",
-    e: "CASO (fictício). No Balcão Único de Muanavila, a jornada mostra: 1) pedido presencial; 2) espera de 4 dias por verificação interna; 3) nova deslocação para entregar um comprovativo já apresentado; 4) espera de 2 dias; 5) levantamento. A equipa só tem capacidade para uma intervenção este trimestre. Qual escolhe, e porquê?",
-    opts: [
-      "Criar um portal para o pedido inicial, mantendo os restantes passos",
-      "Eliminar a exigência do comprovativo repetido, acabando com uma deslocação inteira",
-      "Reduzir a espera de 2 dias para 1 dia",
-      "Alargar o horário de atendimento do balcão",
-    ], ind: 1,
-    exp: "A eliminação do comprovativo repetido remove uma deslocação completa e a espera que a rodeia, sem depender de tecnologia nova. Digitalizar o pedido inicial mantém as duas deslocações seguintes; reduzir uma espera de 2 para 1 dia é um ganho menor; alargar o horário não retira passos.",
-    obj: "Priorizar intervenções pelo impacto no percurso da pessoa. Lições 2 e 3 do módulo 2.",
+    obj: "Verificar o efeito de uma simplificação. Lições 2 e 3 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "em", d: "di",
@@ -432,57 +361,36 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "O limite é apenas o número de perguntas do inquérito",
     ], ind: 1,
     exp: "A amostra está condicionada pelo canal: quem não chega ao portal não responde. Declarar esse limite é condição de honestidade, e corrigi-lo exige recolha por outros canais, como o atendimento presencial.",
-    obj: "Reconhecer limites de amostragem na recolha de opinião. Lição 1 do módulo 2.",
+    obj: "Reconhecer limites de amostragem na recolha de opinião. Lição 1 do módulo Serviços Centrados no Cidadão.",
   },
-  {
-    m: "m2", t: "em", d: "di",
-    e: "Um serviço quer publicar estatísticas de atendimento por distrito, a partir de registos que incluem nome, número de documento e morada das pessoas. Qual é a abordagem adequada?",
-    opts: [
-      "Publicar a tabela completa, por transparência",
-      "Publicar apenas dados agregados, sem elementos que permitam identificar pessoas, e limitar detalhe quando o número de casos é muito pequeno",
-      "Publicar a tabela retirando apenas o nome",
-      "Não publicar nada, porque qualquer estatística identifica pessoas",
-    ], ind: 1,
-    exp: "Transparência estatística obtém-se com agregação. Retirar só o nome é insuficiente, porque documento e morada identificam; e com poucos casos até um agregado pode identificar, o que obriga a limitar o detalhe. Recusar toda a publicação também não é necessário.",
-    obj: "Conciliar transparência com protecção de dados pessoais. Lição 4 do módulo 2.",
-  },
-  // -- verdadeiro/falso: 2 fáceis, 2 médias, 1 difícil --
   {
     m: "m2", t: "vf", d: "f",
     e: "Verdadeiro ou falso: o mapa de jornada descreve o percurso do ponto de vista de quem usa o serviço, e não da organização interna.",
     val: true,
     exp: "Verdadeiro. É essa mudança de ponto de vista que revela esperas, repetições e falta de informação que a visão interna não mostra.",
-    obj: "Compreender a perspectiva do mapa de jornada. Lição 2 do módulo 2.",
+    obj: "Compreender a perspectiva do mapa de jornada. Lição 2 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "vf", d: "f",
     e: "Verdadeiro ou falso: pedir a uma pessoa um documento que a própria instituição já emitiu é um passo que deve ser questionado durante a simplificação.",
     val: true,
     exp: "Verdadeiro. É um dos casos mais comuns de esforço desnecessário transferido para o cidadão e um alvo imediato de simplificação.",
-    obj: "Identificar exigências desnecessárias. Lição 3 do módulo 2.",
+    obj: "Identificar exigências desnecessárias. Lição 3 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "vf", d: "me",
     e: "Verdadeiro ou falso: a conservação de dados pessoais deve ter prazo definido, mesmo quando os dados estão guardados em sistema seguro.",
     val: true,
     exp: "Verdadeiro. Segurança e conservação são exigências distintas: guardar bem não justifica guardar para sempre. Sem prazo, acumulam-se dados sem finalidade e aumenta o efeito de qualquer incidente.",
-    obj: "Distinguir segurança de limitação da conservação. Lição 4 do módulo 2.",
-  },
-  {
-    m: "m2", t: "vf", d: "me",
-    e: "Verdadeiro ou falso: ouvir cinco pessoas no atendimento não tem qualquer utilidade, porque a amostra é pequena de mais para concluir alguma coisa.",
-    val: false,
-    exp: "Falso. Conversas com poucas pessoas revelam dificuldades concretas e repetidas que orientam a melhoria, desde que os resultados não sejam apresentados como percentagens representativas da população.",
-    obj: "Usar métodos qualitativos com rigor. Lição 1 do módulo 2.",
+    obj: "Distinguir segurança de limitação da conservação. Lição 4 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "vf", d: "di",
     e: "Verdadeiro ou falso: se um processo for digitalizado tal como está, os pontos de dor identificados na jornada desaparecem automaticamente.",
     val: false,
     exp: "Falso. Passos repetidos, documentos exigidos em duplicado e falta de informação de estado mantêm-se no canal digital; podem até agravar-se, porque a pessoa deixa de ter alguém a quem perguntar.",
-    obj: "Antecipar a persistência de pontos de dor após digitalização. Lições 2 e 3 do módulo 2.",
+    obj: "Antecipar a persistência de pontos de dor após digitalização. Lições 2 e 3 do módulo Serviços Centrados no Cidadão.",
   },
-  // -- associação: 1 fácil, 1 média --
   {
     m: "m2", t: "cor", d: "f",
     e: "Associe cada elemento do trabalho centrado no cidadão à sua descrição.",
@@ -493,7 +401,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Minimização de dados", direita: "Recolher apenas o necessário para prestar o serviço" },
     ],
     exp: "São quatro instrumentos distintos: quem usa, como usa, onde sofre e que dados se justificam. Confundi-los leva a diagnósticos vagos.",
-    obj: "Associar instrumentos do desenho centrado no cidadão. Lições 1, 2 e 4 do módulo 2.",
+    obj: "Associar instrumentos do desenho centrado no cidadão. Lições 1, 2 e 4 do módulo Serviços Centrados no Cidadão.",
   },
   {
     m: "m2", t: "cor", d: "me",
@@ -505,9 +413,21 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Pessoa sem internet não consegue submeter", direita: "Manter canal presencial ou assistido" },
     ],
     exp: "Cada problema tem uma resposta que o resolve na raiz. A digitalização isolada não responde a nenhum deles, se o passo desnecessário permanecer.",
-    obj: "Escolher a intervenção adequada a cada problema. Lições 2 e 3 do módulo 2.",
+    obj: "Escolher a intervenção adequada a cada problema. Lições 2 e 3 do módulo Serviços Centrados no Cidadão.",
   },
-  // -- ordenação: 1 fácil --
+  {
+    m: "m2", t: "cor", d: "di",
+    e: "Associe cada exigência de tratamento de dados no atendimento à prática que a cumpre.",
+    pares: [
+      { esquerda: "Recolher apenas o necessário para o serviço pedido", direita: "Formulário sem campos dispensáveis, revisto com a área responsável" },
+      { esquerda: "Limitar quem consulta os dados", direita: "Acesso atribuído por função, e não conta partilhada pela equipa" },
+      { esquerda: "Não conservar para além do necessário", direita: "Prazo de conservação escrito e eliminação verificada no fim do prazo" },
+      { esquerda: "Informar a pessoa sobre a utilização dos seus dados", direita: "Aviso claro no momento da recolha, em linguagem simples" },
+      { esquerda: "Permitir apurar quem consultou um processo", direita: "Registo de acessos conservado no sistema do serviço" },
+    ],
+    exp: "Cada exigência tem uma prática verificável. Guardar num sistema seguro não substitui prazo de conservação, nem acesso por função, nem informação à pessoa: são obrigações distintas e cumulativas.",
+    obj: "Converter exigências de protecção de dados em práticas de atendimento. Lição 4 do módulo Serviços Centrados no Cidadão.",
+  },
   {
     m: "m2", t: "ord", d: "f",
     e: "Ordene as etapas do trabalho sobre um serviço, do primeiro ao último passo.",
@@ -519,13 +439,38 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Digitalizar o processo simplificado",
     ],
     exp: "A ordem garante que a tecnologia chega ao fim, depois de o processo já ter sido compreendido e limpo. Inverter a ordem produz serviços digitais que reproduzem problemas antigos.",
-    obj: "Sequenciar o trabalho centrado no cidadão. Lições 1 a 3 do módulo 2.",
+    obj: "Sequenciar o trabalho centrado no cidadão. Lições 1 a 3 do módulo Serviços Centrados no Cidadão.",
+  },
+  {
+    m: "m2", t: "ord", d: "me",
+    e: "Ordene as etapas de uma recolha de informação junto de quem usa o serviço, do primeiro ao último passo.",
+    seq: [
+      "Definir a pergunta a que a recolha deve responder",
+      "Escolher os canais de recolha, incluindo o presencial para quem não usa internet",
+      "Recolher com registo das dificuldades observadas",
+      "Organizar os resultados e declarar os limites da amostra",
+      "Devolver as conclusões à equipa e usá-las na decisão",
+    ],
+    exp: "A recolha começa pela pergunta e não pelo questionário. A escolha dos canais determina quem fica de fora, e a declaração dos limites impede que resultados parciais sejam apresentados como representativos.",
+    obj: "Sequenciar uma recolha junto de pessoas utilizadoras. Lição 1 do módulo Serviços Centrados no Cidadão.",
+  },
+  {
+    m: "m2", t: "em", cen: true, d: "di",
+    e: "CENÁRIO (dados fictícios). No Balcão Único de Muanavila, a jornada mostra: 1) pedido presencial; 2) espera de 4 dias por verificação interna; 3) nova deslocação para entregar um comprovativo já apresentado; 4) espera de 2 dias; 5) levantamento. A equipa só tem capacidade para uma intervenção este trimestre. Qual escolhe, e porquê?",
+    opts: [
+      "Criar um portal para o pedido inicial, mantendo os restantes passos",
+      "Eliminar a exigência do comprovativo repetido, acabando com uma deslocação inteira",
+      "Reduzir a espera de 2 dias para 1 dia",
+      "Alargar o horário de atendimento do balcão",
+    ], ind: 1,
+    exp: "A eliminação do comprovativo repetido remove uma deslocação completa e a espera que a rodeia, sem depender de tecnologia nova. Digitalizar o pedido inicial mantém as duas deslocações seguintes; reduzir uma espera de 2 para 1 dia é um ganho menor; alargar o horário não retira passos.",
+    obj: "Priorizar intervenções pelo impacto no percurso da pessoa. Lições 2 e 3 do módulo Serviços Centrados no Cidadão.",
   },
 
   // ==========================================================
   // MÓDULO 3 — Implementação e Mudança Institucional (18)
+  // em 6 (2f/3me/1di) · vf 4 (2f/1me/1di) · cor 4 (2f/1me/1di) · ord 2 (1f/1me) · cen 2 (1me/1di)
   // ==========================================================
-  // -- escolha múltipla: 3 fáceis, 4 médias, 3 difíceis --
   {
     m: "m3", t: "em", d: "f",
     e: "O que deve conter, no mínimo, um plano de implementação útil?",
@@ -536,7 +481,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Apenas o nome do sistema a instalar",
     ], ind: 1,
     exp: "Sem responsável não há quem responda; sem prazo não há quando; sem indicador não se sabe se resultou. É esse conjunto que torna um plano executável e verificável.",
-    obj: "Identificar os elementos mínimos de um plano. Lição 1 do módulo 3.",
+    obj: "Identificar os elementos mínimos de um plano. Lição 1 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "em", d: "f",
@@ -548,19 +493,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Para dispensar o acompanhamento da direcção",
     ], ind: 1,
     exp: "Tarefas sem dono param no primeiro obstáculo. A definição explícita de responsabilidades diz quem decide, quem executa, quem é consultado e quem é informado.",
-    obj: "Justificar a atribuição explícita de responsabilidades. Lição 2 do módulo 3.",
-  },
-  {
-    m: "m3", t: "em", d: "f",
-    e: "Uma mudança foi anunciada por circular e, três meses depois, metade do pessoal continua a usar o processo antigo. Que factor da gestão da mudança foi descuidado?",
-    opts: [
-      "A quantidade de circulares emitidas",
-      "O acompanhamento das pessoas: formação, apoio no posto de trabalho e resposta a dificuldades reais",
-      "O custo do novo sistema",
-      "A escolha do fornecedor",
-    ], ind: 1,
-    exp: "Comunicar não é acompanhar. A adopção exige formação, apoio próximo durante as primeiras semanas e um canal para resolver as dificuldades que aparecem no uso real.",
-    obj: "Reconhecer o que sustenta a adopção. Lição 3 do módulo 3.",
+    obj: "Justificar a atribuição explícita de responsabilidades. Lição 2 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "em", d: "me",
@@ -572,7 +505,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Distribuir uma iniciativa por cada departamento, para não gerar descontentamento",
     ], ind: 1,
     exp: "Priorizar exige cruzar valor esperado com exequibilidade e dependências. Critérios de visibilidade, de orçamento ou de repartição política entre departamentos conduzem a carteiras que não entregam resultado.",
-    obj: "Aplicar critérios de priorização. Lição 1 do módulo 3.",
+    obj: "Aplicar critérios de priorização. Lição 1 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "em", d: "me",
@@ -584,7 +517,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "A direcção deixará de acompanhar o projecto",
     ], ind: 1,
     exp: "Falta na equipa quem conhece o processo, o atendimento e as regras do serviço. O resultado costuma ser tecnicamente correcto e operacionalmente desajustado.",
-    obj: "Avaliar a composição de equipas de projecto. Lição 2 do módulo 3.",
+    obj: "Avaliar a composição de equipas de projecto. Lição 2 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "em", d: "me",
@@ -596,43 +529,7 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Número de circulares enviadas sobre o tema",
     ], ind: 1,
     exp: "A adopção mede-se pelo uso efectivo. Formação, equipamento e comunicação são meios; podem estar todos cumpridos com adopção nula.",
-    obj: "Escolher indicadores de adopção. Lições 3 e 4 do módulo 3.",
-  },
-  {
-    m: "m3", t: "em", d: "me",
-    e: "Terminado o projecto, a equipa que o conduziu é dissolvida e ninguém fica responsável pelo serviço digital. Qual é a consequência mais provável?",
-    opts: [
-      "O serviço mantém-se estável indefinidamente, por já estar implementado",
-      "Problemas, pedidos de melhoria e actualizações ficam sem tratamento, e o serviço degrada-se",
-      "O serviço passa automaticamente para a responsabilidade do fornecedor",
-      "Os indicadores deixam de ser necessários",
-    ], ind: 1,
-    exp: "Um serviço digital é um serviço vivo: recebe pedidos, muda com a legislação interna e precisa de correcções. Sem responsável definido para a fase de sustentação, degrada-se até voltar a haver crise.",
-    obj: "Reconhecer a necessidade de sustentação após o projecto. Lição 4 do módulo 3.",
-  },
-  {
-    m: "m3", t: "em", d: "di",
-    e: "CASO (fictício). Na Direcção Provincial de Tchindembo, o novo processo digital reduziu o prazo médio de 10 para 4 dias, mas o número de pedidos rejeitados por preenchimento incorrecto subiu de 5% para 22%. Que leitura e que acção são mais adequadas?",
-    opts: [
-      "Declarar sucesso: o prazo melhorou e a rejeição é responsabilidade de quem preenche",
-      "Reconhecer um efeito adverso: o formulário está a induzir erro, e a acção é melhorar instruções, validações e apoio no preenchimento",
-      "Voltar imediatamente ao processo anterior",
-      "Reduzir o número de campos de forma aleatória até a rejeição descer",
-    ], ind: 1,
-    exp: "Um ganho num indicador e uma deterioração noutro exigem leitura conjunta: 22% de rejeição significa retrabalho e nova espera para uma em cada cinco pessoas. A resposta é corrigir a causa do erro, medindo de novo — não declarar vitória nem reverter tudo.",
-    obj: "Interpretar indicadores em conjunto e decidir a correcção. Lição 4 do módulo 3.",
-  },
-  {
-    m: "m3", t: "em", d: "di",
-    e: "Uma direcção quer garantir que o plano não fica dependente de uma única pessoa entusiasta. Que medida responde melhor a esse risco?",
-    opts: [
-      "Atribuir todas as tarefas a essa pessoa, que é a mais motivada",
-      "Documentar processos e decisões, distribuir responsabilidades por mais do que uma pessoa e prever substituição",
-      "Reduzir o âmbito do plano a metade",
-      "Contratar um fornecedor externo para conduzir tudo",
-    ], ind: 1,
-    exp: "A dependência de uma pessoa é um risco de continuidade. Documentar, repartir responsabilidades e prever substituição mantém o trabalho quando essa pessoa muda de funções. Entregar tudo a um fornecedor desloca a dependência, não a elimina.",
-    obj: "Mitigar o risco de dependência individual. Lições 2 e 4 do módulo 3.",
+    obj: "Escolher indicadores de adopção. Lições 3 e 4 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "em", d: "di",
@@ -644,45 +541,36 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "O problema é não indicar o custo do sistema",
     ], ind: 1,
     exp: "«Implementado» é marco de actividade: pode cumprir-se sem qualquer melhoria no serviço. Um plano verificável junta a esse marco pelo menos um indicador de efeito observável por quem usa o serviço.",
-    obj: "Distinguir marcos de actividade de indicadores de resultado. Lições 1 e 4 do módulo 3.",
+    obj: "Distinguir marcos de actividade de indicadores de resultado. Lições 1 e 4 do módulo Implementação e Mudança.",
   },
-  // -- verdadeiro/falso: 2 fáceis, 2 médias, 1 difícil --
   {
     m: "m3", t: "vf", d: "f",
     e: "Verdadeiro ou falso: um plano de implementação sem responsáveis nomeados é difícil de executar e de acompanhar.",
     val: true,
     exp: "Verdadeiro. Sem responsável, nenhuma acção tem quem responda por ela, e o acompanhamento transforma-se em pedido genérico de informação.",
-    obj: "Reconhecer a importância dos responsáveis no plano. Lição 1 do módulo 3.",
+    obj: "Reconhecer a importância dos responsáveis no plano. Lição 1 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "vf", d: "f",
     e: "Verdadeiro ou falso: a resistência à mudança é frequentemente sinal de dificuldades reais no trabalho, e não apenas má vontade.",
     val: true,
     exp: "Verdadeiro. Muitas vezes traduz falta de formação, receio de errar, aumento de trabalho na transição ou instruções pouco claras. Tratar essas causas é mais eficaz do que insistir em comunicação.",
-    obj: "Interpretar resistência à mudança. Lição 3 do módulo 3.",
+    obj: "Interpretar resistência à mudança. Lição 3 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "vf", d: "me",
     e: "Verdadeiro ou falso: definir indicadores antes de iniciar a implementação permite comparar a situação inicial com a posterior.",
     val: true,
     exp: "Verdadeiro. Sem medição inicial não há termo de comparação e qualquer afirmação de melhoria fica por demonstrar.",
-    obj: "Justificar a medição inicial. Lição 4 do módulo 3.",
-  },
-  {
-    m: "m3", t: "vf", d: "me",
-    e: "Verdadeiro ou falso: quando o âmbito do projecto cresce durante a execução, a direcção pode manter os mesmos prazos e recursos sem qualquer efeito na entrega.",
-    val: false,
-    exp: "Falso. Mais âmbito com os mesmos recursos e prazos produz atraso, redução de qualidade ou tarefas por concluir. A decisão honesta é ajustar âmbito, prazos ou recursos de forma explícita.",
-    obj: "Reconhecer o efeito do crescimento de âmbito. Lição 1 do módulo 3.",
+    obj: "Justificar a medição inicial. Lição 4 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "vf", d: "di",
     e: "Verdadeiro ou falso: um indicador que a equipa pode melhorar sem alterar o serviço — por exemplo, contando de outra forma os pedidos concluídos — continua a ser um bom indicador de resultado.",
     val: false,
     exp: "Falso. Um indicador manipulável pela forma de contagem deixa de medir o que interessa. Um bom indicador tem definição escrita, fonte de dados identificada e regra de contagem estável ao longo do tempo.",
-    obj: "Avaliar a qualidade de um indicador. Lição 4 do módulo 3.",
+    obj: "Avaliar a qualidade de um indicador. Lição 4 do módulo Implementação e Mudança.",
   },
-  // -- associação: 1 fácil, 1 média --
   {
     m: "m3", t: "cor", d: "f",
     e: "Associe cada elemento do plano à pergunta a que responde.",
@@ -693,7 +581,19 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Indicador", direita: "Como se saberá se resultou" },
     ],
     exp: "Cada elemento responde a uma pergunta distinta; a falta de qualquer um deles deixa o plano sem execução ou sem verificação.",
-    obj: "Estruturar um plano de implementação. Lição 1 do módulo 3.",
+    obj: "Estruturar um plano de implementação. Lição 1 do módulo Implementação e Mudança.",
+  },
+  {
+    m: "m3", t: "cor", d: "f",
+    e: "Associe cada papel num projecto de transformação à responsabilidade que lhe corresponde.",
+    pares: [
+      { esquerda: "Direcção da instituição", direita: "Decidir prioridades e assegurar recursos" },
+      { esquerda: "Responsável do serviço", direita: "Garantir que o novo processo funciona no atendimento" },
+      { esquerda: "Equipa técnica", direita: "Configurar e manter a solução" },
+      { esquerda: "Pessoal de atendimento", direita: "Usar o novo processo e comunicar as dificuldades encontradas" },
+    ],
+    exp: "Quando estes papéis não estão distinguidos, decisões ficam à espera de quem não as pode tomar e problemas de atendimento são tratados como questões técnicas.",
+    obj: "Distribuir responsabilidades num projecto. Lição 2 do módulo Implementação e Mudança.",
   },
   {
     m: "m3", t: "cor", d: "me",
@@ -705,9 +605,34 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       { esquerda: "Projecto depende de uma só pessoa", direita: "Documentação e repartição de responsabilidades" },
     ],
     exp: "Cada dificuldade tem uma resposta específica; respostas genéricas, como «mais comunicação», não resolvem nenhuma delas por si só.",
-    obj: "Escolher medidas adequadas às dificuldades de implementação. Lições 2 a 4 do módulo 3.",
+    obj: "Escolher medidas adequadas às dificuldades de implementação. Lições 2 a 4 do módulo Implementação e Mudança.",
   },
-  // -- ordenação: 1 média --
+  {
+    m: "m3", t: "cor", d: "di",
+    e: "Associe cada resultado observado após a entrada em funcionamento à leitura mais rigorosa.",
+    pares: [
+      { esquerda: "Prazo médio caiu e a taxa de rejeição manteve-se", direita: "Melhoria confirmada, a sustentar e a monitorizar" },
+      { esquerda: "Prazo médio caiu e a rejeição por erro de preenchimento subiu muito", direita: "Ganho com efeito adverso: corrigir instruções e validações" },
+      { esquerda: "Uso do canal digital subiu e o prazo manteve-se", direita: "Mudança de canal sem benefício demonstrado" },
+      { esquerda: "Nada mudou nos indicadores, mas a equipa relata menos retrabalho interno", direita: "Ganho interno por confirmar com medição própria" },
+      { esquerda: "Indicador melhorou logo após alteração da regra de contagem", direita: "Resultado não comparável: verificar a definição do indicador" },
+    ],
+    exp: "A leitura séria cruza indicadores em vez de escolher o que favorece. Subidas de rejeição, mudanças de canal sem efeito e alterações de regra de contagem explicam muitos «sucessos» aparentes.",
+    obj: "Interpretar resultados após a entrada em funcionamento. Lição 4 do módulo Implementação e Mudança.",
+  },
+  {
+    m: "m3", t: "ord", d: "f",
+    e: "Ordene as etapas de preparação das pessoas para um novo processo, do primeiro ao último passo.",
+    seq: [
+      "Explicar o que muda e porquê, com exemplos do trabalho real",
+      "Formar quem vai usar o processo",
+      "Acompanhar as primeiras semanas de utilização no posto de trabalho",
+      "Recolher as dificuldades encontradas e corrigir instruções ou configurações",
+      "Confirmar a adopção pelo uso efectivo do novo processo",
+    ],
+    exp: "A comunicação abre o caminho, mas a adopção ganha-se no acompanhamento e na correcção do que falha nas primeiras semanas. Confirmar pelo uso efectivo evita declarar adopção com base em formação dada.",
+    obj: "Sequenciar a preparação das pessoas. Lição 3 do módulo Implementação e Mudança.",
+  },
   {
     m: "m3", t: "ord", d: "me",
     e: "Ordene as etapas de implementação e sustentação, do primeiro ao último passo.",
@@ -719,7 +644,110 @@ export const EXAME_TD_V2: QuestaoTdV2[] = [
       "Avaliar resultados e definir a sustentação do serviço",
     ],
     exp: "Medir a situação inicial antes de executar é o passo mais esquecido; sem ele, a avaliação final não tem comparação. A sustentação fecha o ciclo, atribuindo dono ao serviço depois do projecto.",
-    obj: "Sequenciar implementação e sustentação. Lições 1 a 4 do módulo 3.",
+    obj: "Sequenciar implementação e sustentação. Lições 1 a 4 do módulo Implementação e Mudança.",
+  },
+  {
+    m: "m3", t: "em", cen: true, d: "me",
+    e: "CENÁRIO (dados fictícios). Na Direcção Provincial de Chimoiane, o projecto terminou há seis meses: a equipa foi dissolvida, ninguém ficou responsável pelo serviço digital e os pedidos de correcção acumulam-se numa caixa de correio partilhada. O atendimento voltou a usar o processo antigo em parte dos casos. Que medida responde à causa?",
+    opts: [
+      "Repetir a formação inicial a todo o pessoal",
+      "Atribuir a responsabilidade permanente do serviço a uma função definida, com circuito para tratar pedidos e correcções",
+      "Emitir uma circular a proibir o uso do processo antigo",
+      "Adquirir equipamento novo para o atendimento",
+    ], ind: 1,
+    exp: "O problema não é falta de formação nem de equipamento: é ausência de dono depois do projecto. Sem responsável e sem circuito para tratar correcções, o serviço degrada-se e as pessoas voltam ao que funciona. Proibir sem alternativa operacional não resolve.",
+    obj: "Reconhecer e corrigir a falta de sustentação. Lições 2 e 4 do módulo Implementação e Mudança.",
+  },
+  {
+    m: "m3", t: "em", cen: true, d: "di",
+    e: "CENÁRIO (dados fictícios). Na Direcção Provincial de Tchindembo, o novo processo digital reduziu o prazo médio de 10 para 4 dias, mas o número de pedidos rejeitados por preenchimento incorrecto subiu de 5% para 22%. A direcção quer anunciar o resultado como sucesso. Que leitura e que acção são mais adequadas?",
+    opts: [
+      "Anunciar sucesso: o prazo melhorou e a rejeição é responsabilidade de quem preenche",
+      "Reconhecer um efeito adverso: o formulário está a induzir erro, e a acção é melhorar instruções, validações e apoio no preenchimento, medindo de novo antes de anunciar",
+      "Voltar imediatamente ao processo anterior",
+      "Reduzir o número de campos ao acaso até a taxa de rejeição descer",
+    ], ind: 1,
+    exp: "Um ganho num indicador e uma deterioração noutro exigem leitura conjunta: 22% de rejeição significa retrabalho e nova espera para uma em cada cinco pessoas. A resposta é corrigir a causa do erro e medir outra vez — não anunciar vitória, não reverter tudo, nem cortar campos sem critério.",
+    obj: "Interpretar indicadores em conjunto e decidir a correcção. Lição 4 do módulo Implementação e Mudança.",
+  },
+
+  // ==========================================================
+  // TRANSVERSAL — Governo Digital Inclusivo e Acessibilidade (6)
+  // em 2 (1f/1me) · cor 2 (1f/1me) · ord 1 (1f) · cen 1 (1me)
+  // ==========================================================
+  {
+    m: "transversal", t: "em", d: "f",
+    e: "Ao escrever a informação de um serviço público para o sítio da instituição, que prática torna o conteúdo mais fácil de usar por mais pessoas?",
+    opts: [
+      "Frases curtas, linguagem simples, títulos claros e explicação dos termos técnicos usados",
+      "Texto longo em parágrafo único, com termos técnicos sem explicação",
+      "Publicação apenas como documento digitalizado em imagem",
+      "Uso exclusivo de siglas para poupar espaço",
+    ], ind: 0,
+    exp: "Linguagem simples, estrutura com títulos e explicação dos termos servem toda a gente, e são indispensáveis para quem tem baixa literacia ou usa leitor de ecrã. Imagens digitalizadas de texto não são lidas por essas ferramentas.",
+    obj: "Aplicar princípios de conteúdo acessível num serviço público. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
+  },
+  {
+    m: "transversal", t: "em", d: "me",
+    e: "Uma equipa vai redesenhar o atendimento de um serviço e pergunta quando deve tratar da acessibilidade. Qual é a resposta mais correcta?",
+    opts: [
+      "No fim, depois de o serviço estar pronto, como ajuste final",
+      "Desde o início, no levantamento de necessidades e no desenho, porque corrigir depois é mais caro e nem sempre possível",
+      "Apenas se houver reclamação de uma pessoa com deficiência",
+      "Apenas quando existir orçamento específico para o efeito",
+    ], ind: 1,
+    exp: "As escolhas que criam barreiras — formatos, canais, exigências de documentos, linguagem — ficam fixadas no desenho. Tratar a acessibilidade no fim transforma-a em remendo, e alguns problemas passam a ser irreparáveis sem refazer o serviço.",
+    obj: "Situar a acessibilidade no momento certo do desenho do serviço. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
+  },
+  {
+    m: "transversal", t: "cor", d: "f",
+    e: "Associe cada barreira encontrada no acesso a um serviço público à medida que a reduz.",
+    pares: [
+      { esquerda: "Pessoa sem ligação à internet em casa", direita: "Manter atendimento presencial ou assistido" },
+      { esquerda: "Pessoa que usa leitor de ecrã", direita: "Publicar o conteúdo em texto, e não como imagem digitalizada" },
+      { esquerda: "Pessoa com baixa literacia", direita: "Instruções em linguagem simples, com exemplos" },
+      { esquerda: "Pessoa com mobilidade reduzida", direita: "Evitar deslocações desnecessárias e garantir atendimento acessível no local" },
+    ],
+    exp: "Cada barreira tem uma medida própria. A mesma solução não serve para todas, e a ausência de alternativa transforma uma melhoria digital em exclusão.",
+    obj: "Associar barreiras de acesso a medidas de inclusão. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
+  },
+  {
+    m: "transversal", t: "cor", d: "me",
+    e: "Associe cada decisão tomada durante a transformação de um serviço ao efeito que tem sobre a inclusão das pessoas utilizadoras.",
+    pares: [
+      { esquerda: "Encerrar o atendimento presencial ao mesmo tempo que abre o canal em linha", direita: "Exclui quem não tem acesso ou não consegue usar o canal digital" },
+      { esquerda: "Exigir endereço de correio electrónico para qualquer pedido", direita: "Cria barreira a quem não tem endereço e obriga a pedir ajuda a terceiros" },
+      { esquerda: "Disponibilizar a mesma informação em texto simples além do documento habitual", direita: "Alarga o número de pessoas que consegue usar a informação" },
+      { esquerda: "Testar o formulário com pessoas com dificuldades diferentes antes de publicar", direita: "Permite corrigir barreiras antes de afectarem o atendimento" },
+      { esquerda: "Escrever requisitos de acessibilidade no caderno de encargos", direita: "Torna a acessibilidade verificável no momento da entrega" },
+    ],
+    exp: "Inclusão resulta de decisões concretas, não de intenção declarada. Fechar canais e exigir meios que nem toda a gente tem produz exclusão, mesmo quando o objectivo é modernizar.",
+    obj: "Avaliar o efeito de decisões de serviço sobre a inclusão. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
+  },
+  {
+    m: "transversal", t: "ord", d: "f",
+    e: "Ordene as etapas para publicar informação acessível sobre um serviço, do primeiro ao último passo.",
+    seq: [
+      "Identificar quem precisa da informação e que dificuldades enfrenta",
+      "Escrever o conteúdo em linguagem simples, com estrutura e títulos",
+      "Disponibilizar em formato de texto, evitando imagens de documentos",
+      "Verificar com pessoas com dificuldades diferentes",
+      "Corrigir o que foi apontado e publicar",
+    ],
+    exp: "A verificação com pessoas reais antes de publicar é o passo que distingue conteúdo acessível de conteúdo que se presume acessível. Corrigir depois da publicação deixa barreiras activas durante esse tempo.",
+    obj: "Sequenciar a produção de conteúdo acessível. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
+  },
+  {
+    m: "transversal", t: "em", cen: true, d: "me",
+    e: "CENÁRIO (dados fictícios). O Serviço Provincial de Licenciamento de Namutequeliua passa a aceitar pedidos apenas por formulário em linha e encerra o guichet, com o argumento de que o processo ficou mais rápido. Nas duas semanas seguintes, o atendimento telefónico recebe muitos pedidos de ajuda de pessoas sem internet, sem endereço de correio electrónico ou com dificuldade em ler o formulário. Que decisão responde melhor ao problema?",
+    opts: [
+      "Manter apenas o canal em linha e aconselhar as pessoas a pedirem ajuda a familiares",
+      "Reabrir um canal presencial ou assistido, simplificar a linguagem do formulário e disponibilizar a informação em texto simples",
+      "Suspender o formulário em linha e voltar integralmente ao papel",
+      "Publicar um vídeo explicativo como única forma de apoio",
+    ], ind: 1,
+    exp: "O ganho de rapidez não justifica excluir quem não consegue usar o único canal disponível. A resposta mantém o canal digital e repõe alternativa assistida, corrigindo ao mesmo tempo a linguagem e o formato da informação. Depender de familiares transfere o problema; voltar ao papel deita fora o ganho; um vídeo como apoio único cria nova barreira.",
+    obj: "Decidir perante exclusão provocada por um canal único. Módulo transversal Governo Digital Inclusivo e Acessibilidade.",
   },
 ];
 
@@ -818,10 +846,10 @@ export const PRE_POS_TD_V2: QuestaoTdV2[] = [
     obj: "Diagnóstico: noção inicial de medição.",
   },
   {
-    m: "m3", t: "vf", d: "f",
-    e: "DIAGNÓSTICO. Verdadeiro ou falso: depois de o projecto terminar, o serviço digital continua a precisar de alguém responsável por ele.",
+    m: "transversal", t: "vf", d: "f",
+    e: "DIAGNÓSTICO. Verdadeiro ou falso: publicar a informação de um serviço apenas como documento digitalizado em imagem dificulta o acesso a quem usa leitor de ecrã.",
     val: true,
-    exp: "Verdadeiro. Sem responsável pela sustentação, o serviço degrada-se com o tempo.",
-    obj: "Diagnóstico: noção inicial de sustentação.",
+    exp: "Verdadeiro. O leitor de ecrã não lê texto dentro de uma imagem; é preciso disponibilizar o conteúdo em texto.",
+    obj: "Diagnóstico: noção inicial de conteúdo acessível.",
   },
 ];
