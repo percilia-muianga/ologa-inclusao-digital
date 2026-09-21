@@ -18,7 +18,18 @@ import {
   montarGuiao,
   DESCRICOES_MODULO,
 } from "./conteudo/computacao-nuvem-licoes";
-import { MODULOS_PLANO } from "../src/lib/plano-computacao-nuvem";
+import {
+  MODULOS_PLANO,
+  MINUTOS_AVALIACAO_ORIENTACAO,
+} from "../src/lib/plano-computacao-nuvem";
+
+/** «8 h 40 min», «9 horas» — sem arredondar para horas inteiras. */
+function textoDuracao(min: number) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  if (m === 0) return `${h} ${h === 1 ? "hora" : "horas"}`;
+  return `${h} h ${m} min`;
+}
 
 const SLUG = "computacao-em-nuvem";
 
@@ -44,13 +55,55 @@ function must<T>(res: { data: T | null; error: unknown }): T {
 
 async function main() {
   const curso = must(
-    await sb.from("cursos").select("id,titulo").eq("slug", SLUG).maybeSingle(),
+    await sb.from("cursos").select("id,titulo,minutos_avaliacao_orientacao").eq("slug", SLUG).maybeSingle(),
   );
   if (!curso) throw new Error(`Curso ${SLUG} não encontrado`);
 
   const relacoes = must(
-    await sb.from("curso_modulos").select("modulo_id,ordem").eq("curso_id", curso.id).order("ordem"),
+    await sb.from("curso_modulos").select("modulo_id,ordem,carga_horaria_minutos").eq("curso_id", curso.id).order("ordem"),
   );
+
+  // Reconciliação dos metadados de duração com o plano (fonte única).
+  // A carga do CURSO (30 h) é dos TdR; a distribuição por módulo é proposta.
+  const tempos: string[] = [];
+  for (const plano of MODULOS_PLANO) {
+    const rel = relacoes.find((r) => r.ordem === plano.ordem);
+    if (!rel) throw new Error(`Módulo de ordem ${plano.ordem} não está ligado ao curso`);
+    if (rel.carga_horaria_minutos !== plano.minutos) {
+      must(
+        await sb
+          .from("curso_modulos")
+          .update({ carga_horaria_minutos: plano.minutos })
+          .eq("curso_id", curso.id)
+          .eq("modulo_id", rel.modulo_id)
+          .select("modulo_id"),
+      );
+      tempos.push(`${plano.chave}: ${rel.carga_horaria_minutos} -> ${plano.minutos} min`);
+    }
+    // O módulo transversal é partilhado por vários cursos: não se altera o
+    // texto de duração do módulo em si, apenas a carga nesta relação.
+    if (!plano.transversal) {
+      must(
+        await sb
+          .from("modulos")
+          .update({ duracao: textoDuracao(plano.minutos) })
+          .eq("id", rel.modulo_id)
+          .select("id"),
+      );
+    }
+  }
+  if (curso.minutos_avaliacao_orientacao !== MINUTOS_AVALIACAO_ORIENTACAO) {
+    must(
+      await sb
+        .from("cursos")
+        .update({ minutos_avaliacao_orientacao: MINUTOS_AVALIACAO_ORIENTACAO })
+        .eq("id", curso.id)
+        .select("id"),
+    );
+    tempos.push(
+      `avaliação/orientação: ${curso.minutos_avaliacao_orientacao} -> ${MINUTOS_AVALIACAO_ORIENTACAO} min`,
+    );
+  }
 
   const actualizadas: string[] = [];
   const semConteudo: string[] = [];
@@ -113,7 +166,7 @@ async function main() {
 
   console.log(
     JSON.stringify(
-      { curso: curso.titulo, actualizadas, descricoesActualizadas: descricoes, porPreencher: semConteudo },
+      { curso: curso.titulo, tempos, actualizadas, descricoesActualizadas: descricoes, porPreencher: semConteudo },
       null,
       2,
     ),
