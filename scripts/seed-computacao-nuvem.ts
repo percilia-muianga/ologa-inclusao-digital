@@ -16,6 +16,7 @@ import {
   LICOES,
   montarElearning,
   montarGuiao,
+  DESCRICOES_MODULO,
 } from "./conteudo/computacao-nuvem-licoes";
 import { MODULOS_PLANO } from "../src/lib/plano-computacao-nuvem";
 
@@ -53,6 +54,7 @@ async function main() {
 
   const actualizadas: string[] = [];
   const semConteudo: string[] = [];
+  const descricoes: string[] = [];
 
   for (const plano of MODULOS_PLANO) {
     if (plano.transversal) continue;
@@ -93,11 +95,25 @@ async function main() {
       );
       actualizadas.push(`${l.chave} (${existente.id})`);
     }
+
+    // Descrição do módulo só muda quando TODAS as suas lições estão escritas.
+    const todasEscritas = plano.licoes.every((l) => LICOES[l.chave]);
+    const descricao = DESCRICOES_MODULO[plano.chave];
+    if (todasEscritas && descricao) {
+      must(
+        await sb
+          .from("modulos")
+          .update({ descricao })
+          .eq("id", rel.modulo_id)
+          .select("id"),
+      );
+      descricoes.push(plano.chave);
+    }
   }
 
   console.log(
     JSON.stringify(
-      { curso: curso.titulo, actualizadas, porPreencher: semConteudo },
+      { curso: curso.titulo, actualizadas, descricoesActualizadas: descricoes, porPreencher: semConteudo },
       null,
       2,
     ),
