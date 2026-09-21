@@ -608,7 +608,7 @@ async function seleccionarQuestoes(
   banco: QuestaoBanco[],
   cfg: { numero_questoes: number; pct_facil: number; pct_media: number; pct_dificil: number },
 ): Promise<QuestaoBanco[]> {
-  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+  const s = await admin();
   const { data: curso } = await s.from("cursos").select("slug").eq("id", cursoId).maybeSingle();
   const quotasCurso = curso?.slug ? QUOTAS_POR_CURSO[curso.slug] : undefined;
   const pct = { facil: cfg.pct_facil, media: cfg.pct_media, dificil: cfg.pct_dificil };
@@ -648,7 +648,7 @@ async function seleccionarQuestoes(
 }
 
 async function carregarConfig(cursoId: string) {
-  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+  const s = await admin();
   const { data } = await s
     .from("exame_configuracoes")
     .select("*")
@@ -658,7 +658,7 @@ async function carregarConfig(cursoId: string) {
 }
 
 async function formandoPorToken(token: string, perfilId: string) {
-  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+  const s = await admin();
   const { data } = await s
     .from("formandos")
     .select("id, nome, token_pessoal, perfil_id")
@@ -687,7 +687,7 @@ async function assiduidadeDoFormando(
   base: "estrita" | "ajustada";
   justificadas: number;
 } | null> {
-  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+  const s = await admin();
   const { calcularAssiduidade } = await import("@/lib/presencas.server");
   const [sessoesRes, inscricoesRes, presencasRes, cfgRes] = await Promise.all([
     s.from("turma_sessoes").select("id,data,estado").eq("turma_id", turmaId),
@@ -700,12 +700,13 @@ async function assiduidadeDoFormando(
       .maybeSingle(),
   ]);
   const inscricao = (inscricoesRes.data ?? []).find(
-    (i) => normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
+    (i: { nome: string; estado: string; id: string }) =>
+      normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
   );
   if (!inscricao) return null;
   const base = (cfgRes.data?.base_assiduidade ?? "estrita") as "estrita" | "ajustada";
   const linhas = calcularAssiduidade(
-    (sessoesRes.data ?? []).map((x) => ({
+    (sessoesRes.data ?? []).map((x: { id: string; data: string; estado: string }) => ({
       id: x.id,
       data: x.data,
       estado: x.estado as never,
@@ -728,7 +729,7 @@ async function assiduidadeDoFormando(
 
 /** Última turma do formando para o curso, se existir inscrição registada. */
 async function turmaDoFormando(nome: string, cursoId: string) {
-  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+  const s = await admin();
   const { data: turmas } = await s
     .from("turmas")
     .select("id, designacao, provincia, data_inicio, data_fim")
@@ -739,11 +740,13 @@ async function turmaDoFormando(nome: string, cursoId: string) {
     .select("turma_id, nome")
     .in(
       "turma_id",
-      turmas.map((t) => t.id),
+      turmas.map((t: { id: string }) => t.id),
     );
-  const minha = (inscricoes ?? []).find((i) => normalizar(i.nome) === normalizar(nome));
+  const minha = (inscricoes ?? []).find(
+    (i: { nome: string; turma_id: string }) => normalizar(i.nome) === normalizar(nome),
+  );
   if (!minha) return null;
-  return turmas.find((t) => t.id === minha.turma_id) ?? null;
+  return turmas.find((t: { id: string }) => t.id === minha.turma_id) ?? null;
 }
 
 export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
