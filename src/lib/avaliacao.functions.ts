@@ -443,6 +443,30 @@ async function formandoPorToken(token: string) {
   return data;
 }
 
+/**
+ * Assiduidade real do formando na turma: sessões presentes sobre sessões
+ * realizadas. Devolve null quando ainda não há sessões realizadas.
+ */
+async function assiduidadeDoFormando(turmaId: string, nome: string): Promise<number | null> {
+  const s = await admin();
+  const { calcularAssiduidade } = await import("@/lib/presencas.server");
+  const [sessoesRes, inscricoesRes, presencasRes] = await Promise.all([
+    s.from("turma_sessoes").select("id,data").eq("turma_id", turmaId),
+    s.from("turma_inscricoes").select("id,nome,estado").eq("turma_id", turmaId),
+    s.from("presencas").select("*").eq("turma_id", turmaId),
+  ]);
+  const inscricao = (inscricoesRes.data ?? []).find(
+    (i) => normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
+  );
+  if (!inscricao) return null;
+  const linhas = calcularAssiduidade(
+    sessoesRes.data ?? [],
+    [{ id: inscricao.id, nome: inscricao.nome }],
+    (presencasRes.data ?? []) as never,
+  );
+  return linhas[0]?.taxaPct ?? null;
+}
+
 /** Última turma do formando para o curso, se existir inscrição registada. */
 async function turmaDoFormando(nome: string, cursoId: string) {
   const s = await admin();
