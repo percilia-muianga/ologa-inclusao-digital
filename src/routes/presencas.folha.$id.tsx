@@ -30,6 +30,8 @@ function FolhaImpressaoPage() {
   const carregar = useServerFn(obterFolhaSessao);
   const q = useQuery({ queryKey: ["folha-sessao", id], queryFn: () => carregar({ data: id }) });
 
+  if (q.isError) return <ErroPermissao erro={q.error} />;
+
   if (q.isLoading)
     return (
       <PlataformaPagina titulo="Folha de presenças">

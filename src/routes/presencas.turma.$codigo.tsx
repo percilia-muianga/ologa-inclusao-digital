@@ -48,6 +48,8 @@ function AssiduidadeTurmaPage() {
     queryFn: () => carregar({ data: codigo }),
   });
 
+  if (q.isError) return <ErroPermissao erro={q.error} />;
+
   if (q.isLoading)
     return (
       <PlataformaPagina titulo="Assiduidade da turma">

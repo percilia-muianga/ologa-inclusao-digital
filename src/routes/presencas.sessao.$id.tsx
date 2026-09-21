@@ -166,6 +166,8 @@ function MarcarSessaoPage() {
     }
   }
 
+  if (q.isError) return <ErroPermissao erro={q.error} />;
+
   if (q.isLoading)
     return (
       <PlataformaPagina titulo="Marcar presenças">

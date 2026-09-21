@@ -32,6 +32,8 @@ function PresencasPage() {
 
   const turmas = q.data?.turmas ?? [];
 
+  if (q.isError) return <ErroPermissao erro={q.error} />;
+
   return (
     <PlataformaPagina
       titulo="Presenças"
