@@ -554,8 +554,9 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       .filter((t) => t.estado === "submetida" && t.nota_pct !== null)
       .reduce<number | null>((max, t) => Math.max(max ?? 0, Number(t.nota_pct)), null);
 
-    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
-
+    const assiduidade = turma
+      ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
+      : null;
 
     return {
       formando: { nome: formando.nome },
@@ -569,11 +570,16 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       prazoLimite: prazoLimite?.toISOString() ?? null,
       diasRestantes,
       melhorNota,
-      // Assiduidade real, calculada a partir das presenças marcadas. Fica a
-      // null enquanto a turma não tiver sessões realizadas.
-      assiduidadePct,
+      // As duas taxas, sempre. A que vale para certificação é a indicada em
+      // baseAssiduidade, escolhida na configuração do curso.
+      assiduidadePct: assiduidade?.usadaPct ?? null,
+      assiduidadeEstritaPct: assiduidade?.estritaPct ?? null,
+      assiduidadeAjustadaPct: assiduidade?.ajustadaPct ?? null,
+      faltasJustificadas: assiduidade?.justificadas ?? 0,
+      baseAssiduidade: assiduidade?.base ?? "estrita",
       certificado,
     };
+
   });
 
 export const iniciarExame = createServerFn({ method: "POST" })
