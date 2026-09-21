@@ -62,8 +62,8 @@ Detalhe completo em `docs/plano-curricular-transformacao-digital.md`.
 | Composição exacta guardada por tentativa | implementado |
 | Respostas correctas nunca enviadas antes da submissão | implementado e verificado no código (`obterTentativa`) |
 | Contagens reais por curso e por módulo | implementado |
-| Distinção entre pré-teste/pós-teste e exame final | implementado: o catálogo já não mistura os dois instrumentos |
-| Questões reais no banco | **pendente** — nenhuma questão foi inventada |
+| Distinção entre pré-teste/pós-teste e exame final | implementado; os dois instrumentos são agora campos distintos na base (`instrumento`) e o exame só usa o banco certificador |
+| Questões no banco | Princípios da Transformação Digital: 60 de exame e 10 de pré/pós-teste, **inactivas**, à espera de validação. Restantes cinco cursos: **por fornecer** — nenhuma questão foi inventada |
 
 ## Secções 12 e 12.1 — certificação individual
 
