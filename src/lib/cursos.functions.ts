@@ -13,10 +13,11 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [cursosRes, relacoesRes, licoesRes, bancoRes, wsPerguntasRes, configRes, examesRes] =
     await Promise.all([
-      supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia").order("ordem"),
+      supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia,minutos_avaliacao_orientacao").order("ordem"),
       supabaseAdmin.from("curso_modulos").select("curso_id,modulo_id,carga_horaria_minutos"),
       supabaseAdmin.from("licoes").select("modulo_id,estado_conteudo"),
-      supabaseAdmin.from("banco_questoes").select("curso_id,activa"),
+      // O pré/pós-teste é outro instrumento e não conta para o banco do exame.
+      supabaseAdmin.from("banco_questoes").select("curso_id,activa").eq("instrumento", "exame_final"),
       supabaseAdmin.from("workshop_perguntas").select("id", { count: "exact", head: true }),
       supabaseAdmin.from("configuracoes_programa").select("chave,valor"),
       supabaseAdmin.from("exame_configuracoes").select("curso_id,numero_questoes"),
@@ -54,7 +55,11 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
       QUESTOES_POR_EXAME_PADRAO;
     const minimoBanco = questoesPorExame * FACTOR_BANCO_TDR;
     const activas = activasPorCurso.get(curso.id) ?? 0;
-    const minutosCurriculo = modulos.reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0);
+    // Minutos dos módulos mais os blocos de avaliação e orientação que não
+    // pertencem a nenhum módulo (diagnóstico, pós-teste, exame final).
+    const minutosCurriculo =
+      modulos.reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0) +
+      (curso.minutos_avaliacao_orientacao ?? 0);
     const horasCurriculo = Math.round((minutosCurriculo / 60) * 10) / 10;
     return {
       id: curso.id, ordem: curso.ordem, slug: curso.slug, titulo: curso.titulo,
