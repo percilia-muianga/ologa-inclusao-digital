@@ -56,10 +56,10 @@ function CertificadosPage() {
     queryFn: () => carregarEstado({ data: { token, cursoId } }),
   });
 
-  async function pedirCertificado(assiduidade: number) {
+  async function pedirCertificado() {
     setMensagem(null);
     try {
-      const r = await emitir({ data: { token, cursoId, assiduidadePct: assiduidade } });
+      const r = await emitir({ data: { token, cursoId } });
       setMensagem(`Certificado emitido. Código de verificação: ${r.codigo_verificacao}`);
       await estado.refetch();
     } catch (e) {
