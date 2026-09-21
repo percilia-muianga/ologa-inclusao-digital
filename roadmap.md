@@ -46,7 +46,15 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] G — Limite de 30 formandos confirmado; computadores da sala e rácio com aviso acima de 2 por computador
 - [x] Plano de produção soma lições e perguntas de pré e pós-teste em falta
 
-## Fase 4 — Presenças (offline e telefone)
+## Fase 4 — Presenças (offline e telefone) (concluída)
+- [x] Marcação por formando e por sessão: presente, ausente e justificado com motivo escrito obrigatório
+- [x] Ecrã para telefone, marcação num só toque, áreas de toque de 44 px e estado legível em texto
+- [x] Funciona sem ligação: marcações guardadas no aparelho, enviadas depois, com estado visível (guardado, enviado, erro) — mesmo mecanismo da folha dos workshops
+- [x] Nunca apagar marcações: contradições entre aparelhos ficam todas guardadas e assinaladas para revisão manual
+- [x] Sessões virtuais: presença calculada por permanência e progresso, com limiares por curso; correcção pelo formador exige justificação escrita e fica na auditoria
+- [x] Assiduidade por formando, sinal em cor e em texto abaixo dos 80 %, e alerta de risco antes do fim da formação
+- [x] Folha de presenças imprimível por sessão, com nomes e espaço para assinatura
+- [x] Certificação ligada à assiduidade real (deixa de estar «por apurar»), apurada no servidor
 ## Fase 5 — Avaliação e certificação individual (estrutura concluída)
 - [x] Banco de questões: cinco tipologias, dificuldade, curso, módulo, resposta, explicação, estado e autor
 - [x] Ecrã de gestão por curso e módulo, com filtros e desactivação (questões usadas nunca eliminadas)
@@ -55,7 +63,7 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Tempo limite legível por leitor de ecrã, gravação automática e retoma segura
 - [x] Certificação com as duas condições em separado, segunda tentativa e prazo de 30 dias
 - [x] Certificado de curso verificável no mesmo ecrã /verificar
-- [ ] Assiduidade real: depende da marcação de presenças (fase 4), ainda por construir
+- [x] Assiduidade real: ligada à marcação de presenças (fase 4)
 - [ ] Conteúdo das questões: a fornecer pela Ologa
 ## Fase 6 — Painel Nacional e dados de demonstração
 ## Fase 7 — Conformidade e selector de papel
