@@ -157,3 +157,51 @@ certificado», falta:
 
 Marcar uma lição como feita nunca conta como presença nem dispensa os 80 % de
 assiduidade, os 60 % de nota e os 30 dias de prazo.
+
+## Revisão transversal (A12) — requisito, evidência e lacuna
+
+Critério usado: **não** se declara conformidade só porque existe ecrã ou teste
+unitário. «Verificado» significa observado a correr (navegador, consulta à base
+ou teste sobre a regra real). Prioridades: **P0** bloqueia entrega, **P1**
+exigido pelo TdR mas não bloqueante hoje, **P2** melhoria.
+
+| Área | Fonte | O que existe | Evidência | Lacuna | Prior. |
+| --- | --- | --- | --- | --- | --- |
+| Seis cursos e cargas | sec. 14 | Os 6 cursos na base com as horas da tabela da sec. 14 | Consulta à base | IA 16/20 h e Redes 120/80 h divergem entre sec. 6.2 e sec. 14 — **pendente de esclarecimento da ATDI**, não arbitrado por nós | P0 (externo) |
+| Currículos e materiais | sec. 6, 6.1 | Transformação Digital com 12 lições completas (rascunho); restantes 5 cursos com estrutura e conteúdo por fornecer | Seed + teste de soma 24 h | Conteúdo dos outros 5 cursos por fornecer pela Ologa | P0 (externo) |
+| Acesso público ao conteúdo | sec. 6.1 | Catálogo, módulos e lições abertos sem conta | Navegador | — | — |
+| Acessibilidade | sec. 8 | Barra, alto contraste, ouvir, teclado, 44 px, texto sempre que há cor | Navegador | Revisão por terceiros (REMOTELINE) **proposta, não feita**; vídeo, legendagem e LSM por produzir | P1 |
+| Contas, perfis e matrículas | sec. 7 | Conta, perfil, papéis, inscrição em turma | Código + políticas | Não há ecrã de auto‑matrícula por código para o formando | P1 |
+| Progresso do formando | sec. 6.1, 11 | **Novo:** progresso por matrícula no servidor, único por matrícula+lição, validado no servidor | Testes e navegador (caso anónimo) | Percurso autenticado real por testar — não há turmas nem matrículas reais e não criámos dados fictícios | P1 |
+| Turmas, horários e presenças | sec. 11 | Turmas, sessões com estado próprio, presenças em três estados, offline, folha imprimível | Testes de assiduidade | Sem dados reais; sessões virtuais sem ligação automática a videoconferência | P1 |
+| Avaliação e certificação | sec. 10, 12, 12.1 | Banco com 5 tipologias, exame gerado no arranque, certificado individual com 80 %/60 %/30 dias validados no servidor | 14 testes de regra | Banco 60+10 **inactivo**; exame bloqueado até validação pedagógica | P0 (externo) |
+| Gestão, indicadores e exportação | sec. 13 | Painel nacional por província e distrito, CSV, XLS e PDF | Navegador | Sem dados reais para validar volumes | P2 |
+| Segurança, privacidade e auditoria | Lei 10/2024, sec. 15 | RLS em todas as tabelas, leitura de exames e presenças restrita à equipa de formação, registo de auditoria imutável | Políticas na base | Recomendações do analisador fora de exames e presenças por rever | P1 |
+| Desempenho, 99,5 %, 200 simultâneos | sec. 16 | — | — | **Nunca medido.** Não existe teste de carga nem monitorização de disponibilidade | P1 |
+| Alojamento, entrega de código e suporte | sec. 17 | Plataforma publicada; código no repositório | — | Plano de entrega, suporte e transferência por acordar | P1 |
+
+### Progresso por matrícula — o que ficou implementado nesta etapa
+
+- Tabela nova, aditiva, com unicidade matrícula+lição; nada foi alterado ou
+  apagado nos dados existentes.
+- Validação no servidor: dono da matrícula, existência da lição e pertença do
+  módulo ao curso da turma, incluindo módulos partilhados (o transversal é
+  aceite sem inventar um curso «pai»).
+- Acesso: cada pessoa só vê e altera o progresso das suas matrículas; a equipa
+  de formação lê segundo as atribuições que já existiam. Nada foi alargado.
+- Interface: a carregar, a guardar, guardado, falhou com «tentar de novo».
+  Nunca é afirmada sincronização que não aconteceu; sem sessão com matrícula, o
+  progresso é explicitamente identificado como local.
+- Progresso anónimo **não** é importado para a matrícula.
+- Concluir uma lição não gera presença, aprovação nem certificado — dito no
+  próprio ecrã.
+
+### Testado e por testar
+
+Testado em unidade (sem tocar na base): isolamento entre utilizadores, entre
+matrículas e entre cursos, aceitação de módulo partilhado, recusa de lição fora
+do curso e de matrícula inexistente — 7 testes, num total de 37 a passar.
+Testado no navegador: a lição pública continua a funcionar sem conta e mostra o
+aviso de progresso local. **Por testar num percurso real:** gravação, recarregar
+a página e continuidade noutro aparelho com a mesma conta — depende de existir
+uma turma e uma matrícula reais, que não criámos.
