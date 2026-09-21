@@ -139,7 +139,7 @@ export const obterTurma = createServerFn({ method: "GET" })
       turma,
       curso: cursoRes.data,
       sessoes,
-      inscritos: (inscricoesRes.data ?? []).filter((i) => i.estado !== "desistiu").length,
+      inscritos: (inscricoesRes.data ?? []).filter((i: { estado: string }) => i.estado !== "desistiu").length,
       horasAgendadas: Math.round((minutos / 60) * 100) / 100,
       cargaHorariaCurso: cargaCurso,
       cargaConfere: cargaCurso > 0 && Math.abs(minutos / 60 - cargaCurso) < 0.01,
@@ -348,7 +348,7 @@ export const inscreverFormando = createServerFn({ method: "POST" })
       .select("id,estado")
       .eq("turma_id", data.turmaId);
     if (inscritosRes.error) throw inscritosRes.error;
-    const activos = (inscritosRes.data ?? []).filter((i) => i.estado !== "desistiu").length;
+    const activos = (inscritosRes.data ?? []).filter((i: { estado: string }) => i.estado !== "desistiu").length;
     if (activos >= turmaRes.data.limite_formandos) {
       return {
         ok: false as const,

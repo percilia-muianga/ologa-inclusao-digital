@@ -262,7 +262,7 @@ export const registarParticipantes = createServerFn({ method: "POST" })
 
     return {
       registados: (inseridos ?? []).length,
-      duplicados: (inseridos ?? []).filter((i) => i.duplicado_provavel).length,
+      duplicados: (inseridos ?? []).filter((i: { duplicado_provavel: boolean }) => i.duplicado_provavel).length,
     };
   });
 

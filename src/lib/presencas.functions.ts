@@ -354,7 +354,7 @@ export const registarPresencas = createServerFn({ method: "POST" })
     if (error) throw error;
     return {
       gravadas: (inseridas ?? []).length,
-      conflitos: (inseridas ?? []).filter((i) => i.conflito).length,
+      conflitos: (inseridas ?? []).filter((i: { conflito: boolean }) => i.conflito).length,
       recusadas,
     };
   });
@@ -431,7 +431,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
     if (error) throw error;
     return {
       gravadas: (inseridas ?? []).length,
-      presentes: (inseridas ?? []).filter((i) => i.estado === "presente").length,
+      presentes: (inseridas ?? []).filter((i: { estado: string }) => i.estado === "presente").length,
       duracao,
       limiarPermanencia,
       limiarProgresso,
