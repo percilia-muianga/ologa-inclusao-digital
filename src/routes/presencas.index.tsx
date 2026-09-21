@@ -64,11 +64,26 @@ function PresencasPage() {
               </p>
               <p className="mt-2 text-base text-navy">
                 {t.inscritos} formandos inscritos · {t.sessoesRealizadas} de {t.totalSessoes} sessões
-                já realizadas ·{" "}
-                {t.assiduidadeMediaPct === null
-                  ? "assiduidade média: — (sem sessões realizadas)"
-                  : `assiduidade média: ${t.assiduidadeMediaPct}%`}
+                marcadas como realizadas · {t.justificadas} faltas justificadas
               </p>
+              <p className="mt-1 text-base text-navy">
+                Assiduidade estrita média:{" "}
+                {t.assiduidadeEstritaMediaPct === null
+                  ? "— (sem sessões realizadas)"
+                  : `${t.assiduidadeEstritaMediaPct}%`}{" "}
+                · Assiduidade ajustada média:{" "}
+                {t.assiduidadeAjustadaMediaPct === null
+                  ? "— (sem sessões realizadas)"
+                  : `${t.assiduidadeAjustadaMediaPct}%`}
+                . Para certificação vale a {t.base === "ajustada" ? "ajustada" : "estrita"}.
+              </p>
+              {t.sessoesPorRegularizar > 0 ? (
+                <p className="mt-2 rounded-md border border-[#C20400] bg-[#FFF4F4] p-3 text-base font-semibold text-[#C20400]">
+                  Por regularizar: {t.sessoesPorRegularizar} sessões com a data já passada continuam
+                  agendadas. Abra a turma e marque cada uma como realizada, cancelada ou adiada —
+                  enquanto isso não for feito, não entram no cálculo da assiduidade.
+                </p>
+              ) : null}
               {t.abaixoDoLimiar > 0 || t.emRisco > 0 ? (
                 <p className="mt-2 rounded-md border border-[#C20400] bg-[#FFF4F4] p-3 text-base font-semibold text-[#C20400]">
                   Atenção: {t.abaixoDoLimiar} formandos abaixo dos {LIMIAR_ASSIDUIDADE} por cento
@@ -78,6 +93,7 @@ function PresencasPage() {
                   .
                 </p>
               ) : null}
+
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link
                   to="/presencas/turma/$codigo"
