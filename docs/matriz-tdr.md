@@ -649,3 +649,61 @@ dificuldades exactamente nas quotas, sem repetição de questão e com mais de 8
 provas distintas em 100 sementes; diagnóstico separado e fora do sorteio. Gravação
 repetida: 0 inseridas, 70 actualizadas por curso, 0 duplicados. Estado na base:
 140 rascunhos utilizáveis (70 + 70), 140 retiradas, 0 activas.
+
+## A20 — Correcção da lacuna de cobertura em Transformação Digital, 21/09/2026
+
+**Lacuna declarada.** O requisito do primeiro bloco era cobertura garantida de
+TODOS os módulos associados e de cenários nos DOIS cursos. O resultado
+anterior não cumpria em Transformação Digital: as quotas desse curso não
+incluíam o módulo transversal «Governo Digital Inclusivo e Acessibilidade»
+(ordem 200), que está associado ao curso, nem qualquer questão de cenário, e o
+banco v2 desse curso foi escrito em conformidade com essa limitação. Ficou
+assim declarado como limite, mas era uma lacuna face ao requisito, e é
+corrigida aqui. Computação em Nuvem foi preservada sem alteração.
+
+**Quotas de Transformação Digital (proposta pedagógica da Ologa, por validar
+pela ATDI — não é imposição do TdR).** Prova de 20 questões em 60 minutos,
+dentro do bloco de avaliação já reservado, sem alterar as 24 horas do curso:
+
+| Módulo (nome) | Ordem | Questões na prova | Banco |
+|---|---|---|---|
+| Fundamentos da Transformação Digital | 111 | 6 | 18 |
+| Serviços Públicos Centrados no Cidadão | 112 | 6 | 18 |
+| Implementação e Mudança Institucional | 113 | 6 | 18 |
+| Governo Digital Inclusivo e Acessibilidade (transversal) | 200 | 2 | 6 |
+
+Tipologias na prova: 8 escolha múltipla, 4 verdadeiro/falso, 4 associação,
+2 ordenação, 2 cenários. Banco: 24 / 12 / 12 / 6 / 6. Dificuldade na prova:
+8 fáceis, 8 médias, 4 difíceis; banco 24 / 24 / 12. O cenário é categoria
+pedagógica própria e exclui a classificação como escolha múltipla, mesmo
+usando esse formato de resposta. Cada dimensão tem exactamente o triplo do que
+a prova consome, pelo que cada exame inclui todos os módulos, todos os
+formatos e cenários.
+
+**Conteúdo.** Foram reaproveitadas as questões v2 boas, nunca expostas (a
+versão exposta é a v1, retirada e nunca reutilizada), e escritas de raiz as que
+faltavam: cenários com caso e decisão nos três módulos temáticos, associações e
+ordenações adicionais, e seis questões transversais sobre acessibilidade e
+serviços inclusivos, baseadas nas lições dos formandos, sem invocar normas
+jurídicas novas. Duas questões que já eram casos passaram a estar classificadas
+como cenário por metadado. Os elementos mantidos conservam o enunciado, e
+portanto o registo e o identificador estáveis.
+
+**Reconciliação da semente.** A semente v2 passa a retirar (nunca apagar) as
+linhas v2 em uso cujo enunciado já não consta do ficheiro, com motivo escrito,
+de modo a não restarem sobrantes a contar como utilizáveis. Execução:
+18 inseridas, 52 actualizadas, 18 sobrantes retiradas em Transformação Digital;
+Nuvem intacta. Repetição: 0 inseridas, 0 sobrantes — idempotente.
+
+**Estado na base.** Transformação Digital: 60 de exame + 10 de diagnóstico
+utilizáveis na v2, 88 retiradas (70 da v1 exposta + 18 sobrantes da revisão),
+0 activas. Computação em Nuvem: 60 + 10 utilizáveis, 70 retiradas, 0 activas.
+Nada foi activado, nenhum exame está operacional e nada foi publicado.
+
+**Verificações reais.** 107 testes e verificação de tipos limpa, incluindo
+contagens exactas de Transformação Digital por módulo, tipologia e
+dificuldade; quotas com transversal e cenário; 100 provas simuladas por curso
+com os bancos reais, todas viáveis e com cobertura completa; 150 amostras com a
+composição real de Transformação Digital, todas com os quatro módulos, dois
+cenários e duas ordenações; exclusão de inactivos, retirados e diagnóstico do
+sorteio. Contagens confirmadas também por consulta directa à base.
