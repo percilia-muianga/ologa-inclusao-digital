@@ -115,6 +115,20 @@ async function main() {
         .select("modulo_id"),
     );
 
+    // Descrição do conteúdo que existe mesmo. O módulo transversal é
+    // partilhado por vários cursos e não é tocado aqui.
+    if (plano.descricao) {
+      must(
+        await sb
+          .from("modulos")
+          .update({ descricao: plano.descricao })
+          .eq("id", rel.modulo_id)
+          .select("id"),
+      );
+    }
+
+
+
     for (const l of plano.licoes) {
       const existente = must(
         await sb
@@ -134,8 +148,8 @@ async function main() {
             titulo: l.titulo,
             duracao: `${l.minutos} minutos`,
             duracao_minutos: l.minutos,
-            conteudo_elearning: montarElearning(conteudo, l.minutos),
-            guiao_formador: montarGuiao(conteudo, l.titulo, l.minutos),
+            conteudo_elearning: montarElearning(conteudo, l.minutos, l.tempos),
+            guiao_formador: montarGuiao(conteudo, l.titulo, l.minutos, l.tempos),
             estado_conteudo: "disponivel",
             proposta_por_validar: true,
           })

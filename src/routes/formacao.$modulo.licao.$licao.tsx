@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
@@ -33,9 +33,10 @@ function pararLeitura() {
 
 function LicaoView() {
   const { modulo: moduloId, licao: licaoId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const navigate = useNavigate();
   const { data: licao } = useSuspenseQuery(licaoQuery(licaoId));
-  const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
+  const { data: mod } = useSuspenseQuery(moduloQuery(moduloId, curso));
   const [aba, setAba] = useState<Aba>("elearning");
 
   // Paragem automática ao mudar de separador ou de lição
@@ -57,9 +58,10 @@ function LicaoView() {
       navigate({
         to: "/formacao/$modulo/licao/$licao",
         params: { modulo: moduloId, licao: proxima.id },
+        search: { curso },
       });
     } else {
-      navigate({ to: "/formacao/$modulo", params: { modulo: moduloId } });
+      navigate({ to: "/formacao/$modulo", params: { modulo: moduloId }, search: { curso } });
     }
   }
 
@@ -99,6 +101,7 @@ function LicaoView() {
         <Link
           to="/formacao/$modulo"
           params={{ modulo: moduloId }}
+          search={{ curso }}
           className="text-navy-2 underline hover:text-brand-dark"
         >
           ← Voltar ao módulo
@@ -107,14 +110,22 @@ function LicaoView() {
       <h2 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h2>
 
       {/* Só é assinalado como disponível o formato que existe mesmo. */}
-      <ul className="selos-formato" aria-label="Formatos desta lição">
+      <ul className="selos-formato" aria-label="Recursos já disponíveis nesta lição">
         <li className="selo-formato"><span>Texto: disponível</span><span className="check" aria-hidden="true">✓</span></li>
         <li className="selo-formato"><span>Síntese em leitura fácil: disponível</span><span className="check" aria-hidden="true">✓</span></li>
         <li className="selo-formato"><span>Leitura em voz alta pelo navegador: disponível</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Alto contraste e navegação por teclado: disponíveis</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Vídeo e legendagem: por produzir</span></li>
-        <li className="selo-formato"><span>Língua de Sinais Moçambicana: por produzir</span></li>
+        <li className="selo-formato"><span>Alto contraste e navegação por teclado: controlos disponíveis</span><span className="check" aria-hidden="true">✓</span></li>
       </ul>
+      <ul className="selos-formato" aria-label="Recursos que ainda não existem nesta lição">
+        <li className="selo-formato selo-formato--por-produzir"><span className="marca" aria-hidden="true">✗ </span><span>Vídeo e legendagem: por produzir</span></li>
+        <li className="selo-formato selo-formato--por-produzir"><span className="marca" aria-hidden="true">✗ </span><span>Língua de Sinais Moçambicana: por produzir</span></li>
+        <li className="selo-formato selo-formato--por-produzir"><span className="marca" aria-hidden="true">✗ </span><span>Revisão de acessibilidade por terceiros: por realizar</span></li>
+      </ul>
+      <p className="mb-4 mt-2 text-sm text-navy-2">
+        Os controlos de acessibilidade existem e funcionam. Isso não equivale a uma
+        revisão de acessibilidade feita por terceiros: essa revisão está proposta e
+        ainda não foi realizada.
+      </p>
 
       {temGuiao ? (
         <div role="tablist" aria-label="Vistas da lição" className="mb-4 flex gap-2 border-b border-line">
@@ -221,6 +232,7 @@ function LicaoView() {
             <Link
               to="/formacao/$modulo/licao/$licao"
               params={{ modulo: moduloId, licao: anterior.id }}
+              search={{ curso }}
               className="text-sm font-semibold text-navy-2 underline"
             >
               ← {anterior.titulo}

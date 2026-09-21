@@ -414,6 +414,17 @@
   color: var(--color-success);
   font-weight: 800;
 }
+/* Recursos que ainda não existem: forma, traço e texto diferentes — nunca só a cor. */
+.selo-formato--por-produzir {
+  background: transparent;
+  color: #5b4b1a;
+  border: 1px dashed #a98b2e;
+  border-radius: 0.375rem;
+  font-weight: 600;
+}
+.selo-formato--por-produzir .marca {
+  font-weight: 800;
+}
 
 /* Ilustração da lição — SVGs trazem role="img" e aria-label próprios */
 .ilustracao-licao svg {

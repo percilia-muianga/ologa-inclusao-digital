@@ -11,16 +11,20 @@
  * engano; é lido apenas pelo seed (scripts/seed-transformacao-digital.ts).
  */
 
+import type { TemposLicao } from "../../src/lib/plano-transformacao-digital";
+
 export type ConteudoLicao = {
   objectivos: string[];
   explicacao: string[];
   exemplo: { titulo: string; corpo: string[] };
-  actividade: { tempo: string; enunciado: string[]; produto: string };
+  /** Os minutos não são escritos aqui: vêm de TemposLicao (fonte única). */
+  actividade: { formato: string; enunciado: string[]; produto: string };
   sintese: string[];
   verificacao: { pergunta: string; resposta: string; feedback: string }[];
   guiao: {
     preparacao: string[];
-    conducao: { tempo: string; passo: string }[];
+    /** Quatro passos, pela ordem: acolhimento, exposição, actividade, partilha. */
+    conducao: [string, string, string, string];
     criterios: string[];
     errosComuns: string[];
   };
@@ -39,10 +43,48 @@ export const AVISO_HTML =
   "Este conteúdo é um rascunho preparado pela equipa. A sua disponibilidade na plataforma " +
   "não significa aprovação nem validação técnica.</p>";
 
-export function montarElearning(c: ConteudoLicao, minutos: number): string {
+/** Rótulos dos quatro blocos, pela mesma ordem de TemposLicao. */
+export const BLOCOS_TEMPO = [
+  "Acolhimento e objectivos",
+  "Exposição",
+  "Actividade prática",
+  "Partilha e síntese",
+] as const;
+
+export function minutosPorBloco(t: TemposLicao): number[] {
+  return [t.acolhimento, t.exposicao, t.actividade, t.partilha];
+}
+
+/** Grelha de tempos comum ao conteúdo e ao guião — evita duas contas diferentes. */
+function grelhaTempos(t: TemposLicao): string {
+  const minutos = minutosPorBloco(t);
+  return (
+    "<ul>" +
+    BLOCOS_TEMPO.map((b, i) => `<li>${b}: ${minutos[i]} minutos.</li>`).join("") +
+    "</ul>"
+  );
+}
+
+function faixas(t: TemposLicao): string[] {
+  const minutos = minutosPorBloco(t);
+  let inicio = 0;
+  return minutos.map((m) => {
+    const faixa = `${inicio}–${inicio + m} min`;
+    inicio += m;
+    return faixa;
+  });
+}
+
+export function montarElearning(
+  c: ConteudoLicao,
+  minutos: number,
+  tempos: TemposLicao,
+): string {
   return [
     AVISO_HTML,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos.</p>`,
+    "<h3>Como o tempo desta lição está distribuído</h3>",
+    grelhaTempos(tempos),
     "<h3>Objectivos de aprendizagem</h3>",
     "<p>No fim desta lição, a pessoa formanda deve ser capaz de:</p>",
     lista(c.objectivos),
@@ -53,13 +95,15 @@ export function montarElearning(c: ConteudoLicao, minutos: number): string {
     `<h4>${esc(c.exemplo.titulo)}</h4>`,
     paragrafos(c.exemplo.corpo),
     "<h3>Actividade prática</h3>",
-    `<p><strong>Tempo:</strong> ${esc(c.actividade.tempo)}.</p>`,
+    `<p><strong>Tempo:</strong> ${tempos.actividade} minutos de trabalho, ${esc(
+      c.actividade.formato,
+    )}, seguidos de ${tempos.partilha} minutos de partilha e síntese em plenário.</p>`,
     paragrafos(c.actividade.enunciado),
     `<p><strong>Produto esperado:</strong> ${esc(c.actividade.produto)}</p>`,
     "<h3>Síntese em leitura fácil</h3>",
     lista(c.sintese),
     "<h3>Verificação formativa</h3>",
-    "<p>Estas perguntas não contam para a nota final. Servem para a pessoa formanda confirmar o que percebeu.</p>",
+    "<p>Estas perguntas não contam para a nota final e não são perguntas do exame final. Servem para a pessoa formanda confirmar o que percebeu.</p>",
     c.verificacao
       .map(
         (v, i) =>
@@ -71,21 +115,34 @@ export function montarElearning(c: ConteudoLicao, minutos: number): string {
   ].join("");
 }
 
-export function montarGuiao(c: ConteudoLicao, titulo: string, minutos: number): string {
+export function montarGuiao(
+  c: ConteudoLicao,
+  titulo: string,
+  minutos: number,
+  tempos: TemposLicao,
+): string {
+  const faixa = faixas(tempos);
   return [
     AVISO_HTML,
     `<h3>Guião do formador — ${esc(titulo)}</h3>`,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos, em sessão virtual.</p>`,
+    "<p>Os tempos abaixo são os mesmos que a pessoa formanda vê no conteúdo da lição.</p>",
     "<h4>Preparação</h4>",
     lista(c.guiao.preparacao),
     "<h4>Condução</h4>",
     `<ol>${c.guiao.conducao
-      .map((p) => `<li><strong>${esc(p.tempo)}:</strong> ${esc(p.passo)}</li>`)
+      .map(
+        (passo, i) =>
+          `<li><strong>${faixa[i]} (${BLOCOS_TEMPO[i]}):</strong> ${esc(passo)}</li>`,
+      )
       .join("")}</ol>`,
     "<h4>Critérios de apreciação do produto da actividade</h4>",
     lista(c.guiao.criterios),
     "<h4>Erros comuns a antecipar</h4>",
     lista(c.guiao.errosComuns),
+    "<p><strong>Separação pedagógica:</strong> este guião não contém perguntas nem " +
+      "respostas do exame final. O exame é gerado no momento em que a pessoa formanda " +
+      "o inicia, a partir do banco de questões, e o gabarito fica apenas no servidor.</p>",
   ].join("");
 }
 
@@ -112,7 +169,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "40 minutos, individual com partilha final de 10 minutos",
+      formato: "individual",
       enunciado: [
         "Escolha um serviço prestado pela instituição onde trabalha e que conheça bem.",
         "Escreva, em três colunas, o que nesse serviço é digitação, o que é digitalização e o que seria transformação digital.",
@@ -155,10 +212,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar a tabela de três colunas num documento partilhado e em ficheiro de texto simples, para quem tiver ligação fraca.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Acolhimento, objectivos da lição e regra de participação." },
-        { tempo: "10–50 min", passo: "Exposição dos três degraus e das quatro camadas, com perguntas ao grupo a cada bloco." },
-        { tempo: "50–80 min", passo: "Actividade prática individual, com apoio a pedido." },
-        { tempo: "80–90 min", passo: "Partilha de dois ou três trabalhos e síntese." },
+        "Acolhimento, objectivos da lição e regra de participação.",
+        "Exposição dos três degraus e das quatro camadas, com perguntas ao grupo a cada bloco.",
+        "Actividade prática individual, com apoio a pedido.",
+        "Partilha de dois ou três trabalhos e síntese.",
       ],
       criterios: [
         "Classifica correctamente pelo menos quatro dos seis passos.",
@@ -196,7 +253,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "40 minutos em pares",
+      formato: "em pares",
       enunciado: [
         "Escolham um passo de um serviço que gostariam de eliminar.",
         "Escrevam que norma, decisão ou prática interna sustenta esse passo. Se não souberem, escrevam quem na instituição saberia.",
@@ -231,10 +288,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Ter à mão os nomes das políticas e normas nacionais aplicáveis, sem as interpretar juridicamente na sessão.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Retoma da lição anterior e ligação ao tema." },
-        { tempo: "10–50 min", passo: "Exposição das três diferenças e do papel das políticas públicas." },
-        { tempo: "50–80 min", passo: "Actividade em pares, em salas separadas." },
-        { tempo: "80–90 min", passo: "Partilha e registo das dúvidas jurídicas para encaminhamento." },
+        "Retoma da lição anterior e ligação ao tema.",
+        "Exposição das três diferenças e do papel das políticas públicas.",
+        "Actividade em pares, em salas separadas.",
+        "Partilha e registo das dúvidas jurídicas para encaminhamento.",
       ],
       criterios: [
         "Identifica um passo concreto e não uma queixa genérica.",
@@ -272,7 +329,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "50 minutos em grupos de três",
+      formato: "em grupos de três",
       enunciado: [
         "Escolham um serviço em processo de digitalização.",
         "Preencham uma grelha com quatro colunas: impacto social, impacto económico, risco ético ou jurídico, impacto ambiental.",
@@ -308,10 +365,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Ter exemplos de indicadores simples para desbloquear grupos parados.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Pergunta de abertura: o que é um serviço que valeu a pena?" },
-        { tempo: "10–40 min", passo: "Exposição dos quatro tipos de impacto." },
-        { tempo: "40–80 min", passo: "Trabalho de grupo com a grelha." },
-        { tempo: "80–90 min", passo: "Apresentação de uma grelha e discussão de quem pode perder." },
+        "Pergunta de abertura: o que é um serviço que valeu a pena?",
+        "Exposição dos quatro tipos de impacto.",
+        "Trabalho de grupo com a grelha.",
+        "Apresentação de uma grelha e discussão de quem pode perder.",
       ],
       criterios: [
         "Identifica pelo menos um grupo que pode perder com a mudança.",
@@ -348,7 +405,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "50 minutos, individual com validação em pares",
+      formato: "individual, com validação em pares",
       enunciado: [
         "Avalie o seu serviço nas cinco dimensões, atribuindo um dos quatro níveis.",
         "Escreva uma linha de justificação por dimensão, com um facto observável.",
@@ -382,10 +439,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar dois exemplos de justificação bem escrita e dois mal escritos.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Enquadrar o diagnóstico como instrumento de decisão." },
-        { tempo: "10–40 min", passo: "Apresentar dimensões e níveis com exemplos." },
-        { tempo: "40–80 min", passo: "Diagnóstico individual e validação em pares." },
-        { tempo: "80–90 min", passo: "Recolha das prioridades e fecho do módulo 1." },
+        "Enquadrar o diagnóstico como instrumento de decisão.",
+        "Apresentar dimensões e níveis com exemplos.",
+        "Diagnóstico individual e validação em pares.",
+        "Recolha das prioridades e fecho do módulo 1.",
       ],
       criterios: [
         "Todas as cinco dimensões têm nível atribuído e justificação com facto observável.",
@@ -421,7 +478,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "60 minutos: 30 de preparação, 30 de análise",
+      formato: "individual",
       enunciado: [
         "Escreva um guião de dez perguntas abertas para utentes do seu serviço.",
         "Escreva uma grelha de observação com cinco comportamentos a registar.",
@@ -454,10 +511,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Combinar antecipadamente as regras de recolha: consentimento, anonimato e não recolher dados desnecessários.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Abertura do módulo 2 e objectivos." },
-        { tempo: "10–45 min", passo: "Métodos de recolha e construção de perfis." },
-        { tempo: "45–95 min", passo: "Actividade prática com apoio individual." },
-        { tempo: "95–105 min", passo: "Partilha de um perfil por grupo e síntese." },
+        "Abertura do módulo 2 e objectivos.",
+        "Métodos de recolha e construção de perfis.",
+        "Actividade prática com apoio individual.",
+        "Partilha de um perfil por grupo e síntese.",
       ],
       criterios: [
         "As perguntas são abertas e não sugerem a resposta.",
@@ -495,7 +552,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "60 minutos em grupos de três",
+      formato: "em grupos de três",
       enunciado: [
         "Mapeiem a jornada de um serviço, do primeiro contacto ao resultado, com as quatro colunas indicadas.",
         "Assinalem os pontos de fricção e estimem o tempo perdido em cada um.",
@@ -529,10 +586,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Ter cronómetro e regras de tempo por grupo.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Retoma dos perfis da lição anterior." },
-        { tempo: "10–45 min", passo: "Método de mapeamento e tipos de fricção." },
-        { tempo: "45–95 min", passo: "Mapeamento em grupo." },
-        { tempo: "95–105 min", passo: "Apresentação de um mapa e crítica construtiva." },
+        "Retoma dos perfis da lição anterior.",
+        "Método de mapeamento e tipos de fricção.",
+        "Mapeamento em grupo.",
+        "Apresentação de um mapa e crítica construtiva.",
       ],
       criterios: [
         "O mapa inclui passos anteriores ao primeiro contacto com a instituição.",
@@ -570,7 +627,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "60 minutos, individual com revisão cruzada",
+      formato: "individual, com revisão cruzada em pares",
       enunciado: [
         "Escolha um formulário ou procedimento do seu serviço.",
         "Aplique os três critérios a cada passo ou campo e classifique: eliminar, fundir, manter.",
@@ -603,10 +660,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar exemplos de riscos bem e mal escritos.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Ligação ao mapa de jornada da lição anterior." },
-        { tempo: "10–45 min", passo: "Os três critérios e o limite do controlo interno." },
-        { tempo: "45–95 min", passo: "Aplicação individual e revisão cruzada em pares." },
-        { tempo: "95–105 min", passo: "Recolha dos casos em que a simplificação exige decisão superior." },
+        "Ligação ao mapa de jornada da lição anterior.",
+        "Os três critérios e o limite do controlo interno.",
+        "Aplicação individual e revisão cruzada em pares.",
+        "Recolha dos casos em que a simplificação exige decisão superior.",
       ],
       criterios: [
         "Classifica todos os passos, sem deixar nenhum por decidir sem justificação.",
@@ -645,7 +702,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "60 minutos em pares",
+      formato: "em pares",
       enunciado: [
         "Peguem num formulário do serviço e assinalem que campos são dados pessoais.",
         "Para cada campo, escrevam a finalidade e quem precisa de lhe aceder.",
@@ -684,10 +741,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar um formulário-exemplo com campos manifestamente desnecessários.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Abertura e recolha de receios do grupo sobre dados." },
-        { tempo: "10–50 min", passo: "Princípios de recolha mínima e finalidade, e as medidas básicas de segurança." },
-        { tempo: "50–95 min", passo: "Actividade em pares." },
-        { tempo: "95–105 min", passo: "Compromissos concretos e fecho do módulo 2." },
+        "Abertura e recolha de receios do grupo sobre dados.",
+        "Princípios de recolha mínima e finalidade, e as medidas básicas de segurança.",
+        "Actividade em pares.",
+        "Compromissos concretos e fecho do módulo 2.",
       ],
       criterios: [
         "Identifica correctamente os campos que são dados pessoais.",
@@ -724,7 +781,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "70 minutos em grupos de três",
+      formato: "em grupos de três",
       enunciado: [
         "Partindo do diagnóstico do módulo 1, listem oito iniciativas possíveis.",
         "Classifiquem cada uma quanto a valor para o utente e exequibilidade, numa escala de três níveis.",
@@ -757,10 +814,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar a grelha valor/exequibilidade em formato acessível.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Abertura do módulo 3 e ligação ao diagnóstico." },
-        { tempo: "10–35 min", passo: "Critérios de priorização e estrutura do plano de uma página." },
-        { tempo: "35–95 min", passo: "Trabalho de grupo." },
-        { tempo: "95–105 min", passo: "Apresentação de um plano e crítica pelos critérios." },
+        "Abertura do módulo 3 e ligação ao diagnóstico.",
+        "Critérios de priorização e estrutura do plano de uma página.",
+        "Trabalho de grupo.",
+        "Apresentação de um plano e crítica pelos critérios.",
       ],
       criterios: [
         "Os três objectivos têm resultado, responsável, prazo e indicador.",
@@ -798,7 +855,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "70 minutos, individual com discussão final",
+      formato: "individual, com discussão final",
       enunciado: [
         "Escolha uma das três iniciativas do plano da lição anterior.",
         "Preencha uma matriz de papéis para as cinco decisões mais importantes dessa iniciativa.",
@@ -831,10 +888,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Recolher os planos da lição anterior.",
       ],
       conducao: [
-        { tempo: "0–10 min", passo: "Retoma do plano e dos responsáveis nomeados." },
-        { tempo: "10–35 min", passo: "Papéis, competências e risco de dependência." },
-        { tempo: "35–95 min", passo: "Trabalho individual com apoio." },
-        { tempo: "95–105 min", passo: "Discussão dos casos de dependência de uma só pessoa." },
+        "Retoma do plano e dos responsáveis nomeados.",
+        "Papéis, competências e risco de dependência.",
+        "Trabalho individual com apoio.",
+        "Discussão dos casos de dependência de uma só pessoa.",
       ],
       criterios: [
         "Cada uma das cinco decisões tem um único decisor identificado.",
@@ -872,7 +929,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "80 minutos em grupos de três",
+      formato: "em grupos de três",
       enunciado: [
         "Identifiquem três causas prováveis de resistência à iniciativa que escolheram.",
         "Escrevam três mensagens de comunicação interna, cada uma respondendo a uma das três perguntas que as pessoas fazem, e escolham o canal de cada uma.",
@@ -906,10 +963,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Preparar modelos curtos de mensagem interna.",
       ],
       conducao: [
-        { tempo: "0–15 min", passo: "Recolha de experiências anteriores de mudança no grupo." },
-        { tempo: "15–35 min", passo: "Causas de resistência e lógica das primeiras duas semanas." },
-        { tempo: "35–95 min", passo: "Trabalho de grupo sobre o plano de adopção." },
-        { tempo: "95–105 min", passo: "Leitura em voz alta de uma mensagem por grupo e crítica." },
+        "Recolha de experiências anteriores de mudança no grupo.",
+        "Causas de resistência e lógica das primeiras duas semanas.",
+        "Trabalho de grupo sobre o plano de adopção.",
+        "Leitura em voz alta de uma mensagem por grupo e crítica.",
       ],
       criterios: [
         "As causas de resistência são específicas do serviço e não genéricas.",
@@ -947,7 +1004,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      tempo: "80 minutos em grupos de três",
+      formato: "em grupos de três",
       enunciado: [
         "Definam três indicadores de resultado para a iniciativa escolhida, com os quatro elementos exigidos.",
         "Acrescentem um indicador de equidade e expliquem que desigualdade permitiria detectar.",
@@ -986,10 +1043,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Confirmar se a instituição tem procedimento de abate de equipamento, sem pressupor.",
       ],
       conducao: [
-        { tempo: "0–15 min", passo: "Distinção entre actividade e resultado, com exemplos do grupo." },
-        { tempo: "15–35 min", passo: "Elementos de um indicador, equidade e sustentabilidade." },
-        { tempo: "35–95 min", passo: "Trabalho de grupo." },
-        { tempo: "95–105 min", passo: "Fecho do módulo 3 e preparação da revisão e do exame final." },
+        "Distinção entre actividade e resultado, com exemplos do grupo.",
+        "Elementos de um indicador, equidade e sustentabilidade.",
+        "Trabalho de grupo.",
+        "Fecho do módulo 3 e preparação da revisão e do exame final.",
       ],
       criterios: [
         "Os três indicadores são de resultado e têm os quatro elementos.",

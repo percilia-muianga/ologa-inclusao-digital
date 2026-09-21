@@ -4,21 +4,35 @@ import { useEffect, useState } from "react";
 import { obterModulo } from "@/lib/formacao.functions";
 import { formacaoStore } from "@/lib/formacao-store";
 
-export const moduloQuery = (moduloId: string) =>
+export const moduloQuery = (moduloId: string, cursoSlug?: string) =>
   queryOptions({
-    queryKey: ["formacao", "modulo", moduloId],
-    queryFn: () => obterModulo({ data: { moduloId } }),
+    queryKey: ["formacao", "modulo", moduloId, cursoSlug ?? null],
+    queryFn: () => obterModulo({ data: { moduloId, cursoSlug: cursoSlug ?? null } }),
   });
 
+/**
+ * `curso` é o contexto de percurso: indica a partir de que curso a pessoa
+ * chegou ao módulo. Não altera os dados nem a ordenação global; é validado no
+ * servidor e ignorado se o módulo não pertencer a esse curso.
+ */
+export type PesquisaModulo = { curso?: string };
+
 export const Route = createFileRoute("/formacao/$modulo")({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(moduloQuery(params.modulo)),
+  validateSearch: (s: Record<string, unknown>): PesquisaModulo =>
+    typeof s["curso"] === "string" && s["curso"].length > 0
+      ? { curso: s["curso"] }
+      : {},
+  loaderDeps: ({ search }) => ({ curso: search.curso }),
+  loader: ({ context, params, deps }) =>
+    context.queryClient.ensureQueryData(moduloQuery(params.modulo, deps.curso)),
   component: ModuloLayout,
 });
 
 function ModuloLayout() {
   const { modulo: moduloId } = Route.useParams();
-  const { data } = useSuspenseQuery(moduloQuery(moduloId));
+  const { curso } = Route.useSearch();
+  const { data } = useSuspenseQuery(moduloQuery(moduloId, curso));
+  const contexto = data.contexto;
 
   // Progresso local (barra discreta em topo do módulo)
   const [concluidas, setConcluidas] = useState(0);
@@ -35,13 +49,27 @@ function ModuloLayout() {
   return (
     <div className="wrap py-8">
       <nav className="mb-4 text-sm">
-        <Link to="/formacao" className="text-navy-2 underline hover:text-brand">
-          ← Todos os cursos
-        </Link>
+        {contexto ? (
+          <Link
+            to="/cursos/$curso"
+            params={{ curso: contexto.cursoSlug }}
+            className="text-navy-2 underline hover:text-brand"
+          >
+            ← Voltar ao curso {contexto.cursoTitulo}
+          </Link>
+        ) : (
+          <Link to="/formacao" className="text-navy-2 underline hover:text-brand">
+            ← Todos os módulos da formação aberta
+          </Link>
+        )}
       </nav>
       <div className="mb-6">
         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Módulo {data.modulo.ordem}
+          {contexto
+            ? contexto.transversal
+              ? `Módulo transversal obrigatório · ${contexto.cursoTitulo}`
+              : `Módulo ${contexto.ordemNoCurso} de ${contexto.totalModulos} · ${contexto.cursoTitulo}`
+            : "Módulo da formação aberta"}
         </div>
         <h1 className="mt-1 text-2xl font-extrabold text-navy sm:text-3xl">
           {data.modulo.titulo}

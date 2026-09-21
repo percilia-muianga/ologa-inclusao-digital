@@ -54,7 +54,19 @@ function CursoPage() {
             servem apenas de exercício.
           </p>
         ) : null}
-        <p className="mt-2 text-navy-2"><strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os títulos organizam o plano de produção; o conteúdo temático será fornecido pela equipa Ologa.</p>
+        {totalPorFornecer > 0 ? (
+          <p className="mt-2 text-navy-2">
+            <strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os
+            títulos organizam o plano de produção; o conteúdo temático será fornecido
+            pela equipa Ologa.
+          </p>
+        ) : (
+          <p className="mt-2 text-navy-2">
+            <strong>Todas as lições deste curso já têm conteúdo escrito.</strong> O
+            conteúdo está em rascunho, por validar. Não existe aprovação da Ologa, da
+            ATDI nem revisão de acessibilidade por terceiros.
+          </p>
+        )}
         <p className="mt-2 text-navy-2">
           Carga oficial do curso: {curso.carga_horaria} horas. Soma do plano curricular:{" "}
           {horasCurriculo} horas
@@ -87,7 +99,13 @@ function CursoPage() {
           <section key={modulo.id} aria-labelledby={`modulo-${modulo.id}`} className="rounded-lg border border-line bg-white p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-dark">{modulo.transversal ? "Módulo transversal obrigatório" : `Módulo ${modulo.ordem}`}</p><h2 id={`modulo-${modulo.id}`} className="mt-1 text-xl font-extrabold text-navy">{modulo.titulo}</h2>{modulo.descricao ? <p className="mt-2 max-w-3xl text-navy-2">{modulo.descricao}</p> : null}</div>
-              <span className="rounded-full bg-page px-3 py-1 text-sm font-bold text-navy">{modulo.porFornecer > 0 ? `${modulo.porFornecer} por fornecer` : "Conteúdo disponível"}</span>
+              <span className="rounded-full bg-page px-3 py-1 text-sm font-bold text-navy">
+                {modulo.porFornecer > 0
+                  ? `${modulo.porFornecer} lições por fornecer`
+                  : modulo.licoes.some((l) => l.proposta_por_validar)
+                    ? "Conteúdo escrito, em rascunho por validar"
+                    : "Conteúdo disponível"}
+              </span>
             </div>
             <ol className="mt-5 space-y-4">
               {modulo.licoes.map((licao) => (
@@ -105,6 +123,7 @@ function CursoPage() {
                       <Link
                         to="/formacao/$modulo/licao/$licao"
                         params={{ modulo: modulo.id, licao: licao.id }}
+                        search={{ curso: curso.slug }}
                         className="mt-3 inline-flex min-h-11 items-center font-semibold text-navy underline"
                       >
                         Abrir a lição, com leitura em voz alta e navegação entre lições
@@ -117,7 +136,7 @@ function CursoPage() {
                       </details>
                     </>
                   ) : (
-                    <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>
+                    <p className="mt-2 text-sm text-navy-2">Título definido; conteúdo temático ainda por escrever.</p>
                   )}
                 </li>
               ))}

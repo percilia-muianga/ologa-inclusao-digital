@@ -118,3 +118,16 @@ Pendente: validação pedagógica pela Ologa/ATDI (as questões ficam inactivas 
 lá); esclarecimento da ATDI sobre as divergências 16/20 h (IA) e 120/80 h
 (Redes); revisão de acessibilidade pela REMOTELINE; vídeo, legendagem e Língua
 de Sinais Moçambicana por produzir.
+
+## A11 — Consolidação do curso Transformação Digital
+
+- Contexto de curso nas rotas de módulo e lição (`?curso=`), validado no
+  servidor; rótulo «Módulo 1 de 4 · <curso>» em vez do índice interno.
+- Tempos por lição de fonte única (`TemposLicao`), coerentes entre conteúdo e
+  guião; soma 24 h verificada por teste.
+- Estados reais do conteúdo na ficha do curso; selos de recursos por produzir
+  diferenciados por forma e texto.
+- Testes: 30 no total (5 novos em `tempos-licoes-transformacao-digital.test.ts`).
+
+Pendente: progresso certificável por inscrição; ambiente isolado de
+demonstração; activação do banco após validação pedagógica.
