@@ -839,4 +839,5 @@ export const LICOES: Record<string, ConteudoLicao> = {
  */
 export const DESCRICOES_MODULO: Record<string, string> = {
   m1: "Quatro lições sobre os fundamentos da inteligência artificial: o que é e o que não é, com a distinção entre automação por regras e sistemas que inferem a partir de dados, uma breve história e o facto de que texto fluente não é texto verdadeiro; dados, características, rótulos, qualidade, representatividade, vazamento de dados e a diferença entre algoritmo e modelo, sobre um mini-conjunto fictício fornecido por inteiro; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo calculados sobre uma tabela fornecida; e aplicações ao trabalho administrativo, com uma prática assistida de resumo de um documento fictício.",
+  m2: "Quatro lições sobre a inteligência artificial no serviço público: casos de uso na administração, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana, governação e prestação de contas. Em preparação.",
 };

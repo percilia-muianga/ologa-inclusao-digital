@@ -174,9 +174,8 @@ async function main() {
       actualizadas.push(`${l.chave} (${existente.id})`);
     }
 
-    const todasEscritas = plano.licoes.every((l) => LICOES[l.chave]);
     const descricao = DESCRICOES_MODULO[plano.chave];
-    if (todasEscritas && descricao) {
+    if (descricao) {
       must(await sb.from("modulos").update({ descricao }).eq("id", rel.modulo_id).select("id"));
       descricoes.push(plano.chave);
     }
