@@ -7,11 +7,16 @@ import {
   registarPresencas,
   corrigirPresenca,
   calcularPresencasVirtuais,
+  definirEstadoSessao,
   ESTADOS_PRESENCA,
+  ESTADOS_SESSAO,
   rotuloEstadoPresenca,
+  rotuloEstadoSessao,
   type EstadoPresenca,
+  type EstadoSessao,
   type MarcacaoEnvio,
 } from "@/lib/presencas.functions";
+
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 
 export const Route = createFileRoute("/presencas/sessao/$id")({
