@@ -14,6 +14,7 @@
  */
 
 import type { TemposLicao } from "../../src/lib/plano-computacao-nuvem";
+import { LICOES_M3 } from "./computacao-nuvem-m3";
 
 export type Laboratorio = {
   titulo: string;
@@ -1316,4 +1317,6 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
   },
+
+  ...LICOES_M3,
 };
