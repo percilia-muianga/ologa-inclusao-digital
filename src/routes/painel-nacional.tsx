@@ -81,12 +81,42 @@ function PainelNacionalPage() {
     ],
     ["Índice de satisfação dos participantes", pct(satisfacao.indicePct), `${satisfacao.respostas} questionários`],
     ["Aplicam as competências aos três meses", pct(eficacia.aplicamPct), `${eficacia.respostas} inquéritos`],
+    [
+      "Assiduidade estrita média",
+      pct(desempenho.assiduidadeEstritaPct),
+      "Sessões presentes a dividir pelas sessões realizadas; as justificadas contam como ausência",
+    ],
+    [
+      "Assiduidade ajustada média",
+      pct(desempenho.assiduidadeAjustadaPct),
+      "Sessões presentes a dividir pelas sessões realizadas menos as justificadas",
+    ],
+    ["Faltas justificadas registadas", desempenho.faltasJustificadas, ""],
+    [
+      "Sessões marcadas como realizadas",
+      desempenho.sessoesRealizadas,
+      `${desempenho.sessoesPorRegularizar} sessões com a data passada continuam agendadas e não contam`,
+    ],
     ["Workshops provinciais realizados", workshops.provinciaisRealizados, workshops.provinciaisPlaneados],
     ["Workshops distritais realizados", workshops.distritaisRealizados, workshops.distritaisPlaneados],
   ];
 
+  const colunasProvincia = [
+    "Província",
+    "Turmas",
+    "Formandos",
+    "Pré-teste",
+    "Pós-teste",
+    "Evolução",
+    "Assiduidade estrita",
+    "Assiduidade ajustada",
+    "Faltas justificadas",
+    "Workshop provincial",
+    "Workshops distritais",
+  ];
+
   const provincias = [
-    ["Província", "Turmas", "Formandos", "Pré-teste", "Pós-teste", "Evolução", "Workshop provincial", "Workshops distritais"],
+    colunasProvincia,
     ...porProvincia.map((p) => [
       p.provincia,
       p.turmas,
@@ -98,6 +128,9 @@ function PainelNacionalPage() {
         : p.evolucaoPp === null
           ? "—"
           : `${p.evolucaoPp > 0 ? "+" : ""}${p.evolucaoPp} pp`,
+      pct(p.assiduidadeEstritaPct),
+      pct(p.assiduidadeAjustadaPct),
+      p.faltasJustificadas,
       `${p.workshopsProvinciaisRealizados} de 1`,
       `${p.workshopsDistritaisRealizados} de ${p.workshopsDistritaisPlaneados}`,
     ]),
@@ -105,6 +138,7 @@ function PainelNacionalPage() {
 
   const distritos = [
     ["Província", "Distrito", "Realizados", "Previstos"],
+
     ...porDistrito.map((d) => [d.provincia, d.distrito, d.realizados, d.planeados]),
   ];
 
@@ -218,16 +252,8 @@ function PainelNacionalPage() {
             </caption>
             <thead className="bg-page text-navy">
               <tr>
-                {[
-                  "Província",
-                  "Turmas",
-                  "Formandos",
-                  "Pré-teste",
-                  "Pós-teste",
-                  "Evolução",
-                  "Workshop provincial",
-                  "Workshops distritais",
-                ].map((h) => (
+                {colunasProvincia.map((h) => (
+
                   <th key={h} scope="col" className="px-3 py-2 text-xs font-bold uppercase tracking-wide">
                     {h}
                   </th>
@@ -255,6 +281,10 @@ function PainelNacionalPage() {
                         ? "—"
                         : `${p.evolucaoPp > 0 ? "+" : ""}${p.evolucaoPp} pp`}
                   </td>
+                  <td className="px-3 py-2 text-navy-2">{pct(p.assiduidadeEstritaPct)}</td>
+                  <td className="px-3 py-2 text-navy-2">{pct(p.assiduidadeAjustadaPct)}</td>
+                  <td className="px-3 py-2 text-navy-2">{p.faltasJustificadas}</td>
+
                   <td className="px-3 py-2 text-navy-2">
                     {p.workshopsProvinciaisRealizados} de 1
                   </td>

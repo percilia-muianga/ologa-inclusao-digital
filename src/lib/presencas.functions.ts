@@ -3,13 +3,20 @@ import {
   calcularAssiduidade,
   marcacaoEfectiva,
   sessoesRealizadas,
+  sessoesPorRegularizar,
+  BASES_ASSIDUIDADE,
+  rotuloBaseAssiduidade,
+  formulaBaseAssiduidade,
   LIMIAR_ASSIDUIDADE,
   type MarcacaoBruta,
   type EstadoPresenca,
+  type EstadoSessao,
+  type BaseAssiduidade,
+  type SessaoParaCalculo,
 } from "@/lib/presencas.server";
 
-export { LIMIAR_ASSIDUIDADE };
-export type { EstadoPresenca };
+export { LIMIAR_ASSIDUIDADE, BASES_ASSIDUIDADE, rotuloBaseAssiduidade, formulaBaseAssiduidade };
+export type { EstadoPresenca, EstadoSessao, BaseAssiduidade };
 
 export const ESTADOS_PRESENCA: ReadonlyArray<readonly [EstadoPresenca, string]> = [
   ["presente", "Presente"],
@@ -17,8 +24,19 @@ export const ESTADOS_PRESENCA: ReadonlyArray<readonly [EstadoPresenca, string]> 
   ["justificado", "Justificado"],
 ] as const;
 
+export const ESTADOS_SESSAO: ReadonlyArray<readonly [EstadoSessao, string, string]> = [
+  ["agendada", "Agendada", "Ainda por realizar. Não entra no cálculo da assiduidade."],
+  ["realizada", "Realizada", "Aconteceu. É a única situação que entra no cálculo da assiduidade."],
+  ["cancelada", "Cancelada", "Não aconteceu e não é reposta. Exige motivo escrito."],
+  ["adiada", "Adiada", "Não aconteceu nesta data e será remarcada. Exige motivo escrito."],
+] as const;
+
 export function rotuloEstadoPresenca(valor: string): string {
   return ESTADOS_PRESENCA.find(([v]) => v === valor)?.[1] ?? valor;
+}
+
+export function rotuloEstadoSessao(valor: string): string {
+  return ESTADOS_SESSAO.find(([v]) => v === valor)?.[1] ?? valor;
 }
 
 async function admin() {
@@ -26,36 +44,53 @@ async function admin() {
   return supabaseAdmin;
 }
 
+function paraCalculo(
+  sessoes: Array<{ id: string; data: string; estado: string }>,
+): SessaoParaCalculo[] {
+  return sessoes.map((s) => ({ id: s.id, data: s.data, estado: s.estado as EstadoSessao }));
+}
+
 /** Turmas com sessões, para o formador escolher onde vai marcar presenças. */
 export const listarTurmasComSessoes = createServerFn({ method: "GET" }).handler(async () => {
   const s = await admin();
-  const [turmasRes, sessoesRes, inscricoesRes, presencasRes, cursosRes] = await Promise.all([
-    s
-      .from("turmas")
-      .select("id,designacao,codigo_inscricao,provincia,distrito,estado,curso_id,data_inicio,data_fim")
-      .order("criado_em", { ascending: false }),
-    s.from("turma_sessoes").select("id,turma_id,data,tema,modalidade,ordem").order("ordem"),
-    s.from("turma_inscricoes").select("id,turma_id,nome,estado"),
-    s.from("presencas").select("*"),
-    s.from("cursos").select("id,titulo"),
-  ]);
-  for (const r of [turmasRes, sessoesRes, inscricoesRes, presencasRes, cursosRes])
+  const [turmasRes, sessoesRes, inscricoesRes, presencasRes, cursosRes, configRes] =
+    await Promise.all([
+      s
+        .from("turmas")
+        .select("id,designacao,codigo_inscricao,provincia,distrito,estado,curso_id,data_inicio,data_fim")
+        .order("criado_em", { ascending: false }),
+      s.from("turma_sessoes").select("id,turma_id,data,tema,modalidade,ordem,estado").order("ordem"),
+      s.from("turma_inscricoes").select("id,turma_id,nome,estado"),
+      s.from("presencas").select("*"),
+      s.from("cursos").select("id,titulo"),
+      s.from("presenca_configuracoes").select("curso_id,base_assiduidade"),
+    ]);
+  for (const r of [turmasRes, sessoesRes, inscricoesRes, presencasRes, cursosRes, configRes])
     if (r.error) throw r.error;
 
   const cursos = cursosRes.data ?? [];
   const marcacoes = (presencasRes.data ?? []) as unknown as MarcacaoBruta[];
 
   const turmas = (turmasRes.data ?? []).map((t) => {
-    const sessoes = (sessoesRes.data ?? []).filter((x) => x.turma_id === t.id);
+    const sessoes = paraCalculo((sessoesRes.data ?? []).filter((x) => x.turma_id === t.id));
     const inscritos = (inscricoesRes.data ?? []).filter(
       (i) => i.turma_id === t.id && i.estado !== "desistiu",
     );
+    const base =
+      ((configRes.data ?? []).find((c) => c.curso_id === t.curso_id)
+        ?.base_assiduidade as BaseAssiduidade) ?? "estrita";
     const linhas = calcularAssiduidade(
-      sessoes.map((x) => ({ id: x.id, data: x.data })),
+      sessoes,
       inscritos.map((i) => ({ id: i.id, nome: i.nome })),
       marcacoes.filter((m) => m.turma_id === t.id),
+      base,
     );
-    const comTaxa = linhas.filter((l) => l.taxaPct !== null);
+    const media = (chave: "taxaEstritaPct" | "taxaAjustadaPct") => {
+      const uteis = linhas.filter((l) => l[chave] !== null);
+      return uteis.length
+        ? Math.round((uteis.reduce((a, l) => a + (l[chave] ?? 0), 0) / uteis.length) * 10) / 10
+        : null;
+    };
     return {
       id: t.id,
       designacao: t.designacao,
@@ -64,14 +99,16 @@ export const listarTurmasComSessoes = createServerFn({ method: "GET" }).handler(
       distrito: t.distrito,
       estado: t.estado,
       cursoTitulo: cursos.find((c) => c.id === t.curso_id)?.titulo ?? "",
+      base,
       totalSessoes: sessoes.length,
-      sessoesRealizadas: sessoesRealizadas(sessoes.map((x) => ({ id: x.id, data: x.data }))).size,
+      sessoesRealizadas: sessoesRealizadas(sessoes).size,
+      sessoesPorRegularizar: sessoesPorRegularizar(sessoes).size,
       inscritos: inscritos.length,
       abaixoDoLimiar: linhas.filter((l) => l.abaixoDoLimiar).length,
       emRisco: linhas.filter((l) => l.emRisco).length,
-      assiduidadeMediaPct: comTaxa.length
-        ? Math.round((comTaxa.reduce((a, l) => a + (l.taxaPct ?? 0), 0) / comTaxa.length) * 10) / 10
-        : null,
+      justificadas: linhas.reduce((a, l) => a + l.justificadas, 0),
+      assiduidadeEstritaMediaPct: media("taxaEstritaPct"),
+      assiduidadeAjustadaMediaPct: media("taxaAjustadaPct"),
     };
   });
 
@@ -92,40 +129,90 @@ export const assiduidadeDaTurma = createServerFn({ method: "GET" })
     if (!turmaRes.data) return null;
     const turma = turmaRes.data;
 
-    const [sessoesRes, inscricoesRes, presencasRes, cursoRes] = await Promise.all([
+    const [sessoesRes, inscricoesRes, presencasRes, cursoRes, configRes] = await Promise.all([
       s
         .from("turma_sessoes")
-        .select("id,ordem,data,hora_inicio,hora_fim,tema,modalidade,formador_nome")
+        .select(
+          "id,ordem,data,hora_inicio,hora_fim,tema,modalidade,formador_nome,estado,motivo_estado,estado_actualizado_em,estado_actualizado_por_nome",
+        )
         .eq("turma_id", turma.id)
         .order("ordem"),
       s.from("turma_inscricoes").select("id,nome,estado").eq("turma_id", turma.id),
       s.from("presencas").select("*").eq("turma_id", turma.id),
       s.from("cursos").select("id,titulo").eq("id", turma.curso_id).maybeSingle(),
+      s
+        .from("presenca_configuracoes")
+        .select("base_assiduidade")
+        .eq("curso_id", turma.curso_id)
+        .maybeSingle(),
     ]);
-    for (const r of [sessoesRes, inscricoesRes, presencasRes, cursoRes]) if (r.error) throw r.error;
+    for (const r of [sessoesRes, inscricoesRes, presencasRes, cursoRes, configRes])
+      if (r.error) throw r.error;
 
     const sessoes = sessoesRes.data ?? [];
+    const calculo = paraCalculo(sessoes);
     const inscritos = (inscricoesRes.data ?? []).filter((i) => i.estado !== "desistiu");
     const marcacoes = (presencasRes.data ?? []) as unknown as MarcacaoBruta[];
     const efectivas = marcacaoEfectiva(marcacoes);
-    const realizadas = sessoesRealizadas(sessoes.map((x) => ({ id: x.id, data: x.data })));
+    const realizadas = sessoesRealizadas(calculo);
+    const porRegularizar = sessoesPorRegularizar(calculo);
+    const base = (configRes.data?.base_assiduidade as BaseAssiduidade) ?? "estrita";
 
     return {
       turma,
       cursoTitulo: cursoRes.data?.titulo ?? "",
+      base,
       sessoes: sessoes.map((x) => ({
         ...x,
         realizada: realizadas.has(x.id),
+        porRegularizar: porRegularizar.has(x.id),
         marcadas: inscritos.filter((i) => efectivas.has(`${x.id}|${i.id}`)).length,
       })),
+      porRegularizar: porRegularizar.size,
       inscritos: inscritos.length,
       limiar: LIMIAR_ASSIDUIDADE,
       linhas: calcularAssiduidade(
-        sessoes.map((x) => ({ id: x.id, data: x.data })),
+        calculo,
         inscritos.map((i) => ({ id: i.id, nome: i.nome })),
         marcacoes,
+        base,
       ),
     };
+  });
+
+/**
+ * Estado da sessão, marcado pelo formador. Cancelar ou adiar exige motivo
+ * escrito. A alteração fica no registo de auditoria (gatilho da tabela).
+ */
+export const definirEstadoSessao = createServerFn({ method: "POST" })
+  .validator(
+    (dados: {
+      sessaoId: string;
+      estado: EstadoSessao;
+      motivo: string | null;
+      porNome: string | null;
+    }) => dados,
+  )
+  .handler(async ({ data }) => {
+    const exigeMotivo = data.estado === "cancelada" || data.estado === "adiada";
+    if (exigeMotivo && (data.motivo ?? "").trim().length < 5)
+      return {
+        ok: false as const,
+        motivo: "Cancelar ou adiar uma sessão exige um motivo escrito.",
+      };
+
+    const s = await admin();
+    const { error } = await s
+      .from("turma_sessoes")
+      .update({
+        estado: data.estado as never,
+        motivo_estado: exigeMotivo ? (data.motivo ?? "").trim() : null,
+        estado_actualizado_em: new Date().toISOString(),
+        estado_actualizado_por_nome: data.porNome,
+      })
+      .eq("id", data.sessaoId);
+    if (error) throw error;
+    return { ok: true as const };
   });
 
 /** Folha de uma sessão: formandos da turma e a marcação que já existe. */
@@ -169,16 +256,27 @@ export const obterFolhaSessao = createServerFn({ method: "GET" })
         curso_id: turmaRes.data.curso_id,
         limiar_permanencia_pct: 75,
         limiar_progresso_pct: 75,
+        base_assiduidade: "estrita",
         actualizado_em: null,
       },
       formandos: inscritos.map((i) => {
-        const historico = marcacoes.filter((m) => m.inscricao_id === i.id);
+        const historico = (presencasRes.data ?? []).filter((m) => m.inscricao_id === i.id);
         const actual = efectivas.get(`${sessaoId}|${i.id}`) ?? null;
+        const calculada = historico.find((h) => h.origem === "calculada") ?? null;
         return {
           inscricaoId: i.id,
           nome: i.nome,
           actual,
           conflito: historico.some((h) => h.conflito),
+          // Proveniência do valor da sessão virtual: quem o escreveu e quando.
+          introducaoManual: calculada?.valor_introduzido_manualmente
+            ? {
+                porNome: calculada.introduzido_por_nome,
+                em: calculada.introduzido_em,
+                minutos: calculada.minutos_permanencia,
+                progresso: calculada.progresso_pct,
+              }
+            : null,
           historico,
         };
       }),
@@ -246,12 +344,15 @@ export const registarPresencas = createServerFn({ method: "POST" })
 
 /**
  * Sessões virtuais: a presença é calculada pelo tempo de permanência e pelo
- * progresso, comparados com o limiar configurado para o curso.
+ * progresso, comparados com o limiar configurado para o curso. Os valores são
+ * introduzidos pelo formador — fica registado que são manuais, por quem e
+ * quando, para o dado não passar por automático.
  */
 export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
   .validator(
     (dados: {
       sessaoId: string;
+      introduzidoPorNome: string | null;
       registos: Array<{
         inscricaoId: string;
         nome: string;
@@ -286,6 +387,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
     const [hi, mi] = sessaoRes.data.hora_inicio.split(":").map(Number);
     const [hf, mf] = sessaoRes.data.hora_fim.split(":").map(Number);
     const duracao = Math.max(1, hf * 60 + mf - (hi * 60 + mi));
+    const agora = new Date().toISOString();
 
     const linhas = data.registos.map((r) => {
       const permanenciaPct = Math.round((r.minutosPermanencia / duracao) * 100);
@@ -299,6 +401,9 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
         origem: "calculada" as never,
         minutos_permanencia: r.minutosPermanencia,
         progresso_pct: r.progressoPct,
+        valor_introduzido_manualmente: true,
+        introduzido_por_nome: data.introduzidoPorNome,
+        introduzido_em: agora,
       };
     });
     if (linhas.length === 0) return { gravadas: 0, duracao, limiarPermanencia, limiarProgresso };
@@ -358,10 +463,18 @@ export const corrigirPresenca = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-/** Limiares de presença das sessões virtuais, por curso. */
+/**
+ * Limiares de presença das sessões virtuais e base de assiduidade que vale
+ * para a certificação, por curso.
+ */
 export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
   .validator(
-    (dados: { cursoId: string; limiarPermanenciaPct: number; limiarProgressoPct: number }) => dados,
+    (dados: {
+      cursoId: string;
+      limiarPermanenciaPct: number;
+      limiarProgressoPct: number;
+      baseAssiduidade?: BaseAssiduidade;
+    }) => dados,
   )
   .handler(async ({ data }) => {
     const s = await admin();
@@ -370,6 +483,7 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
         curso_id: data.cursoId,
         limiar_permanencia_pct: data.limiarPermanenciaPct,
         limiar_progresso_pct: data.limiarProgressoPct,
+        base_assiduidade: (data.baseAssiduidade ?? "estrita") as never,
         actualizado_em: new Date().toISOString(),
       },
       { onConflict: "curso_id" },
@@ -377,3 +491,25 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+/** Base de assiduidade escolhida para cada curso, para o ecrã de configuração. */
+export const listarBasesAssiduidade = createServerFn({ method: "GET" }).handler(async () => {
+  const s = await admin();
+  const [cursosRes, configRes] = await Promise.all([
+    s.from("cursos").select("id,titulo,ordem").order("ordem"),
+    s.from("presenca_configuracoes").select("*"),
+  ]);
+  for (const r of [cursosRes, configRes]) if (r.error) throw r.error;
+  return {
+    cursos: (cursosRes.data ?? []).map((c) => {
+      const cfg = (configRes.data ?? []).find((x) => x.curso_id === c.id);
+      return {
+        id: c.id,
+        titulo: c.titulo,
+        base: (cfg?.base_assiduidade as BaseAssiduidade) ?? "estrita",
+        limiarPermanenciaPct: cfg?.limiar_permanencia_pct ?? 75,
+        limiarProgressoPct: cfg?.limiar_progresso_pct ?? 75,
+      };
+    }),
+  };
+});

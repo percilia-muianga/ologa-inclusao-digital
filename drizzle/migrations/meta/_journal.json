@@ -50,6 +50,13 @@
       "when": 1789988912102,
       "tag": "0006_presencas_assiduidade",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789996244355,
+      "tag": "0007_estado_sessao_e_base_assiduidade",
+      "breakpoints": true
     }
   ]
 }

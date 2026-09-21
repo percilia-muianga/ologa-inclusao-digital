@@ -7,11 +7,16 @@ import {
   registarPresencas,
   corrigirPresenca,
   calcularPresencasVirtuais,
+  definirEstadoSessao,
   ESTADOS_PRESENCA,
+  ESTADOS_SESSAO,
   rotuloEstadoPresenca,
+  rotuloEstadoSessao,
   type EstadoPresenca,
+  type EstadoSessao,
   type MarcacaoEnvio,
 } from "@/lib/presencas.functions";
+
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 
 export const Route = createFileRoute("/presencas/sessao/$id")({
@@ -53,6 +58,8 @@ function MarcarSessaoPage() {
   const enviar = useServerFn(registarPresencas);
   const corrigir = useServerFn(corrigirPresenca);
   const calcular = useServerFn(calcularPresencasVirtuais);
+  const mudarEstado = useServerFn(definirEstadoSessao);
+
 
   const q = useQuery({ queryKey: ["folha-sessao", id], queryFn: () => carregar({ data: id }) });
 
@@ -211,6 +218,21 @@ function MarcarSessaoPage() {
         {estadoEnvio === "erro" ? " Houve um erro no último envio." : ""}
       </p>
 
+      <EstadoDaSessao
+        estado={d.sessao.estado as EstadoSessao}
+        motivo={d.sessao.motivo_estado}
+        actualizadoEm={d.sessao.estado_actualizado_em}
+        actualizadoPor={d.sessao.estado_actualizado_por_nome}
+        dataSessao={d.sessao.data}
+        aoDefinir={async (estado, motivo, porNome) => {
+          const r = await mudarEstado({ data: { sessaoId: id, estado, motivo, porNome } });
+          if (!r.ok) return r.motivo;
+          await q.refetch();
+          return null;
+        }}
+      />
+
+
       {porEnviar.length > 0 && online ? (
         <button
           type="button"
@@ -258,6 +280,19 @@ function MarcarSessaoPage() {
                         }`
                       : "Ainda sem marcação nesta sessão."}
                   </p>
+                  {f.introducaoManual ? (
+                    <p className="mt-1 text-base text-navy-2">
+                      Valor da sessão virtual introduzido manualmente
+                      {f.introducaoManual.porNome ? ` por ${f.introducaoManual.porNome}` : ""}
+                      {f.introducaoManual.em
+                        ? ` em ${new Date(f.introducaoManual.em).toLocaleString("pt-PT")}`
+                        : ""}
+                      : {f.introducaoManual.minutos ?? "—"} minutos de permanência e{" "}
+                      {f.introducaoManual.progresso ?? "—"} por cento de progresso. Não foi recolhido
+                      automaticamente por nenhuma plataforma de videoconferência.
+                    </p>
+                  ) : null}
+
                   {f.conflito ? (
                     <p className="mt-1 text-base font-semibold text-[#C20400]">
                       Marcações contraditórias nesta sessão, guardadas todas — precisa de revisão
@@ -353,11 +388,12 @@ function MarcarSessaoPage() {
             permanencia: d.configuracao.limiar_permanencia_pct,
             progresso: d.configuracao.limiar_progresso_pct,
           }}
-          aoCalcular={async (registos) => {
-            const r = await calcular({ data: { sessaoId: id, registos } });
+          aoCalcular={async (registos, introduzidoPorNome) => {
+            const r = await calcular({ data: { sessaoId: id, introduzidoPorNome, registos } });
             await q.refetch();
             return r.gravadas;
           }}
+
         />
       ) : null}
 
@@ -509,10 +545,13 @@ function SessaoVirtual({
       minutosPermanencia: number;
       progressoPct: number;
     }>,
+    introduzidoPorNome: string | null,
   ) => Promise<number>;
 }) {
   const [valores, setValores] = useState<Record<string, { minutos: string; progresso: string }>>({});
+  const [quem, setQuem] = useState("");
   const [aviso, setAviso] = useState<string | null>(null);
+
 
   return (
     <section aria-labelledby="virtual" className="mt-10">
@@ -577,6 +616,22 @@ function SessaoVirtual({
           </div>
         ))}
       </div>
+      <div className="mt-4">
+        <label className="block text-sm font-semibold text-navy-2" htmlFor="quem-introduziu">
+          Nome de quem está a introduzir estes valores (obrigatório)
+        </label>
+        <p className="text-sm text-navy-2">
+          Estes minutos e este progresso são escritos à mão pelo formador. Fica registado na ficha
+          desta sessão quem os escreveu e quando, para o dado não passar por automático.
+        </p>
+        <input
+          id="quem-introduziu"
+          type="text"
+          value={quem}
+          onChange={(e) => setQuem(e.target.value)}
+          className="mt-2 min-h-11 w-full max-w-md rounded-md border border-line bg-white px-3 text-base text-navy"
+        />
+      </div>
       <div role="status" aria-live="polite" className="mt-3 text-base font-semibold text-navy">
         {aviso}
       </div>
@@ -595,13 +650,155 @@ function SessaoVirtual({
             setAviso("Escreva os minutos de permanência de pelo menos um formando.");
             return;
           }
-          const n = await aoCalcular(registos);
+          if (quem.trim().length < 3) {
+            setAviso("Escreva o nome de quem está a introduzir estes valores.");
+            return;
+          }
+          const n = await aoCalcular(registos, quem.trim());
           setValores({});
-          setAviso(`${n} presenças calculadas e gravadas. Pode corrigir qualquer uma acima.`);
+          setAviso(
+            `${n} presenças calculadas e gravadas, com o registo de que os valores foram introduzidos por ${quem.trim()}. Pode corrigir qualquer uma acima.`,
+          );
         }}
+
         className="mt-4 inline-flex min-h-11 items-center rounded-md bg-navy px-5 text-base font-semibold text-navy-foreground"
       >
         Calcular presenças desta sessão virtual
+      </button>
+    </section>
+  );
+}
+
+/**
+ * Estado da sessão: agendada, realizada, cancelada ou adiada. Só as
+ * realizadas entram no denominador da assiduidade. O estado nunca muda
+ * sozinho — quem o muda é o formador, e cancelar ou adiar exige motivo
+ * escrito, que fica no registo de auditoria.
+ */
+function EstadoDaSessao({
+  estado,
+  motivo,
+  actualizadoEm,
+  actualizadoPor,
+  dataSessao,
+  aoDefinir,
+}: {
+  estado: EstadoSessao;
+  motivo: string | null;
+  actualizadoEm: string | null;
+  actualizadoPor: string | null;
+  dataSessao: string;
+  aoDefinir: (
+    estado: EstadoSessao,
+    motivo: string | null,
+    porNome: string | null,
+  ) => Promise<string | null>;
+}) {
+  const [escolhido, setEscolhido] = useState<EstadoSessao>(estado);
+  const [texto, setTexto] = useState("");
+  const [quem, setQuem] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [feito, setFeito] = useState(false);
+
+  const passou = new Date(`${dataSessao}T23:59:59`) < new Date();
+  const porRegularizar = estado === "agendada" && passou;
+  const exigeMotivo = escolhido === "cancelada" || escolhido === "adiada";
+
+  return (
+    <section aria-labelledby="estado-sessao" className="mt-6 rounded-lg border border-line bg-white p-4">
+      <h2 id="estado-sessao" className="text-lg font-bold text-navy">
+        Estado desta sessão
+      </h2>
+      <p className="mt-1 text-base text-navy">
+        Estado actual: {rotuloEstadoSessao(estado)}.{" "}
+        {estado === "realizada"
+          ? "Entra no cálculo da assiduidade."
+          : "Não entra no cálculo da assiduidade."}
+        {motivo ? ` Motivo escrito: ${motivo}.` : ""}
+        {actualizadoEm
+          ? ` Marcado${actualizadoPor ? ` por ${actualizadoPor}` : ""} em ${new Date(actualizadoEm).toLocaleString("pt-PT")}.`
+          : ""}
+      </p>
+
+      {porRegularizar ? (
+        <p
+          role="status"
+          className="mt-3 rounded-md border border-[#C20400] bg-[#FFF4F4] p-3 text-base font-semibold text-[#C20400]"
+        >
+          Por regularizar: a data desta sessão já passou e ela continua agendada. Falta dizer se foi
+          realizada, cancelada ou adiada. Enquanto isso não for feito, não entra no cálculo da
+          assiduidade de nenhum formando.
+        </p>
+      ) : null}
+
+      <fieldset className="mt-4">
+        <legend className="text-sm font-semibold text-navy-2">Passar o estado para</legend>
+        <div className="mt-2 flex flex-wrap gap-3">
+          {ESTADOS_SESSAO.map(([valor, rotulo]) => (
+            <button
+              key={valor}
+              type="button"
+              aria-pressed={escolhido === valor}
+              onClick={() => setEscolhido(valor)}
+              className={botaoEstado(escolhido === valor)}
+            >
+              {rotulo}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-sm text-navy-2">
+          {ESTADOS_SESSAO.find(([v]) => v === escolhido)?.[2]}
+        </p>
+      </fieldset>
+
+      {exigeMotivo ? (
+        <div className="mt-3">
+          <label className="block text-sm font-semibold text-navy-2" htmlFor="motivo-estado">
+            Motivo do cancelamento ou adiamento (obrigatório)
+          </label>
+          <textarea
+            id="motivo-estado"
+            rows={2}
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            className="min-h-11 w-full rounded-md border border-line bg-white p-3 text-base text-navy"
+          />
+        </div>
+      ) : null}
+
+      <div className="mt-3">
+        <label className="block text-sm font-semibold text-navy-2" htmlFor="quem-estado">
+          Nome de quem marca o estado
+        </label>
+        <input
+          id="quem-estado"
+          type="text"
+          value={quem}
+          onChange={(e) => setQuem(e.target.value)}
+          className="mt-1 min-h-11 w-full max-w-md rounded-md border border-line bg-white px-3 text-base text-navy"
+        />
+      </div>
+
+      <div role="status" aria-live="polite" className="mt-2 text-base font-semibold text-navy">
+        {erro ? <span className="text-[#C20400]">{erro}</span> : null}
+        {feito ? "Estado da sessão actualizado e registado na auditoria." : null}
+      </div>
+
+      <button
+        type="button"
+        onClick={async () => {
+          setErro(null);
+          setFeito(false);
+          const r = await aoDefinir(escolhido, texto || null, quem.trim() || null);
+          if (r) setErro(r);
+          else {
+            setFeito(true);
+            setTexto("");
+          }
+        }}
+        className="mt-3 inline-flex min-h-11 items-center rounded-md bg-navy px-5 text-base font-semibold text-navy-foreground"
+      >
+        Gravar estado da sessão
       </button>
     </section>
   );

@@ -150,19 +150,31 @@ function CertificadosPage() {
           <section className="rounded-lg border border-line bg-white p-5">
             <h2 className="text-lg font-bold text-navy">Condição 2 — Assiduidade</h2>
             <p className="mt-2 text-base text-navy">
-              {d.assiduidadePct === null
-                ? "Assiduidade por apurar: a sua turma ainda não tem sessões realizadas com presenças marcadas."
-                : `Assiduidade registada: ${d.assiduidadePct}% das sessões já realizadas.`}{" "}
-              Limiar exigido: {d.assiduidadeMinimaPct}%.
+              Assiduidade estrita:{" "}
+              {d.assiduidadeEstritaPct === null ? "por apurar" : `${d.assiduidadeEstritaPct}%`} —
+              sessões presentes a dividir pelas sessões realizadas, com as faltas justificadas a
+              contar como ausência.
+            </p>
+            <p className="mt-1 text-base text-navy">
+              Assiduidade ajustada:{" "}
+              {d.assiduidadeAjustadaPct === null ? "por apurar" : `${d.assiduidadeAjustadaPct}%`} —
+              sessões presentes a dividir pelas sessões realizadas menos as{" "}
+              {d.faltasJustificadas} faltas justificadas, que saem do denominador.
+            </p>
+            <p className="mt-2 text-base text-navy">
+              Neste curso, a taxa que vale para certificação é a{" "}
+              {d.baseAssiduidade === "ajustada" ? "ajustada" : "estrita"}. Limiar exigido:{" "}
+              {d.assiduidadeMinimaPct}%.
             </p>
             <p className="mt-1 text-base font-semibold text-navy">
               {d.assiduidadePct === null
-                ? "Por apurar"
+                ? "Por apurar: a sua turma ainda não tem sessões marcadas como realizadas com presenças registadas."
                 : d.assiduidadePct >= d.assiduidadeMinimaPct
-                  ? "Condição cumprida"
-                  : "Condição não cumprida"}
+                  ? `Condição cumprida, com ${d.assiduidadePct}%.`
+                  : `Condição não cumprida, com ${d.assiduidadePct}%.`}
             </p>
           </section>
+
 
           <section className="rounded-lg border border-line bg-white p-5">
             <h2 className="text-lg font-bold text-navy">Tentativas e prazo</h2>

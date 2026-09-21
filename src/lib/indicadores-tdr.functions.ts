@@ -18,6 +18,7 @@ function mediaPct(lista: Array<{ pontuacao: number; total: number }>): number | 
  */
 export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { calcularAssiduidade } = await import("@/lib/presencas.server");
 
   const [
     turmasRes,
@@ -31,9 +32,12 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     configRes,
     locaisRes,
     distritosRes,
+    sessoesRes,
+    presencasRes,
+    basesRes,
   ] = await Promise.all([
     supabaseAdmin.from("turmas").select("id,provincia,distrito,curso_id,estado"),
-    supabaseAdmin.from("turma_inscricoes").select("turma_id,estado"),
+    supabaseAdmin.from("turma_inscricoes").select("id,turma_id,nome,estado"),
     supabaseAdmin.from("certificados").select("id", { count: "exact", head: true }),
     supabaseAdmin
       .from("avaliacoes_conhecimento")
@@ -49,7 +53,11 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       .select("provincia,nome,ordem_provincia,ordem")
       .order("ordem_provincia")
       .order("ordem"),
+    supabaseAdmin.from("turma_sessoes").select("id,turma_id,data,estado"),
+    supabaseAdmin.from("presencas").select("*"),
+    supabaseAdmin.from("presenca_configuracoes").select("curso_id,base_assiduidade"),
   ]);
+
 
   for (const r of [
     turmasRes,
@@ -63,6 +71,9 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     configRes,
     locaisRes,
     distritosRes,
+    sessoesRes,
+    presencasRes,
+    basesRes,
   ]) {
     if (r.error) throw r.error;
   }
@@ -76,6 +87,39 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
   const avaliacoes = avaliacoesRes.data ?? [];
   const satisfacao = satisfacaoRes.data ?? [];
   const eficacia = eficaciaRes.data ?? [];
+
+  // Assiduidade por formando, turma a turma. Só as sessões marcadas como
+  // realizadas entram no denominador. Guardamos sempre as duas taxas.
+  const linhasAssiduidade = turmas.flatMap((t) => {
+    const sessoes = (sessoesRes.data ?? [])
+      .filter((s) => s.turma_id === t.id)
+      .map((s) => ({ id: s.id, data: s.data, estado: s.estado as never }));
+    const inscritosT = inscricoes.filter((i) => i.turma_id === t.id);
+    if (inscritosT.length === 0) return [];
+    const base =
+      ((basesRes.data ?? []).find((b) => b.curso_id === t.curso_id)?.base_assiduidade as
+        | "estrita"
+        | "ajustada") ?? "estrita";
+    return calcularAssiduidade(
+      sessoes,
+      inscritosT.map((i) => ({ id: i.id, nome: i.nome })),
+      ((presencasRes.data ?? []) as never[]).filter(
+        (m: { turma_id: string }) => m.turma_id === t.id,
+      ) as never,
+      base,
+    ).map((l) => ({ ...l, provincia: t.provincia }));
+  });
+
+  const mediaTaxa = (
+    lista: Array<{ taxaEstritaPct: number | null; taxaAjustadaPct: number | null }>,
+    chave: "taxaEstritaPct" | "taxaAjustadaPct",
+  ) => {
+    const uteis = lista.filter((l) => l[chave] !== null);
+    return uteis.length
+      ? Math.round((uteis.reduce((a, l) => a + (l[chave] ?? 0), 0) / uteis.length) * 10) / 10
+      : null;
+  };
+
 
   const inscritos = inscricoes.length;
   const certificados = certificadosRes.count ?? 0;
@@ -114,6 +158,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     const posP = mediaPct(avaliacoesP.filter((a) => a.momento === "pos"));
     const censurado = avaliacoesP.length > 0 && avaliacoesP.length < LIMITE_DIVULGACAO;
     const wsP = workshops.filter((w) => w.provincia === provincia);
+    const linhasP = linhasAssiduidade.filter((l) => l.provincia === provincia);
     return {
       provincia,
       turmas: turmasP.length,
@@ -122,6 +167,9 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       posMedia: censurado ? null : posP,
       evolucaoPp: censurado || preP === null || posP === null ? null : Math.round((posP - preP) * 10) / 10,
       censurado,
+      assiduidadeEstritaPct: mediaTaxa(linhasP, "taxaEstritaPct"),
+      assiduidadeAjustadaPct: mediaTaxa(linhasP, "taxaAjustadaPct"),
+      faltasJustificadas: linhasP.reduce((a, l) => a + l.justificadas, 0),
       workshopsProvinciaisRealizados: wsP.filter(
         (w) => w.tipo === "provincial" && w.estado === "realizado",
       ).length,
@@ -135,6 +183,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
       workshopsDistritaisPlaneados: distritosPorProvincia.get(provincia)?.length ?? 7,
     };
   });
+
 
   const porDistrito = [...distritosPorProvincia.entries()].flatMap(([provincia, nomes]) =>
     nomes.map((nome) => ({
@@ -162,7 +211,17 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
           ? Math.round((posNacional - preNacional) * 10) / 10
           : null,
       avaliacoesRegistadas: avaliacoes.length,
+      assiduidadeEstritaPct: mediaTaxa(linhasAssiduidade, "taxaEstritaPct"),
+      assiduidadeAjustadaPct: mediaTaxa(linhasAssiduidade, "taxaAjustadaPct"),
+      faltasJustificadas: linhasAssiduidade.reduce((a, l) => a + l.justificadas, 0),
+      sessoesRealizadas: (sessoesRes.data ?? []).filter((s) => s.estado === "realizada").length,
+      sessoesPorRegularizar: (sessoesRes.data ?? []).filter(
+        (s) =>
+          s.estado === "agendada" &&
+          new Date(`${s.data}T23:59:59`) < new Date(),
+      ).length,
     },
+
     satisfacao: {
       indicePct: indiceSatisfacao,
       respostas: satisfacao.length,
