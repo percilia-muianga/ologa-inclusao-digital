@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { useAdminGuard } from "@/hooks/use-admin-guard";
+import { BotaoDocumento } from "@/components/botao-documento";
 import {
   atualizarMetasInstituicao,
   atualizarPercursoInstituicao,
