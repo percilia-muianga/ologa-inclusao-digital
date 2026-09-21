@@ -329,4 +329,172 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
   },
+
+  m1l3: {
+    objectivos: [
+      "Distinguir nuvem pública, privada, comunitária e híbrida pelo critério de quem a nuvem serve.",
+      "Explicar o que é multinuvem e em que difere de nuvem híbrida.",
+      "Identificar dois riscos e duas vantagens de uma solução híbrida para um serviço público.",
+    ],
+    explicacao: [
+      "Os modelos de implantação respondem a outra pergunta: para quem existe esta nuvem. A nuvem pública é operada para uso do público em geral; qualquer organização contrata e a capacidade é partilhada com outros consumidores. A nuvem privada existe para uso exclusivo de uma organização, com as suas várias unidades como consumidores, e pode estar instalada nas instalações da organização ou nas de terceiro que a opere. A nuvem comunitária serve um conjunto de organizações com preocupações comuns, por exemplo várias instituições do mesmo sector com os mesmos requisitos de segurança. A nuvem híbrida é a composição de duas ou mais destas, que permanecem distintas mas são ligadas por tecnologia que permite mover dados ou aplicações entre elas.",
+      "A distinção não é sobre o sítio onde estão as máquinas. Uma nuvem privada pode estar alojada fora da instituição e continuar a ser privada, porque serve uma só organização. E uma nuvem pública não deixa de ser pública por a instituição ter lá uma área isolada com rede própria.",
+      "Multinuvem é coisa diferente de híbrida. Multinuvem significa usar serviços de mais do que um fornecedor de nuvem, por exemplo armazenamento num e uma aplicação noutro. Pode haver multinuvem sem nenhuma componente privada; e pode haver nuvem híbrida com um único fornecedor. As razões para usar mais do que um fornecedor costumam ser reduzir a dependência de um só, aproveitar um serviço que só existe num deles, ou responder a exigência de continuidade. O custo é a complexidade: duas consolas, dois modelos de identidade, duas facturas e equipas que precisam de conhecer ambos.",
+      "Para a administração pública, o caso híbrido aparece com frequência por três razões. Há dados cuja localização ou tratamento está sujeito a exigências que aconselham a mantê-los sob controlo directo. Há aplicações antigas que não correm em nuvem pública sem serem reescritas. E há ligações à internet que, em certos distritos, não sustentam um serviço inteiramente remoto — o que recomenda manter capacidade local para o atendimento continuar quando a ligação cair.",
+      "Os riscos de uma solução híbrida são igualmente concretos: a superfície a proteger aumenta, porque há duas redes e uma ligação entre elas; a responsabilidade dilui-se, porque uma falha pode estar de qualquer dos lados; e o custo de operação sobe, porque é preciso manter competências nos dois ambientes. Uma arquitectura híbrida deve ser uma decisão justificada, não o resultado de não se ter decidido.",
+    ],
+    exemplo: {
+      titulo: "O registo de licenças da Autarquia de Cambala (cenário fictício)",
+      corpo: [
+        "A Autarquia de Cambala tem um registo de licenças comerciais com dados de identificação dos requerentes e quer publicar um portal onde o munícipe consulta o estado do seu pedido.",
+        "A proposta em discussão é híbrida: a base de dados do registo fica numa nuvem privada operada para o sector, por causa dos dados pessoais e de uma exigência interna de controlo directo; o portal de consulta, que só mostra o estado do pedido e não guarda dados sensíveis, fica em nuvem pública, onde é fácil aguentar picos de acesso.",
+        "As duas partes ligam-se por um canal cifrado e o portal só pode perguntar pelo estado de um pedido, nunca ler a ficha completa. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de três",
+      enunciado: [
+        "Escolham um serviço da vossa instituição que trate dados de pessoas.",
+        "Dividam esse serviço em duas listas: o que poderia estar em nuvem pública e o que, na vossa opinião, deve ficar sob controlo directo. Justifiquem cada colocação com uma razão — legal, técnica ou de ligação à internet.",
+        "Desenhem, com caixas e setas, a ligação entre as duas partes e escrevam que informação atravessa essa ligação.",
+        "Indiquem um risco que esta divisão cria e como o mitigariam.",
+      ],
+      produto:
+        "um esquema de duas zonas com a informação que circula entre elas, as justificações de cada colocação e um risco com a respectiva mitigação.",
+    },
+    sintese: [
+      "O modelo de implantação responde a: para quem existe esta nuvem.",
+      "Pública serve o público em geral; privada serve uma organização; comunitária serve um grupo com requisitos comuns; híbrida liga duas ou mais.",
+      "Privada não quer dizer «dentro do edifício»: quer dizer «para uma só organização».",
+      "Multinuvem é usar vários fornecedores; é diferente de híbrida.",
+      "O híbrido resolve problemas reais e aumenta a complexidade e a superfície a proteger.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Uma instituição contrata capacidade exclusiva, operada por terceiro, em instalações do terceiro. É nuvem pública ou privada?",
+        resposta: "Privada, porque é de uso exclusivo de uma organização.",
+        feedback:
+          "O critério é o conjunto de consumidores servidos, não a propriedade do edifício nem a localização do equipamento.",
+      },
+      {
+        pergunta: "Usar armazenamento de um fornecedor e aplicações de outro é nuvem híbrida?",
+        resposta: "Não necessariamente. Isso é multinuvem; só é híbrida se combinar modelos de implantação diferentes.",
+        feedback:
+          "Os dois conceitos aparecem juntos com frequência, mas respondem a perguntas distintas: quantos fornecedores, e que tipo de nuvem.",
+      },
+    ],
+    referencias: [
+      {
+        titulo: "NIST SP 800-145, The NIST Definition of Cloud Computing",
+        url: "https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-145.pdf",
+        consultadoEm: "21 de Setembro de 2026",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Levar cartões com os quatro modelos de implantação para uma classificação rápida em plenário.",
+        "Preparar folhas A3 para os esquemas de caixas e setas; a actividade não precisa de computador.",
+        "Antecipar a confusão entre híbrida e multinuvem, que é o ponto mais falhado desta lição.",
+      ],
+      conducao: [
+        "Acolhimento, ligação aos modelos de serviço da lição anterior e objectivos desta.",
+        "Exposição dos quatro modelos de implantação, da diferença entre híbrida e multinuvem e das razões e riscos do híbrido no sector público.",
+        "Actividade em grupos: divisão do serviço em duas zonas e esquema da ligação.",
+        "Partilha de dois esquemas com decisões opostas e síntese em leitura fácil.",
+      ],
+      criterios: [
+        "Justifica cada colocação com uma razão concreta e não apenas com «é mais seguro».",
+        "O esquema identifica que informação atravessa a ligação entre as zonas.",
+        "Distingue correctamente híbrida de multinuvem.",
+        "Indica um risco realista e uma mitigação proporcional.",
+      ],
+      errosComuns: [
+        "Tratar «privada» como sinónimo de «dentro do edifício».",
+        "Chamar híbrida a qualquer situação com dois fornecedores.",
+        "Colocar tudo sob controlo directo por precaução, sem avaliar o custo dessa decisão.",
+      ],
+    },
+  },
+
+  m1l4: {
+    objectivos: [
+      "Enumerar as vantagens habituais da nuvem e o limite prático de cada uma.",
+      "Identificar as componentes de infra-estrutura que sustentam um serviço em nuvem.",
+      "Aplicar o princípio da responsabilidade partilhada, dizendo o que continua a caber à instituição em cada modelo de serviço.",
+    ],
+    explicacao: [
+      "As vantagens mais invocadas são quatro. Ajustar a capacidade à procura, evitando comprar para o pico. Reduzir o tempo entre decidir e ter o serviço a funcionar, porque não há aquisição de equipamento. Aceder a serviços geridos que a instituição não teria capacidade de montar sozinha. E melhorar a continuidade, por ser mais fácil ter cópias em locais diferentes.",
+      "Cada uma tem o seu limite. O ajuste à procura só poupa se alguém reduzir a capacidade quando o pico passa — máquinas esquecidas ligadas consomem na mesma. A rapidez inicial não elimina o trabalho de migrar dados, rever processos e formar pessoas, que costuma ser a parte mais demorada. Os serviços geridos aumentam a dependência do fornecedor e dificultam a saída. E nada disto funciona sem ligação à internet com qualidade suficiente, o que em vários distritos é a primeira restrição a verificar, antes de qualquer decisão de arquitectura.",
+      "Por baixo do serviço estão componentes de infra-estrutura que convém nomear, porque reaparecem em todas as consolas: centros de dados agrupados em regiões, e dentro de cada região zonas separadas para que uma falha não apanhe tudo; capacidade de cálculo, seja em máquinas virtuais, contentores ou funções; armazenamento, em disco ligado à máquina, em contentor de objectos ou em sistema de ficheiros partilhado; rede, com redes virtuais, endereços, balanceadores e ligações privadas; e os serviços de identidade, registo e monitoria que atravessam tudo o resto.",
+      "O princípio que organiza as responsabilidades chama-se responsabilidade partilhada. O fornecedor responde pela segurança da nuvem: instalações, equipamento, rede física, e a camada que ele próprio gere. A instituição responde pela segurança na nuvem: que dados coloca lá, quem tem acesso, como configura o que criou, e o cumprimento das regras a que está sujeita. A fronteira desloca-se com o modelo de serviço — em infra-estrutura como serviço a instituição responde também pelo sistema operativo; em plataforma como serviço deixa de responder por ele; em programa como serviço fica sobretudo com contas, configuração e dados. O que nunca se transfere é a responsabilidade pelos dados e pelo serviço prestado ao cidadão.",
+      "A maioria dos incidentes públicos conhecidos neste domínio não resulta de falha do fornecedor, mas de configuração indevida do lado do cliente: um contentor de armazenamento aberto ao público, uma permissão excessiva, uma chave deixada dentro do código. É por isso que este curso dedica um módulo inteiro a identidades, permissões mínimas e protecção de dados.",
+    ],
+    exemplo: {
+      titulo: "A fronteira mal percebida no Hospital Distrital de Namacurra do Norte (cenário fictício)",
+      corpo: [
+        "O Hospital Distrital de Namacurra do Norte contrata uma plataforma como serviço para uma aplicação de marcação de consultas. A direcção fica com a ideia de que «a segurança é do fornecedor».",
+        "Seis meses depois descobre-se que doze pessoas que já saíram do hospital continuam com conta activa, e que o relatório mensal de marcações estava a ser guardado num espaço de partilha acessível a quem tivesse o endereço.",
+        "Nenhuma destas falhas é do fornecedor: ambas estão do lado da instituição — gestão de contas e configuração de acesso. Cenário fictício, para exercício.",
+      ],
+    },
+    actividade: {
+      formato: "em pares",
+      enunciado: [
+        "Desenhem uma tabela com três colunas: infra-estrutura como serviço, plataforma como serviço e programa como serviço.",
+        "Nas linhas, coloquem: instalações e equipamento; rede física; sistema operativo; aplicação; configuração de acesso; dados; contas de utilizador; cumprimento das regras aplicáveis.",
+        "Preencham cada célula com «fornecedor», «instituição» ou «ambos» e assinalem as células onde tiverem dúvida.",
+        "Escolham uma das células marcadas com dúvida e escrevam que pergunta fariam ao fornecedor para a esclarecer.",
+      ],
+      produto:
+        "a matriz de responsabilidade partilhada preenchida, com as dúvidas assinaladas e uma pergunta concreta a colocar ao fornecedor.",
+    },
+    sintese: [
+      "As vantagens da nuvem são reais e têm limites: poupar exige gerir; a rapidez inicial não elimina o trabalho de migrar.",
+      "Sem ligação à internet com qualidade suficiente, a discussão de arquitectura não avança.",
+      "Componentes a conhecer: regiões e zonas, cálculo, armazenamento, rede, identidade e monitoria.",
+      "O fornecedor responde pela segurança da nuvem; a instituição responde pela segurança na nuvem.",
+      "A responsabilidade pelos dados e pelo serviço ao cidadão não se transfere por contrato.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Um contentor de armazenamento com dados de utentes ficou acessível ao público. De quem é a responsabilidade?",
+        resposta: "Da instituição: é configuração do lado do cliente.",
+        feedback:
+          "Este é o caso típico da responsabilidade na nuvem. O fornecedor entrega o mecanismo de controlo de acesso; usá-lo correctamente é trabalho de quem cria o recurso.",
+      },
+      {
+        pergunta: "Migrar para a nuvem reduz sempre o custo?",
+        resposta:
+          "Não. Depende do perfil de utilização, do contrato, do esforço de migração e da disciplina em reduzir capacidade quando deixa de ser precisa.",
+        feedback:
+          "Vale a pena separar as duas perguntas: «isto melhora o serviço?» e «isto custa menos?». Nem sempre têm a mesma resposta.",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Levar a matriz de responsabilidade partilhada já desenhada em papel, com as linhas preenchidas e as células vazias.",
+        "Preparar um exemplo de incidente por configuração indevida, sem nomear instituições reais.",
+        "Verificar com o grupo, no início, qual é a qualidade da ligação à internet nos seus locais de trabalho.",
+      ],
+      conducao: [
+        "Acolhimento, recolha rápida das expectativas de poupança que o grupo traz e objectivos da lição.",
+        "Exposição das vantagens e dos seus limites, das componentes de infra-estrutura e do princípio da responsabilidade partilhada.",
+        "Actividade em pares com a matriz de responsabilidades e as dúvidas assinaladas.",
+        "Partilha das células onde houve mais desacordo e síntese em leitura fácil.",
+      ],
+      criterios: [
+        "A matriz reflecte a deslocação da fronteira entre os três modelos.",
+        "Coloca dados e cumprimento das regras do lado da instituição em todos os modelos.",
+        "Assinala dúvidas em vez de as preencher ao acaso.",
+        "A pergunta ao fornecedor é concreta e respondível.",
+      ],
+      errosComuns: [
+        "Atribuir toda a segurança ao fornecedor por ele ser especializado.",
+        "Esquecer a gestão de contas de pessoas que saíram da instituição.",
+        "Prometer poupança antes de conhecer o perfil de utilização.",
+      ],
+    },
+  },
 };
