@@ -151,8 +151,8 @@ function CertificadosPage() {
             <h2 className="text-lg font-bold text-navy">Condição 2 — Assiduidade</h2>
             <p className="mt-2 text-base text-navy">
               {d.assiduidadePct === null
-                ? "Assiduidade por apurar: a marcação de presenças por sessão ainda não está em funcionamento na plataforma."
-                : `Assiduidade registada: ${d.assiduidadePct}%.`}{" "}
+                ? "Assiduidade por apurar: a sua turma ainda não tem sessões realizadas com presenças marcadas."
+                : `Assiduidade registada: ${d.assiduidadePct}% das sessões já realizadas.`}{" "}
               Limiar exigido: {d.assiduidadeMinimaPct}%.
             </p>
             <p className="mt-1 text-base font-semibold text-navy">
@@ -209,13 +209,13 @@ function CertificadosPage() {
               </>
             ) : d.assiduidadePct === null ? (
               <p className="mt-2 text-base text-navy">
-                O certificado só pode ser emitido depois de a assiduidade estar registada. Fale com
+                O certificado só pode ser emitido depois de as presenças estarem marcadas. Fale com
                 a coordenação da sua turma.
               </p>
             ) : (
               <button
                 type="button"
-                onClick={() => void pedirCertificado(d.assiduidadePct!)}
+                onClick={() => void pedirCertificado()}
                 className="mt-3 inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
               >
                 Emitir certificado
