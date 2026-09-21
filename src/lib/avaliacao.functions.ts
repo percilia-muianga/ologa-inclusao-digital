@@ -523,6 +523,9 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       .filter((t) => t.estado === "submetida" && t.nota_pct !== null)
       .reduce<number | null>((max, t) => Math.max(max ?? 0, Number(t.nota_pct)), null);
 
+    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
+
+
     return {
       formando: { nome: formando.nome },
       turma,
