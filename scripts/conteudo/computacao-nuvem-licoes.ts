@@ -533,7 +533,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Escolham um serviço real da vossa instituição que ainda não esteja em nuvem — sem usar dados reais de pessoas no exercício.",
         "Apliquem os seis critérios, um a um, e escrevam uma linha de conclusão por critério.",
         "Escrevam a recomendação com as quatro partes: opção escolhida, opções descartadas e porquê, pressupostos assumidos, e o que falta apurar com indicação de quem responde.",
-        "Apresentem em três minutos. O grupo que ouve faz uma pergunta que ponha à prova um pressuposto.",
+        "Na partilha ouvem-se dois grupos, escolhidos por amostra: 3 minutos de exposição e 1 minuto de comentário cada, seguidos de 2 minutos de síntese. Os restantes grupos entregam a ficha ao formador, que devolve apreciação escrita.",
       ],
       produto:
         "uma ficha de recomendação de uma página com os seis critérios aplicados, a opção escolhida, as descartadas, os pressupostos e a lista do que falta apurar.",
@@ -567,19 +567,19 @@ export const LICOES: Record<string, ConteudoLicao> = {
       preparacao: [
         "Imprimir a ficha de recomendação com os seis critérios e as quatro partes, uma por grupo.",
         "Combinar antes com os participantes que serviços podem ser usados no exercício, para evitar dados reais de pessoas.",
-        "Preparar o cronómetro das apresentações de três minutos e a regra de uma pergunta por grupo.",
+        "Preparar o cronómetro da partilha: dois grupos por amostra, 3 minutos de exposição e 1 minuto de comentário cada, e 2 minutos de síntese — 10 minutos ao todo numa turma até 30 participantes.",
       ],
       conducao: [
         "Acolhimento, retoma dos três blocos do módulo — características, modelos de serviço, modelos de implantação — e objectivos desta lição.",
         "Exposição dos seis critérios, das três regras de método e da estrutura da recomendação em quatro partes.",
         "Actividade em grupos de quatro: aplicação dos critérios e redacção da ficha de recomendação.",
-        "Apresentações de três minutos com uma pergunta por grupo, e síntese final do módulo em leitura fácil.",
+        "Partilha por amostra: dois grupos, 3 minutos de exposição e 1 minuto de comentário cada, e 2 minutos de síntese final do módulo em leitura fácil. As fichas dos restantes grupos são recolhidas para apreciação escrita.",
       ],
       criterios: [
         "Aplica os seis critérios e não apenas os dois mais fáceis.",
         "A recomendação tem as quatro partes, incluindo o que falta apurar.",
         "Os pressupostos estão escritos como pressupostos, e não como factos.",
-        "Responde à pergunta do outro grupo sem abandonar a fundamentação nem a defender de forma rígida.",
+        "Responde ao comentário recebido, em sala ou por escrito, sem abandonar a fundamentação nem a defender de forma rígida.",
       ],
       errosComuns: [
         "Escolher o modelo primeiro e procurar os critérios que o justificam depois.",

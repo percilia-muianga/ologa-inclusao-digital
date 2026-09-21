@@ -35,6 +35,14 @@ export const Route = createFileRoute("/cursos/$curso")({
 function CursoPage() {
   const { curso, modulos, totalPorFornecer, minutosAvaliacao, horasCurriculo, propostaPorValidar } =
     Route.useLoaderData();
+  const horas = (min: number) => Math.round((min / 60) * 10) / 10;
+  const minutosTematicos = modulos
+    .filter((m) => !m.transversal)
+    .reduce((s, m) => s + m.minutos, 0);
+  const minutosTransversal = modulos
+    .filter((m) => m.transversal)
+    .reduce((s, m) => s + m.minutos, 0);
+  const totalLicoes = modulos.reduce((s, m) => s + m.licoes.length, 0);
   const campos = [
     ["Objectivos", curso.objectivos],
     ["Público-alvo", curso.publico_alvo],
@@ -68,15 +76,20 @@ function CursoPage() {
           </p>
         )}
         <p className="mt-2 text-navy-2">
-          Carga oficial do curso: {curso.carga_horaria} horas. Soma do plano curricular:{" "}
-          {horasCurriculo} horas
-          {minutosAvaliacao > 0
-            ? `, das quais ${Math.round((minutosAvaliacao / 60) * 10) / 10} horas de avaliação e orientação fora dos módulos`
-            : ""}
-          .{" "}
+          Carga fixada nos Termos de Referência para o curso: {curso.carga_horaria} horas.
+          Soma da distribuição proposta: {horasCurriculo} horas ={" "}
+          {horas(minutosTematicos)} horas de módulos temáticos +{" "}
+          {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
+          {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame, fora dos módulos.{" "}
           {horasCurriculo === curso.carga_horaria
             ? "As duas somas coincidem."
-            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}
+            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
+          A distribuição por módulos e lições é proposta pedagógica por validar; os Termos
+          de Referência fixam o total do curso, não o tempo de cada módulo.
+        </p>
+        <p className="mt-2 text-navy-2">
+          Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
+          {totalLicoes - totalPorFornecer}. Por fornecer: {totalPorFornecer}.
         </p>
       </section>
       <section aria-labelledby="ficha-curso" className="mt-6">
