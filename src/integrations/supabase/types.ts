@@ -1110,6 +1110,120 @@ export type Database = {
         }
         Relationships: []
       }
+      presenca_configuracoes: {
+        Row: {
+          actualizado_em: string
+          curso_id: string
+          limiar_permanencia_pct: number
+          limiar_progresso_pct: number
+        }
+        Insert: {
+          actualizado_em?: string
+          curso_id: string
+          limiar_permanencia_pct?: number
+          limiar_progresso_pct?: number
+        }
+        Update: {
+          actualizado_em?: string
+          curso_id?: string
+          limiar_permanencia_pct?: number
+          limiar_progresso_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presenca_configuracoes_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: true
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      presencas: {
+        Row: {
+          aparelho: string | null
+          conflito: boolean
+          dados_de_demonstracao: boolean
+          estado: Database["public"]["Enums"]["estado_presenca"]
+          id: string
+          inscricao_id: string
+          justificacao_correccao: string | null
+          marcado_por: string | null
+          marcado_por_nome: string | null
+          minutos_permanencia: number | null
+          motivo: string | null
+          nome_formando: string
+          origem: Database["public"]["Enums"]["origem_presenca"]
+          origem_offline: boolean
+          progresso_pct: number | null
+          registado_em: string
+          sessao_id: string
+          turma_id: string
+        }
+        Insert: {
+          aparelho?: string | null
+          conflito?: boolean
+          dados_de_demonstracao?: boolean
+          estado: Database["public"]["Enums"]["estado_presenca"]
+          id?: string
+          inscricao_id: string
+          justificacao_correccao?: string | null
+          marcado_por?: string | null
+          marcado_por_nome?: string | null
+          minutos_permanencia?: number | null
+          motivo?: string | null
+          nome_formando: string
+          origem?: Database["public"]["Enums"]["origem_presenca"]
+          origem_offline?: boolean
+          progresso_pct?: number | null
+          registado_em?: string
+          sessao_id: string
+          turma_id: string
+        }
+        Update: {
+          aparelho?: string | null
+          conflito?: boolean
+          dados_de_demonstracao?: boolean
+          estado?: Database["public"]["Enums"]["estado_presenca"]
+          id?: string
+          inscricao_id?: string
+          justificacao_correccao?: string | null
+          marcado_por?: string | null
+          marcado_por_nome?: string | null
+          minutos_permanencia?: number | null
+          motivo?: string | null
+          nome_formando?: string
+          origem?: Database["public"]["Enums"]["origem_presenca"]
+          origem_offline?: boolean
+          progresso_pct?: number | null
+          registado_em?: string
+          sessao_id?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presencas_inscricao_id_fkey"
+            columns: ["inscricao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_inscricoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presencas_sessao_id_fkey"
+            columns: ["sessao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_sessoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presencas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       progresso_licoes: {
         Row: {
           concluida_em: string
@@ -1795,6 +1909,7 @@ export type Database = {
         | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
       dificuldade_questao: "facil" | "media" | "dificil"
+      estado_presenca: "presente" | "ausente" | "justificado"
       estado_tentativa: "em_curso" | "submetida" | "expirada"
       estado_turma:
         | "planeada"
@@ -1822,6 +1937,7 @@ export type Database = {
         | "outro"
       nivel_modulo: "basico" | "intermedio" | "avancado"
       nivel_partida: "nenhum" | "basico" | "intermedio" | "prefere_nao_indicar"
+      origem_presenca: "manual" | "calculada" | "correccao"
       papel_sistema:
         | "formando"
         | "formador"
@@ -1990,6 +2106,7 @@ export const Constants = {
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
       dificuldade_questao: ["facil", "media", "dificil"],
+      estado_presenca: ["presente", "ausente", "justificado"],
       estado_tentativa: ["em_curso", "submetida", "expirada"],
       estado_turma: [
         "planeada",
@@ -2020,6 +2137,7 @@ export const Constants = {
       ],
       nivel_modulo: ["basico", "intermedio", "avancado"],
       nivel_partida: ["nenhum", "basico", "intermedio", "prefere_nao_indicar"],
+      origem_presenca: ["manual", "calculada", "correccao"],
       papel_sistema: [
         "formando",
         "formador",

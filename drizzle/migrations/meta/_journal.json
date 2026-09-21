@@ -43,6 +43,13 @@
       "when": 1789987715717,
       "tag": "0005_avaliacao_banco_exame_certificacao",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789988912102,
+      "tag": "0006_presencas_assiduidade",
+      "breakpoints": true
     }
   ]
 }

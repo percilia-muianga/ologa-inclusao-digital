@@ -443,6 +443,30 @@ async function formandoPorToken(token: string) {
   return data;
 }
 
+/**
+ * Assiduidade real do formando na turma: sessões presentes sobre sessões
+ * realizadas. Devolve null quando ainda não há sessões realizadas.
+ */
+async function assiduidadeDoFormando(turmaId: string, nome: string): Promise<number | null> {
+  const s = await admin();
+  const { calcularAssiduidade } = await import("@/lib/presencas.server");
+  const [sessoesRes, inscricoesRes, presencasRes] = await Promise.all([
+    s.from("turma_sessoes").select("id,data").eq("turma_id", turmaId),
+    s.from("turma_inscricoes").select("id,nome,estado").eq("turma_id", turmaId),
+    s.from("presencas").select("*").eq("turma_id", turmaId),
+  ]);
+  const inscricao = (inscricoesRes.data ?? []).find(
+    (i) => normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
+  );
+  if (!inscricao) return null;
+  const linhas = calcularAssiduidade(
+    sessoesRes.data ?? [],
+    [{ id: inscricao.id, nome: inscricao.nome }],
+    (presencasRes.data ?? []) as never,
+  );
+  return linhas[0]?.taxaPct ?? null;
+}
+
 /** Última turma do formando para o curso, se existir inscrição registada. */
 async function turmaDoFormando(nome: string, cursoId: string) {
   const s = await admin();
@@ -499,6 +523,9 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       .filter((t) => t.estado === "submetida" && t.nota_pct !== null)
       .reduce<number | null>((max, t) => Math.max(max ?? 0, Number(t.nota_pct)), null);
 
+    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
+
+
     return {
       formando: { nome: formando.nome },
       turma,
@@ -511,9 +538,9 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       prazoLimite: prazoLimite?.toISOString() ?? null,
       diasRestantes,
       melhorNota,
-      // A marcação de presenças ainda não existe na plataforma: sem registos,
-      // a assiduidade fica por apurar em vez de ser inventada.
-      assiduidadePct: null as number | null,
+      // Assiduidade real, calculada a partir das presenças marcadas. Fica a
+      // null enquanto a turma não tiver sessões realizadas.
+      assiduidadePct,
       certificado,
     };
   });
@@ -768,7 +795,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
       .object({
         token: z.string().uuid(),
         cursoId: z.string().uuid(),
-        assiduidadePct: z.number().min(0).max(100),
       })
       .parse(i),
   )
@@ -798,8 +824,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
     );
     if (!melhor) throw new Error("SEM_EXAME_SUBMETIDO");
     if (melhor.nota < cfg.nota_minima_pct) throw new Error("NOTA_INSUFICIENTE");
-    if (data.assiduidadePct < cfg.assiduidade_minima_pct)
-      throw new Error("ASSIDUIDADE_INSUFICIENTE");
 
     const { data: curso } = await s
       .from("cursos")
@@ -807,6 +831,13 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
       .eq("id", data.cursoId)
       .single();
     const turma = await turmaDoFormando(formando.nome, data.cursoId);
+
+    // A assiduidade é sempre apurada no servidor, a partir das presenças
+    // marcadas — nunca aceite do lado de quem pede o certificado.
+    const assiduidadePct = turma ? await assiduidadeDoFormando(turma.id, formando.nome) : null;
+    if (assiduidadePct === null) throw new Error("ASSIDUIDADE_POR_APURAR");
+    if (assiduidadePct < cfg.assiduidade_minima_pct) throw new Error("ASSIDUIDADE_INSUFICIENTE");
+
 
     const { data: cert, error } = await s
       .from("certificados_curso")
@@ -824,7 +855,7 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
         data_inicio: turma?.data_inicio ?? null,
         data_fim: turma?.data_fim ?? null,
         nota_final_pct: melhor.nota,
-        assiduidade_pct: data.assiduidadePct,
+        assiduidade_pct: assiduidadePct,
       })
       .select("codigo_verificacao, emitido_em")
       .single();
