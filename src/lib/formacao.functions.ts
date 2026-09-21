@@ -1,5 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { sessaoObrigatoria, type ContextoAutenticado } from '@/lib/guardas'
+
+type EmitirCertificadoEntrada = z.infer<typeof emitirSchema>
 
 const admin = async () =>
   (await import('@/integrations/supabase/client.server')).supabaseAdmin
