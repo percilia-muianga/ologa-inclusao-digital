@@ -32,8 +32,10 @@ aceita() { # aceita <descrição> <uid> <sql>
 echo "1. Escalada de papel em perfis"
 recusa "formando não se promove a admin (UPDATE)" $A \
   "UPDATE public.perfis SET papel='admin_ologa' WHERE id='$A';"
-recusa "formando não altera o papel de outro (UPDATE)" $A \
-  "UPDATE public.perfis SET papel='admin_ologa' WHERE id='$B';"
+como $A "UPDATE public.perfis SET papel='admin_ologa' WHERE id='$B';" >/dev/null
+r=$($PSQL -c "SELECT papel FROM public.perfis WHERE id='$B';")
+[ "$r" = "formando" ] && ok "formando não altera o papel de outro (nada mudou)" \
+  || ko "formando não altera o papel de outro" "$r"
 recusa "novo perfil próprio com papel elevado (INSERT)" $NOVO \
   "INSERT INTO public.perfis (id,nome,email,papel) VALUES ('$NOVO','N','n@exemplo.invalid','admin_ologa');"
 recusa "perfil criado com o id de outra pessoa (INSERT)" $NOVO \
@@ -55,8 +57,10 @@ recusa "formando não atribui papéis a outros" $A \
   "INSERT INTO public.utilizador_papeis (utilizador_id,papel) VALUES ('$B','auditor_atdi');"
 recusa "auditor não se promove" $AUD \
   "INSERT INTO public.utilizador_papeis (utilizador_id,papel) VALUES ('$AUD','admin_atdi');"
-recusa "formando não apaga o papel de auditor" $A \
-  "DELETE FROM public.utilizador_papeis WHERE utilizador_id='$AUD';"
+como $A "DELETE FROM public.utilizador_papeis WHERE utilizador_id='$AUD';" >/dev/null
+r=$($PSQL -c "SELECT count(*) FROM public.utilizador_papeis WHERE utilizador_id='$AUD';")
+[ "$r" = "1" ] && ok "formando não apaga o papel de auditor (continua lá)" \
+  || ko "formando não apaga o papel de auditor" "$r"
 aceita "administração atribui papéis" $ADM \
   "INSERT INTO public.utilizador_papeis (utilizador_id,papel) VALUES ('$A','formador') RETURNING 'feito';"
 
