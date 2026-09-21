@@ -27,6 +27,8 @@ type Detalhes = {
   data_fim: string | null;
   nota_final_pct: string;
   assiduidade_pct: string;
+  base_assiduidade: string;
+
 } | null;
 
 type Estado =
@@ -155,9 +157,13 @@ function VerificarPage() {
                     <div>
                       <dt className="font-semibold text-ink/70">Assiduidade</dt>
                       <dd className="text-ink">
-                        {estado.certificado.detalhes.assiduidade_pct}%
+                        {estado.certificado.detalhes.assiduidade_pct}%{" "}
+                        {estado.certificado.detalhes.base_assiduidade === "ajustada"
+                          ? "(assiduidade ajustada: sessões presentes sobre sessões realizadas menos as justificadas)"
+                          : "(assiduidade estrita: sessões presentes sobre sessões realizadas)"}
                       </dd>
                     </div>
+
                   </>
                 ) : null}
               </dl>
