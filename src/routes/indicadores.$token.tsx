@@ -12,7 +12,7 @@ export const Route = createFileRoute("/indicadores/$token")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Indicadores da instituição — Ologa" },
+      { title: "Indicadores da instituição — Plataforma Nacional de Capacitação Digital" },
       { name: "robots", content: "noindex, nofollow, noarchive" },
       { name: "referrer", content: "no-referrer" },
     ],
@@ -33,7 +33,7 @@ function IndicadoresPage() {
 
   useEffect(() => {
     // Não deixar o token entrar no title da aba, event tracking, nem em headers de referrer.
-    document.title = "Indicadores da instituição — Ologa";
+    document.title = "Indicadores da instituição — Plataforma Nacional de Capacitação Digital";
     let cancelado = false;
     obter({ data: { token } })
       .then((res) => {

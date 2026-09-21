@@ -14,7 +14,7 @@ import {
 } from "@/lib/inscricao-schema";
 
 export const Route = createFileRoute("/gestao/instituicoes/")({
-  head: () => ({ meta: [{ title: "Ologa — Administração" }] }),
+  head: () => ({ meta: [{ title: "Gestão de instituições — Plataforma Nacional de Capacitação Digital" }] }),
   component: OlogaPage,
 });
 

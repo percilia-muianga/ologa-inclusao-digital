@@ -5,7 +5,7 @@ export const Route = createFileRoute("/formacao/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(modulosCatalogoQuery),
   head: () => ({
     meta: [
-      { title: "Cursos — Ologa Literacia Digital" },
+      { title: "Cursos abertos — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:

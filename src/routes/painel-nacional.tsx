@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Download, Printer } from "lucide-react";
 import { PlataformaPagina } from "@/components/plataforma-pagina";
+import { Button } from "@/components/ui/button";
 import { obterIndicadoresTdr } from "@/lib/indicadores-tdr.functions";
 
 export const Route = createFileRoute("/painel-nacional")({
@@ -47,15 +49,108 @@ function pct(v: number | null) {
   return v === null ? "—" : `${v}%`;
 }
 
+function descarregar(conteudo: BlobPart, tipo: string, nome: string) {
+  const url = URL.createObjectURL(new Blob([conteudo], { type: tipo }));
+  const ligacao = document.createElement("a");
+  ligacao.href = url;
+  ligacao.download = nome;
+  ligacao.click();
+  URL.revokeObjectURL(url);
+}
+
+function celulaCsv(valor: string | number | null) {
+  const texto = valor === null ? "—" : String(valor);
+  return `"${texto.replaceAll('"', '""')}"`;
+}
+
 function PainelNacionalPage() {
-  const { desempenho, satisfacao, eficacia, workshops, porProvincia, porDistrito } =
-    Route.useLoaderData();
+  const dados = Route.useLoaderData();
+  const { desempenho, satisfacao, eficacia, workshops, porProvincia, porDistrito } = dados;
+
+  const indicadores = [
+    ["Indicador", "Valor", "Nota"],
+    ["Formandos inscritos", desempenho.inscritos, ""],
+    ["Taxa de conclusão", pct(desempenho.taxaConclusaoPct), ""],
+    ["Taxa de certificação", pct(desempenho.taxaCertificacaoPct), `${desempenho.certificados} certificados emitidos`],
+    [
+      "Melhoria entre pré-teste e pós-teste",
+      desempenho.evolucaoPp === null
+        ? "—"
+        : `${desempenho.evolucaoPp > 0 ? "+" : ""}${desempenho.evolucaoPp} pp`,
+      `Pré-teste ${pct(desempenho.preMedia)}; Pós-teste ${pct(desempenho.posMedia)}; ${desempenho.avaliacoesRegistadas} registos`,
+    ],
+    ["Índice de satisfação dos participantes", pct(satisfacao.indicePct), `${satisfacao.respostas} questionários`],
+    ["Aplicam as competências aos três meses", pct(eficacia.aplicamPct), `${eficacia.respostas} inquéritos`],
+    ["Workshops provinciais realizados", workshops.provinciaisRealizados, workshops.provinciaisPlaneados],
+    ["Workshops distritais realizados", workshops.distritaisRealizados, workshops.distritaisPlaneados],
+  ];
+
+  const provincias = [
+    ["Província", "Turmas", "Formandos", "Pré-teste", "Pós-teste", "Evolução", "Workshop provincial", "Workshops distritais"],
+    ...porProvincia.map((p) => [
+      p.provincia,
+      p.turmas,
+      p.inscritos,
+      p.censurado ? "Insuficiente para divulgação" : pct(p.preMedia),
+      p.censurado ? "Insuficiente para divulgação" : pct(p.posMedia),
+      p.censurado
+        ? "Insuficiente para divulgação"
+        : p.evolucaoPp === null
+          ? "—"
+          : `${p.evolucaoPp > 0 ? "+" : ""}${p.evolucaoPp} pp`,
+      `${p.workshopsProvinciaisRealizados} de 1`,
+      `${p.workshopsDistritaisRealizados} de ${p.workshopsDistritaisPlaneados}`,
+    ]),
+  ];
+
+  const distritos = [
+    ["Província", "Distrito", "Realizados", "Previstos"],
+    ...porDistrito.map((d) => [d.provincia, d.distrito, d.realizados, d.planeados]),
+  ];
+
+  function exportarCsv() {
+    const linhas = [
+      ["Painel Nacional"],
+      ...indicadores,
+      [],
+      ["Por província"],
+      ...provincias,
+      [],
+      ["Workshops por distrito"],
+      ...distritos,
+    ];
+    const csv = `\uFEFF${linhas.map((linha) => linha.map((v) => celulaCsv(v ?? "")).join(";")).join("\r\n")}`;
+    descarregar(csv, "text/csv;charset=utf-8", "painel-nacional.csv");
+  }
+
+  async function exportarXls() {
+    const XLSX = await import("xlsx");
+    const livro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(indicadores), "Indicadores");
+    XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(provincias), "Por província");
+    XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(distritos), "Por distrito");
+    XLSX.writeFile(livro, "painel-nacional.xls", { bookType: "biff8" });
+  }
 
   return (
     <PlataformaPagina
       titulo="Painel Nacional"
       introducao="Indicadores organizados pelos tipos do Termo de Referência: desempenho da formação, satisfação e eficácia, mais a execução dos workshops. As contagens mostram o número, mesmo quando é zero; os rácios, médias e percentagens sem denominador mostram um traço."
     >
+      <div className="mb-8 flex flex-wrap gap-3 print:hidden" aria-label="Exportar esta vista">
+        <Button type="button" size="lg" onClick={exportarCsv} className="min-h-11">
+          <Download aria-hidden="true" />
+          Exportar CSV
+        </Button>
+        <Button type="button" size="lg" variant="outline" onClick={() => void exportarXls()} className="min-h-11">
+          <Download aria-hidden="true" />
+          Exportar XLS
+        </Button>
+        <Button type="button" size="lg" variant="outline" onClick={() => window.print()} className="min-h-11">
+          <Printer aria-hidden="true" />
+          Exportar PDF
+        </Button>
+      </div>
       <section aria-labelledby="desempenho">
         <h2 id="desempenho" className="text-xl font-bold text-navy">
           Desempenho da formação

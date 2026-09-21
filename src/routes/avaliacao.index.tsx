@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { panoramaBanco } from "@/lib/avaliacao.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/avaliacao/")({
   component: AvaliacaoPage,
@@ -10,9 +11,16 @@ export const Route = createFileRoute("/avaliacao/")({
 
 function AvaliacaoPage() {
   const carregar = useServerFn(panoramaBanco);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["panorama-banco"],
-    queryFn: () => carregar(),
+    queryFn: () =>
+      Promise.race([
+        carregar(),
+        new Promise<never>((_, rejeitar) =>
+          setTimeout(() => rejeitar(new Error("TEMPO_ESGOTADO")), 10000),
+        ),
+      ]),
+    retry: false,
   });
 
   return (
@@ -38,9 +46,21 @@ function AvaliacaoPage() {
       <div role="status" aria-live="polite">
         {isLoading ? <p className="text-base text-navy-2">A carregar o banco de questões…</p> : null}
         {isError ? (
-          <p className="text-base text-navy-2">
-            Não foi possível carregar o banco de questões. Volte a tentar dentro de momentos.
-          </p>
+          <EstadoVazio
+            titulo="Não foi possível mostrar o banco de questões"
+            descricao="As contagens por curso e módulo não ficaram disponíveis. Verifique a ligação e volte a tentar; nenhuma questão foi alterada."
+            accao={
+              <Button
+                type="button"
+                onClick={() => void refetch()}
+                disabled={isFetching}
+                size="lg"
+                className="min-h-11"
+              >
+                {isFetching ? "A tentar novamente…" : "Tentar novamente"}
+              </Button>
+            }
+          />
         ) : null}
       </div>
 

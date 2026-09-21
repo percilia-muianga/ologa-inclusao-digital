@@ -4,7 +4,27 @@ import { listarCursosPrograma } from "@/lib/cursos.functions";
 
 export const Route = createFileRoute("/cursos")({
   loader: () => listarCursosPrograma(),
-  head: () => ({ meta: [{ title: "Cursos — Plataforma Nacional de Capacitação Digital" }] }),
+  head: () => ({
+    meta: [
+      { title: "Cursos — Plataforma Nacional de Capacitação Digital" },
+      {
+        name: "description",
+        content:
+          "Seis cursos de capacitação e um módulo transversal obrigatório de Governo Digital Inclusivo e Acessibilidade.",
+      },
+      { property: "og:title", content: "Cursos — Plataforma Nacional de Capacitação Digital" },
+      {
+        property: "og:description",
+        content:
+          "Seis cursos de capacitação e um módulo transversal obrigatório de Governo Digital Inclusivo e Acessibilidade.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ologa-staging-priv-9k3m2.lovable.app/cursos" },
+    ],
+  }),
   component: CursosPage,
 });
 

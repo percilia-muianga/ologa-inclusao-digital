@@ -9,16 +9,16 @@ import { PROVINCIAS, GENEROS } from "@/lib/papeis";
 export const Route = createFileRoute("/criar-conta")({
   head: () => ({
     meta: [
-      { title: "Criar conta — Ologa" },
+      { title: "Criar conta — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Crie a sua conta na plataforma de literacia digital da Ologa para acompanhar o seu percurso, presenças e certificados.",
+          "Crie a sua conta na Plataforma Nacional de Capacitação Digital para acompanhar o seu percurso, presenças e certificados.",
       },
-      { property: "og:title", content: "Criar conta — Ologa" },
+      { property: "og:title", content: "Criar conta — Plataforma Nacional de Capacitação Digital" },
       {
         property: "og:description",
-        content: "Conta pessoal na plataforma de literacia digital da Ologa.",
+        content: "Conta pessoal na Plataforma Nacional de Capacitação Digital.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

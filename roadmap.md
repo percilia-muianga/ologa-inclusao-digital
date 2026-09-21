@@ -75,7 +75,7 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [ ] Email da conta de demonstração e domínio das contas de teste
 
 ## Correcções encontradas na versão publicada (em curso)
-- [ ] Retirar a lei e o total incerto de 4000 formandos da abertura e partilha da página inicial
-- [ ] Corrigir metadados de Cursos e restantes metadados comerciais da plataforma
-- [ ] Garantir que Avaliação nunca fica presa no carregamento e mantém contagens no estado vazio
-- [ ] Exportar qualquer vista do Painel Nacional em CSV, XLS e PDF imprimível sem navegação
+- [x] Retirar a lei e o total incerto de 4000 formandos da abertura e partilha da página inicial
+- [x] Corrigir metadados de Cursos e restantes metadados comerciais da plataforma
+- [x] Garantir que Avaliação nunca fica presa no carregamento e mantém contagens no estado vazio
+- [x] Exportar qualquer vista do Painel Nacional em CSV, XLS e PDF imprimível sem navegação

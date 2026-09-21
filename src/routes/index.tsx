@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Seis cursos, onze províncias, quatro mil formandos previstos. Módulos de literacia digital abertos ao público, sem necessidade de conta.",
+          "Seis cursos, onze províncias e setenta e sete distritos. Módulos de literacia digital abertos ao público, sem necessidade de conta.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -77,8 +77,8 @@ const AREAS: { to: string; titulo: string; descricao: string }[] = [
 const NUMEROS: { valor: string; rotulo: string }[] = [
   { valor: "6", rotulo: "cursos do programa" },
   { valor: "11", rotulo: "províncias abrangidas" },
-  { valor: "4000", rotulo: "formandos previstos" },
-  { valor: "6 artigos", rotulo: "conformidade com a Lei n.º 10/2024" },
+  { valor: "2 horas", rotulo: "módulo transversal" },
+  { valor: "77", rotulo: "distritos abrangidos" },
 ];
 
 function PlataformaHome() {
@@ -102,9 +102,9 @@ function PlataformaHome() {
               </h1>
               <p className="mt-4 max-w-3xl text-base text-navy-2 sm:text-lg">
                 Cursos, turmas, presenças, avaliação e certificação, com acompanhamento
-                nacional por província e distrito. Desenhada segundo os princípios do
-                desenho universal e alinhada com a Lei n.º 10/2024 sobre os direitos da
-                pessoa com deficiência.
+                nacional por província e distrito. Desenhada segundo os princípios do desenho
+                universal: as mesmas turmas, os mesmos materiais e os mesmos certificados para
+                todas as pessoas.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link

@@ -11,11 +11,11 @@ import { criarInscricao, listarModulosPublico } from "@/lib/inscricao.functions"
 export const Route = createFileRoute("/inscricao")({
   head: () => ({
     meta: [
-      { title: "Inscrever a minha instituição — Ologa" },
+      { title: "Inscrição de instituição — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Formulário público de inscrição de instituições para a formação da Ologa.",
+          "Formulário de inscrição de instituições na Plataforma Nacional de Capacitação Digital.",
       },
     ],
   }),
