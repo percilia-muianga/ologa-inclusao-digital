@@ -248,7 +248,9 @@ async function semearCurso(alvo: Alvo) {
     curso: curso.titulo,
     inseridas,
     actualizadas,
+    sobrantesRetiradas: sobrantes.length,
     ignoradasPorEstaremRetiradas: ignoradasRetiradas,
+
     naBase: {
       total: finais.length,
       activas: finais.filter((q) => q.activa).length,
