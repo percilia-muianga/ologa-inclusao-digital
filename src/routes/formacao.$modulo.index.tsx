@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { moduloQuery } from "./formacao.$modulo";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/formacao/$modulo/")({
 
 function ModuloOverview() {
   const { modulo: moduloId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const { data } = useSuspenseQuery(moduloQuery(moduloId));
   const [concluidas, setConcluidas] = useState<Set<string>>(new Set());
   const [diagnostico, setDiagnostico] = useState<{ pontuacao: number; total: number } | null>(null);

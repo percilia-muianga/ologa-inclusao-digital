@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/formacao/$modulo/diagnostico")({
 
 function DiagnosticoView() {
   const { modulo: moduloId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const { data: perguntas } = useSuspenseQuery(diagPerguntasQuery(moduloId));
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
   const submeter = useServerFn(submeterDiagnostico);

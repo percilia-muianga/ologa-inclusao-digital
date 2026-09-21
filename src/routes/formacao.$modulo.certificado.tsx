@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -31,6 +31,7 @@ const APOIOS: { valor: Apoio; etiqueta: string }[] = [
 
 function CertificadoView() {
   const { modulo: moduloId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const navigate = useNavigate();
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
   const emitir = useServerFn(emitirCertificado);

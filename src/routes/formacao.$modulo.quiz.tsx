@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -26,6 +26,7 @@ type Resultado = {
 
 function QuizView() {
   const { modulo: moduloId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const navigate = useNavigate();
   const { data: perguntas } = useSuspenseQuery(quizQuery(moduloId));
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));

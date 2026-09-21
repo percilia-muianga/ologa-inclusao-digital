@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
@@ -33,6 +33,7 @@ function pararLeitura() {
 
 function LicaoView() {
   const { modulo: moduloId, licao: licaoId } = Route.useParams();
+  const { curso } = useSearch({ from: "/formacao/$modulo" });
   const navigate = useNavigate();
   const { data: licao } = useSuspenseQuery(licaoQuery(licaoId));
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId));
