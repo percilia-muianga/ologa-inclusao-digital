@@ -85,6 +85,13 @@
       "when": 1790014922388,
       "tag": "0011_banco_questoes_versoes_e_cenario",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790018239993,
+      "tag": "0012_cursos_nota_carga_horaria",
+      "breakpoints": true
     }
   ]
 }

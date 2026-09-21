@@ -95,7 +95,7 @@ export const obterCursoPrograma = createServerFn({ method: "GET" })
   .handler(async ({ data: slug }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cursoRes = await supabaseAdmin.from("cursos")
-      .select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia,objectivos,publico_alvo,pre_requisitos,materiais,minutos_avaliacao_orientacao")
+      .select("id,ordem,slug,titulo,carga_horaria,carga_horaria_nota,modalidade,formandos_previstos,abrangencia,objectivos,publico_alvo,pre_requisitos,materiais,minutos_avaliacao_orientacao")
       .eq("slug", slug).maybeSingle();
     if (cursoRes.error) throw cursoRes.error;
     if (!cursoRes.data) return null;

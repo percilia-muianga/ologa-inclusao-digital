@@ -75,8 +75,15 @@ function CursoPage() {
             ATDI nem revisão de acessibilidade por terceiros.
           </p>
         )}
+        {curso.carga_horaria_nota ? (
+          <p className="mt-2 text-navy-2">
+            <strong>Carga horária por confirmar.</strong> {curso.carga_horaria_nota}
+          </p>
+        ) : null}
         <p className="mt-2 text-navy-2">
-          Carga fixada nos Termos de Referência para o curso: {curso.carga_horaria} horas.
+          {curso.carga_horaria_nota
+            ? `Carga horária usada a título provisório neste plano: ${curso.carga_horaria} horas.`
+            : `Carga fixada nos Termos de Referência para o curso: ${curso.carga_horaria} horas.`}{" "}
           Soma da distribuição proposta: {horasCurriculo} horas ={" "}
           {horas(minutosTematicos)} horas de módulos temáticos +{" "}
           {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
@@ -84,8 +91,10 @@ function CursoPage() {
           {horasCurriculo === curso.carga_horaria
             ? "As duas somas coincidem."
             : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
-          A distribuição por módulos e lições é proposta pedagógica por validar; os Termos
-          de Referência fixam o total do curso, não o tempo de cada módulo.
+          A distribuição por módulos e lições é proposta pedagógica por validar.{" "}
+          {curso.carga_horaria_nota
+            ? "O total do curso está por confirmar, conforme a nota acima."
+            : "Os Termos de Referência fixam o total do curso, não o tempo de cada módulo."}
         </p>
         <p className="mt-2 text-navy-2">
           Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
