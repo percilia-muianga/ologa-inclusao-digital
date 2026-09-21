@@ -47,6 +47,8 @@ export const CENARIO_CUSTOS = {
   diasDoMes: 30,
   vmPortal: { horas: 720, descricao: "portal ligado 24 horas por dia, 30 dias" },
   vmRelatorios: { horas: 220, descricao: "máquina de relatórios ligada 10 horas por dia, 22 dias úteis" },
+  discosPortalGb: 128,
+  discosRelatoriosGb: 64,
   discosGb: 192, // 128 GB do portal + 64 GB da máquina de relatórios
   objectosGb: 400,
   saidaGb: 150,
@@ -469,7 +471,7 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
     ],
     explicacao: [
       "A factura de um serviço na nuvem não tem uma linha só. Tem, tipicamente, seis famílias de rubricas. A computação paga-se sobretudo por tempo com a máquina ligada, e por tamanho da máquina. O armazenamento paga-se por capacidade ocupada e por tempo, havendo classes mais baratas para dados pouco consultados. A rede é o ponto que mais surpreende: a entrada de dados costuma não ser cobrada, mas a saída para a internet é cobrada por gigabyte, e tráfego entre regiões também pode ser cobrado. As cópias de segurança pagam-se por volume guardado e por tempo de retenção. Os registos de monitoria pagam-se por volume recebido e por tempo de conservação — guardar tudo, sempre, sai caro. E o suporte costuma ser um plano à parte, muitas vezes com percentagem do consumo e com valor mínimo mensal.",
-      "Há três verdades incómodas que convém dizer cedo. A primeira: parar uma máquina virtual não elimina todos os custos associados. Deixa de contar o tempo de computação, mas o disco continua a ocupar espaço e a ser cobrado, e endereços reservados, cópias e licenças associadas podem continuar a contar. Para deixar de pagar tudo, é preciso eliminar os recursos — depois de confirmar que não são precisos e de guardar o que interessa. A segunda: os alertas de orçamento avisam, não travam. Um orçamento definido na plataforma envia notificação quando o consumo atinge determinadas percentagens do valor previsto; por si, não suspende serviços nem impede que a despesa continue a crescer. A documentação do próprio fornecedor descreve o orçamento como instrumento de aviso, e qualquer acção automática tem de ser configurada à parte, com todos os riscos que suspender um serviço público acarreta. A terceira: o preço listado não é a despesa total — falta o câmbio, faltam impostos quando aplicáveis, falta o tempo de pessoas.",
+      "Há três verdades incómodas que convém dizer cedo. A primeira: parar uma máquina virtual não elimina todos os custos associados, e «parar» não quer sempre dizer a mesma coisa. A documentação do Azure sobre estados e facturação de máquinas virtuais distingue o estado «parada» (Stopped), em que a máquina continua com a capacidade reservada e a computação CONTINUA a ser facturada, do estado «parada e desalocada» (Stopped/Deallocated), em que a capacidade é libertada e a computação por consumo deixa de ser facturada. Mesmo desalocada, o disco continua a ocupar espaço e a ser cobrado, e endereços reservados, cópias e licenças associadas podem continuar a contar; e, se existirem compromissos contratuais — capacidade reservada, planos de poupança, licenças subscritas —, esses continuam a ser pagos independentemente de a máquina estar ligada ou não. Desligar a máquina pelo sistema operativo, de dentro, costuma deixá-la no primeiro estado, não no segundo. Para deixar de pagar tudo, é preciso eliminar os recursos — depois de confirmar que não são precisos e de guardar o que interessa. A segunda: os alertas de orçamento avisam, não travam. Um orçamento definido na plataforma envia notificação quando o consumo atinge determinadas percentagens do valor previsto; por si, não suspende serviços nem impede que a despesa continue a crescer. A documentação do próprio fornecedor descreve o orçamento como instrumento de aviso, e qualquer acção automática tem de ser configurada à parte, com todos os riscos que suspender um serviço público acarreta. A terceira: o preço listado não é a despesa total — falta o câmbio, faltam impostos quando aplicáveis, falta o tempo de pessoas.",
       "Por isso, todo o cálculo de custos tem de trazer os pressupostos à superfície. Quantas horas por dia a máquina está mesmo ligada? Quantos dias tem o mês considerado? Que volume de saída de dados se prevê, e com que base? Qual o câmbio usado e de que data? Um orçamento em que estes números não estão escritos não pode ser discutido nem corrigido: só pode ser acreditado ou rejeitado. Escrever os pressupostos é o que transforma uma estimativa numa proposta discutível. E quando um número não é conhecido, escreve-se «por apurar» e indica-se como será apurado — nunca se preenche com um valor bonito.",
       "A optimização faz-se por camadas, começando pelo que não tem risco. Primeiro, eliminar o que não é usado: discos órfãos de máquinas já apagadas, endereços reservados sem uso, ambientes de demonstração esquecidos, cópias antigas fora da política de retenção. Depois, ajustar o que está sobredimensionado: máquinas com processador quase sempre abaixo de dez por cento, bases de dados com capacidade muito acima do uso real. A seguir, ajustar horários: ambientes de teste e de formação raramente precisam de estar ligados de noite e ao fim-de-semana. Depois, arrumar os dados: mover para classes de armazenamento mais baratas o que é raramente consultado, reduzir a retenção de registos para o que é realmente necessário, comprimir exportações. Só no fim se consideram compromissos de longo prazo — capacidade reservada por um ou três anos — porque estes trocam flexibilidade por desconto e, num serviço público, exigem previsibilidade que nem sempre existe.",
       "É útil distinguir três tipos de medida, porque são frequentemente confundidos na mesma lista. Há medidas que reduzem o custo de forma permanente, como apagar um disco órfão. Há medidas que adiam ou deslocam o custo, como mover dados para uma classe mais barata com custo de leitura mais alto: se os dados forem muito consultados, a poupança desaparece. E há medidas que reduzem risco sem reduzir custo, como criar um orçamento com alertas — valiosas, mas que não devem ser somadas à coluna da poupança. Uma proposta de optimização honesta separa estas três colunas.",
@@ -480,7 +482,7 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
       corpo: [
         "A tabela de preços que se segue é inventada para este exercício. Os valores são redondos de propósito, para que o cálculo possa ser feito à mão. Não correspondem aos preços de nenhum fornecedor e não servem para orçamentar nada.",
         ...TABELA_PRECOS_TEXTO,
-        `Consumo declarado no mês, também fictício, para um mês de ${CENARIO_CUSTOS.diasDoMes} dias: ${CENARIO_CUSTOS.vmPortal.descricao}, ou seja ${CENARIO_CUSTOS.vmPortal.horas} horas; ${CENARIO_CUSTOS.vmRelatorios.descricao}, ou seja ${CENARIO_CUSTOS.vmRelatorios.horas} horas; ${CENARIO_CUSTOS.discosGb} GB de discos ligados às duas máquinas; ${CENARIO_CUSTOS.objectosGb} GB em armazenamento de objectos; ${CENARIO_CUSTOS.saidaGb} GB de saída de dados para a internet; ${CENARIO_CUSTOS.backupGb} GB de cópias de segurança; ${CENARIO_CUSTOS.logsGb} GB de registos recebidos pelo serviço de monitoria.`,
+        `Consumo declarado no mês, também fictício, para um mês de ${CENARIO_CUSTOS.diasDoMes} dias: ${CENARIO_CUSTOS.vmPortal.descricao}, ou seja ${CENARIO_CUSTOS.vmPortal.horas} horas; ${CENARIO_CUSTOS.vmRelatorios.descricao}, ou seja ${CENARIO_CUSTOS.vmRelatorios.horas} horas; ${CENARIO_CUSTOS.discosPortalGb} GB de disco na máquina do portal e ${CENARIO_CUSTOS.discosRelatoriosGb} GB de disco na máquina de relatórios, ou seja ${CENARIO_CUSTOS.discosGb} GB de discos no total; ${CENARIO_CUSTOS.objectosGb} GB em armazenamento de objectos; ${CENARIO_CUSTOS.saidaGb} GB de saída de dados para a internet; ${CENARIO_CUSTOS.backupGb} GB de cópias de segurança; ${CENARIO_CUSTOS.logsGb} GB de registos recebidos pelo serviço de monitoria.`,
         "Repare-se em dois detalhes que costumam ser esquecidos no cálculo: os primeiros gigabytes de saída não são cobrados, pelo que a saída facturável é menor do que a saída total; e o plano de suporte tem um valor mínimo, que se aplica quando a percentagem calculada fica abaixo desse mínimo.",
       ],
     },
@@ -493,7 +495,7 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
         "Parte 1 — cálculo. Preencham uma tabela com uma linha por rubrica: computação, discos, armazenamento de objectos, saída de dados, cópias de segurança, registos e suporte. Em cada linha têm de escrever os operandos usados — quantidade, preço unitário e resultado — e não apenas o total. Apresentem o consumo do mês, o valor do suporte, o total em dólares e o total convertido em meticais ao câmbio assumido.",
         "Parte 2 — pressupostos. Escrevam a lista dos pressupostos do vosso cálculo, incluindo o número de dias do mês, as horas de funcionamento assumidas, os gigabytes de saída sem custo e o câmbio. Marquem com «por apurar» qualquer número que, num caso real, teria de ser confirmado e indiquem onde seria confirmado.",
         "Parte 3 — optimização. Proponham cinco medidas para reduzir o custo mensal deste cenário. Para cada uma indiquem a poupança estimada em dólares, como a estimaram, o risco para o serviço e a classificação da medida: reduz custo de forma permanente, adia ou desloca o custo, ou reduz risco sem reduzir custo. As três colunas não se somam entre si.",
-        "Parte 4 — limites. Respondam por escrito a duas perguntas: (a) se a direcção definir um orçamento com alerta aos 80 %, o consumo pára quando o alerta dispara? (b) se pararmos a máquina de relatórios durante todo o mês seguinte, quanto deixamos de pagar e que custos continuam a ser cobrados? Apresentem a conta.",
+        "Parte 4 — limites. Respondam por escrito a duas perguntas: (a) se a direcção definir um orçamento com alerta aos 80 %, o consumo pára quando o alerta dispara? (b) se a máquina de relatórios ficar parada E DESALOCADA durante todo o mês seguinte — pressuposto expresso deste exercício: a capacidade é libertada e não existe nenhum compromisso contratual de capacidade reservada, plano de poupança ou licença subscrita associado a essa máquina —, quanto deixamos de pagar e que custos continuam a ser cobrados? Apresentem a conta. Escrevam também o que mudaria na resposta se a máquina ficasse apenas parada, sem ser desalocada.",
         "Rubrica de apreciação, sobre 10 pontos: 3 pontos pelo cálculo correcto com todos os operandos visíveis; 1 ponto pelo tratamento correcto dos gigabytes de saída sem custo; 1 ponto pelo tratamento correcto do mínimo do plano de suporte; 1 ponto pela conversão com câmbio identificado como pressuposto; 2 pontos pelas cinco medidas com poupança estimada e classificação nas três colunas; 2 pontos pelas duas respostas da parte 4, com a conta feita. Perde 2 pontos qualquer trabalho que apresente um total sem mostrar os operandos.",
       ],
       produto:
@@ -502,7 +504,9 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
     sintese: [
       "A factura tem várias rubricas: computação, armazenamento, rede e saída, cópias, registos e suporte.",
       "A entrada de dados costuma não pagar; a saída para a internet paga.",
-      "Parar uma máquina não elimina todos os custos: o disco continua a ser cobrado.",
+      "Parar não é o mesmo que desalocar: só a máquina desalocada deixa de pagar computação por consumo.",
+      "Mesmo desalocada, o disco continua a ser cobrado.",
+      "Compromissos já assumidos (capacidade reservada, licenças) continuam a pagar-se com a máquina desligada.",
       "Os alertas de orçamento avisam; não suspendem o consumo.",
       "Todo o cálculo mostra os operandos, os pressupostos e o câmbio usado.",
       "Optimizar começa por apagar o que não é usado e ajustar o que está grande demais.",
@@ -528,6 +532,11 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
     ],
     referencias: [
       {
+        titulo: "Microsoft Learn — Estados e facturação de máquinas virtuais no Azure",
+        url: "https://learn.microsoft.com/en-us/azure/virtual-machines/states-billing",
+        consultadoEm: CONSULTADO,
+      },
+      {
         titulo: "Microsoft Learn — Tutorial: create and manage Azure budgets",
         url: "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets",
         consultadoEm: CONSULTADO,
@@ -541,11 +550,11 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
         "Nesta lição não se abre nenhuma plataforma, não se consulta nenhuma factura real e não se cria nenhum recurso.",
         "Solução de referência do cálculo, para correcção em plenário (todos os valores são fictícios):",
         ...SOLUCAO_TEXTO,
-        `Resposta de referência da parte 4(b): parar a máquina de relatórios durante o mês seguinte poupa ${CENARIO_CUSTOS.vmRelatorios.horas} h × ${PRECOS_FICTICIOS.vmHora} USD/h = ${n(CENARIO_CUSTOS.vmRelatorios.horas * PRECOS_FICTICIOS.vmHora)} USD de computação, mas o disco de 64 GB dessa máquina continua a ser cobrado: 64 GB × ${PRECOS_FICTICIOS.discoGbMes} USD/GB/mês = ${n(64 * PRECOS_FICTICIOS.discoGbMes)} USD, e as cópias e os registos associados também continuam se não forem alterados. A poupança líquida na computação não é, portanto, a eliminação de toda a despesa dessa máquina.`,
+        `Resposta de referência da parte 4(b), sob o pressuposto expresso de máquina parada E DESALOCADA, com capacidade libertada e sem compromissos contratuais associados: deixam de se pagar ${CENARIO_CUSTOS.vmRelatorios.horas} h × ${PRECOS_FICTICIOS.vmHora} USD/h = ${n(CENARIO_CUSTOS.vmRelatorios.horas * PRECOS_FICTICIOS.vmHora)} USD de computação. Se a máquina ficasse apenas parada, sem desalocação, essa poupança NÃO se verificaria. Em qualquer dos casos, o disco de ${CENARIO_CUSTOS.discosRelatoriosGb} GB dessa máquina continua a ser cobrado: ${CENARIO_CUSTOS.discosRelatoriosGb} GB × ${PRECOS_FICTICIOS.discoGbMes} USD/GB/mês = ${n(CENARIO_CUSTOS.discosRelatoriosGb * PRECOS_FICTICIOS.discoGbMes)} USD, e as cópias e os registos associados também continuam se não forem alterados. A poupança líquida na computação não é, portanto, a eliminação de toda a despesa dessa máquina.`,
       ],
       conducao: [
         "Acolhimento, objectivos e pergunta inicial: quem já viu uma factura de serviços informáticos que não conseguiu explicar?",
-        "Exposição: as seis famílias de rubricas; entrada e saída de dados; parar não é eliminar; orçamentos avisam mas não travam; pressupostos e câmbio; camadas de optimização; as três colunas de medidas; etiquetagem e revisão mensal.",
+        "Exposição: as seis famílias de rubricas; entrada e saída de dados; parar não é desalocar e desalocar não é eliminar; orçamentos avisam mas não travam; pressupostos e câmbio; camadas de optimização; as três colunas de medidas; etiquetagem e revisão mensal.",
         "Actividade em pares: cálculo, pressupostos, optimização e limites, alternando quem escreve a cada parte; circular para verificar que os operandos estão visíveis e que os gigabytes sem custo e o mínimo do suporte foram tratados.",
         "Correcção do cálculo em plenário com a solução de referência, partilha por amostra de dois pares sobre as medidas de optimização e síntese. As folhas dos restantes pares ficam afixadas e recebem apreciação escrita.",
       ],
@@ -561,6 +570,7 @@ export const LICOES_M3: Record<string, ConteudoLicao> = {
         "Cobrar a saída total em vez da saída facturável, esquecendo os gigabytes sem custo.",
         "Aplicar a percentagem do suporte e ignorar o valor mínimo.",
         "Assumir que parar a máquina elimina toda a despesa associada.",
+        "Confundir máquina parada com máquina desalocada: só a segunda liberta a computação por consumo.",
         "Somar na mesma coluna poupanças reais e medidas que apenas reduzem risco.",
         "Usar um câmbio sem dizer qual é nem de quando é.",
       ],
