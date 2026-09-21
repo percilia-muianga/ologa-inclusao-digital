@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { avaliarPertenca } from "./progresso.server";
 
 /**
  * Progresso de lições ligado à matrícula (turma_inscricoes).
@@ -81,28 +82,28 @@ async function validarMatriculaELicao(
     .eq("id", inscricaoId)
     .maybeSingle();
 
-  if (!inscricao || inscricao.perfil_id !== userId) {
-    throw new Error("MATRICULA_INVALIDA");
-  }
-  const cursoId: string | undefined = inscricao.turmas?.curso_id;
-  if (!cursoId) throw new Error("MATRICULA_INVALIDA");
+  const cursoId: string | undefined = inscricao?.turmas?.curso_id;
 
   const { data: licao } = await supabase
     .from("licoes")
     .select("id, modulo_id")
     .eq("id", licaoId)
     .maybeSingle();
-  if (!licao) throw new Error("LICAO_INVALIDA");
 
-  const { data: rel } = await supabase
-    .from("curso_modulos")
-    .select("modulo_id")
-    .eq("curso_id", cursoId)
-    .eq("modulo_id", licao.modulo_id)
-    .maybeSingle();
-  if (!rel) throw new Error("LICAO_FORA_DO_CURSO");
+  const { data: rel } = cursoId
+    ? await supabase.from("curso_modulos").select("modulo_id").eq("curso_id", cursoId)
+    : { data: [] as { modulo_id: string }[] };
 
-  return { cursoId };
+  const recusa = avaliarPertenca({
+    perfilDaMatricula: inscricao?.perfil_id ?? null,
+    utilizador: userId,
+    cursoDaTurma: cursoId ?? null,
+    moduloDaLicao: licao?.modulo_id ?? null,
+    modulosDoCurso: ((rel ?? []) as { modulo_id: string }[]).map((r) => r.modulo_id),
+  });
+  if (recusa) throw new Error(recusa);
+
+  return { cursoId: cursoId! };
 }
 
 /** Lições já concluídas nesta matrícula (opcionalmente só de um módulo). */
