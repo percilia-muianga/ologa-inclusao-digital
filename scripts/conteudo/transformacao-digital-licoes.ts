@@ -11,16 +11,20 @@
  * engano; é lido apenas pelo seed (scripts/seed-transformacao-digital.ts).
  */
 
+import type { TemposLicao } from "../../src/lib/plano-transformacao-digital";
+
 export type ConteudoLicao = {
   objectivos: string[];
   explicacao: string[];
   exemplo: { titulo: string; corpo: string[] };
-  actividade: { tempo: string; enunciado: string[]; produto: string };
+  /** Os minutos não são escritos aqui: vêm de TemposLicao (fonte única). */
+  actividade: { formato: string; enunciado: string[]; produto: string };
   sintese: string[];
   verificacao: { pergunta: string; resposta: string; feedback: string }[];
   guiao: {
     preparacao: string[];
-    conducao: { tempo: string; passo: string }[];
+    /** Quatro passos, pela ordem: acolhimento, exposição, actividade, partilha. */
+    conducao: [string, string, string, string];
     criterios: string[];
     errosComuns: string[];
   };
@@ -39,10 +43,48 @@ export const AVISO_HTML =
   "Este conteúdo é um rascunho preparado pela equipa. A sua disponibilidade na plataforma " +
   "não significa aprovação nem validação técnica.</p>";
 
-export function montarElearning(c: ConteudoLicao, minutos: number): string {
+/** Rótulos dos quatro blocos, pela mesma ordem de TemposLicao. */
+export const BLOCOS_TEMPO = [
+  "Acolhimento e objectivos",
+  "Exposição",
+  "Actividade prática",
+  "Partilha e síntese",
+] as const;
+
+export function minutosPorBloco(t: TemposLicao): number[] {
+  return [t.acolhimento, t.exposicao, t.actividade, t.partilha];
+}
+
+/** Grelha de tempos comum ao conteúdo e ao guião — evita duas contas diferentes. */
+function grelhaTempos(t: TemposLicao): string {
+  const minutos = minutosPorBloco(t);
+  return (
+    "<ul>" +
+    BLOCOS_TEMPO.map((b, i) => `<li>${b}: ${minutos[i]} minutos.</li>`).join("") +
+    "</ul>"
+  );
+}
+
+function faixas(t: TemposLicao): string[] {
+  const minutos = minutosPorBloco(t);
+  let inicio = 0;
+  return minutos.map((m) => {
+    const faixa = `${inicio}–${inicio + m} min`;
+    inicio += m;
+    return faixa;
+  });
+}
+
+export function montarElearning(
+  c: ConteudoLicao,
+  minutos: number,
+  tempos: TemposLicao,
+): string {
   return [
     AVISO_HTML,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos.</p>`,
+    "<h3>Como o tempo desta lição está distribuído</h3>",
+    grelhaTempos(tempos),
     "<h3>Objectivos de aprendizagem</h3>",
     "<p>No fim desta lição, a pessoa formanda deve ser capaz de:</p>",
     lista(c.objectivos),
@@ -53,13 +95,15 @@ export function montarElearning(c: ConteudoLicao, minutos: number): string {
     `<h4>${esc(c.exemplo.titulo)}</h4>`,
     paragrafos(c.exemplo.corpo),
     "<h3>Actividade prática</h3>",
-    `<p><strong>Tempo:</strong> ${esc(c.actividade.tempo)}.</p>`,
+    `<p><strong>Tempo:</strong> ${tempos.actividade} minutos de trabalho, ${esc(
+      c.actividade.formato,
+    )}, seguidos de ${tempos.partilha} minutos de partilha e síntese em plenário.</p>`,
     paragrafos(c.actividade.enunciado),
     `<p><strong>Produto esperado:</strong> ${esc(c.actividade.produto)}</p>`,
     "<h3>Síntese em leitura fácil</h3>",
     lista(c.sintese),
     "<h3>Verificação formativa</h3>",
-    "<p>Estas perguntas não contam para a nota final. Servem para a pessoa formanda confirmar o que percebeu.</p>",
+    "<p>Estas perguntas não contam para a nota final e não são perguntas do exame final. Servem para a pessoa formanda confirmar o que percebeu.</p>",
     c.verificacao
       .map(
         (v, i) =>
@@ -71,21 +115,34 @@ export function montarElearning(c: ConteudoLicao, minutos: number): string {
   ].join("");
 }
 
-export function montarGuiao(c: ConteudoLicao, titulo: string, minutos: number): string {
+export function montarGuiao(
+  c: ConteudoLicao,
+  titulo: string,
+  minutos: number,
+  tempos: TemposLicao,
+): string {
+  const faixa = faixas(tempos);
   return [
     AVISO_HTML,
     `<h3>Guião do formador — ${esc(titulo)}</h3>`,
     `<p><strong>Duração prevista:</strong> ${minutos} minutos, em sessão virtual.</p>`,
+    "<p>Os tempos abaixo são os mesmos que a pessoa formanda vê no conteúdo da lição.</p>",
     "<h4>Preparação</h4>",
     lista(c.guiao.preparacao),
     "<h4>Condução</h4>",
     `<ol>${c.guiao.conducao
-      .map((p) => `<li><strong>${esc(p.tempo)}:</strong> ${esc(p.passo)}</li>`)
+      .map(
+        (passo, i) =>
+          `<li><strong>${faixa[i]} (${BLOCOS_TEMPO[i]}):</strong> ${esc(passo)}</li>`,
+      )
       .join("")}</ol>`,
     "<h4>Critérios de apreciação do produto da actividade</h4>",
     lista(c.guiao.criterios),
     "<h4>Erros comuns a antecipar</h4>",
     lista(c.guiao.errosComuns),
+    "<p><strong>Separação pedagógica:</strong> este guião não contém perguntas nem " +
+      "respostas do exame final. O exame é gerado no momento em que a pessoa formanda " +
+      "o inicia, a partir do banco de questões, e o gabarito fica apenas no servidor.</p>",
   ].join("");
 }
 
