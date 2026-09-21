@@ -6,6 +6,7 @@ import {
   type PainelIndicadores,
 } from "@/lib/indicadores-instituicao.functions";
 import { ListenButton } from "@/components/listen-button";
+import { BotaoDocumento } from "@/components/botao-documento";
 
 
 export const Route = createFileRoute("/indicadores/$token")({
@@ -226,38 +227,17 @@ function IndicadoresPage() {
               nota="Ao gerar, a declaração fica registada como assinada."
             />
           </ul>
+          <p className="mt-3 text-sm text-ink/70">
+            Estes documentos nomeiam pessoas. Só podem ser abertos com sessão iniciada numa conta
+            autorizada da coordenação. Esta página continua a mostrar apenas totais.
+          </p>
         </section>
       </main>
     </>
   );
 }
 
-function LinkDoc({
-  token,
-  tipo,
-  nome,
-  nota,
-}: {
-  token: string;
-  tipo: "relatorio" | "certificado" | "declaracao";
-  nome: string;
-  nota?: string;
-}) {
-  const href = `/api/public/documentos/${tipo}/${token}`;
-  return (
-    <li className="rounded-md border border-ink/10 bg-white p-4">
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener"
-        className="text-base font-semibold text-brand-dark underline"
-      >
-        {nome} (PDF)
-      </a>
-      {nota && <p className="mt-2 text-xs text-ink/60">{nota}</p>}
-    </li>
-  );
-}
+const LinkDoc = BotaoDocumento;
 
 function Total({ titulo, valor }: { titulo: string; valor: number | null }) {
   return (
