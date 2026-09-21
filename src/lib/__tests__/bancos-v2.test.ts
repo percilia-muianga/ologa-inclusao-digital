@@ -48,7 +48,7 @@ function sorteaveis(lista: Q[], moduloPorChave: Record<string, string>): Questao
 }
 
 const MOD_NUVEM = { m1: "131", m2: "132", m3: "133", transversal: "200" };
-const MOD_TD = { m1: "111", m2: "112", m3: "113" };
+const MOD_TD = { m1: "111", m2: "112", m3: "113", transversal: "200" };
 
 const CURSOS = [
   {
