@@ -221,7 +221,10 @@ export type Database = {
       }
       certificados_curso: {
         Row: {
+          assiduidade_ajustada_pct: number | null
+          assiduidade_estrita_pct: number | null
           assiduidade_pct: number
+          base_assiduidade: Database["public"]["Enums"]["base_assiduidade"]
           carga_horaria: number
           codigo_verificacao: string
           curso_id: string
@@ -239,7 +242,10 @@ export type Database = {
           turma_id: string | null
         }
         Insert: {
+          assiduidade_ajustada_pct?: number | null
+          assiduidade_estrita_pct?: number | null
           assiduidade_pct: number
+          base_assiduidade?: Database["public"]["Enums"]["base_assiduidade"]
           carga_horaria?: number
           codigo_verificacao: string
           curso_id: string
@@ -257,7 +263,10 @@ export type Database = {
           turma_id?: string | null
         }
         Update: {
+          assiduidade_ajustada_pct?: number | null
+          assiduidade_estrita_pct?: number | null
           assiduidade_pct?: number
+          base_assiduidade?: Database["public"]["Enums"]["base_assiduidade"]
           carga_horaria?: number
           codigo_verificacao?: string
           curso_id?: string
@@ -1113,18 +1122,21 @@ export type Database = {
       presenca_configuracoes: {
         Row: {
           actualizado_em: string
+          base_assiduidade: Database["public"]["Enums"]["base_assiduidade"]
           curso_id: string
           limiar_permanencia_pct: number
           limiar_progresso_pct: number
         }
         Insert: {
           actualizado_em?: string
+          base_assiduidade?: Database["public"]["Enums"]["base_assiduidade"]
           curso_id: string
           limiar_permanencia_pct?: number
           limiar_progresso_pct?: number
         }
         Update: {
           actualizado_em?: string
+          base_assiduidade?: Database["public"]["Enums"]["base_assiduidade"]
           curso_id?: string
           limiar_permanencia_pct?: number
           limiar_progresso_pct?: number
@@ -1147,6 +1159,8 @@ export type Database = {
           estado: Database["public"]["Enums"]["estado_presenca"]
           id: string
           inscricao_id: string
+          introduzido_em: string | null
+          introduzido_por_nome: string | null
           justificacao_correccao: string | null
           marcado_por: string | null
           marcado_por_nome: string | null
@@ -1159,6 +1173,7 @@ export type Database = {
           registado_em: string
           sessao_id: string
           turma_id: string
+          valor_introduzido_manualmente: boolean
         }
         Insert: {
           aparelho?: string | null
@@ -1167,6 +1182,8 @@ export type Database = {
           estado: Database["public"]["Enums"]["estado_presenca"]
           id?: string
           inscricao_id: string
+          introduzido_em?: string | null
+          introduzido_por_nome?: string | null
           justificacao_correccao?: string | null
           marcado_por?: string | null
           marcado_por_nome?: string | null
@@ -1179,6 +1196,7 @@ export type Database = {
           registado_em?: string
           sessao_id: string
           turma_id: string
+          valor_introduzido_manualmente?: boolean
         }
         Update: {
           aparelho?: string | null
@@ -1187,6 +1205,8 @@ export type Database = {
           estado?: Database["public"]["Enums"]["estado_presenca"]
           id?: string
           inscricao_id?: string
+          introduzido_em?: string | null
+          introduzido_por_nome?: string | null
           justificacao_correccao?: string | null
           marcado_por?: string | null
           marcado_por_nome?: string | null
@@ -1199,6 +1219,7 @@ export type Database = {
           registado_em?: string
           sessao_id?: string
           turma_id?: string
+          valor_introduzido_manualmente?: boolean
         }
         Relationships: [
           {
@@ -1555,11 +1576,15 @@ export type Database = {
           criado_em: string
           dados_de_demonstracao: boolean
           data: string
+          estado: Database["public"]["Enums"]["estado_sessao"]
+          estado_actualizado_em: string | null
+          estado_actualizado_por_nome: string | null
           formador_nome: string | null
           hora_fim: string
           hora_inicio: string
           id: string
           modalidade: string
+          motivo_estado: string | null
           ordem: number
           tema: string
           turma_id: string
@@ -1568,11 +1593,15 @@ export type Database = {
           criado_em?: string
           dados_de_demonstracao?: boolean
           data: string
+          estado?: Database["public"]["Enums"]["estado_sessao"]
+          estado_actualizado_em?: string | null
+          estado_actualizado_por_nome?: string | null
           formador_nome?: string | null
           hora_fim: string
           hora_inicio: string
           id?: string
           modalidade?: string
+          motivo_estado?: string | null
           ordem: number
           tema: string
           turma_id: string
@@ -1581,11 +1610,15 @@ export type Database = {
           criado_em?: string
           dados_de_demonstracao?: boolean
           data?: string
+          estado?: Database["public"]["Enums"]["estado_sessao"]
+          estado_actualizado_em?: string | null
+          estado_actualizado_por_nome?: string | null
           formador_nome?: string | null
           hora_fim?: string
           hora_inicio?: string
           id?: string
           modalidade?: string
+          motivo_estado?: string | null
           ordem?: number
           tema?: string
           turma_id?: string
@@ -1907,9 +1940,11 @@ export type Database = {
         | "audiodescricao"
         | "mobilidade"
         | "nenhum"
+      base_assiduidade: "estrita" | "ajustada"
       conectividade: "boa" | "fraca" | "nenhuma"
       dificuldade_questao: "facil" | "media" | "dificil"
       estado_presenca: "presente" | "ausente" | "justificado"
+      estado_sessao: "agendada" | "realizada" | "cancelada" | "adiada"
       estado_tentativa: "em_curso" | "submetida" | "expirada"
       estado_turma:
         | "planeada"
@@ -2104,9 +2139,11 @@ export const Constants = {
         "mobilidade",
         "nenhum",
       ],
+      base_assiduidade: ["estrita", "ajustada"],
       conectividade: ["boa", "fraca", "nenhuma"],
       dificuldade_questao: ["facil", "media", "dificil"],
       estado_presenca: ["presente", "ausente", "justificado"],
+      estado_sessao: ["agendada", "realizada", "cancelada", "adiada"],
       estado_tentativa: ["em_curso", "submetida", "expirada"],
       estado_turma: [
         "planeada",
