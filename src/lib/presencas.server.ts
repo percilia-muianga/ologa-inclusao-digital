@@ -3,6 +3,32 @@
 
 export type EstadoPresenca = "presente" | "ausente" | "justificado";
 
+export type EstadoSessao = "agendada" | "realizada" | "cancelada" | "adiada";
+
+/** Qual das duas taxas vale para efeitos de certificação. */
+export type BaseAssiduidade = "estrita" | "ajustada";
+
+export const BASES_ASSIDUIDADE: ReadonlyArray<readonly [BaseAssiduidade, string, string]> = [
+  [
+    "estrita",
+    "Assiduidade estrita",
+    "Sessões presentes a dividir pelas sessões realizadas. As faltas justificadas contam como ausência.",
+  ],
+  [
+    "ajustada",
+    "Assiduidade ajustada",
+    "Sessões presentes a dividir pelas sessões realizadas menos as justificadas. As justificadas saem do denominador: nem contam a favor nem contra.",
+  ],
+] as const;
+
+export function rotuloBaseAssiduidade(valor: string): string {
+  return BASES_ASSIDUIDADE.find(([v]) => v === valor)?.[1] ?? valor;
+}
+
+export function formulaBaseAssiduidade(valor: string): string {
+  return BASES_ASSIDUIDADE.find(([v]) => v === valor)?.[2] ?? "";
+}
+
 export type MarcacaoBruta = {
   id: string;
   sessao_id: string;
@@ -20,6 +46,8 @@ export type MarcacaoBruta = {
   nome_formando: string;
 };
 
+export type SessaoParaCalculo = { id: string; data: string; estado: EstadoSessao };
+
 export type LinhaAssiduidade = {
   inscricaoId: string;
   nome: string;
@@ -29,7 +57,14 @@ export type LinhaAssiduidade = {
   porMarcar: number;
   realizadas: number;
   totalSessoes: number;
+  porRealizar: number;
+  /** Presentes sobre realizadas. As justificadas contam como ausência. */
+  taxaEstritaPct: number | null;
+  /** Presentes sobre realizadas menos justificadas. */
+  taxaAjustadaPct: number | null;
+  /** A taxa que vale para certificação, conforme a configuração do curso. */
   taxaPct: number | null;
+  base: BaseAssiduidade;
   abaixoDoLimiar: boolean;
   emRisco: boolean;
   maximoPossivelPct: number | null;
@@ -49,24 +84,53 @@ export function marcacaoEfectiva(marcacoes: MarcacaoBruta[]): Map<string, Marcac
   return mapa;
 }
 
-/** Uma sessão conta como realizada quando a sua data já passou. */
-export function sessoesRealizadas(
-  sessoes: Array<{ id: string; data: string }>,
+/**
+ * Uma sessão só conta como realizada quando o formador a marcou como
+ * realizada. A data nunca decide sozinha: uma sessão cancelada, adiada ou que
+ * nunca aconteceu não entra no denominador da assiduidade.
+ */
+export function sessoesRealizadas(sessoes: Array<{ id: string; estado: EstadoSessao }>): Set<string> {
+  return new Set(sessoes.filter((s) => s.estado === "realizada").map((s) => s.id));
+}
+
+/** Sessões ainda por realizar: agendadas ou adiadas, que podem vir a contar. */
+export function sessoesPorRealizar(
+  sessoes: Array<{ id: string; estado: EstadoSessao }>,
+): Set<string> {
+  return new Set(
+    sessoes.filter((s) => s.estado === "agendada" || s.estado === "adiada").map((s) => s.id),
+  );
+}
+
+/**
+ * Sessões cuja data já passou e que continuam agendadas. Ficam assinaladas ao
+ * formador e ao supervisor — o estado nunca muda sozinho.
+ */
+export function sessoesPorRegularizar(
+  sessoes: Array<{ id: string; data: string; estado: EstadoSessao }>,
   hoje = new Date(),
 ): Set<string> {
   const limite = new Date(hoje.toISOString().slice(0, 10) + "T23:59:59");
   return new Set(
-    sessoes.filter((s) => new Date(`${s.data}T00:00:00`) <= limite).map((s) => s.id),
+    sessoes
+      .filter((s) => s.estado === "agendada" && new Date(`${s.data}T00:00:00`) <= limite)
+      .map((s) => s.id),
   );
 }
 
+function arredondar(numerador: number, denominador: number): number | null {
+  if (denominador <= 0) return null;
+  return Math.round((numerador / denominador) * 1000) / 10;
+}
+
 export function calcularAssiduidade(
-  sessoes: Array<{ id: string; data: string }>,
+  sessoes: SessaoParaCalculo[],
   inscritos: Array<{ id: string; nome: string }>,
   marcacoes: MarcacaoBruta[],
-  hoje = new Date(),
+  base: BaseAssiduidade = "estrita",
 ): LinhaAssiduidade[] {
-  const realizadas = sessoesRealizadas(sessoes, hoje);
+  const realizadas = sessoesRealizadas(sessoes);
+  const porRealizar = sessoesPorRealizar(sessoes);
   const efectivas = marcacaoEfectiva(marcacoes);
   const conflitosPorInscricao = new Map<string, number>();
   for (const m of marcacoes) {
@@ -88,10 +152,18 @@ export function calcularAssiduidade(
       else ausentes += 1;
     }
     const nRealizadas = realizadas.size;
+    const nPorRealizar = porRealizar.size;
     const total = sessoes.length;
-    const taxaPct = nRealizadas > 0 ? Math.round((presentes / nRealizadas) * 1000) / 10 : null;
+
+    const taxaEstritaPct = arredondar(presentes, nRealizadas);
+    const taxaAjustadaPct = arredondar(presentes, nRealizadas - justificadas);
+    const taxaPct = base === "ajustada" ? taxaAjustadaPct : taxaEstritaPct;
+
     const maximoPossivelPct =
-      total > 0 ? Math.round(((presentes + (total - nRealizadas)) / total) * 1000) / 10 : null;
+      base === "ajustada"
+        ? arredondar(presentes + nPorRealizar, nRealizadas - justificadas + nPorRealizar)
+        : arredondar(presentes + nPorRealizar, nRealizadas + nPorRealizar);
+
     return {
       inscricaoId: i.id,
       nome: i.nome,
@@ -101,12 +173,16 @@ export function calcularAssiduidade(
       porMarcar,
       realizadas: nRealizadas,
       totalSessoes: total,
+      porRealizar: nPorRealizar,
+      taxaEstritaPct,
+      taxaAjustadaPct,
       taxaPct,
+      base,
       abaixoDoLimiar: taxaPct !== null && taxaPct < LIMIAR_ASSIDUIDADE,
       emRisco:
         maximoPossivelPct !== null &&
         nRealizadas > 0 &&
-        nRealizadas < total &&
+        nPorRealizar > 0 &&
         maximoPossivelPct < LIMIAR_ASSIDUIDADE,
       maximoPossivelPct,
       conflitos: conflitosPorInscricao.get(i.id) ?? 0,
