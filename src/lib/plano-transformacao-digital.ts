@@ -59,6 +59,12 @@ export type ModuloPlano = {
   chave: string;
   ordem: number;
   titulo: string;
+  /**
+   * Descrição do conteúdo que existe mesmo neste módulo. Só é definida nos
+   * módulos próprios deste curso; o transversal é partilhado por vários
+   * cursos e a sua descrição não é tocada aqui.
+   */
+  descricao?: string;
   minutos: number;
   teoriaMin: number;
   praticaMin: number;
@@ -69,6 +75,8 @@ export type ModuloPlano = {
 export const MODULOS_PLANO: ModuloPlano[] = [
   {
     chave: "m1",
+    descricao:
+      "Quatro lições sobre o que é, e o que não é, transformação digital: os três degraus (digitação, digitalização e transformação), as quatro camadas que mudam ao mesmo tempo, o valor público e os impactos sociais, éticos e ambientais, e um diagnóstico da maturidade digital do próprio serviço. Rascunho por validar pela Ologa/ATDI.",
     ordem: 1,
     titulo: "Fundamentos da Transformação Digital",
     minutos: 360,
@@ -133,6 +141,8 @@ export const MODULOS_PLANO: ModuloPlano[] = [
   },
   {
     chave: "m2",
+    descricao:
+      "Quatro lições sobre desenhar o serviço a partir de quem o usa: conhecer as pessoas, mapear a jornada do serviço, simplificar o processo antes de o digitalizar, e tratar dados, segurança e privacidade no atendimento. Rascunho por validar pela Ologa/ATDI.",
     ordem: 2,
     titulo: "Serviços Públicos Centrados no Cidadão",
     minutos: 420,
@@ -194,6 +204,8 @@ export const MODULOS_PLANO: ModuloPlano[] = [
   },
   {
     chave: "m3",
+    descricao:
+      "Quatro lições sobre pôr em prática: estratégia, prioridades e plano de uma página; papéis, competências e responsabilidades; gestão da mudança e adopção de novos comportamentos; e medição de resultados com melhoria contínua. Rascunho por validar pela Ologa/ATDI.",
     ordem: 3,
     titulo: "Implementação e Mudança Institucional",
     minutos: 420,
