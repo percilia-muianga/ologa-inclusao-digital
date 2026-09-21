@@ -104,7 +104,8 @@ describe("conteúdo escrito do módulo 1", () => {
 
   it("escreve as quatro lições do módulo 1 e nenhuma do módulo 2", () => {
     expect(Object.keys(LICOES).sort()).toEqual(chaves);
-    expect(DESCRICOES_MODULO["m2"]).toBeUndefined();
+    // O módulo 2 tem descrição de plano, mas nenhuma lição escrita.
+    expect(DESCRICOES_MODULO["m2"]).toMatch(/Em preparação/);
   });
 
   it("dá a cada lição objectivos, explicação desenvolvida, caso, actividade e duas questões", () => {
