@@ -35,6 +35,14 @@ export const Route = createFileRoute("/cursos/$curso")({
 function CursoPage() {
   const { curso, modulos, totalPorFornecer, minutosAvaliacao, horasCurriculo, propostaPorValidar } =
     Route.useLoaderData();
+  const horas = (min: number) => Math.round((min / 60) * 10) / 10;
+  const minutosTematicos = modulos
+    .filter((m) => !m.transversal)
+    .reduce((s, m) => s + m.minutos, 0);
+  const minutosTransversal = modulos
+    .filter((m) => m.transversal)
+    .reduce((s, m) => s + m.minutos, 0);
+  const totalLicoes = modulos.reduce((s, m) => s + m.licoes.length, 0);
   const campos = [
     ["Objectivos", curso.objectivos],
     ["Público-alvo", curso.publico_alvo],
