@@ -247,4 +247,86 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
   },
+
+  m1l2: {
+    objectivos: [
+      "Distinguir infra-estrutura como serviço, plataforma como serviço e programa como serviço pelo que fica a cargo de cada parte.",
+      "Classificar correctamente três serviços informáticos usados no dia-a-dia de uma instituição.",
+      "Justificar a escolha de um dos três modelos para uma necessidade concreta de um serviço público.",
+    ],
+    explicacao: [
+      "Os três modelos de serviço distinguem-se por uma pergunta simples: até onde vai o trabalho do fornecedor e onde começa o trabalho da instituição. Em todos eles o equipamento físico, a electricidade e as instalações são do fornecedor. O que muda é o resto.",
+      "Na infra-estrutura como serviço, a instituição recebe os elementos de base: máquinas virtuais, discos, redes. Instala o sistema operativo que quiser, actualiza-o, instala as aplicações e responde pela configuração. É o modelo com mais liberdade e com mais trabalho: quem escolhe este caminho precisa de pessoal com competências de administração de sistemas.",
+      "Na plataforma como serviço, a instituição entrega apenas a aplicação e a sua configuração. O fornecedor trata do sistema operativo, do servidor aplicacional e, muitas vezes, da base de dados e da capacidade de crescer com a procura. Perde-se liberdade de configurar o que está por baixo e ganha-se tempo: é o modelo habitual para publicar depressa um serviço em linha com uma equipa pequena.",
+      "No programa como serviço, a instituição não gere aplicação nenhuma: usa um programa pronto, pela rede, e configura-o. Correio electrónico institucional, sistemas de videoconferência e ferramentas de escritório em linha são exemplos correntes. O trabalho que resta é de configuração, de gestão de contas e de utilizadores, e de tratamento dos dados que lá ficam guardados.",
+      "Uma imagem útil é a da refeição: a infra-estrutura como serviço é a cozinha equipada onde se cozinha tudo; a plataforma como serviço é a cozinha onde já está preparada a base e só se termina o prato; o programa como serviço é a refeição servida à mesa. A imagem ajuda a lembrar a repartição do trabalho, mas não substitui o contrato: é o contrato que diz exactamente quem faz o quê, incluindo em caso de falha.",
+      "Uma instituição raramente escolhe um só. É comum ter correio electrónico como programa como serviço, o portal de serviços como plataforma, e uma ou outra máquina virtual de infra-estrutura para aplicações antigas que ainda não foram modernizadas. A regra prática é subir o mais possível na escala — do mais gerido para o menos gerido — e só descer quando houver razão técnica ou legal para o fazer.",
+    ],
+    exemplo: {
+      titulo: "Três necessidades da Direcção Provincial de Muteva (cenário fictício)",
+      corpo: [
+        "A Direcção Provincial de Muteva tem três problemas em cima da mesa. Primeiro: o correio electrónico institucional falha e não há quem o mantenha. Segundo: querem publicar um portal simples de marcação de atendimento, escrito por dois técnicos da casa. Terceiro: há uma aplicação antiga de gestão de expediente que só corre numa versão específica de sistema operativo.",
+        "A escolha razoável é diferente em cada caso: o correio passa para um programa como serviço, porque não há valor em manter servidor de correio próprio; o portal de marcações vai para uma plataforma como serviço, porque a equipa quer publicar código e não administrar servidores; a aplicação antiga fica, para já, numa máquina virtual de infra-estrutura como serviço, porque exige aquela versão concreta — e fica registada como candidata a modernização.",
+        "Cenário fictício, para exercício. Não representa nenhuma direcção provincial existente.",
+      ],
+    },
+    actividade: {
+      formato: "em grupos de três",
+      enunciado: [
+        "Listem cinco serviços informáticos que a vossa instituição usa hoje ou pretende usar no próximo ano.",
+        "Para cada um, indiquem o modelo de serviço mais adequado e escrevam, em duas colunas, o que ficaria a cargo do fornecedor e o que ficaria a cargo da instituição.",
+        "Assinalem, para cada linha, uma competência que a equipa precisaria de ter. Se essa competência não existir hoje, escrevam «por formar».",
+      ],
+      produto:
+        "uma tabela de cinco serviços com o modelo escolhido, a repartição de responsabilidades e as competências necessárias ou por formar.",
+    },
+    sintese: [
+      "Os três modelos diferem no que o fornecedor faz e no que a instituição continua a fazer.",
+      "Infra-estrutura: recebo máquinas e redes, giro tudo o que está por cima.",
+      "Plataforma: entrego a aplicação, o fornecedor trata do que está por baixo.",
+      "Programa como serviço: uso um programa pronto e giro contas, configuração e dados.",
+      "A maioria das instituições usa os três ao mesmo tempo, conforme a necessidade.",
+    ],
+    verificacao: [
+      {
+        pergunta:
+          "Numa plataforma como serviço, quem é responsável por actualizar o sistema operativo do servidor?",
+        resposta: "O fornecedor.",
+        feedback:
+          "É essa a vantagem principal do modelo. Em contrapartida, a instituição não escolhe livremente versões nem configurações desse nível.",
+      },
+      {
+        pergunta:
+          "Se a instituição usa correio electrónico institucional em linha, deixa de ter responsabilidades sobre esses dados?",
+        resposta:
+          "Não. Continua responsável pelas contas, pelas permissões, pela informação que lá coloca e pelo cumprimento das regras de protecção de dados.",
+        feedback:
+          "Esta é a confusão mais frequente e volta na lição sobre responsabilidade partilhada: contratar um programa como serviço transfere operação, não transfere responsabilidade pelos dados.",
+      },
+    ],
+    guiao: {
+      preparacao: [
+        "Levar preparada a tabela de duas colunas — fornecedor e instituição — em papel, para grupos sem computador.",
+        "Confirmar com a instituição anfitriã quais os serviços informáticos que podem ser mencionados em sala.",
+        "Preparar dois exemplos de cada modelo que sejam reconhecíveis pelo grupo.",
+      ],
+      conducao: [
+        "Acolhimento, retoma das cinco características da lição anterior e objectivos desta.",
+        "Exposição dos três modelos com a repartição de responsabilidades, usando a imagem da refeição e corrigindo-a de imediato com a remissão para o contrato.",
+        "Actividade em grupos de três, com apoio para distinguir plataforma de programa como serviço.",
+        "Partilha de um grupo por modelo e síntese em leitura fácil.",
+      ],
+      criterios: [
+        "Classifica pelo menos quatro dos cinco serviços de forma defensável.",
+        "A repartição de responsabilidades é coerente com o modelo escolhido.",
+        "Identifica pelo menos uma competência por formar sem a esconder.",
+        "Não confunde plataforma como serviço com programa como serviço.",
+      ],
+      errosComuns: [
+        "Achar que qualquer coisa acedida pelo navegador é programa como serviço.",
+        "Supor que a infra-estrutura como serviço é sempre mais barata por parecer mais simples.",
+        "Concluir que contratar serviço gerido dispensa a instituição de responsabilidade sobre os dados.",
+      ],
+    },
+  },
 };
