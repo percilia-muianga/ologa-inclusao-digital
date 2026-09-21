@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/avaliacao")({
   head: () => ({
@@ -20,19 +19,5 @@ export const Route = createFileRoute("/avaliacao")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: AvaliacaoPage,
+  component: () => <Outlet />,
 });
-
-function AvaliacaoPage() {
-  return (
-    <PlataformaPagina
-      titulo="Avaliação"
-      introducao="Banco de questões por curso e módulo, com pelo menos o triplo das questões usadas em cada exame, e exame final gerado no momento em que o formando o inicia."
-    >
-      <EstadoVazio
-        titulo="O banco de questões ainda está vazio"
-        descricao="As questões, as cinco tipologias e o exame final entram na fase 5. Os diagnósticos e quizzes dos módulos de literacia digital já existentes continuam disponíveis ao público."
-      />
-    </PlataformaPagina>
-  );
-}
