@@ -124,3 +124,9 @@ CREATE TABLE public.instituicao_modulos_percurso (
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+
+-- Função que já existia antes da primeira migração (mesma assinatura da real).
+CREATE OR REPLACE FUNCTION public.is_admin(_uid uuid) RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM public.perfis WHERE id = _uid AND papel = 'admin_ologa')
+$$;
