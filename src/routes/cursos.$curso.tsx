@@ -46,7 +46,26 @@ function CursoPage() {
       <Link to="/cursos" className="inline-flex min-h-11 items-center font-semibold text-navy underline">← Voltar aos seis cursos</Link>
       <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
         <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
+        {propostaPorValidar ? (
+          <p className="mt-2 text-navy-2">
+            <strong>Proposta pedagógica — por validar pela Ologa/ATDI.</strong> O conteúdo
+            das lições é um rascunho preparado pela equipa. Estar disponível nesta página
+            não significa estar aprovado. Todos os casos apresentados são fictícios e
+            servem apenas de exercício.
+          </p>
+        ) : null}
         <p className="mt-2 text-navy-2"><strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os títulos organizam o plano de produção; o conteúdo temático será fornecido pela equipa Ologa.</p>
+        <p className="mt-2 text-navy-2">
+          Carga oficial do curso: {curso.carga_horaria} horas. Soma do plano curricular:{" "}
+          {horasCurriculo} horas
+          {minutosAvaliacao > 0
+            ? `, das quais ${Math.round((minutosAvaliacao / 60) * 10) / 10} horas de avaliação e orientação fora dos módulos`
+            : ""}
+          .{" "}
+          {horasCurriculo === curso.carga_horaria
+            ? "As duas somas coincidem."
+            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}
+        </p>
       </section>
       <section aria-labelledby="ficha-curso" className="mt-6">
         <h2 id="ficha-curso" className="text-xl font-extrabold text-navy">Ficha do curso</h2>
