@@ -654,8 +654,8 @@ export const EXAME_V2: QuestaoNuvemV2[] = [
   {
     m: "m3", t: "em", cen: true, d: "di",
     e: "CENÁRIO (preços FICTÍCIOS, para exercício). Um serviço tem: 300 horas de máquina a 0,12 USD por hora; 150 GB de armazenamento a 0,02 USD por GB; 50 GB de saída de dados a 0,09 USD por GB; e um plano de suporte com mínimo mensal de 20,00 USD. Qual é o total mensal em dólares?",
-    opts: ["76,00 USD", "83,50 USD", "63,50 USD", "96,00 USD"], ind: 1,
-    exp: "Computação: 300 × 0,12 = 36,00 USD. Armazenamento: 150 × 0,02 = 3,00 USD. Saída: 50 × 0,09 = 4,50 USD. Consumo: 36,00 + 3,00 + 4,50 = 43,50 USD. Com o suporte mínimo de 20,00 USD, o total é 63,50 USD… atenção: 43,50 + 20,00 = 63,50 USD. O valor correcto é, pois, 63,50 USD.",
+    opts: ["43,50 USD", "83,50 USD", "63,50 USD", "56,00 USD"], ind: 2,
+    exp: "Computação: 300 × 0,12 = 36,00 USD. Armazenamento: 150 × 0,02 = 3,00 USD. Saída de dados: 50 × 0,09 = 4,50 USD. Consumo = 36,00 + 3,00 + 4,50 = 43,50 USD. Somando o mínimo mensal de suporte, 43,50 + 20,00 = 63,50 USD. A opção 43,50 USD esquece o suporte; 56,00 USD esquece a saída de dados e parte do armazenamento; 83,50 USD duplica o suporte.",
     obj: "Calcular um custo mensal com todos os operandos visíveis. Lição 4 do módulo 3.",
   },
 
