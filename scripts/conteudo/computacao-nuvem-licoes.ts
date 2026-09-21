@@ -179,12 +179,17 @@ export function montarElearning(
     lista(c.sintese),
     "<h3>Verificação formativa</h3>",
     "<p>Estas perguntas não contam para a nota final e não são perguntas do exame final. Servem para a pessoa formanda confirmar o que percebeu.</p>",
+    `<ol>${c.verificacao.map((v) => `<li>${esc(v.pergunta)}</li>`).join("")}</ol>`,
+    "<h3>Respostas comentadas da verificação formativa</h3>",
+    "<p>As respostas abaixo pertencem às perguntas de verificação formativa desta lição. " +
+      "<strong>Não são perguntas nem respostas do exame final</strong> e não têm qualquer efeito na nota. " +
+      "Tente responder primeiro e só depois compare.</p>",
     c.verificacao
       .map(
         (v, i) =>
-          `<details><summary>Pergunta ${i + 1}. ${esc(v.pergunta)}</summary>` +
+          `<h4>Pergunta ${i + 1}. ${esc(v.pergunta)}</h4>` +
           `<p><strong>Resposta:</strong> ${esc(v.resposta)}</p>` +
-          `<p><strong>Comentário:</strong> ${esc(v.feedback)}</p></details>`,
+          `<p><strong>Comentário:</strong> ${esc(v.feedback)}</p>`,
       )
       .join(""),
     referenciasHtml(c),
@@ -216,9 +221,19 @@ export function montarGuiao(
     lista(c.guiao.criterios),
     "<h4>Erros comuns a antecipar</h4>",
     lista(c.guiao.errosComuns),
+    "<h4>Respostas comentadas da verificação formativa (não é o exame)</h4>",
+    `<ol>${c.verificacao
+      .map(
+        (v) =>
+          `<li><strong>${esc(v.pergunta)}</strong><br>Resposta: ${esc(v.resposta)}<br>Comentário: ${esc(v.feedback)}</li>`,
+      )
+      .join("")}</ol>`,
     "<p><strong>Separação pedagógica:</strong> este guião não contém perguntas nem " +
-      "respostas do exame final. O exame é gerado no momento em que a pessoa formanda " +
-      "o inicia, a partir do banco de questões, e o gabarito fica apenas no servidor.</p>",
+      "respostas do exame final; as respostas acima são apenas da verificação formativa. " +
+      "O banco de questões deste curso ainda NÃO está escrito, validado nem activado, pelo " +
+      "que o exame final deste curso não está disponível. Quando o banco for criado, validado " +
+      "e activado, o exame passa a ser gerado no momento em que a pessoa formanda o inicia, a " +
+      "partir desse banco, e o gabarito fica apenas no servidor.</p>",
   ].join("");
 }
 
