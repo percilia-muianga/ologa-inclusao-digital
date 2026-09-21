@@ -795,7 +795,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
       .object({
         token: z.string().uuid(),
         cursoId: z.string().uuid(),
-        assiduidadePct: z.number().min(0).max(100),
       })
       .parse(i),
   )
