@@ -965,9 +965,9 @@ export const LICOES: Record<string, ConteudoLicao> = {
     explicacao: [
       "Uma base de dados pode correr de duas maneiras na nuvem. Instalada por nós numa máquina virtual, damos-lhe a versão que quisermos e mandamos em tudo — e ficamos com as actualizações, as cópias de segurança, a alta disponibilidade e a afinação a nosso cargo. Gerida pelo fornecedor, recebemos um ponto de ligação e o fornecedor trata do sistema operativo, das actualizações do motor, das cópias automáticas e, se for contratado, da réplica noutra zona. Continua a ser nossa a modelação dos dados, o desempenho das consultas, quem tem acesso e o cumprimento das regras de protecção de dados.",
       "A escolha entre relacional e não relacional mantém-se igual à de sempre: dados com estrutura estável e necessidade de consistência forte — processos, licenças, pagamentos — pedem base relacional; dados de forma variável e volume grande — registos de eventos, documentos, leituras de sensores — encaixam melhor em bases não relacionais. Na nuvem os dois tipos existem em versão gerida.",
-      "A plataforma como serviço aplica a mesma ideia à aplicação. Entrega-se o código e a plataforma trata do servidor, do sistema operativo, do servidor de aplicação e do certificado de segurança do endereço, além de permitir aumentar o número de instâncias quando a procura sobe. Do nosso lado ficam o código, a configuração da aplicação, os segredos — que não vão no código, mas na configuração do serviço ou num cofre de segredos — e as ligações à base de dados. É o modelo que dá mais resultado por menos trabalho a equipas pequenas, e é por isso que interessa a serviços públicos com poucas pessoas na área informática.",
+      "A plataforma como serviço aplica a mesma ideia à aplicação. Entrega-se o código e a plataforma trata do servidor, do sistema operativo, do servidor de aplicação e do certificado de segurança do endereço, além de permitir aumentar o número de instâncias quando a procura sobe. Do nosso lado ficam o código, a configuração da aplicação, os segredos — que não vão no código, mas na configuração do serviço ou num cofre de segredos — e as ligações à base de dados. Para equipas pequenas costuma dar mais resultado por menos trabalho, e por isso interessa a serviços públicos com poucas pessoas na área informática — mas não é vantajoso em todos os casos: depende dos limites da plataforma e do plano contratado.",
       "As limitações também se devem conhecer. A plataforma impõe versões de linguagem suportadas, tempos máximos de resposta, e por vezes não permite instalar componentes de sistema. Uma aplicação antiga pode não caber sem alterações. É aí que entra a modernização: dividir a aplicação em partes independentes, os microserviços, trocar componentes locais por serviços geridos, e adoptar práticas de integração e entrega contínuas, em que cada alteração é construída e publicada por um processo automático e repetível. Modernizar tem custo e risco, e faz-se por etapas — nunca é obrigatório modernizar tudo para começar a usar nuvem.",
-      "Uma nota sobre custos que vale para todo o módulo: manter uma aplicação publicada numa plataforma consome, mesmo com pouco tráfego, porque há capacidade reservada. Por isso, no laboratório, o que se cria é apagado no fim.",
+      "Uma nota sobre custos que vale para todo o módulo: o custo depende do plano contratado e há planos em que a capacidade fica reservada, consumindo mesmo com pouco tráfego. Verifica-se antes, no plano concreto, em vez de assumir. Nada é prometido como gratuito e, no laboratório, o que se cria é apagado no fim.",
     ],
     exemplo: {
       titulo: "A consulta pública de estado do processo, em Ondela (cenário fictício)",
@@ -991,22 +991,26 @@ export const LICOES: Record<string, ConteudoLicao> = {
     laboratorio: {
       titulo: "Publicar uma aplicação simples numa plataforma como serviço",
       percurso:
-        "Azure App Service com uma aplicação Node.js mínima, seguindo o guia rápido oficial actual. O antigo guia de aplicação estática já não serve este objectivo, porque encaminha para outro serviço.",
+        "Azure App Service, em Linux, com a aplicação Node.js mínima fornecida com este curso. Método único de publicação: linha de comandos do Azure, com implantação a partir de ficheiro comprimido.",
       preRequisitos: [
         "Conta institucional de formação com limites de consumo e alertas definidos pelo formador, e grupo de recursos do exercício criado.",
         "Microsoft Azure — subscrição institucional de formação e grupo de recursos do exercício, com utilizador de formação limitado a esse grupo de recursos. Nada é necessário do lado da Amazon nesta lição.",
-        "Aplicação de exemplo preparada e testada antes pelo formador: aplicação Node.js mínima com servidor Express, ficheiro package.json com a dependência e o comando de arranque «node index.js», e uma rota que devolve texto fixo. Sem base de dados, sem dados de pessoas e sem segredos no código.",
-        "Arquivo comprimido dessa aplicação, com package.json e index.js na raiz, pronto para implantação — é este o método de publicação usado, coerente com a pilha Node.js escolhida no portal.",
+        "Aplicação de exemplo já disponível nesta plataforma, para descarregar: os ficheiros index.js e package.json estão em /exemplos/paas-node/index.js e /exemplos/paas-node/package.json. Usam apenas o módulo http do Node.js, sem dependências a instalar, sem base de dados, sem dados de pessoas e sem segredos no código. O código completo está transcrito mais abaixo.",
+        "Linha de comandos do Azure instalada e sessão iniciada com a conta institucional de formação, feita pelo formador antes da sessão. Não se usam tokens, nem credenciais de publicação, nem autenticação básica.",
+        "Programa para criar ficheiros comprimidos, disponível no sistema operativo da sala.",
         "Nenhum participante associa cartão de pagamento nem cria subscrição própria. O escalão de serviço a usar é o indicado pelo formador; o material não promete gratuitidade.",
         "Se a turma não tiver ambiente de desenvolvimento, o formador disponibiliza o código já preparado num arquivo, para carregamento directo.",
       ],
       passos: [
+        "Teste local, antes de qualquer publicação: descarregar os dois ficheiros do exemplo, colocá-los numa pasta e executar «node index.js». Abrir http://localhost:8080 e confirmar a resposta. Parar, executar de novo definindo a variável MENSAGEM_EXEMPLO e confirmar que o texto muda. Este teste é local e não usa nuvem nenhuma; serve para separar problemas do código de problemas da publicação.",
         "No portal do Azure, dentro do grupo de recursos do exercício, criar uma aplicação Web indicando pilha de execução Node.js e sistema operativo Linux, com nome que identifique a turma e o grupo.",
         "Escolher o plano de serviço indicado pelo formador e a região combinada. Não subir de escalão por iniciativa própria.",
         "Rever e criar. Esperar pela conclusão e abrir a página do recurso.",
-        "Publicar o arquivo comprimido da aplicação de exemplo pela implantação a partir de ficheiro zip, confirmando que a versão de Node.js escolhida no portal corresponde à usada no exemplo e que o comando de arranque do package.json é o esperado.",
+        "Preparar o ficheiro comprimido: colocar index.js e package.json numa pasta vazia e comprimir os DOIS ficheiros de forma a ficarem na raiz do arquivo, e não dentro de uma subpasta. Verificar a listagem do arquivo antes de publicar.",
+        "Publicar com um único comando, a partir da pasta onde está o arquivo: az webapp deploy --resource-group <grupo-de-recursos> --name <nome-da-aplicacao> --src-path exemplo-paas.zip --type zip",
+        "Confirmar nas definições gerais da aplicação que a versão de Node.js corresponde à indicada no package.json e que o comando de arranque é «node index.js». O arquivo publicado não é construído automaticamente, por isso a aplicação tem de correr tal como está — é por essa razão que o exemplo não tem dependências a instalar.",
         "Abrir o endereço público atribuído à aplicação e confirmar que a página responde.",
-        "Nas definições da aplicação, criar uma variável de configuração de exemplo, com um valor fictício, e mostrar que a aplicação a lê sem que ela esteja escrita no código. É assim que se tratam segredos: fora do código.",
+        "Nas definições da aplicação, criar a variável de configuração MENSAGEM_EXEMPLO com um valor fictício, guardar, aguardar o reinício e recarregar a página: o texto apresentado muda. A variável não é segredo, mas demonstra o mecanismo — é assim que se tratam também as palavras-passe, fora do código.",
         "Confirmar nos registos da aplicação que o pedido feito no navegador aparece registado.",
         "Registar na ficha o endereço público, a hora da publicação e o escalão usado.",
         "Limpeza: apagar a aplicação Web e o respectivo plano de serviço. O plano continua a consumir mesmo sem aplicação, por isso é apagado também.",
@@ -1022,9 +1026,12 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "A página mostra erro de aplicação: quase sempre falta o ficheiro de arranque esperado ou a pilha de execução escolhida não corresponde ao código; verificar os registos antes de repetir a publicação.",
         "Publicação concluída mas página antiga: aguardar o reinício da aplicação ou forçá-lo; não publicar várias vezes seguidas às cegas.",
         "Escalão indisponível na região: escolher outra região da lista autorizada, mantendo o mesmo escalão.",
-        "Plano de serviço esquecido depois de apagar a aplicação: é um recurso separado e continua a consumir.",
+        "Plano de serviço esquecido depois de apagar a aplicação: é um recurso separado; se foi criado só para este exercício, apaga-se também.",
+        "Comando recusado por falta de sessão: a sessão da linha de comandos é iniciada pelo formador com a conta institucional; os participantes não introduzem credenciais próprias.",
+        "Arquivo com uma pasta a envolver os ficheiros: a aplicação não arranca; recriar o arquivo com index.js e package.json na raiz.",
       ],
       evidencia: [
+        "Captura de ecrã da execução local do exemplo, antes de qualquer publicação.",
         "Captura de ecrã da página publicada, com o endereço visível.",
         "Captura de ecrã das definições de configuração mostrando a variável de exemplo, com valores fictícios apenas.",
         "Captura de ecrã da lista de recursos depois da limpeza, mostrando que a aplicação e o plano de serviço já não constam.",
@@ -1032,7 +1039,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
       limpeza: [
         "Apagar por ordem de dependências, apenas no Azure e apenas os recursos deste exercício: primeiro a aplicação Web, que depende do plano de serviço.",
-        "Apagar depois o plano de serviço, que é um recurso distinto e continua a consumir mesmo sem aplicação.",
+        "Apagar o plano de serviço apenas se tiver sido criado para este exercício. Se o plano for partilhado com outros grupos ou já existisse, NÃO se apaga; regista-se na ficha que ficou por ser partilhado.",
         "Conferir que no grupo de recursos do exercício ficaram apenas os recursos partilhados anteriores à sessão, e registar o que foi apagado.",
       ],
     },
@@ -1042,7 +1049,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       "Os segredos ficam na configuração do serviço ou num cofre, nunca no código.",
       "A plataforma impõe limites, como versões suportadas; aplicações antigas podem precisar de alterações.",
       "Modernizar — microserviços, serviços geridos, entrega automática — faz-se por etapas e não é condição para começar.",
-      "Uma aplicação publicada consome mesmo sem tráfego, por isso o que se cria no exercício apaga-se no fim, incluindo o plano de serviço.",
+      "Conforme o plano, a capacidade pode ficar reservada e consumir mesmo sem tráfego: verifica-se antes, e no exercício apaga-se o que foi criado, incluindo o plano se tiver sido criado para o exercício.",
     ],
     verificacao: [
       {
@@ -1068,10 +1075,16 @@ export const LICOES: Record<string, ConteudoLicao> = {
         url: "https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs",
         consultadoEm: "21 de Setembro de 2026",
       },
+      {
+        titulo: "Azure App Service — Implantar ficheiros comprimidos (nota: o envio pela interface Kudu não funciona em Linux e o arquivo não é construído por defeito)",
+        url: "https://learn.microsoft.com/en-us/azure/app-service/deploy-zip",
+        consultadoEm: "21 de Setembro de 2026",
+      },
     ],
     guiao: {
       preparacao: [
-        "Preparar e testar antes da sessão a aplicação Node.js de exemplo e o respectivo arquivo comprimido, confirmando que a versão de Node.js, o comando de arranque e o método de implantação coincidem com os passos do laboratório.",
+        "Iniciar sessão na linha de comandos do Azure com a conta institucional antes da sessão, e confirmar que os participantes não precisam de introduzir credenciais.",
+        "Descarregar os ficheiros do exemplo desta plataforma, executá-los localmente uma vez e confirmar a versão de Node.js e o comando de arranque configurados na aplicação Web.",
         "Organizar a sala em pares, com alternância de executante; se o ambiente falhar, registar a prática como pendente e reagendar, em vez de a substituir por demonstração.",
         "Indicar por escrito o escalão de serviço e a região autorizados, e não deixar a escolha aos grupos.",
         "Confirmar os limites de consumo e alertas da conta de formação antes de abrir o exercício.",
@@ -1088,10 +1101,10 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "A tabela separa correctamente o que é do fornecedor e o que é da instituição, incluindo segredos e acessos.",
         "A aplicação foi publicada e o endereço respondeu com o conteúdo do exemplo, com evidência recolhida, e ambas as pessoas do par executaram parte dos passos.",
         "A variável de configuração foi usada em vez de valor escrito no código.",
-        "A limpeza inclui o plano de serviço e está registada.",
+        "A limpeza inclui o plano de serviço quando foi criado para o exercício, e está registada.",
       ],
       errosComuns: [
-        "Apagar a aplicação e deixar o plano de serviço activo.",
+        "Apagar o plano de serviço partilhado por outros grupos, ou esquecer o plano criado só para o exercício.",
         "Escrever valores sensíveis, ainda que fictícios, no código do exemplo.",
         "Concluir que a plataforma serve para tudo, sem verificar versões e limites.",
         "Confundir modernizar com refazer: a modernização faz-se por etapas.",
