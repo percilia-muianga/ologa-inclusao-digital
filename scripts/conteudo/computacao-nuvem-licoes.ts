@@ -27,6 +27,8 @@ export type Laboratorio = {
   limpeza: string[];
   /** Quando a limpeza é adiada por outro exercício depender deste recurso. */
   limpezaAdiada?: string;
+  /** Código completo transcrito na lição, por ficheiro. */
+  codigo?: { ficheiro: string; descarregarEm?: string; corpo: string }[];
 };
 
 export type ConteudoLicao = {
@@ -124,6 +126,15 @@ function laboratorioHtml(c: ConteudoLicao): string {
     `<p><strong>Percurso didáctico:</strong> ${esc(l.percurso)} O fornecedor é exemplo de ensino, escolhido pela clareza da documentação, e não uma imposição do Termo de Referência nem uma recomendação de compra.</p>`,
     "<h4>Pré-requisitos</h4>",
     lista(l.preRequisitos),
+    l.codigo?.length
+      ? "<h4>Ficheiros do exemplo</h4><p>O exemplo está completo aqui e também disponível para descarregar. Não tem dependências a instalar.</p>" +
+        l.codigo
+          .map(
+            (f) =>
+              `<p><strong>${esc(f.ficheiro)}</strong>${f.descarregarEm ? ` — <a href="${esc(f.descarregarEm)}" rel="noreferrer noopener" target="_blank">descarregar</a>` : ""}</p><pre><code>${esc(f.corpo)}</code></pre>`,
+          )
+          .join("")
+      : "",
     "<h4>Passos</h4>",
     `<ol>${l.passos.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`,
     "<h4>Como verificar o resultado</h4>",
@@ -1000,6 +1011,18 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Programa para criar ficheiros comprimidos, disponível no sistema operativo da sala.",
         "Nenhum participante associa cartão de pagamento nem cria subscrição própria. O escalão de serviço a usar é o indicado pelo formador; o material não promete gratuitidade.",
         "Se a turma não tiver ambiente de desenvolvimento, o formador disponibiliza o código já preparado num arquivo, para carregamento directo.",
+      ],
+      codigo: [
+        {
+          ficheiro: "index.js",
+          descarregarEm: "/exemplos/paas-node/index.js",
+          corpo: "// Exemplo mínimo para o laboratório de plataforma como serviço.\n// Proposta pedagógica — por validar pela Ologa/ATDI. Sem dependências externas.\n// Usa apenas o módulo http do Node.js.\n\nconst http = require(\"http\");\n\nconst port = process.env.PORT || 8080;\nconst mensagem = process.env.MENSAGEM_EXEMPLO || \"Mensagem por definir na configuração do serviço.\";\n\nconst servidor = http.createServer((pedido, resposta) => {\n  // Registo simples: método e caminho. Não regista cabeçalhos, corpo,\n  // endereços nem qualquer dado que possa identificar uma pessoa.\n  console.log(`${pedido.method} ${pedido.url}`);\n\n  resposta.writeHead(200, { \"Content-Type\": \"text/plain; charset=utf-8\" });\n  resposta.end(\n    \"Laboratório de plataforma como serviço — exemplo de formação.\\n\" +\n      `Mensagem configurada: ${mensagem}\\n`,\n  );\n});\n\n// Escuta em todas as interfaces: exigido pela plataforma.\nservidor.listen(port, \"0.0.0.0\", () => {\n  console.log(`Servidor de exemplo à escuta na porta ${port}`);\n});\n",
+        },
+        {
+          ficheiro: "package.json",
+          descarregarEm: "/exemplos/paas-node/package.json",
+          corpo: "{\n  \"name\": \"exemplo-paas-formacao\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"description\": \"Exemplo mínimo de aplicação Node.js para o laboratório de plataforma como serviço do curso Computação em Nuvem.\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"engines\": {\n    \"node\": \">=20\"\n  },\n  \"dependencies\": {}\n}\n",
+        },
       ],
       passos: [
         "Teste local, antes de qualquer publicação: descarregar os dois ficheiros do exemplo, colocá-los numa pasta e executar «node index.js». Abrir http://localhost:8080 e confirmar a resposta. Parar, executar de novo definindo a variável MENSAGEM_EXEMPLO e confirmar que o texto muda. Este teste é local e não usa nuvem nenhuma; serve para separar problemas do código de problemas da publicação.",
