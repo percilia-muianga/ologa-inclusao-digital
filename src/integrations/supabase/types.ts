@@ -675,6 +675,7 @@ export type Database = {
           instituicao_id: string | null
           nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          perfil_id: string | null
           precisa_apoio: boolean | null
           token_pessoal: string
         }
@@ -690,6 +691,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          perfil_id?: string | null
           precisa_apoio?: boolean | null
           token_pessoal?: string
         }
@@ -705,6 +707,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
+          perfil_id?: string | null
           precisa_apoio?: boolean | null
           token_pessoal?: string
         }
@@ -714,6 +717,13 @@ export type Database = {
             columns: ["instituicao_id"]
             isOneToOne: false
             referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "formandos_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
             referencedColumns: ["id"]
           },
         ]
