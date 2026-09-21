@@ -20,9 +20,11 @@ const ERROS: Record<string, string> = {
   TOKEN_INVALIDO:
     "Não encontrámos nenhum formando com esse código pessoal. Confirme o código que recebeu ao concluir um módulo.",
   BANCO_INSUFICIENTE:
-    "Este curso ainda não tem questões activas suficientes para gerar o exame. Fale com a coordenação.",
+    "Este curso ainda não tem questões activas suficientes para gerar o exame: o Termo de Referência exige um banco com pelo menos o triplo das questões usadas em cada exame. Fale com a coordenação.",
   TENTATIVAS_ESGOTADAS:
     "Já utilizou as duas tentativas permitidas para este curso.",
+  PRAZO_EXPIRADO:
+    "O prazo para fazer o exame terminou. Conta-se em dias de calendário a partir do fim da formação da sua turma. Fale com a coordenação.",
 };
 
 function IniciarExamePage() {

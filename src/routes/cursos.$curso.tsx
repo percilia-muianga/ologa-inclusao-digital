@@ -8,6 +8,27 @@ export const Route = createFileRoute("/cursos/$curso")({
     if (!resultado) throw notFound();
     return resultado;
   },
+  head: ({ loaderData }) => {
+    if (!loaderData)
+      return {
+        meta: [
+          { title: "Curso indisponível — Plataforma Nacional de Capacitação Digital" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    const titulo = `${loaderData.curso.titulo} — Plataforma Nacional de Capacitação Digital`;
+    const descricao = `${loaderData.curso.carga_horaria} horas em regime ${loaderData.curso.modalidade}, organizado em ${loaderData.modulos.length} módulos.`;
+    return {
+      meta: [
+        { title: titulo },
+        { name: "description", content: descricao },
+        { property: "og:title", content: titulo },
+        { property: "og:description", content: descricao },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+    };
+  },
   component: CursoPage,
 });
 

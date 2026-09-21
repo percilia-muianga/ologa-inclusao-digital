@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
 
 const admin = async () =>
   (await import("@/integrations/supabase/client.server")).supabaseAdmin;
@@ -558,7 +559,21 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
       : null;
 
+    const condicoes = avaliarCondicoesCertificacao({
+      assiduidadePct: assiduidade?.usadaPct ?? null,
+      notaPct: melhorNota,
+      minimoAssiduidadePct: cfg.assiduidade_minima_pct,
+      minimoNotaPct: cfg.nota_minima_pct,
+      dataFim: fim,
+      prazoDias: cfg.prazo_dias,
+      agora: new Date(),
+    });
+
     return {
+      prazoExpirado: condicoes.prazoExpirado,
+      assiduidadeCumpre: condicoes.assiduidadeCumpre,
+      notaCumpre: condicoes.notaCumpre,
+      podeCertificar: condicoes.podeCertificar,
       formando: { nome: formando.nome },
       turma,
       tentativas: tentativas ?? [],
@@ -607,6 +622,16 @@ export const iniciarExame = createServerFn({ method: "POST" })
     if ((existentes ?? []).length >= cfg.tentativas_max)
       throw new Error("TENTATIVAS_ESGOTADAS");
 
+    const turmaDoExame = await turmaDoFormando(formando.nome, data.cursoId);
+    // Secção 12.1: o exame só pode ser feito até ao prazo, em dias de
+    // calendário, depois do fim da formação.
+    if (turmaDoExame?.data_fim) {
+      const limitePrazo = new Date(
+        new Date(turmaDoExame.data_fim).getTime() + cfg.prazo_dias * 24 * 60 * 60 * 1000,
+      );
+      if (Date.now() > limitePrazo.getTime()) throw new Error("PRAZO_EXPIRADO");
+    }
+
     const { data: questoesBanco, error } = await s
       .from("banco_questoes")
       .select("id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao")
@@ -614,7 +639,8 @@ export const iniciarExame = createServerFn({ method: "POST" })
       .eq("activa", true);
     if (error) throw error;
     const banco = (questoesBanco ?? []) as unknown as QuestaoBanco[];
-    if (banco.length < cfg.numero_questoes) throw new Error("BANCO_INSUFICIENTE");
+    // Secção 10: banco activo com pelo menos o triplo das questões do exame.
+    if (banco.length < cfg.numero_questoes * 3) throw new Error("BANCO_INSUFICIENTE");
 
     const seleccionadas = seleccionarPorDificuldade(banco, cfg.numero_questoes, {
       facil: cfg.pct_facil,
@@ -622,7 +648,7 @@ export const iniciarExame = createServerFn({ method: "POST" })
       dificil: cfg.pct_dificil,
     });
 
-    const turma = await turmaDoFormando(formando.nome, data.cursoId);
+    const turma = turmaDoExame;
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();
     const { data: tentativa, error: eT } = await s
       .from("exame_tentativas")
@@ -859,9 +885,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
         Number(t.nota_pct) > (max?.nota ?? -1) ? { id: t.id, nota: Number(t.nota_pct) } : max,
       null,
     );
-    if (!melhor) throw new Error("SEM_EXAME_SUBMETIDO");
-    if (melhor.nota < cfg.nota_minima_pct) throw new Error("NOTA_INSUFICIENTE");
-
     const { data: curso } = await s
       .from("cursos")
       .select("titulo, carga_horaria")
@@ -874,10 +897,19 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
     const assiduidade = turma
       ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
       : null;
-    if (!assiduidade || assiduidade.usadaPct === null)
-      throw new Error("ASSIDUIDADE_POR_APURAR");
-    if (assiduidade.usadaPct < cfg.assiduidade_minima_pct)
-      throw new Error("ASSIDUIDADE_INSUFICIENTE");
+
+    // Condições cumulativas das secções 12 e 12.1: nota, assiduidade e prazo.
+    const condicoes = avaliarCondicoesCertificacao({
+      assiduidadePct: assiduidade?.usadaPct ?? null,
+      notaPct: melhor?.nota ?? null,
+      minimoAssiduidadePct: cfg.assiduidade_minima_pct,
+      minimoNotaPct: cfg.nota_minima_pct,
+      dataFim: turma?.data_fim ? new Date(turma.data_fim) : null,
+      prazoDias: cfg.prazo_dias,
+      agora: new Date(),
+    });
+    if (!condicoes.podeCertificar || !melhor || !assiduidade || assiduidade.usadaPct === null)
+      throw new Error(condicoes.motivo ?? "SEM_EXAME_SUBMETIDO");
 
     const { data: cert, error } = await s
       .from("certificados_curso")

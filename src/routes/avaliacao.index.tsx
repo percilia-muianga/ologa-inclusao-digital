@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { panoramaBanco } from "@/lib/avaliacao.functions";
+import { pendenciasCurriculares } from "@/lib/cursos.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +12,12 @@ export const Route = createFileRoute("/avaliacao/")({
 
 function AvaliacaoPage() {
   const carregar = useServerFn(panoramaBanco);
+  const carregarPendencias = useServerFn(pendenciasCurriculares);
+  const curriculo = useQuery({
+    queryKey: ["pendencias-curriculares"],
+    queryFn: () => carregarPendencias(),
+    retry: false,
+  });
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["panorama-banco"],
     queryFn: () =>
@@ -42,6 +49,32 @@ function AvaliacaoPage() {
           Iniciar exame final
         </Link>
       </div>
+
+      {curriculo.data && curriculo.data.some((c) => c.pendente) ? (
+        <section
+          aria-labelledby="revisao-pedagogica"
+          className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-5"
+        >
+          <h2 id="revisao-pedagogica" className="text-lg font-bold text-navy">
+            Cargas horárias pendentes de revisão pedagógica
+          </h2>
+          <p className="mt-2 text-base text-navy-2">
+            A carga horária oficial de cada curso segue a secção 14 do Termo de Referência. A soma
+            dos módulos não coincide nos cursos abaixo. Nenhum módulo ou lição foi retirado para
+            acertar a conta: a distribuição curricular aguarda revisão da equipa Ologa.
+          </p>
+          <ul className="mt-3 space-y-1 text-base text-navy-2">
+            {curriculo.data
+              .filter((c) => c.pendente)
+              .map((c) => (
+                <li key={c.id}>
+                  <strong className="text-navy">{c.titulo}</strong>: carga oficial de{" "}
+                  {c.cargaOficial} horas; soma dos módulos de {c.horasCurriculo} horas.
+                </li>
+              ))}
+          </ul>
+        </section>
+      ) : null}
 
       <div role="status" aria-live="polite">
         {isLoading ? <p className="text-base text-navy-2">A carregar o banco de questões…</p> : null}
