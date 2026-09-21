@@ -70,33 +70,46 @@ export async function registarEventoGestao(
   utilizadorId: string | null,
   accao: "leitura_gestao" | "escrita_gestao",
   resultado: "permitido" | "recusado",
-) {
+  alvo?: string,
+): Promise<boolean> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("registo_auditoria").insert({
+    const { error } = await supabaseAdmin.from("registo_auditoria").insert({
       utilizador_id: utilizadorId,
       accao,
       entidade: "acesso_gestao",
-      registo_id: null,
-      valor_novo: { resultado },
+      registo_id: alvo ?? null,
+      valor_novo: { resultado, alvo: alvo ?? null },
       contexto_actor: utilizadorId ? "sessao_autenticada" : "sem_sessao",
     } as never);
+    return !error;
   } catch {
-    // O registo não pode impedir a recusa de acesso.
+    return false;
   }
 }
 
-/** Barra a chamada ANTES de qualquer consulta privilegiada. */
+/**
+ * Barra a chamada ANTES de qualquer consulta privilegiada.
+ *
+ * Recusas são sempre recusas, mesmo que o registo falhe. Mas uma ESCRITA
+ * autorizada só avança se o registo de auditoria tiver ficado gravado: se a
+ * auditoria falhar, a operação é interrompida antes de tocar nos dados.
+ */
 export async function exigirGestao(
   context: ContextoAutenticado,
   modo: "ler" | "escrever",
+  alvo?: string,
 ): Promise<Permissoes> {
   const p = await permissoesGestao(context);
   const accao = modo === "ler" ? "leitura_gestao" : "escrita_gestao";
-  if (modo === "ler" ? p.podeLer : p.podeEscrever) {
-    await registarEventoGestao(context?.userId ?? null, accao, "permitido");
-    return p;
+  const permitido = modo === "ler" ? p.podeLer : p.podeEscrever;
+  if (!permitido) {
+    await registarEventoGestao(context?.userId ?? null, accao, "recusado", alvo);
+    throw new Error("SEM_PERMISSAO_GESTAO");
   }
-  await registarEventoGestao(context?.userId ?? null, accao, "recusado");
-  throw new Error("SEM_PERMISSAO_GESTAO");
+  const registado = await registarEventoGestao(context?.userId ?? null, accao, "permitido", alvo);
+  if (!registado && modo === "escrever") {
+    throw new Error("AUDITORIA_INDISPONIVEL");
+  }
+  return p;
 }
