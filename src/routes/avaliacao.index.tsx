@@ -126,7 +126,11 @@ function AvaliacaoPage() {
                     ? "Sem questões utilizáveis: as que existiam foram retiradas"
                     : "O banco de questões ainda está vazio"
                 }
-                descricao="Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                descricao={
+                  data.totalRetiradas > 0
+                    ? "As questões que existiam foram retiradas e continuam guardadas, mas não podem ser usadas nem activadas. É preciso escrever uma versão nova, que a Ologa/ATDI depois valida. Enquanto não houver questões utilizáveis, nenhum exame é gerado. Onde se lê «por fornecer» por curso ou por módulo, isso conta apenas as questões utilizáveis."
+                    : "Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                }
               />
             ) : data.totalActivas === 0 ? (
               <section className="rounded-lg border border-amber-300 bg-amber-50 p-5">
