@@ -199,17 +199,20 @@ describe("sorteio com cobertura garantida — Transformação Digital", () => {
     tipos: cfg.tipos,
   };
 
-  it("cumpre as quotas propostas em 150 amostras, preservando a ordenação", () => {
+  it("cumpre as quotas propostas em 150 amostras, com todos os módulos, tipos e cenários", () => {
     for (let semente = 1; semente <= 150; semente++) {
       const r = sortearExame(banco, quotas, geradorComSemente(semente));
       expect(r.ok, `semente ${semente}`).toBe(true);
       if (r.ok) {
         conferir(r.ids, banco, quotas);
         const escolhidas = r.ids.map((id) => banco.find((q) => q.id === id)!);
-        expect(escolhidas.filter((q) => q.tipologia === "ordenacao").length).toBe(1);
+        expect(escolhidas.filter((q) => q.tipologia === "ordenacao" && !q.cenario).length).toBe(2);
+        expect(escolhidas.filter((q) => q.cenario).length).toBe(2);
+        expect(new Set(escolhidas.map((q) => q.moduloId)).size).toBe(4);
       }
     }
   });
+
 });
 
 describe("bloqueios honestos, sem completar em silêncio", () => {
