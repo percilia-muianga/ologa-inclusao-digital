@@ -129,6 +129,7 @@ describe("handlers de gestão: quem não pode, não chega à base", () => {
       await executar(ctx);
     } catch (e) {
       erro = e;
+      if (process.env['DEPURAR']) console.log((e as Error).stack);
     }
     return { erro, escritasFeitas: escritas(registo), registoAdmin: [...registoAdmin] };
   }
