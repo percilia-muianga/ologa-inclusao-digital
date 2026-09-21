@@ -429,8 +429,8 @@
   }
 
   .a11y-bar,
-  body > div > header,
-  body > div > footer,
+  header,
+  footer,
   .print\:hidden {
     display: none !important;
   }

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { panoramaBanco } from "@/lib/avaliacao.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/avaliacao/")({
   component: AvaliacaoPage,
@@ -49,14 +50,15 @@ function AvaliacaoPage() {
             titulo="Não foi possível mostrar o banco de questões"
             descricao="As contagens por curso e módulo não ficaram disponíveis. Verifique a ligação e volte a tentar; nenhuma questão foi alterada."
             accao={
-              <button
+              <Button
                 type="button"
                 onClick={() => void refetch()}
                 disabled={isFetching}
-                className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground disabled:opacity-60"
+                size="lg"
+                className="min-h-11"
               >
                 {isFetching ? "A tentar novamente…" : "Tentar novamente"}
-              </button>
+              </Button>
             }
           />
         ) : null}
