@@ -185,7 +185,11 @@ function CursoPage() {
                       </details>
                     </>
                   ) : (
-                    <p className="mt-2 text-sm text-navy-2">Título definido; conteúdo temático ainda por escrever.</p>
+                    <p className="mt-2 text-sm text-navy-2">
+                      {propostaPorValidar
+                        ? "Título definido; conteúdo temático ainda por escrever."
+                        : "Lição em preparação."}
+                    </p>
                   )}
                 </li>
               ))}
