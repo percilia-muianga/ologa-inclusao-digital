@@ -204,7 +204,13 @@ export function sortearExame(
       };
   }
 
-  const lista = baralhar([...celulas.values()], aleatorio);
+  // Ordem de exploração: primeiro as células mais escassas (menos questões
+  // disponíveis), com desempate ao acaso. A ordem não retira soluções — o
+  // retrocesso continua a percorrer todo o espaço — mas reduz muito o
+  // trabalho, porque as decisões mais condicionadas são tomadas cedo.
+  const lista = baralhar([...celulas.values()], aleatorio).sort(
+    (a, b) => a.questoes.length - b.questoes.length,
+  );
 
   // Sobras por restrição, a partir de cada posição (para podar cedo).
   const n = lista.length;
