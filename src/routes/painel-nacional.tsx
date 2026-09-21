@@ -281,6 +281,10 @@ function PainelNacionalPage() {
                         ? "—"
                         : `${p.evolucaoPp > 0 ? "+" : ""}${p.evolucaoPp} pp`}
                   </td>
+                  <td className="px-3 py-2 text-navy-2">{pct(p.assiduidadeEstritaPct)}</td>
+                  <td className="px-3 py-2 text-navy-2">{pct(p.assiduidadeAjustadaPct)}</td>
+                  <td className="px-3 py-2 text-navy-2">{p.faltasJustificadas}</td>
+
                   <td className="px-3 py-2 text-navy-2">
                     {p.workshopsProvinciaisRealizados} de 1
                   </td>
