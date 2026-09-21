@@ -548,3 +548,51 @@ período, o banco de ambos os cursos — Princípios da Transformação Digital 
 Computação em Nuvem — deve ser **revisto e, se possível, renovado antes de
 qualquer activação**: questões que circularam publicamente perdem valor
 certificador. Todas as questões continuam inactivas.
+
+## A18 — Sorteio com cobertura garantida e versões do banco (21/09/2026)
+
+**Sorteio.** O motor anterior só equilibrava dificuldade. Passou a existir um motor
+puro com retrocesso (`src/lib/sorteio-exame.ts`) que, para cada prova de 20 questões,
+respeita em simultâneo quotas por módulo, por tipologia pedagógica (o cenário conta
+como categoria própria, mesmo quando a resposta é de escolha múltipla) e por
+dificuldade (8 fáceis, 8 médias, 4 difíceis, conforme a configuração 40/40/20). A
+escolha é aleatória entre as combinações viáveis, sem repetição, feita no servidor;
+as respostas nunca são enviadas ao formando.
+
+Quotas propostas (proposta pedagógica da equipa, por validar pela Ologa/ATDI; o TdR
+exige variedade e aleatoriedade, não estas quotas):
+
+- Computação em Nuvem: 6 do módulo 1, 7 do módulo 2, 5 do módulo 3, 2 do transversal;
+  8 escolha múltipla, 4 verdadeiro/falso, 4 associação, 4 cenário.
+- Princípios da Transformação Digital: 7 + 7 + 6 por módulo; 12 escolha múltipla,
+  5 verdadeiro/falso, 2 associação, 1 ordenação.
+
+Se as restrições não forem satisfazíveis, a prova **é bloqueada** com a causa
+(quotas incoerentes, módulo/tipo/dificuldade sem questões suficientes, combinação
+impossível, limite de trabalho). Nunca se completa em silêncio com o que houver.
+
+**Versões.** `banco_questoes` ganhou `versao`, `estado_revisao` (`em_uso`/`retirada`),
+`retirada_em`, `retirada_motivo` e `cenario` (migração 0011). Um gatilho na base
+impede activar uma questão retirada, e o servidor recusa a operação antes disso.
+Nada é apagado: enunciados, respostas, explicações e eventuais tentativas históricas
+ficam intactos.
+
+**Retirada das versões expostas.** Porque a página de gestão esteve acessível sem
+sessão (ver A17), a versão `v1` dos dois cursos foi retirada: 70 questões de
+Computação em Nuvem (60 de exame + 10 de diagnóstico) e 70 de Princípios da
+Transformação Digital. Ficam guardadas, fora do sorteio, fora do rácio e não
+activáveis. **Em consequência, nenhum dos dois cursos tem questões utilizáveis: o
+exame permanece bloqueado até a renovação do conteúdo (versão nova) ser escrita e
+validada pela Ologa/ATDI.** Não havia tentativas nem certificados (0 e 0), pelo que
+nenhum registo histórico foi afectado.
+
+**Seeds.** As gravações antigas deixam de reescrever ou reactivar linhas retiradas
+(contam-nas em separado) e passam a marcar a versão que gravam (`VERSAO_BANCO`,
+por omissão `v1`). Continuam idempotentes.
+
+**Verificações reais.** 90 testes: 200 amostras de Cloud e 150 de TD sem falhas,
+determinismo por semente, mais de 20 provas distintas em 30 sementes, bloqueios com
+causa, escassez de cenários, caso que um algoritmo ganancioso perderia, exclusão de
+inactivas/retiradas/diagnóstico no carregamento do exame, retirada sem apagar,
+motor sem acesso à base nem a gabaritos. Gravação repetida do banco Cloud: 0
+inseridas, 0 actualizadas, 70 ignoradas por estarem retiradas. Nada foi publicado.
