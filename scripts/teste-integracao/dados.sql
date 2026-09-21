@@ -1,0 +1,1 @@
+-- fixtures locais efémeras (sem dados reais)
