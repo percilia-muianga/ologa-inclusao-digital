@@ -17,6 +17,8 @@ import { EXAME, PRE_POS, type QuestaoNuvem } from "./conteudo/computacao-nuvem-q
 
 const SLUG = "computacao-em-nuvem";
 const AUTOR = "Equipa pedagógica Ologa (rascunho)";
+/** Versão do banco que este ficheiro grava. A renovação usa uma versão nova. */
+const VERSAO = process.env["VERSAO_BANCO"] ?? "v1";
 
 const url = process.env["SUPABASE_URL"];
 const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
@@ -87,10 +89,18 @@ async function main() {
     moduloPorChave[chave] = rel.modulo_id;
   }
 
-  const existentes = must<{ id: string; enunciado: string; instrumento: string }[]>(
-    await sb.from("banco_questoes").select("id,enunciado,instrumento").eq("curso_id", curso.id),
+  const existentes = must<{ id: string; enunciado: string; instrumento: string; estado_revisao: string }[]>(
+    await sb.from("banco_questoes").select("id,enunciado,instrumento,estado_revisao").eq("curso_id", curso.id),
   );
-  const chaveExistente = new Set(existentes.map((q) => `${q.instrumento}::${q.enunciado}`));
+  const estadoExistente = new Map(
+    (existentes as { enunciado: string; instrumento: string; estado_revisao: string }[]).map(
+      (q) => [`${q.instrumento}::${q.enunciado}`, q.estado_revisao] as const,
+    ),
+  );
+  // Uma questão retirada nunca é reactivada nem reescrita por este seed, e
+  // também não é contada como escrita utilizável. Uma renovação de conteúdo
+  // entra como VERSÃO nova, com o seu próprio identificador.
+  let ignoradasRetiradas = 0;
 
   let inseridas = 0;
   let actualizadas = 0;
@@ -100,6 +110,11 @@ async function main() {
     for (const q of lista) {
       if (vistos.has(q.e)) throw new Error(`Enunciado duplicado no ficheiro: ${q.e}`);
       vistos.add(q.e);
+      const estado = estadoExistente.get(`${instrumento}::${q.e}`);
+      if (estado === "retirada") {
+        ignoradasRetiradas++;
+        continue;
+      }
       const { conteudo, resposta } = corpoQuestao(q);
       const linha = {
         curso_id: curso.id,
@@ -115,9 +130,12 @@ async function main() {
         // Rascunho: inactiva, fora do sorteio, sem certificação.
         activa: false,
         autor_nome: AUTOR,
+        versao: VERSAO,
+        estado_revisao: "em_uso",
+        cenario: Boolean(q.cen),
         actualizado_em: new Date().toISOString(),
       };
-      if (chaveExistente.has(`${instrumento}::${q.e}`)) {
+      if (estado) {
         must(
           await sb
             .from("banco_questoes")
@@ -138,10 +156,10 @@ async function main() {
   await carregar(EXAME, "exame_final");
   await carregar(PRE_POS, "pre_pos_teste");
 
-  const finais = must<{ instrumento: string; activa: boolean; tipologia: string; dificuldade: string }[]>(
+  const finais = must<{ instrumento: string; activa: boolean; tipologia: string; dificuldade: string; estado_revisao: string }[]>(
     await sb
       .from("banco_questoes")
-      .select("instrumento,activa,tipologia,dificuldade")
+      .select("instrumento,activa,tipologia,dificuldade,estado_revisao")
       .eq("curso_id", curso.id),
   );
 
@@ -151,6 +169,8 @@ async function main() {
         curso: curso.titulo,
         inseridas,
         actualizadas,
+        ignoradasPorEstaremRetiradas: ignoradasRetiradas,
+        versao: VERSAO,
         exameFicheiro: EXAME.length,
         prePosFicheiro: PRE_POS.length,
         naBase: {
@@ -158,6 +178,8 @@ async function main() {
           exame: finais.filter((q) => q.instrumento === "exame_final").length,
           prePos: finais.filter((q) => q.instrumento === "pre_pos_teste").length,
           activas: finais.filter((q) => q.activa).length,
+          retiradas: finais.filter((q) => q.estado_revisao === "retirada").length,
+          utilizaveis: finais.filter((q) => q.estado_revisao !== "retirada").length,
         },
       },
       null,

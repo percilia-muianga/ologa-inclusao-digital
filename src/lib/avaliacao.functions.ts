@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
+import { sortearExame, type QuestaoSorteavel } from "@/lib/sorteio-exame";
+import { QUOTAS_POR_CURSO, quotasDificuldade } from "@/lib/quotas-exame";
 
 const admin = async () =>
   (await import("@/integrations/supabase/client.server")).supabaseAdmin;
@@ -100,7 +102,9 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
     s.from("cursos").select("id,slug,titulo,ordem").order("ordem"),
     // Os dois instrumentos: o exame final certificador e o pré/pós-teste,
     // contados em separado. O rácio do TdR só conta questões activas.
-    s.from("banco_questoes").select("curso_id,modulo_id,activa,dificuldade,instrumento"),
+    s
+      .from("banco_questoes")
+      .select("curso_id,modulo_id,activa,dificuldade,instrumento,estado_revisao,versao"),
     s.from("exame_configuracoes").select("*"),
     s.from("curso_modulos").select("curso_id,modulo_id,ordem").order("ordem"),
     s.from("modulos").select("id,titulo"),
@@ -111,7 +115,12 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   if (relacoesRes.error) throw relacoesRes.error;
   if (modulosRes.error) throw modulosRes.error;
 
-  const todas = questoesRes.data ?? [];
+  const tudo = questoesRes.data ?? [];
+  // Questões retiradas (versão exposta ou substituída) continuam na base, mas
+  // saem do sorteio, do rácio de prontidão e das contagens utilizáveis.
+  const emUso = (q: { estado_revisao: string }) => q.estado_revisao !== "retirada";
+  const todas = tudo.filter(emUso);
+  const retiradas = tudo.filter((q) => !emUso(q));
   const questoes = todas.filter((q) => q.instrumento === "exame_final");
   const diagnostico = todas.filter((q) => q.instrumento === "pre_pos_teste");
   const modulos = modulosRes.data ?? [];
@@ -125,6 +134,7 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
     const activas = doCurso.filter((q) => q.activa).length;
     const rascunhos = doCurso.length - activas;
     const diagCurso = diagnostico.filter((q) => q.curso_id === curso.id);
+    const retiradasCurso = retiradas.filter((q) => q.curso_id === curso.id);
     const diagActivas = diagCurso.filter((q) => q.activa).length;
     const necessarias = cfg.numero_questoes;
     const minimoTdR = necessarias * 3;
@@ -150,6 +160,12 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
       inactivas: rascunhos,
       rascunhos,
       total: doCurso.length,
+      retiradas: {
+        total: retiradasCurso.length,
+        exame: retiradasCurso.filter((q) => q.instrumento === "exame_final").length,
+        diagnostico: retiradasCurso.filter((q) => q.instrumento === "pre_pos_teste").length,
+        versoes: [...new Set(retiradasCurso.map((q) => q.versao))].sort(),
+      },
       diagnostico: {
         total: diagCurso.length,
         activas: diagActivas,
@@ -187,6 +203,7 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
     totalEscritas: questoes.length,
     totalDiagnostico: diagnostico.length,
     totalDiagnosticoActivas: diagnostico.filter((q) => q.activa).length,
+    totalRetiradas: retiradas.length,
     totalEmFalta: cursos.reduce((soma, c) => soma + c.emFalta, 0),
   };
 });
@@ -260,6 +277,7 @@ export const listarQuestoes = createServerFn({ method: "GET" })
         tipologia: tipologiaEnum.nullable().optional(),
         dificuldade: dificuldadeEnum.nullable().optional(),
         estado: z.enum(["todas", "activas", "inactivas"]).default("todas"),
+        revisao: z.enum(["utilizaveis", "retiradas", "todas"]).default("utilizaveis"),
         // Instrumentos distintos: exame final certificador e pré/pós-teste.
         instrumento: z.enum(["exame_final", "pre_pos_teste"]).default("exame_final"),
       })
@@ -271,7 +289,7 @@ export const listarQuestoes = createServerFn({ method: "GET" })
     let q = s
       .from("banco_questoes")
       .select(
-        "id,curso_id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,activa,autor_nome,criado_em,instrumento,objectivo_associado",
+        "id,curso_id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,activa,autor_nome,criado_em,instrumento,objectivo_associado,estado_revisao,versao,retirada_em,retirada_motivo,cenario",
       )
       .eq("instrumento", data.instrumento)
       .order("criado_em", { ascending: false });
@@ -281,6 +299,8 @@ export const listarQuestoes = createServerFn({ method: "GET" })
     if (data.dificuldade) q = q.eq("dificuldade", data.dificuldade);
     if (data.estado === "activas") q = q.eq("activa", true);
     if (data.estado === "inactivas") q = q.eq("activa", false);
+    if (data.revisao === "utilizaveis") q = q.eq("estado_revisao", "em_uso");
+    if (data.revisao === "retiradas") q = q.eq("estado_revisao", "retirada");
     const { data: linhas, error } = await q;
     if (error) throw error;
 
@@ -409,12 +429,63 @@ export const definirEstadoQuestao = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
+    // Uma questão retirada nunca volta ao sorteio: a activação é recusada no
+    // servidor (e também por travão na própria base de dados).
+    if (data.activa) {
+      const { data: actual } = await s
+        .from("banco_questoes")
+        .select("estado_revisao")
+        .eq("id", data.id)
+        .maybeSingle();
+      if (actual?.estado_revisao === "retirada") throw new Error("QUESTAO_RETIRADA");
+    }
     const { error } = await s
       .from("banco_questoes")
       .update({ activa: data.activa, actualizado_em: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw error;
     return { ok: true };
+  });
+
+/**
+ * Retira definitivamente do sorteio uma versão do banco de um curso. Nada é
+ * apagado: enunciados, gabaritos e explicações ficam na base, e as tentativas
+ * históricas não são tocadas. É idempotente: repetir não muda nada.
+ */
+export const retirarVersaoBanco = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        cursoId: z.string().uuid(),
+        versao: z.string().min(1),
+        motivo: z.string().min(5),
+        instrumentos: z
+          .array(z.enum(["exame_final", "pre_pos_teste"]))
+          .min(1)
+          .default(["exame_final", "pre_pos_teste"]),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
+    const s = await admin();
+    const { data: linhas, error } = await s
+      .from("banco_questoes")
+      .update({
+        estado_revisao: "retirada",
+        activa: false,
+        retirada_em: new Date().toISOString(),
+        retirada_motivo: data.motivo,
+        actualizado_em: new Date().toISOString(),
+      })
+      .eq("curso_id", data.cursoId)
+      .eq("versao", data.versao)
+      .eq("estado_revisao", "em_uso")
+      .in("instrumento", data.instrumentos)
+      .select("id");
+    if (error) throw error;
+    return { ok: true, retiradas: (linhas ?? []).length };
   });
 
 export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
@@ -463,6 +534,7 @@ type QuestaoBanco = {
   conteudo: Record<string, unknown>;
   resposta: Record<string, unknown>;
   explicacao: string;
+  cenario?: boolean | null;
 };
 
 function apresentar(q: QuestaoBanco) {
@@ -520,6 +592,58 @@ function seleccionarPorDificuldade(
     escolhidas.push(...resto.slice(0, total - escolhidas.length));
   }
   return baralhar(escolhidas).slice(0, total);
+}
+
+/**
+ * Escolhe as questões da prova. Nos cursos com quotas de cobertura definidas
+ * (Computação em Nuvem e Princípios da Transformação Digital), garante todos
+ * os módulos e todas as tipologias do plano, além do equilíbrio de
+ * dificuldade. Se as restrições não puderem ser cumpridas, a prova é
+ * BLOQUEADA com a causa — nunca é completada em silêncio. Nos restantes
+ * cursos mantém-se o comportamento anterior.
+ */
+async function seleccionarQuestoes(
+  cursoId: string,
+  banco: QuestaoBanco[],
+  cfg: { numero_questoes: number; pct_facil: number; pct_media: number; pct_dificil: number },
+): Promise<QuestaoBanco[]> {
+  const s = await admin();
+  const { data: curso } = await s.from("cursos").select("slug").eq("id", cursoId).maybeSingle();
+  const quotasCurso = curso?.slug ? QUOTAS_POR_CURSO[curso.slug] : undefined;
+  const pct = { facil: cfg.pct_facil, media: cfg.pct_media, dificil: cfg.pct_dificil };
+
+  if (!quotasCurso || quotasCurso.total !== cfg.numero_questoes) {
+    return seleccionarPorDificuldade(banco, cfg.numero_questoes, pct);
+  }
+
+  const { data: modulos } = await s.from("modulos").select("id,ordem");
+  const idPorOrdem = new Map<number, string>();
+  for (const m of modulos ?? []) idPorOrdem.set(m.ordem, m.id);
+
+  const modulosQuota: Record<string, number> = {};
+  for (const [ordem, quantas] of Object.entries(quotasCurso.modulosPorOrdem)) {
+    const id = idPorOrdem.get(Number(ordem));
+    if (!id) throw new Error(`QUOTA_MODULO_DESCONHECIDO:${ordem}`);
+    modulosQuota[id] = quantas;
+  }
+
+  const sorteaveis: QuestaoSorteavel[] = banco.map((q) => ({
+    id: q.id,
+    moduloId: q.modulo_id,
+    tipologia: q.tipologia,
+    dificuldade: q.dificuldade,
+    cenario: Boolean(q.cenario),
+  }));
+
+  const resultado = sortearExame(sorteaveis, {
+    total: cfg.numero_questoes,
+    dificuldade: quotasDificuldade(cfg.numero_questoes, pct),
+    modulos: modulosQuota,
+    tipos: quotasCurso.tipos,
+  });
+  if (!resultado.ok) throw new Error(`SORTEIO_BLOQUEADO:${resultado.causa}:${resultado.detalhe}`);
+  const porId = new Map(banco.map((q) => [q.id, q]));
+  return resultado.ids.map((id) => porId.get(id)).filter((q): q is QuestaoBanco => Boolean(q));
 }
 
 async function carregarConfig(cursoId: string) {
@@ -733,20 +857,19 @@ export const iniciarExame = createServerFn({ method: "POST" })
 
     const { data: questoesBanco, error } = await s
       .from("banco_questoes")
-      .select("id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao")
+      .select(
+        "id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,cenario",
+      )
       .eq("curso_id", data.cursoId)
       .eq("instrumento", "exame_final")
+      .eq("estado_revisao", "em_uso")
       .eq("activa", true);
     if (error) throw error;
     const banco = (questoesBanco ?? []) as unknown as QuestaoBanco[];
     // Secção 10: banco activo com pelo menos o triplo das questões do exame.
     if (banco.length < cfg.numero_questoes * 3) throw new Error("BANCO_INSUFICIENTE");
 
-    const seleccionadas = seleccionarPorDificuldade(banco, cfg.numero_questoes, {
-      facil: cfg.pct_facil,
-      media: cfg.pct_media,
-      dificil: cfg.pct_dificil,
-    });
+    const seleccionadas = await seleccionarQuestoes(data.cursoId, banco, cfg);
 
     const turma = turmaDoExame;
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();

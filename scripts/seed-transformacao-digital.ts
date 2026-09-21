@@ -168,9 +168,16 @@ async function main() {
   }
 
   const existentes = must(
-    await sb.from("banco_questoes").select("id,enunciado,instrumento").eq("curso_id", curso.id),
+    await sb.from("banco_questoes").select("id,enunciado,instrumento,estado_revisao").eq("curso_id", curso.id),
   );
-  const chaveExistente = new Set(existentes.map((q) => `${q.instrumento}::${q.enunciado}`));
+  const estadoExistente = new Map(
+    (existentes as { enunciado: string; instrumento: string; estado_revisao: string }[]).map(
+      (q) => [`${q.instrumento}::${q.enunciado}`, q.estado_revisao] as const,
+    ),
+  );
+  // Versões retiradas não são reactivadas, reescritas nem contadas.
+  const VERSAO = process.env["VERSAO_BANCO"] ?? "v1";
+  let ignoradasRetiradas = 0;
 
   let inseridas = 0;
   let actualizadas = 0;
@@ -179,6 +186,11 @@ async function main() {
     for (const q of lista) {
       if (vistos.has(q.e)) throw new Error(`Enunciado duplicado no ficheiro: ${q.e}`);
       vistos.add(q.e);
+      const estado = estadoExistente.get(`${instrumento}::${q.e}`);
+      if (estado === "retirada") {
+        ignoradasRetiradas++;
+        continue;
+      }
       const { conteudo, resposta } = corpoQuestao(q);
       const linha = {
         curso_id: curso.id,
@@ -194,9 +206,11 @@ async function main() {
         // Rascunho: não activa certificação oficial enquanto não for validado.
         activa: false,
         autor_nome: AUTOR,
+        versao: VERSAO,
+        estado_revisao: "em_uso",
         actualizado_em: new Date().toISOString(),
       };
-      if (chaveExistente.has(`${instrumento}::${q.e}`)) {
+      if (estado) {
         must(
           await sb
             .from("banco_questoes")
@@ -224,6 +238,8 @@ async function main() {
         licoesActualizadas,
         questoesInseridas: inseridas,
         questoesActualizadas: actualizadas,
+        questoesIgnoradasPorEstaremRetiradas: ignoradasRetiradas,
+        versao: VERSAO,
         exame: EXAME.length,
         prePos: PRE_POS.length,
       },
