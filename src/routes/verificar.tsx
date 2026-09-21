@@ -19,6 +19,16 @@ export const Route = createFileRoute("/verificar")({
   component: VerificarPage,
 });
 
+type Detalhes = {
+  carga_horaria: number;
+  provincia: string | null;
+  turma: string | null;
+  data_inicio: string | null;
+  data_fim: string | null;
+  nota_final_pct: string;
+  assiduidade_pct: string;
+} | null;
+
 type Estado =
   | { tipo: "idle" }
   | { tipo: "a_verificar" }
@@ -30,6 +40,7 @@ type Estado =
         modulo: string;
         instituicao: string;
         data: string;
+        detalhes: Detalhes;
       };
     };
 
