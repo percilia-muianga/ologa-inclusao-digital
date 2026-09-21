@@ -634,7 +634,7 @@ export const iniciarExame = createServerFn({ method: "POST" })
       dificil: cfg.pct_dificil,
     });
 
-    const turma = await turmaDoFormando(formando.nome, data.cursoId);
+    const turma = turmaDoExame;
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();
     const { data: tentativa, error: eT } = await s
       .from("exame_tentativas")
