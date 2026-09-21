@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { obterLicao } from "@/lib/formacao.functions";
 import { moduloQuery } from "./formacao.$modulo";
 import { formacaoStore } from "@/lib/formacao-store";
+import { useProgressoMatricula } from "@/hooks/use-progresso-matricula";
 import {
   ListenButton,
   extrairFalasDeHtml,
@@ -37,6 +38,7 @@ function LicaoView() {
   const navigate = useNavigate();
   const { data: licao } = useSuspenseQuery(licaoQuery(licaoId));
   const { data: mod } = useSuspenseQuery(moduloQuery(moduloId, curso));
+  const prog = useProgressoMatricula(curso, moduloId);
   const [aba, setAba] = useState<Aba>("elearning");
 
   // Paragem automática ao mudar de separador ou de lição
@@ -52,8 +54,12 @@ function LicaoView() {
   const anterior = indice > 0 ? mod.licoes[indice - 1] : null;
   const proxima = indice >= 0 && indice < mod.licoes.length - 1 ? mod.licoes[indice + 1] : null;
 
-  function concluirEAvancar() {
+  async function concluirEAvancar() {
     formacaoStore.marcarLicaoConcluida(moduloId, licaoId);
+    if (prog.matricula) {
+      const ok = await prog.guardar(licaoId);
+      if (!ok) return; // fica na lição para a pessoa poder tentar de novo
+    }
     if (proxima) {
       navigate({
         to: "/formacao/$modulo/licao/$licao",
