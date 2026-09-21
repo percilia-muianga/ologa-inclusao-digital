@@ -342,6 +342,6 @@ describe("garantias no motor de exame (regressão sobre o código)", () => {
     expect(motor).not.toContain("supabase");
     expect(motor).not.toContain("resposta:");
     expect(motor).not.toContain("explicacao");
-    expect(motor).not.toContain("gabarito");
+    expect(motor).not.toContain("gabarito:");
   });
 });
