@@ -226,6 +226,10 @@ function IndicadoresPage() {
               nota="Ao gerar, a declaração fica registada como assinada."
             />
           </ul>
+          <p className="mt-3 text-sm text-ink/70">
+            Estes documentos nomeiam pessoas. Só podem ser abertos com sessão iniciada numa conta
+            autorizada da coordenação. Esta página continua a mostrar apenas totais.
+          </p>
         </section>
       </main>
     </>
