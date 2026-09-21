@@ -211,7 +211,17 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
           ? Math.round((posNacional - preNacional) * 10) / 10
           : null,
       avaliacoesRegistadas: avaliacoes.length,
+      assiduidadeEstritaPct: mediaTaxa(linhasAssiduidade, "taxaEstritaPct"),
+      assiduidadeAjustadaPct: mediaTaxa(linhasAssiduidade, "taxaAjustadaPct"),
+      faltasJustificadas: linhasAssiduidade.reduce((a, l) => a + l.justificadas, 0),
+      sessoesRealizadas: (sessoesRes.data ?? []).filter((s) => s.estado === "realizada").length,
+      sessoesPorRegularizar: (sessoesRes.data ?? []).filter(
+        (s) =>
+          s.estado === "agendada" &&
+          new Date(`${s.data}T23:59:59`) < new Date(),
+      ).length,
     },
+
     satisfacao: {
       indicePct: indiceSatisfacao,
       respostas: satisfacao.length,
