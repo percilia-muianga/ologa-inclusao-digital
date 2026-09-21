@@ -859,9 +859,6 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
         Number(t.nota_pct) > (max?.nota ?? -1) ? { id: t.id, nota: Number(t.nota_pct) } : max,
       null,
     );
-    if (!melhor) throw new Error("SEM_EXAME_SUBMETIDO");
-    if (melhor.nota < cfg.nota_minima_pct) throw new Error("NOTA_INSUFICIENTE");
-
     const { data: curso } = await s
       .from("cursos")
       .select("titulo, carga_horaria")
@@ -874,10 +871,19 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
     const assiduidade = turma
       ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
       : null;
-    if (!assiduidade || assiduidade.usadaPct === null)
-      throw new Error("ASSIDUIDADE_POR_APURAR");
-    if (assiduidade.usadaPct < cfg.assiduidade_minima_pct)
-      throw new Error("ASSIDUIDADE_INSUFICIENTE");
+
+    // Condições cumulativas das secções 12 e 12.1: nota, assiduidade e prazo.
+    const condicoes = avaliarCondicoesCertificacao({
+      assiduidadePct: assiduidade?.usadaPct ?? null,
+      notaPct: melhor?.nota ?? null,
+      minimoAssiduidadePct: cfg.assiduidade_minima_pct,
+      minimoNotaPct: cfg.nota_minima_pct,
+      dataFim: turma?.data_fim ? new Date(turma.data_fim) : null,
+      prazoDias: cfg.prazo_dias,
+      agora: new Date(),
+    });
+    if (!condicoes.podeCertificar || !melhor || !assiduidade || assiduidade.usadaPct === null)
+      throw new Error(condicoes.motivo ?? "SEM_EXAME_SUBMETIDO");
 
     const { data: cert, error } = await s
       .from("certificados_curso")
