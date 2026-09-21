@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
 
 const admin = async () =>
@@ -66,7 +67,10 @@ function gerarCodigo() {
 
 // ---------- referências e panorama do banco ----------
 
-export const referenciasBanco = createServerFn({ method: "GET" }).handler(async () => {
+export const referenciasBanco = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+  await exigirGestaoBanco(context as unknown as ContextoAutenticado, "ler");
   const s = await admin();
   const [cursosRes, relacoesRes, modulosRes] = await Promise.all([
     s.from("cursos").select("id,slug,titulo,ordem").order("ordem"),
@@ -187,9 +191,67 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   };
 });
 
+// ---------- autorização da gestão do banco ----------
+//
+// O banco de questões contém gabaritos e explicações. Qualquer leitura ou
+// escrita destes dados exige sessão real, validada no servidor ANTES de
+// qualquer consulta. O papel nunca é aceite do cliente: é lido da base de
+// dados com o cliente autenticado (RLS como o próprio utilizador).
+
+type ContextoAutenticado = {
+  supabase: {
+    from: (t: string) => any;
+  };
+  userId: string;
+};
+
+const PAPEIS_LEITURA_BANCO = ["admin_atdi", "coordenador_nacional", "auditor_atdi"];
+const PAPEIS_ESCRITA_BANCO = ["admin_atdi", "coordenador_nacional"];
+
+async function papeisDoUtilizador(context: ContextoAutenticado) {
+  const [papeisRes, perfilRes] = await Promise.all([
+    context.supabase
+      .from("utilizador_papeis")
+      .select("papel")
+      .eq("utilizador_id", context.userId),
+    context.supabase.from("perfis").select("papel").eq("id", context.userId).maybeSingle(),
+  ]);
+  const papeis = ((papeisRes.data ?? []) as { papel: string }[]).map((p) => p.papel);
+  const perfil = (perfilRes.data as { papel?: string } | null)?.papel ?? null;
+  return { papeis, perfil };
+}
+
+/** Regra pura de autorização, separada para poder ser testada isoladamente. */
+export function avaliarPermissoesBanco(papeis: string[], perfil: string | null) {
+  const administradorOloga = perfil === "admin_ologa";
+  return {
+    podeLer: administradorOloga || papeis.some((p) => PAPEIS_LEITURA_BANCO.includes(p)),
+    podeEscrever: administradorOloga || papeis.some((p) => PAPEIS_ESCRITA_BANCO.includes(p)),
+  };
+}
+
+/** Devolve o que o utilizador autenticado pode fazer no banco de questões. */
+async function permissoesBanco(context: ContextoAutenticado) {
+  const { papeis, perfil } = await papeisDoUtilizador(context);
+  return avaliarPermissoesBanco(papeis, perfil);
+}
+
+/** Barra a chamada antes de tocar na base com privilégios elevados. */
+async function exigirGestaoBanco(context: ContextoAutenticado, modo: "ler" | "escrever") {
+  const p = await permissoesBanco(context);
+  if (modo === "ler" ? p.podeLer : p.podeEscrever) return p;
+  throw new Error("SEM_PERMISSAO_BANCO");
+}
+
+/** Consulta de permissão para a interface. Exige sessão; anónimo recebe 401. */
+export const permissaoGestaoBanco = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => permissoesBanco(context as unknown as ContextoAutenticado));
+
 // ---------- gestão do banco ----------
 
 export const listarQuestoes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
       .object({
@@ -203,7 +265,8 @@ export const listarQuestoes = createServerFn({ method: "GET" })
       })
       .parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "ler");
     const s = await admin();
     let q = s
       .from("banco_questoes")
@@ -283,8 +346,10 @@ function montarConteudo(d: z.infer<typeof questaoSchema>) {
 }
 
 export const criarQuestao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => questaoSchema.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const { conteudo, resposta } = montarConteudo(data);
     const { data: nova, error } = await s
@@ -308,10 +373,12 @@ export const criarQuestao = createServerFn({ method: "POST" })
   });
 
 export const actualizarQuestao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     questaoSchema.extend({ id: z.string().uuid() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const { conteudo, resposta } = montarConteudo(data);
     const { error } = await s
@@ -335,10 +402,12 @@ export const actualizarQuestao = createServerFn({ method: "POST" })
   });
 
 export const definirEstadoQuestao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z.object({ id: z.string().uuid(), activa: z.boolean() }).parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const { error } = await s
       .from("banco_questoes")
@@ -349,6 +418,7 @@ export const definirEstadoQuestao = createServerFn({ method: "POST" })
   });
 
 export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
       .object({
@@ -361,7 +431,8 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
       })
       .parse(i),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     if (data.pctFacil + data.pctMedia + data.pctDificil !== 100)
       throw new Error("PERCENTAGENS_NAO_SOMAM_100");
     const s = await admin();

@@ -9,6 +9,7 @@ import {
   criarQuestao,
   definirEstadoQuestao,
   listarQuestoes,
+  permissaoGestaoBanco,
   referenciasBanco,
 } from "@/lib/avaliacao.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
@@ -105,9 +106,25 @@ function BancoPage() {
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [aGravar, setAGravar] = useState(false);
 
-  const refs = useQuery({ queryKey: ["refs-banco"], queryFn: () => carregarRefs() });
+  // A permissão é validada no servidor. Só depois de confirmada é que a
+  // página pede as questões: nada de gabaritos antes de autorizar.
+  const carregarPermissao = useServerFn(permissaoGestaoBanco);
+  const permissao = useQuery({
+    queryKey: ["permissao-banco"],
+    queryFn: () => carregarPermissao(),
+    retry: false,
+  });
+  const podeLer = permissao.data?.podeLer === true;
+  const podeEscrever = permissao.data?.podeEscrever === true;
+
+  const refs = useQuery({
+    queryKey: ["refs-banco"],
+    enabled: podeLer,
+    queryFn: () => carregarRefs(),
+  });
   const questoes = useQuery({
     queryKey: ["questoes", filtros],
+    enabled: podeLer,
     queryFn: () =>
       carregarQuestoes({
         data: {
@@ -202,14 +219,53 @@ function BancoPage() {
     await qc.invalidateQueries({ queryKey: ["questoes"] });
   }
 
+  if (permissao.isLoading) {
+    return (
+      <PlataformaPagina titulo="Banco de questões" introducao="A verificar a sua permissão…">
+        <p className="text-base text-navy-2" role="status" aria-live="polite">
+          A verificar a sua permissão…
+        </p>
+      </PlataformaPagina>
+    );
+  }
+
+  if (!podeLer) {
+    return (
+      <PlataformaPagina
+        titulo="Banco de questões"
+        introducao="Área reservada à equipa autorizada."
+      >
+        <EstadoVazio
+          titulo="Sem permissão para ver o banco de questões"
+          descricao="Esta área contém enunciados, respostas correctas e explicações. Só a equipa expressamente autorizada — administração e coordenação nacional — lhe pode aceder, com sessão iniciada. Se precisa de acesso, peça à administração do programa."
+          accao={
+            <Link
+              to="/entrar"
+              className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
+            >
+              Entrar
+            </Link>
+          }
+        />
+      </PlataformaPagina>
+    );
+  }
+
   return (
     <PlataformaPagina
       titulo="Banco de questões"
       introducao="As questões organizam-se por curso e por módulo, com tipologia, dificuldade, resposta correcta, explicação, estado e autor. Uma questão já usada numa tentativa nunca é eliminada: é desactivada."
     >
+      {podeEscrever ? null : (
+        <p className="mb-5 rounded-md border border-amber-300 bg-amber-50 p-4 text-base text-navy-2">
+          Acesso apenas de leitura: pode consultar o banco, mas não pode criar, alterar nem activar
+          questões.
+        </p>
+      )}
       <div className="mb-5 flex flex-wrap gap-3">
         <button
           type="button"
+          disabled={!podeEscrever}
           onClick={abrirNova}
           className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
         >
@@ -674,6 +730,7 @@ function BancoPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
+                  disabled={!podeEscrever}
                   onClick={() => abrirEdicao(q as unknown as Record<string, unknown>)}
                   className="min-h-11 rounded-md border border-line px-3 text-base font-semibold text-navy"
                 >
@@ -681,6 +738,7 @@ function BancoPage() {
                 </button>
                 <button
                   type="button"
+                  disabled={!podeEscrever}
                   onClick={() => void alternarEstado(q.id, !q.activa)}
                   className="min-h-11 rounded-md border border-line px-3 text-base font-semibold text-navy"
                 >
