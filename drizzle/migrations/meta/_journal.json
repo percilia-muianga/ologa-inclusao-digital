@@ -64,6 +64,13 @@
       "when": 1789997950192,
       "tag": "0008_restringir_leitura_exames_presencas",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790001774114,
+      "tag": "0009_proposta_pedagogica_transformacao_digital",
+      "breakpoints": true
     }
   ]
 }
