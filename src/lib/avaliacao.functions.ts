@@ -221,14 +221,19 @@ async function papeisDoUtilizador(context: ContextoAutenticado) {
   return { papeis, perfil };
 }
 
-/** Devolve o que o utilizador autenticado pode fazer no banco de questões. */
-async function permissoesBanco(context: ContextoAutenticado) {
-  const { papeis, perfil } = await papeisDoUtilizador(context);
+/** Regra pura de autorização, separada para poder ser testada isoladamente. */
+export function avaliarPermissoesBanco(papeis: string[], perfil: string | null) {
   const administradorOloga = perfil === "admin_ologa";
   return {
     podeLer: administradorOloga || papeis.some((p) => PAPEIS_LEITURA_BANCO.includes(p)),
     podeEscrever: administradorOloga || papeis.some((p) => PAPEIS_ESCRITA_BANCO.includes(p)),
   };
+}
+
+/** Devolve o que o utilizador autenticado pode fazer no banco de questões. */
+async function permissoesBanco(context: ContextoAutenticado) {
+  const { papeis, perfil } = await papeisDoUtilizador(context);
+  return avaliarPermissoesBanco(papeis, perfil);
 }
 
 /** Barra a chamada antes de tocar na base com privilégios elevados. */
