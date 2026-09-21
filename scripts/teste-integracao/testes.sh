@@ -52,8 +52,11 @@ espera_ok "auditor lê turmas" \
   "$(como authenticated "$AUDITOR" "SELECT count(*) FROM public.turmas;")"
 
 echo "— auditoria: actor real, minimização e atomicidade —"
+# A leitura do registo é confirmada fora do papel "authenticated" porque o
+# registo só é legível por administração/auditoria — a coordenação não o vê.
 espera_ok "auditoria regista o actor verdadeiro da mutação" \
-  "$(como authenticated "$COORD" "INSERT INTO public.turmas(curso_id, designacao, codigo_inscricao, provincia, distrito, modalidade) VALUES ('00000000-0000-0000-0000-00000000c001','T6','C6','Maputo','KaMpfumo','presencial');
+  "$(como postgres "" "SET LOCAL ROLE authenticated; SET LOCAL request.jwt.claim.sub='$COORD';INSERT INTO public.turmas(curso_id, designacao, codigo_inscricao, provincia, distrito, modalidade) VALUES ('00000000-0000-0000-0000-00000000c001','T6','C6','Maputo','KaMpfumo','presencial');
+  RESET ROLE;
   DO \$\$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM public.registo_auditoria WHERE entidade='turmas' AND utilizador_id='$COORD' AND contexto_actor='sessao_autenticada') THEN
       RAISE EXCEPTION 'sem registo com actor verificado';
