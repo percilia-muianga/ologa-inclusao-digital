@@ -252,16 +252,8 @@ function PainelNacionalPage() {
             </caption>
             <thead className="bg-page text-navy">
               <tr>
-                {[
-                  "Província",
-                  "Turmas",
-                  "Formandos",
-                  "Pré-teste",
-                  "Pós-teste",
-                  "Evolução",
-                  "Workshop provincial",
-                  "Workshops distritais",
-                ].map((h) => (
+                {colunasProvincia.map((h) => (
+
                   <th key={h} scope="col" className="px-3 py-2 text-xs font-bold uppercase tracking-wide">
                     {h}
                   </th>
