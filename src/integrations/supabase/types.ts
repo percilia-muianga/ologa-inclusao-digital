@@ -1525,6 +1525,7 @@ export type Database = {
           id: string
           ocorrido_em: string
           registo_id: string | null
+          requisicao_id: string | null
           utilizador_id: string | null
           valor_anterior: Json | null
           valor_novo: Json | null
@@ -1538,6 +1539,7 @@ export type Database = {
           id?: string
           ocorrido_em?: string
           registo_id?: string | null
+          requisicao_id?: string | null
           utilizador_id?: string | null
           valor_anterior?: Json | null
           valor_novo?: Json | null
@@ -1551,6 +1553,7 @@ export type Database = {
           id?: string
           ocorrido_em?: string
           registo_id?: string | null
+          requisicao_id?: string | null
           utilizador_id?: string | null
           valor_anterior?: Json | null
           valor_novo?: Json | null
