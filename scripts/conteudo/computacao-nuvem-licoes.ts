@@ -978,14 +978,15 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     actividade: {
-      formato: "nos mesmos grupos de três",
+      formato:
+        "nos mesmos pares, um computador por par e alternância de quem executa; havendo equipamento, um computador por pessoa, conforme o máximo de dois formandos por computador fixado no Termo de Referência",
       enunciado: [
         "Primeira parte, em papel, 10 minutos: para a consulta de estado de Ondela, escrevam o que fica do lado do fornecedor e o que fica do lado da instituição, em duas colunas, incluindo segredos, cópias de segurança e controlo de acesso.",
-        "Segunda parte, no ambiente de formação, 45 minutos: executar o laboratório de publicação de uma aplicação simples numa plataforma como serviço.",
-        "Terceira parte, dentro do tempo de laboratório: apagar tudo o que foi criado e registar a eliminação.",
+        "Segunda parte, no ambiente de formação, 45 minutos: executar o laboratório de publicação de uma aplicação simples numa plataforma como serviço, trocando de executante a meio.",
+        "Terceira parte, dentro do tempo de laboratório: apagar o que foi criado, pela ordem de dependências, e registar a eliminação.",
       ],
       produto:
-        "tabela de responsabilidades partilhadas e evidência da aplicação publicada e depois eliminada, com o endereço público e as horas de publicação e de eliminação.",
+        "tabela de responsabilidades partilhadas e evidência da aplicação a responder e depois eliminada, com o endereço público, as horas e o registo de quem executou cada metade.",
     },
     laboratorio: {
       titulo: "Publicar uma aplicação simples numa plataforma como serviço",
@@ -993,7 +994,9 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "Azure App Service com uma aplicação Node.js mínima, seguindo o guia rápido oficial actual. O antigo guia de aplicação estática já não serve este objectivo, porque encaminha para outro serviço.",
       preRequisitos: [
         "Conta institucional de formação com limites de consumo e alertas definidos pelo formador, e grupo de recursos do exercício criado.",
-        "Aplicação de exemplo preparada antes pelo formador: uma página que devolve texto fixo, sem base de dados, sem dados de pessoas e sem segredos no código.",
+        "Microsoft Azure — subscrição institucional de formação e grupo de recursos do exercício, com utilizador de formação limitado a esse grupo de recursos. Nada é necessário do lado da Amazon nesta lição.",
+        "Aplicação de exemplo preparada e testada antes pelo formador: aplicação Node.js mínima com servidor Express, ficheiro package.json com a dependência e o comando de arranque «node index.js», e uma rota que devolve texto fixo. Sem base de dados, sem dados de pessoas e sem segredos no código.",
+        "Arquivo comprimido dessa aplicação, com package.json e index.js na raiz, pronto para implantação — é este o método de publicação usado, coerente com a pilha Node.js escolhida no portal.",
         "Nenhum participante associa cartão de pagamento nem cria subscrição própria. O escalão de serviço a usar é o indicado pelo formador; o material não promete gratuitidade.",
         "Se a turma não tiver ambiente de desenvolvimento, o formador disponibiliza o código já preparado num arquivo, para carregamento directo.",
       ],
@@ -1001,7 +1004,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "No portal do Azure, dentro do grupo de recursos do exercício, criar uma aplicação Web indicando pilha de execução Node.js e sistema operativo Linux, com nome que identifique a turma e o grupo.",
         "Escolher o plano de serviço indicado pelo formador e a região combinada. Não subir de escalão por iniciativa própria.",
         "Rever e criar. Esperar pela conclusão e abrir a página do recurso.",
-        "Publicar o código de exemplo pelo método combinado na sessão: implantação a partir de arquivo comprimido, ou a partir de um repositório preparado pelo formador.",
+        "Publicar o arquivo comprimido da aplicação de exemplo pela implantação a partir de ficheiro zip, confirmando que a versão de Node.js escolhida no portal corresponde à usada no exemplo e que o comando de arranque do package.json é o esperado.",
         "Abrir o endereço público atribuído à aplicação e confirmar que a página responde.",
         "Nas definições da aplicação, criar uma variável de configuração de exemplo, com um valor fictício, e mostrar que a aplicação a lê sem que ela esteja escrita no código. É assim que se tratam segredos: fora do código.",
         "Confirmar nos registos da aplicação que o pedido feito no navegador aparece registado.",
@@ -1012,7 +1015,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         "O endereço público da aplicação abre no navegador e mostra a página de exemplo.",
         "A variável de configuração definida no portal é visível no comportamento da aplicação, sem constar do código.",
         "Os registos mostram o pedido correspondente ao acesso feito.",
-        "Depois da limpeza, o endereço deixa de responder e o grupo de recursos do exercício fica vazio.",
+        "Depois da limpeza, o endereço deixa de responder e o grupo de recursos do exercício fica apenas com os recursos partilhados que já lá estavam antes da sessão, se existirem.",
       ],
       problemas: [
         "Nome de aplicação já usado: o endereço é único; acrescentar o código da turma e do grupo.",
@@ -1024,13 +1027,13 @@ export const LICOES: Record<string, ConteudoLicao> = {
       evidencia: [
         "Captura de ecrã da página publicada, com o endereço visível.",
         "Captura de ecrã das definições de configuração mostrando a variável de exemplo, com valores fictícios apenas.",
-        "Captura de ecrã da lista de recursos vazia depois da limpeza.",
+        "Captura de ecrã da lista de recursos depois da limpeza, mostrando que a aplicação e o plano de serviço já não constam.",
         "Linha na ficha com endereço, escalão, hora de publicação e hora de eliminação.",
       ],
       limpeza: [
-        "Apagar a aplicação Web.",
-        "Apagar o plano de serviço associado, que é um recurso distinto.",
-        "Confirmar que o grupo de recursos do exercício fica sem recursos.",
+        "Apagar por ordem de dependências, apenas no Azure e apenas os recursos deste exercício: primeiro a aplicação Web, que depende do plano de serviço.",
+        "Apagar depois o plano de serviço, que é um recurso distinto e continua a consumir mesmo sem aplicação.",
+        "Conferir que no grupo de recursos do exercício ficaram apenas os recursos partilhados anteriores à sessão, e registar o que foi apagado.",
       ],
     },
     sintese: [
@@ -1068,7 +1071,8 @@ export const LICOES: Record<string, ConteudoLicao> = {
     ],
     guiao: {
       preparacao: [
-        "Preparar a aplicação de exemplo e o arquivo de publicação, testados antes da sessão.",
+        "Preparar e testar antes da sessão a aplicação Node.js de exemplo e o respectivo arquivo comprimido, confirmando que a versão de Node.js, o comando de arranque e o método de implantação coincidem com os passos do laboratório.",
+        "Organizar a sala em pares, com alternância de executante; se o ambiente falhar, registar a prática como pendente e reagendar, em vez de a substituir por demonstração.",
         "Indicar por escrito o escalão de serviço e a região autorizados, e não deixar a escolha aos grupos.",
         "Confirmar os limites de consumo e alertas da conta de formação antes de abrir o exercício.",
         "Reservar os últimos minutos do laboratório para apagar aplicação e plano de serviço, com verificação recurso a recurso.",
@@ -1077,12 +1081,12 @@ export const LICOES: Record<string, ConteudoLicao> = {
       conducao: [
         "Acolhimento, ligação às duas lições anteriores — já temos máquina e rede, agora vemos o caminho com menos gestão — e objectivos.",
         "Exposição de bases de dados geridas, plataforma como serviço, fronteira de responsabilidades, limites da plataforma e modernização por etapas.",
-        "Actividade: 10 minutos de tabela de responsabilidades e 45 minutos de laboratório, com limpeza incluída e verificada.",
+        "Actividade: 10 minutos de tabela de responsabilidades e 45 minutos de laboratório, com troca de executante a meio e limpeza incluída e verificada.",
         "Partilha por amostra: dois grupos apresentam 3 minutos cada, com 1 minuto de comentário, e 2 minutos de síntese. As tabelas dos restantes grupos são recolhidas para apreciação escrita.",
       ],
       criterios: [
         "A tabela separa correctamente o que é do fornecedor e o que é da instituição, incluindo segredos e acessos.",
-        "A aplicação foi publicada e o endereço respondeu, com evidência recolhida.",
+        "A aplicação foi publicada e o endereço respondeu com o conteúdo do exemplo, com evidência recolhida, e ambas as pessoas do par executaram parte dos passos.",
         "A variável de configuração foi usada em vez de valor escrito no código.",
         "A limpeza inclui o plano de serviço e está registada.",
       ],
