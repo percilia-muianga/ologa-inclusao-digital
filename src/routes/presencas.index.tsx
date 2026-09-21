@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -31,6 +32,8 @@ function PresencasPage() {
   const q = useQuery({ queryKey: ["turmas-presencas"], queryFn: () => carregar() });
 
   const turmas = q.data?.turmas ?? [];
+
+  if (q.isError) return <ErroPermissao erro={q.error} />;
 
   return (
     <PlataformaPagina

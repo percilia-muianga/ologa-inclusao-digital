@@ -1,5 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { sessaoObrigatoria, type ContextoAutenticado } from '@/lib/guardas'
+
+type EmitirCertificadoEntrada = z.infer<typeof emitirSchema>
 
 const admin = async () =>
   (await import('@/integrations/supabase/client.server')).supabaseAdmin
@@ -202,10 +205,29 @@ function gerarCodigo() {
   return crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase()
 }
 
+/**
+ * Emissão do certificado do módulo de literacia.
+ *
+ * Segurança: exige sessão real. A identidade do certificado vem do perfil
+ * lido no servidor — nunca do nome enviado pelo cliente. O percurso por token
+ * só é reutilizado quando o token pertence a um formando vinculado à conta
+ * autenticada. O quiz é sempre recorrigido no servidor.
+ */
 export const emitirCertificado = createServerFn({ method: 'POST' })
+  .middleware([sessaoObrigatoria])
   .inputValidator((i: unknown) => emitirSchema.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const s = await admin()
+
+    // identidade: sempre do servidor
+    const { data: perfilSessao } = await (context as unknown as ContextoAutenticado).supabase
+      .from('perfis')
+      .select('nome')
+      .eq('id', (context as unknown as ContextoAutenticado).userId)
+      .maybeSingle()
+    const nomeDoPerfil = (perfilSessao as { nome?: string } | null)?.nome?.trim()
+    if (!nomeDoPerfil) throw new Error('PERFIL_INCOMPLETO')
+    const perfilId = (context as unknown as ContextoAutenticado).userId
 
     // 1. validar que TODAS as lições do módulo estão na lista de concluídas
     const { data: licoesModulo, error: eL } = await s.from('licoes')
@@ -229,32 +251,25 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       throw new Error('QUIZ_INSUFICIENTE')
     }
 
-    // 3. resolver formando: reutilizar por token, ou criar novo
+    // 3. resolver o formando SEMPRE pelo vínculo com a conta autenticada
     let formandoId: string
     let tokenPessoal: string
 
+    const { data: vinculado } = await s.from('formandos')
+      .select('id, token_pessoal').eq('perfil_id', perfilId).maybeSingle()
+
     if (data.tokenPessoal) {
       const { data: f, error } = await s.from('formandos')
-        .select('id, token_pessoal').eq('token_pessoal', data.tokenPessoal).single()
+        .select('id, token_pessoal, perfil_id').eq('token_pessoal', data.tokenPessoal).single()
       if (error || !f) throw new Error('TOKEN_INVALIDO')
+      // Um token conhecido não é prova de titularidade.
+      if (f.perfil_id !== perfilId) throw new Error('TOKEN_NAO_VINCULADO')
       formandoId = f.id
       tokenPessoal = f.token_pessoal
-
-      // se já existe certificado para este módulo, devolve-o (não cria outro)
-      const { data: cert } = await s.from('certificados')
-        .select('codigo_verificacao, emitido_em')
-        .eq('formando_id', formandoId).eq('modulo_id', data.moduloId).maybeSingle()
-      if (cert) {
-        return {
-          tokenPessoal,
-          codigoVerificacao: cert.codigo_verificacao,
-          emitidoEm: cert.emitido_em,
-          jaExistia: true,
-        }
-      }
+    } else if (vinculado) {
+      formandoId = vinculado.id
+      tokenPessoal = vinculado.token_pessoal
     } else {
-      if (!data.nome) throw new Error('NOME_OBRIGATORIO')
-
       // Resolver código escrito → instituicao_id. Erro genérico se inválido:
       // não revela se a instituição existe.
       let instituicaoIdResolvido: string | null = null
@@ -267,7 +282,8 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       }
 
       const { data: novo, error } = await s.from('formandos').insert({
-        nome: data.nome,
+        nome: nomeDoPerfil,
+        perfil_id: perfilId,
         instituicao_id: instituicaoIdResolvido,
         genero: data.genero ?? null,
         nivel_partida: data.nivelPartida ?? null,
@@ -279,6 +295,21 @@ export const emitirCertificado = createServerFn({ method: 'POST' })
       if (error) throw error
       formandoId = novo.id
       tokenPessoal = novo.token_pessoal
+    }
+
+    // certificado já emitido para este módulo: devolve-o, não cria outro
+    {
+      const { data: cert } = await s.from('certificados')
+        .select('codigo_verificacao, emitido_em')
+        .eq('formando_id', formandoId).eq('modulo_id', data.moduloId).maybeSingle()
+      if (cert) {
+        return {
+          tokenPessoal,
+          codigoVerificacao: cert.codigo_verificacao,
+          emitidoEm: cert.emitido_em,
+          jaExistia: true,
+        }
+      }
     }
 
     // 4. gravar progresso (idempotente: ignorar duplicados no upsert)

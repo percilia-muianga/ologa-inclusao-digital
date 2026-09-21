@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
 
 export type WorkshopResumo = {
   id: string;
@@ -27,7 +28,10 @@ export function rotuloEstadoWorkshop(valor: string): string {
 }
 
 /** Listas de referência do Termo de Referência: locais de formação e distritos. */
-export const listarReferenciasTdr = createServerFn({ method: "GET" }).handler(async () => {
+export const listarReferenciasTdr = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [locaisRes, distritosRes, configRes] = await Promise.all([
     supabaseAdmin.from("locais_formacao").select("ordem,provincia,local").order("ordem"),
@@ -61,7 +65,10 @@ export const listarReferenciasTdr = createServerFn({ method: "GET" }).handler(as
 });
 
 /** Lista de workshops, com somatórios por província e por tipo. */
-export const listarWorkshops = createServerFn({ method: "GET" }).handler(async () => {
+export const listarWorkshops = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [wsRes, partRes, configRes, locaisRes] = await Promise.all([
     supabaseAdmin
@@ -106,8 +113,10 @@ export const listarWorkshops = createServerFn({ method: "GET" }).handler(async (
 
 /** Ficha de um workshop com os participantes registados. */
 export const obterWorkshop = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
   .validator((id: string) => id)
-  .handler(async ({ data: id }) => {
+  .handler(async ({ data: id, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "ler");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const wsRes = await supabaseAdmin.from("workshops").select("*").eq("id", id).maybeSingle();
     if (wsRes.error) throw wsRes.error;
@@ -158,6 +167,7 @@ export const obterWorkshop = createServerFn({ method: "GET" })
   });
 
 export const criarWorkshop = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       tipo: "provincial" | "distrital";
@@ -170,7 +180,8 @@ export const criarWorkshop = createServerFn({ method: "POST" })
       previstos: number;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: criado, error } = await supabaseAdmin
       .from("workshops")
@@ -197,6 +208,7 @@ export const criarWorkshop = createServerFn({ method: "POST" })
  * provável, para revisão manual.
  */
 export const registarParticipantes = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       workshopId: string;
@@ -211,7 +223,8 @@ export const registarParticipantes = createServerFn({ method: "POST" })
       }>;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const linhas = data.participantes
       .filter((p) => p.nome.trim().length > 0)
@@ -250,6 +263,7 @@ export const registarParticipantes = createServerFn({ method: "POST" })
 
 /** Pré-teste e pós-teste de um workshop ou de uma turma. */
 export const registarAvaliacaoConhecimento = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       momento: "pre" | "pos";
@@ -261,7 +275,8 @@ export const registarAvaliacaoConhecimento = createServerFn({ method: "POST" })
       total: number;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("avaliacoes_conhecimento").insert({
       momento: data.momento,
@@ -278,6 +293,7 @@ export const registarAvaliacaoConhecimento = createServerFn({ method: "POST" })
 
 /** Questionário de satisfação no final de cada acção. */
 export const registarSatisfacao = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       workshopId?: string | null;
@@ -287,7 +303,8 @@ export const registarSatisfacao = createServerFn({ method: "POST" })
       comentario?: string | null;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("questionarios_satisfacao").insert({
       workshop_id: data.workshopId ?? null,
@@ -302,6 +319,7 @@ export const registarSatisfacao = createServerFn({ method: "POST" })
 
 /** Inquérito de eficácia três meses depois da formação (recolha pela ATDI). */
 export const registarInqueritoEficacia = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       workshopId?: string | null;
@@ -314,7 +332,8 @@ export const registarInqueritoEficacia = createServerFn({ method: "POST" })
       registadoPor?: string | null;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("inqueritos_eficacia").insert({
       workshop_id: data.workshopId ?? null,
@@ -332,6 +351,7 @@ export const registarInqueritoEficacia = createServerFn({ method: "POST" })
 
 /** Actualiza um workshop. A alteração fica no registo de auditoria. */
 export const actualizarWorkshop = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       id: string;
@@ -347,7 +367,8 @@ export const actualizarWorkshop = createServerFn({ method: "POST" })
       observacoes: string | null;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("workshops")

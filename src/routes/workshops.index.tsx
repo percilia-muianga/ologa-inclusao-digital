@@ -1,9 +1,12 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { listarWorkshops, rotuloEstadoWorkshop } from "@/lib/workshops.functions";
 
 export const Route = createFileRoute("/workshops/")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarWorkshops(),
   head: () => ({
     meta: [

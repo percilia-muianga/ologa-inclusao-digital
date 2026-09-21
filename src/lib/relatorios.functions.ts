@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
 
 export type RelatorioMensal = {
   id: string;
@@ -16,20 +17,25 @@ export type RelatorioMensal = {
   barreiras_resolvidas: string | null;
 };
 
-export const listarRelatoriosMensais = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
-    .from("relatorios_mensais")
-    .select("*")
-    .order("ano", { ascending: false })
-    .order("mes", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as RelatorioMensal[];
-});
+export const listarRelatoriosMensais = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "ler");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("relatorios_mensais")
+      .select("*")
+      .order("ano", { ascending: false })
+      .order("mes", { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as RelatorioMensal[];
+  });
 
 export const criarRelatorioMensal = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: Omit<RelatorioMensal, "id">) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("relatorios_mensais").insert(data);
     if (error) throw error;

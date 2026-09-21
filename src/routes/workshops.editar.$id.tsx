@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -10,6 +11,8 @@ import {
 } from "@/lib/workshops.functions";
 
 export const Route = createFileRoute("/workshops/editar/$id")({
+  ssr: false,
+  errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: async ({ params }) => {
     const [dados, referencias] = await Promise.all([
       obterWorkshop({ data: params.id }),

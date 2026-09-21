@@ -1,3 +1,4 @@
+import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -47,6 +48,8 @@ function AssiduidadeTurmaPage() {
     queryKey: ["assiduidade-turma", codigo],
     queryFn: () => carregar({ data: codigo }),
   });
+
+  if (q.isError) return <ErroPermissao erro={q.error} />;
 
   if (q.isLoading)
     return (

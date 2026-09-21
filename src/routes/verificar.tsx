@@ -25,8 +25,8 @@ type Detalhes = {
   turma: string | null;
   data_inicio: string | null;
   data_fim: string | null;
-  nota_final_pct: string;
-  assiduidade_pct: string;
+  nota_final_pct: string | null;
+  assiduidade_pct: string | null;
   base_assiduidade: string;
 
 } | null;
@@ -146,21 +146,6 @@ function VerificarPage() {
                       <dd className="text-ink">
                         {estado.certificado.detalhes.data_inicio ?? "—"} a{" "}
                         {estado.certificado.detalhes.data_fim ?? "—"}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold text-ink/70">Nota final</dt>
-                      <dd className="text-ink">
-                        {estado.certificado.detalhes.nota_final_pct}%
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold text-ink/70">Assiduidade</dt>
-                      <dd className="text-ink">
-                        {estado.certificado.detalhes.assiduidade_pct}%{" "}
-                        {estado.certificado.detalhes.base_assiduidade === "ajustada"
-                          ? "(assiduidade ajustada: sessões presentes sobre sessões realizadas menos as justificadas)"
-                          : "(assiduidade estrita: sessões presentes sobre sessões realizadas)"}
                       </dd>
                     </div>
 

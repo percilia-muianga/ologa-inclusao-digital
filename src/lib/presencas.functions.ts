@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
 import {
   calcularAssiduidade,
   marcacaoEfectiva,
@@ -51,7 +52,10 @@ function paraCalculo(
 }
 
 /** Turmas com sessões, para o formador escolher onde vai marcar presenças. */
-export const listarTurmasComSessoes = createServerFn({ method: "GET" }).handler(async () => {
+export const listarTurmasComSessoes = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const s = await admin();
   const [turmasRes, sessoesRes, inscricoesRes, presencasRes, cursosRes, configRes] =
     await Promise.all([
@@ -117,8 +121,10 @@ export const listarTurmasComSessoes = createServerFn({ method: "GET" }).handler(
 
 /** Assiduidade de uma turma, formando a formando, com alerta de risco. */
 export const assiduidadeDaTurma = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
   .validator((codigo: string) => codigo)
-  .handler(async ({ data: codigo }) => {
+  .handler(async ({ data: codigo, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "ler");
     const s = await admin();
     const turmaRes = await s
       .from("turmas")
@@ -185,6 +191,7 @@ export const assiduidadeDaTurma = createServerFn({ method: "GET" })
  * escrito. A alteração fica no registo de auditoria (gatilho da tabela).
  */
 export const definirEstadoSessao = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       sessaoId: string;
@@ -193,7 +200,8 @@ export const definirEstadoSessao = createServerFn({ method: "POST" })
       porNome: string | null;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const exigeMotivo = data.estado === "cancelada" || data.estado === "adiada";
     if (exigeMotivo && (data.motivo ?? "").trim().length < 5)
       return {
@@ -217,8 +225,10 @@ export const definirEstadoSessao = createServerFn({ method: "POST" })
 
 /** Folha de uma sessão: formandos da turma e a marcação que já existe. */
 export const obterFolhaSessao = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
   .validator((sessaoId: string) => sessaoId)
-  .handler(async ({ data: sessaoId }) => {
+  .handler(async ({ data: sessaoId, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "ler");
     const s = await admin();
     const sessaoRes = await s.from("turma_sessoes").select("*").eq("id", sessaoId).maybeSingle();
     if (sessaoRes.error) throw sessaoRes.error;
@@ -297,6 +307,7 @@ export type MarcacaoEnvio = {
  * assinaladas para revisão manual (gatilho na base de dados).
  */
 export const registarPresencas = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       sessaoId: string;
@@ -306,7 +317,8 @@ export const registarPresencas = createServerFn({ method: "POST" })
       marcacoes: MarcacaoEnvio[];
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const sessaoRes = await s
       .from("turma_sessoes")
@@ -349,6 +361,7 @@ export const registarPresencas = createServerFn({ method: "POST" })
  * quando, para o dado não passar por automático.
  */
 export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       sessaoId: string;
@@ -361,7 +374,8 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
       }>;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const sessaoRes = await s
       .from("turma_sessoes")
@@ -425,6 +439,7 @@ export const calcularPresencasVirtuais = createServerFn({ method: "POST" })
  * acrescentada por cima.
  */
 export const corrigirPresenca = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       sessaoId: string;
@@ -435,7 +450,8 @@ export const corrigirPresenca = createServerFn({ method: "POST" })
       justificacao: string;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     if (data.justificacao.trim().length < 5)
       return { ok: false as const, motivo: "A correcção exige uma justificação escrita." };
     if (data.estado === "justificado" && (data.motivo ?? "").trim().length === 0)
@@ -468,6 +484,7 @@ export const corrigirPresenca = createServerFn({ method: "POST" })
  * para a certificação, por curso.
  */
 export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator(
     (dados: {
       cursoId: string;
@@ -476,7 +493,8 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
       baseAssiduidade?: BaseAssiduidade;
     }) => dados,
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const s = await admin();
     const { error } = await s.from("presenca_configuracoes").upsert(
       {
@@ -493,7 +511,10 @@ export const guardarConfigPresencaVirtual = createServerFn({ method: "POST" })
   });
 
 /** Base de assiduidade escolhida para cada curso, para o ecrã de configuração. */
-export const listarBasesAssiduidade = createServerFn({ method: "GET" }).handler(async () => {
+export const listarBasesAssiduidade = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const s = await admin();
   const [cursosRes, configRes] = await Promise.all([
     s.from("cursos").select("id,titulo,ordem").order("ordem"),

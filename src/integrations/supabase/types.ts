@@ -675,6 +675,7 @@ export type Database = {
           instituicao_id: string | null
           nivel_partida: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          perfil_id: string | null
           precisa_apoio: boolean | null
           token_pessoal: string
         }
@@ -690,6 +691,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome: string
+          perfil_id?: string | null
           precisa_apoio?: boolean | null
           token_pessoal?: string
         }
@@ -705,6 +707,7 @@ export type Database = {
           instituicao_id?: string | null
           nivel_partida?: Database["public"]["Enums"]["nivel_partida"] | null
           nome?: string
+          perfil_id?: string | null
           precisa_apoio?: boolean | null
           token_pessoal?: string
         }
@@ -714,6 +717,13 @@ export type Database = {
             columns: ["instituicao_id"]
             isOneToOne: false
             referencedRelation: "instituicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "formandos_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
             referencedColumns: ["id"]
           },
         ]
@@ -1509,6 +1519,7 @@ export type Database = {
         Row: {
           accao: string
           campos_sensiveis_alterados: string[] | null
+          contexto_actor: string | null
           endereco_ip: string | null
           entidade: string
           id: string
@@ -1521,6 +1532,7 @@ export type Database = {
         Insert: {
           accao: string
           campos_sensiveis_alterados?: string[] | null
+          contexto_actor?: string | null
           endereco_ip?: string | null
           entidade: string
           id?: string
@@ -1533,6 +1545,7 @@ export type Database = {
         Update: {
           accao?: string
           campos_sensiveis_alterados?: string[] | null
+          contexto_actor?: string | null
           endereco_ip?: string | null
           entidade?: string
           id?: string
@@ -1992,6 +2005,8 @@ export type Database = {
           tabela: string
         }[]
       }
+      pode_gerir_programa: { Args: { _uid: string }; Returns: boolean }
+      pode_ler_gestao: { Args: { _uid: string }; Returns: boolean }
       registar_acesso_sensivel: {
         Args: {
           _campos: string[]
