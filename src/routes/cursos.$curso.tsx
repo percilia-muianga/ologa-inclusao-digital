@@ -92,8 +92,33 @@ function CursoPage() {
             <ol className="mt-5 space-y-4">
               {modulo.licoes.map((licao) => (
                 <li key={licao.id} className="rounded-md border border-line p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3><span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span></div>
-                  {licao.estado_conteudo === "disponivel" && licao.conteudo_elearning ? <div className="prose mt-4 max-w-none text-navy-2" dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning }} /> : <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>}
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3>
+                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-navy-2">
+                    {licao.duracao ?? "Duração por definir"}
+                    {licao.proposta_por_validar ? " · Proposta pedagógica por validar" : ""}
+                  </p>
+                  {licao.estado_conteudo === "disponivel" && licao.conteudo_elearning ? (
+                    <>
+                      <Link
+                        to="/formacao/$modulo/licao/$licao"
+                        params={{ modulo: modulo.id, licao: licao.id }}
+                        className="mt-3 inline-flex min-h-11 items-center font-semibold text-navy underline"
+                      >
+                        Abrir a lição, com leitura em voz alta e navegação entre lições
+                      </Link>
+                      <details className="mt-3">
+                        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-navy">
+                          Ler aqui o conteúdo desta lição
+                        </summary>
+                        <div className="prose mt-4 max-w-none text-navy-2" dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning }} />
+                      </details>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>
+                  )}
                 </li>
               ))}
             </ol>
