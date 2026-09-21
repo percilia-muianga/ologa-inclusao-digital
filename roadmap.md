@@ -47,7 +47,16 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Plano de produção soma lições e perguntas de pré e pós-teste em falta
 
 ## Fase 4 — Presenças (offline e telefone)
-## Fase 5 — Avaliação e certificação individual
+## Fase 5 — Avaliação e certificação individual (estrutura concluída)
+- [x] Banco de questões: cinco tipologias, dificuldade, curso, módulo, resposta, explicação, estado e autor
+- [x] Ecrã de gestão por curso e módulo, com filtros e desactivação (questões usadas nunca eliminadas)
+- [x] Indicador por curso: activas, necessárias e rácio do triplo exigido pelo TdR, a vermelho quando falha
+- [x] Exame gerado no início, por módulo e dificuldade, com ordem aleatória e composição guardada para auditoria
+- [x] Tempo limite legível por leitor de ecrã, gravação automática e retoma segura
+- [x] Certificação com as duas condições em separado, segunda tentativa e prazo de 30 dias
+- [x] Certificado de curso verificável no mesmo ecrã /verificar
+- [ ] Assiduidade real: depende da marcação de presenças (fase 4), ainda por construir
+- [ ] Conteúdo das questões: a fornecer pela Ologa
 ## Fase 6 — Painel Nacional e dados de demonstração
 ## Fase 7 — Conformidade e selector de papel
 ## Fase 8 — Aplicar os acessos (no fim)

@@ -31,6 +31,7 @@ import { Route as WorkshopsIndexRouteImport } from './routes/workshops.index'
 import { Route as TurmasIndexRouteImport } from './routes/turmas.index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
+import { Route as AvaliacaoIndexRouteImport } from './routes/avaliacao.index'
 import { Route as WorkshopsNovoRouteImport } from './routes/workshops.novo'
 import { Route as WorkshopsIdRouteImport } from './routes/workshops.$id'
 import { Route as TurmasNovaRouteImport } from './routes/turmas.nova'
@@ -38,9 +39,12 @@ import { Route as TurmasCodigoRouteImport } from './routes/turmas.$codigo'
 import { Route as IndicadoresTokenRouteImport } from './routes/indicadores.$token'
 import { Route as FormacaoModuloRouteImport } from './routes/formacao.$modulo'
 import { Route as CursosCursoRouteImport } from './routes/cursos.$curso'
+import { Route as AvaliacaoExameRouteImport } from './routes/avaliacao.exame'
+import { Route as AvaliacaoBancoRouteImport } from './routes/avaliacao.banco'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as GestaoInstituicoesIndexRouteImport } from './routes/gestao.instituicoes.index'
 import { Route as FormacaoModuloIndexRouteImport } from './routes/formacao.$modulo.index'
+import { Route as AvaliacaoExameIndexRouteImport } from './routes/avaliacao.exame.index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
 import { Route as WorkshopsEditarIdRouteImport } from './routes/workshops.editar.$id'
 import { Route as TurmasEditarCodigoRouteImport } from './routes/turmas.editar.$codigo'
@@ -49,6 +53,7 @@ import { Route as GestaoInstituicoesIdRouteImport } from './routes/gestao.instit
 import { Route as FormacaoModuloQuizRouteImport } from './routes/formacao.$modulo.quiz'
 import { Route as FormacaoModuloDiagnosticoRouteImport } from './routes/formacao.$modulo.diagnostico'
 import { Route as FormacaoModuloCertificadoRouteImport } from './routes/formacao.$modulo.certificado'
+import { Route as AvaliacaoExameTentativaRouteImport } from './routes/avaliacao.exame.$tentativa'
 import { Route as AuthenticatedPainelUtilizadoresRouteImport } from './routes/_authenticated/painel.utilizadores'
 import { Route as AuthenticatedPainelPermissoesRouteImport } from './routes/_authenticated/painel.permissoes'
 import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
@@ -165,6 +170,11 @@ const FormacaoIndexRoute = FormacaoIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FormacaoRoute,
 } as any)
+const AvaliacaoIndexRoute = AvaliacaoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
 const WorkshopsNovoRoute = WorkshopsNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
@@ -200,6 +210,16 @@ const CursosCursoRoute = CursosCursoRouteImport.update({
   path: '/$curso',
   getParentRoute: () => CursosRoute,
 } as any)
+const AvaliacaoExameRoute = AvaliacaoExameRouteImport.update({
+  id: '/exame',
+  path: '/exame',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
+const AvaliacaoBancoRoute = AvaliacaoBancoRouteImport.update({
+  id: '/banco',
+  path: '/banco',
+  getParentRoute: () => AvaliacaoRoute,
+} as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -214,6 +234,11 @@ const FormacaoModuloIndexRoute = FormacaoModuloIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FormacaoModuloRoute,
+} as any)
+const AvaliacaoExameIndexRoute = AvaliacaoExameIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AvaliacaoExameRoute,
 } as any)
 const AuthenticatedPainelIndexRoute =
   AuthenticatedPainelIndexRouteImport.update({
@@ -258,6 +283,11 @@ const FormacaoModuloCertificadoRoute =
     path: '/certificado',
     getParentRoute: () => FormacaoModuloRoute,
   } as any)
+const AvaliacaoExameTentativaRoute = AvaliacaoExameTentativaRouteImport.update({
+  id: '/$tentativa',
+  path: '/$tentativa',
+  getParentRoute: () => AvaliacaoExameRoute,
+} as any)
 const AuthenticatedPainelUtilizadoresRoute =
   AuthenticatedPainelUtilizadoresRouteImport.update({
     id: '/utilizadores',
@@ -297,7 +327,7 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/avaliacao': typeof AvaliacaoRoute
+  '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -314,6 +344,8 @@ export interface FileRoutesByFullPath {
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
   '/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
+  '/avaliacao/exame': typeof AvaliacaoExameRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
@@ -321,6 +353,7 @@ export interface FileRoutesByFullPath {
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/turmas/': typeof TurmasIndexRoute
@@ -329,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
+  '/avaliacao/exame/$tentativa': typeof AvaliacaoExameTentativaRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
@@ -337,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
   '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
+  '/avaliacao/exame/': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
@@ -344,7 +379,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/avaliacao': typeof AvaliacaoRoute
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -356,12 +390,14 @@ export interface FileRoutesByTo {
   '/presencas': typeof PresencasRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/verificar': typeof VerificarRoute
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
   '/cursos/$curso': typeof CursosCursoRoute
   '/indicadores/$token': typeof IndicadoresTokenRoute
   '/turmas/$codigo': typeof TurmasCodigoRoute
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao': typeof AvaliacaoIndexRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
   '/turmas': typeof TurmasIndexRoute
@@ -370,6 +406,7 @@ export interface FileRoutesByTo {
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
+  '/avaliacao/exame/$tentativa': typeof AvaliacaoExameTentativaRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
@@ -378,6 +415,7 @@ export interface FileRoutesByTo {
   '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
   '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
+  '/avaliacao/exame': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
@@ -387,7 +425,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/avaliacao': typeof AvaliacaoRoute
+  '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -404,6 +442,8 @@ export interface FileRoutesById {
   '/verificar': typeof VerificarRoute
   '/workshops': typeof WorkshopsRouteWithChildren
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
+  '/avaliacao/banco': typeof AvaliacaoBancoRoute
+  '/avaliacao/exame': typeof AvaliacaoExameRouteWithChildren
   '/cursos/$curso': typeof CursosCursoRoute
   '/formacao/$modulo': typeof FormacaoModuloRouteWithChildren
   '/indicadores/$token': typeof IndicadoresTokenRoute
@@ -411,6 +451,7 @@ export interface FileRoutesById {
   '/turmas/nova': typeof TurmasNovaRoute
   '/workshops/$id': typeof WorkshopsIdRoute
   '/workshops/novo': typeof WorkshopsNovoRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
   '/turmas/': typeof TurmasIndexRoute
@@ -419,6 +460,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/_authenticated/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
+  '/avaliacao/exame/$tentativa': typeof AvaliacaoExameTentativaRoute
   '/formacao/$modulo/certificado': typeof FormacaoModuloCertificadoRoute
   '/formacao/$modulo/diagnostico': typeof FormacaoModuloDiagnosticoRoute
   '/formacao/$modulo/quiz': typeof FormacaoModuloQuizRoute
@@ -427,6 +469,7 @@ export interface FileRoutesById {
   '/turmas/editar/$codigo': typeof TurmasEditarCodigoRoute
   '/workshops/editar/$id': typeof WorkshopsEditarIdRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
+  '/avaliacao/exame/': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
@@ -453,6 +496,8 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/workshops'
     | '/painel'
+    | '/avaliacao/banco'
+    | '/avaliacao/exame'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
@@ -460,6 +505,7 @@ export interface FileRouteTypes {
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
     | '/turmas/'
@@ -468,6 +514,7 @@ export interface FileRouteTypes {
     | '/painel/equipa'
     | '/painel/permissoes'
     | '/painel/utilizadores'
+    | '/avaliacao/exame/$tentativa'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
@@ -476,6 +523,7 @@ export interface FileRouteTypes {
     | '/turmas/editar/$codigo'
     | '/workshops/editar/$id'
     | '/painel/'
+    | '/avaliacao/exame/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
     | '/formacao/$modulo/licao/$licao'
@@ -483,7 +531,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/avaliacao'
     | '/certificados'
     | '/conformidade'
     | '/criar-conta'
@@ -495,12 +542,14 @@ export interface FileRouteTypes {
     | '/presencas'
     | '/relatorios-mensais'
     | '/verificar'
+    | '/avaliacao/banco'
     | '/cursos/$curso'
     | '/indicadores/$token'
     | '/turmas/$codigo'
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao'
     | '/formacao'
     | '/ologa'
     | '/turmas'
@@ -509,6 +558,7 @@ export interface FileRouteTypes {
     | '/painel/equipa'
     | '/painel/permissoes'
     | '/painel/utilizadores'
+    | '/avaliacao/exame/$tentativa'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
@@ -517,6 +567,7 @@ export interface FileRouteTypes {
     | '/turmas/editar/$codigo'
     | '/workshops/editar/$id'
     | '/painel'
+    | '/avaliacao/exame'
     | '/formacao/$modulo'
     | '/gestao/instituicoes'
     | '/formacao/$modulo/licao/$licao'
@@ -542,6 +593,8 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/workshops'
     | '/_authenticated/painel'
+    | '/avaliacao/banco'
+    | '/avaliacao/exame'
     | '/cursos/$curso'
     | '/formacao/$modulo'
     | '/indicadores/$token'
@@ -549,6 +602,7 @@ export interface FileRouteTypes {
     | '/turmas/nova'
     | '/workshops/$id'
     | '/workshops/novo'
+    | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
     | '/turmas/'
@@ -557,6 +611,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/equipa'
     | '/_authenticated/painel/permissoes'
     | '/_authenticated/painel/utilizadores'
+    | '/avaliacao/exame/$tentativa'
     | '/formacao/$modulo/certificado'
     | '/formacao/$modulo/diagnostico'
     | '/formacao/$modulo/quiz'
@@ -565,6 +620,7 @@ export interface FileRouteTypes {
     | '/turmas/editar/$codigo'
     | '/workshops/editar/$id'
     | '/_authenticated/painel/'
+    | '/avaliacao/exame/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
     | '/formacao/$modulo/licao/$licao'
@@ -574,7 +630,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AvaliacaoRoute: typeof AvaliacaoRoute
+  AvaliacaoRoute: typeof AvaliacaoRouteWithChildren
   CertificadosRoute: typeof CertificadosRoute
   ConformidadeRoute: typeof ConformidadeRoute
   CriarContaRoute: typeof CriarContaRoute
@@ -750,6 +806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormacaoIndexRouteImport
       parentRoute: typeof FormacaoRoute
     }
+    '/avaliacao/': {
+      id: '/avaliacao/'
+      path: '/'
+      fullPath: '/avaliacao/'
+      preLoaderRoute: typeof AvaliacaoIndexRouteImport
+      parentRoute: typeof AvaliacaoRoute
+    }
     '/workshops/novo': {
       id: '/workshops/novo'
       path: '/novo'
@@ -799,6 +862,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CursosCursoRouteImport
       parentRoute: typeof CursosRoute
     }
+    '/avaliacao/exame': {
+      id: '/avaliacao/exame'
+      path: '/exame'
+      fullPath: '/avaliacao/exame'
+      preLoaderRoute: typeof AvaliacaoExameRouteImport
+      parentRoute: typeof AvaliacaoRoute
+    }
+    '/avaliacao/banco': {
+      id: '/avaliacao/banco'
+      path: '/banco'
+      fullPath: '/avaliacao/banco'
+      preLoaderRoute: typeof AvaliacaoBancoRouteImport
+      parentRoute: typeof AvaliacaoRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -819,6 +896,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/formacao/$modulo/'
       preLoaderRoute: typeof FormacaoModuloIndexRouteImport
       parentRoute: typeof FormacaoModuloRoute
+    }
+    '/avaliacao/exame/': {
+      id: '/avaliacao/exame/'
+      path: '/'
+      fullPath: '/avaliacao/exame/'
+      preLoaderRoute: typeof AvaliacaoExameIndexRouteImport
+      parentRoute: typeof AvaliacaoExameRoute
     }
     '/_authenticated/painel/': {
       id: '/_authenticated/painel/'
@@ -875,6 +959,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/formacao/$modulo/certificado'
       preLoaderRoute: typeof FormacaoModuloCertificadoRouteImport
       parentRoute: typeof FormacaoModuloRoute
+    }
+    '/avaliacao/exame/$tentativa': {
+      id: '/avaliacao/exame/$tentativa'
+      path: '/$tentativa'
+      fullPath: '/avaliacao/exame/$tentativa'
+      preLoaderRoute: typeof AvaliacaoExameTentativaRouteImport
+      parentRoute: typeof AvaliacaoExameRoute
     }
     '/_authenticated/painel/utilizadores': {
       id: '/_authenticated/painel/utilizadores'
@@ -950,6 +1041,36 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface AvaliacaoExameRouteChildren {
+  AvaliacaoExameTentativaRoute: typeof AvaliacaoExameTentativaRoute
+  AvaliacaoExameIndexRoute: typeof AvaliacaoExameIndexRoute
+}
+
+const AvaliacaoExameRouteChildren: AvaliacaoExameRouteChildren = {
+  AvaliacaoExameTentativaRoute: AvaliacaoExameTentativaRoute,
+  AvaliacaoExameIndexRoute: AvaliacaoExameIndexRoute,
+}
+
+const AvaliacaoExameRouteWithChildren = AvaliacaoExameRoute._addFileChildren(
+  AvaliacaoExameRouteChildren,
+)
+
+interface AvaliacaoRouteChildren {
+  AvaliacaoBancoRoute: typeof AvaliacaoBancoRoute
+  AvaliacaoExameRoute: typeof AvaliacaoExameRouteWithChildren
+  AvaliacaoIndexRoute: typeof AvaliacaoIndexRoute
+}
+
+const AvaliacaoRouteChildren: AvaliacaoRouteChildren = {
+  AvaliacaoBancoRoute: AvaliacaoBancoRoute,
+  AvaliacaoExameRoute: AvaliacaoExameRouteWithChildren,
+  AvaliacaoIndexRoute: AvaliacaoIndexRoute,
+}
+
+const AvaliacaoRouteWithChildren = AvaliacaoRoute._addFileChildren(
+  AvaliacaoRouteChildren,
+)
 
 interface CursosRouteChildren {
   CursosCursoRoute: typeof CursosCursoRoute
@@ -1059,7 +1180,7 @@ const WorkshopsRouteWithChildren = WorkshopsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AvaliacaoRoute: AvaliacaoRoute,
+  AvaliacaoRoute: AvaliacaoRouteWithChildren,
   CertificadosRoute: CertificadosRoute,
   ConformidadeRoute: ConformidadeRoute,
   CriarContaRoute: CriarContaRoute,

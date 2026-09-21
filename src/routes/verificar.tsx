@@ -19,6 +19,16 @@ export const Route = createFileRoute("/verificar")({
   component: VerificarPage,
 });
 
+type Detalhes = {
+  carga_horaria: number;
+  provincia: string | null;
+  turma: string | null;
+  data_inicio: string | null;
+  data_fim: string | null;
+  nota_final_pct: string;
+  assiduidade_pct: string;
+} | null;
+
 type Estado =
   | { tipo: "idle" }
   | { tipo: "a_verificar" }
@@ -30,6 +40,7 @@ type Estado =
         modulo: string;
         instituicao: string;
         data: string;
+        detalhes: Detalhes;
       };
     };
 
@@ -99,12 +110,16 @@ function VerificarPage() {
                   <dd className="text-ink">{estado.certificado.nome_formando}</dd>
                 </div>
                 <div>
-                  <dt className="font-semibold text-ink/70">Módulo</dt>
+                  <dt className="font-semibold text-ink/70">
+                    {estado.certificado.detalhes ? "Curso" : "Módulo"}
+                  </dt>
                   <dd className="text-ink">{estado.certificado.modulo}</dd>
                 </div>
                 <div>
-                  <dt className="font-semibold text-ink/70">Instituição</dt>
-                  <dd className="text-ink">{estado.certificado.instituicao}</dd>
+                  <dt className="font-semibold text-ink/70">
+                    {estado.certificado.detalhes ? "Província" : "Instituição"}
+                  </dt>
+                  <dd className="text-ink">{estado.certificado.instituicao || "—"}</dd>
                 </div>
                 <div>
                   <dt className="font-semibold text-ink/70">Data de emissão</dt>
@@ -112,6 +127,39 @@ function VerificarPage() {
                     {new Date(estado.certificado.data).toLocaleDateString("pt-PT")}
                   </dd>
                 </div>
+                {estado.certificado.detalhes ? (
+                  <>
+                    <div>
+                      <dt className="font-semibold text-ink/70">Carga horária</dt>
+                      <dd className="text-ink">
+                        {estado.certificado.detalhes.carga_horaria} horas
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-ink/70">Turma</dt>
+                      <dd className="text-ink">{estado.certificado.detalhes.turma ?? "—"}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-ink/70">Datas da formação</dt>
+                      <dd className="text-ink">
+                        {estado.certificado.detalhes.data_inicio ?? "—"} a{" "}
+                        {estado.certificado.detalhes.data_fim ?? "—"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-ink/70">Nota final</dt>
+                      <dd className="text-ink">
+                        {estado.certificado.detalhes.nota_final_pct}%
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-ink/70">Assiduidade</dt>
+                      <dd className="text-ink">
+                        {estado.certificado.detalhes.assiduidade_pct}%
+                      </dd>
+                    </div>
+                  </>
+                ) : null}
               </dl>
             </div>
           )}
