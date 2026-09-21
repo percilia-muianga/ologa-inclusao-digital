@@ -106,12 +106,14 @@ function LicaoView() {
       </nav>
       <h2 className="mb-4 text-xl font-bold text-navy sm:text-2xl">{licao.titulo}</h2>
 
-      <ul className="selos-formato" aria-label="Formatos acessíveis assegurados nesta lição">
-        <li className="selo-formato"><span>Texto</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Leitura fácil</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Áudio</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Alto contraste</span><span className="check" aria-hidden="true">✓</span></li>
-        <li className="selo-formato"><span>Língua de Sinais Moçambicana</span><span className="check" aria-hidden="true">✓</span></li>
+      {/* Só é assinalado como disponível o formato que existe mesmo. */}
+      <ul className="selos-formato" aria-label="Formatos desta lição">
+        <li className="selo-formato"><span>Texto: disponível</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Síntese em leitura fácil: disponível</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Leitura em voz alta pelo navegador: disponível</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Alto contraste e navegação por teclado: disponíveis</span><span className="check" aria-hidden="true">✓</span></li>
+        <li className="selo-formato"><span>Vídeo e legendagem: por produzir</span></li>
+        <li className="selo-formato"><span>Língua de Sinais Moçambicana: por produzir</span></li>
       </ul>
 
       {temGuiao ? (

@@ -33,7 +33,8 @@ export const Route = createFileRoute("/cursos/$curso")({
 });
 
 function CursoPage() {
-  const { curso, modulos, totalPorFornecer } = Route.useLoaderData();
+  const { curso, modulos, totalPorFornecer, minutosAvaliacao, horasCurriculo, propostaPorValidar } =
+    Route.useLoaderData();
   const campos = [
     ["Objectivos", curso.objectivos],
     ["Público-alvo", curso.publico_alvo],
@@ -45,7 +46,26 @@ function CursoPage() {
       <Link to="/cursos" className="inline-flex min-h-11 items-center font-semibold text-navy underline">← Voltar aos seis cursos</Link>
       <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
         <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
+        {propostaPorValidar ? (
+          <p className="mt-2 text-navy-2">
+            <strong>Proposta pedagógica — por validar pela Ologa/ATDI.</strong> O conteúdo
+            das lições é um rascunho preparado pela equipa. Estar disponível nesta página
+            não significa estar aprovado. Todos os casos apresentados são fictícios e
+            servem apenas de exercício.
+          </p>
+        ) : null}
         <p className="mt-2 text-navy-2"><strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os títulos organizam o plano de produção; o conteúdo temático será fornecido pela equipa Ologa.</p>
+        <p className="mt-2 text-navy-2">
+          Carga oficial do curso: {curso.carga_horaria} horas. Soma do plano curricular:{" "}
+          {horasCurriculo} horas
+          {minutosAvaliacao > 0
+            ? `, das quais ${Math.round((minutosAvaliacao / 60) * 10) / 10} horas de avaliação e orientação fora dos módulos`
+            : ""}
+          .{" "}
+          {horasCurriculo === curso.carga_horaria
+            ? "As duas somas coincidem."
+            : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}
+        </p>
       </section>
       <section aria-labelledby="ficha-curso" className="mt-6">
         <h2 id="ficha-curso" className="text-xl font-extrabold text-navy">Ficha do curso</h2>
@@ -72,8 +92,33 @@ function CursoPage() {
             <ol className="mt-5 space-y-4">
               {modulo.licoes.map((licao) => (
                 <li key={licao.id} className="rounded-md border border-line p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3><span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span></div>
-                  {licao.estado_conteudo === "disponivel" && licao.conteudo_elearning ? <div className="prose mt-4 max-w-none text-navy-2" dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning }} /> : <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>}
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3>
+                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Conteúdo por fornecer"}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-navy-2">
+                    {licao.duracao ?? "Duração por definir"}
+                    {licao.proposta_por_validar ? " · Proposta pedagógica por validar" : ""}
+                  </p>
+                  {licao.estado_conteudo === "disponivel" && licao.conteudo_elearning ? (
+                    <>
+                      <Link
+                        to="/formacao/$modulo/licao/$licao"
+                        params={{ modulo: modulo.id, licao: licao.id }}
+                        className="mt-3 inline-flex min-h-11 items-center font-semibold text-navy underline"
+                      >
+                        Abrir a lição, com leitura em voz alta e navegação entre lições
+                      </Link>
+                      <details className="mt-3">
+                        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-navy">
+                          Ler aqui o conteúdo desta lição
+                        </summary>
+                        <div className="prose mt-4 max-w-none text-navy-2" dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning }} />
+                      </details>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-sm text-navy-2">A equipa Ologa fornecerá o conteúdo desta lição.</p>
+                  )}
                 </li>
               ))}
             </ol>

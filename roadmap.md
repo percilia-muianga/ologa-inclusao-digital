@@ -93,3 +93,28 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [ ] Questões reais do banco — por fornecer pela Ologa
 - [ ] Revisão pedagógica da distribuição curricular
 - [ ] Restantes recomendações de segurança fora de exames e presenças
+
+## A10 — Proposta pedagógica do curso Princípios da Transformação Digital
+
+Concluído (não publicado):
+
+- Plano de 24 h verificado por teste: 1320 min de módulos + 120 min de
+  avaliação e orientação. Novas colunas: `cursos.minutos_avaliacao_orientacao`,
+  `licoes.duracao_minutos`, `licoes.proposta_por_validar`.
+- Conteúdo original das 12 lições (objectivos, explicação, exemplo fictício,
+  actividade com tempo e produto, síntese em leitura fácil, verificação
+  formativa e guião do formador). Identificadores preservados.
+- Ficha do curso preenchida: objectivos, público-alvo, pré-requisitos e materiais.
+- Banco: 60 questões de exame final + 10 de pré/pós-teste, **inactivas**.
+  Nova coluna `banco_questoes.instrumento` separa os dois instrumentos;
+  `banco_questoes.objectivo_associado` liga cada questão a um objectivo.
+- Semente idempotente em `scripts/seed-transformacao-digital.ts`; gabaritos em
+  `scripts/conteudo/`, fora de `src/`.
+- Documentos: `docs/plano-curricular-transformacao-digital.md` e actualização
+  de `docs/matriz-tdr.md`.
+- Testes: 25 no total (11 novos).
+
+Pendente: validação pedagógica pela Ologa/ATDI (as questões ficam inactivas até
+lá); esclarecimento da ATDI sobre as divergências 16/20 h (IA) e 120/80 h
+(Redes); revisão de acessibilidade pela REMOTELINE; vídeo, legendagem e Língua
+de Sinais Moçambicana por produzir.
