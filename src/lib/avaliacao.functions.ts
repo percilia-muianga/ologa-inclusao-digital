@@ -177,6 +177,8 @@ export const listarQuestoes = createServerFn({ method: "GET" })
         tipologia: tipologiaEnum.nullable().optional(),
         dificuldade: dificuldadeEnum.nullable().optional(),
         estado: z.enum(["todas", "activas", "inactivas"]).default("todas"),
+        // Instrumentos distintos: exame final certificador e pré/pós-teste.
+        instrumento: z.enum(["exame_final", "pre_pos_teste"]).default("exame_final"),
       })
       .parse(i),
   )
@@ -185,8 +187,9 @@ export const listarQuestoes = createServerFn({ method: "GET" })
     let q = s
       .from("banco_questoes")
       .select(
-        "id,curso_id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,activa,autor_nome,criado_em",
+        "id,curso_id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,activa,autor_nome,criado_em,instrumento,objectivo_associado",
       )
+      .eq("instrumento", data.instrumento)
       .order("criado_em", { ascending: false });
     if (data.cursoId) q = q.eq("curso_id", data.cursoId);
     if (data.moduloId) q = q.eq("modulo_id", data.moduloId);
