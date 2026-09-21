@@ -277,7 +277,7 @@ export const FICHA_CURSO = {
   materiais:
     "Materiais e condições propostos, por validar: um computador por pessoa formanda como recomendação e, quando não for possível, no máximo duas pessoas por computador, alternando quem executa; ligação à internet para os laboratórios dos módulos 1 e 2; guiões do formador e conteúdos de cada lição disponíveis na plataforma; fichas de trabalho em papel para os exercícios de análise do módulo 3, que não exigem computador; e contas institucionais de formação com permissões limitadas e limites de consumo definidos pelo formador antes da sessão. Não se usam dados reais de pessoas, não se escrevem credenciais no material e nada é adquirido durante as aulas.",
   nota:
-    "A carga de 30 horas e a modalidade presencial são exigência da tabela da secção 14 do Termo de Referência. A distribuição por módulos e por lições é proposta da equipa e está por validar pela Ologa/ATDI.",
+    "A carga de 30 horas e a modalidade presencial são exigência da tabela da secção 14 do Termo de Referência. A distribuição por módulos e por lições é proposta da equipa e está por validar pela Ologa/ATDI. Banco de avaliação: preparado em rascunho — 60 questões para um exame proposto de 20 e 10 questões de diagnóstico e pós-teste, todas INACTIVAS e por validar pela Ologa/ATDI. O exame deste curso não está activo e não emite certificados.",
 } as const;
 
 export const AVISO_LABORATORIOS =
