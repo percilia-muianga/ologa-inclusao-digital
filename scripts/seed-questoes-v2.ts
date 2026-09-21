@@ -98,11 +98,12 @@ const ALVOS: Alvo[] = [
   },
   {
     slug: "principios-transformacao-digital",
-    ordemPorChave: { m1: 1, m2: 2, m3: 3 },
+    ordemPorChave: { m1: 1, m2: 2, m3: 3, transversal: 4 },
     exame: EXAME_TD_V2 as QuestaoComOrdenacao[],
     prePos: PRE_POS_TD_V2 as QuestaoComOrdenacao[],
   },
 ];
+
 
 async function semearCurso(alvo: Alvo) {
   const curso = must<{ id: string; titulo: string } | null>(
