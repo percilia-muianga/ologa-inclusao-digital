@@ -13,10 +13,11 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [cursosRes, relacoesRes, licoesRes, bancoRes, wsPerguntasRes, configRes, examesRes] =
     await Promise.all([
-      supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia").order("ordem"),
+      supabaseAdmin.from("cursos").select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia,minutos_avaliacao_orientacao").order("ordem"),
       supabaseAdmin.from("curso_modulos").select("curso_id,modulo_id,carga_horaria_minutos"),
       supabaseAdmin.from("licoes").select("modulo_id,estado_conteudo"),
-      supabaseAdmin.from("banco_questoes").select("curso_id,activa"),
+      // O pré/pós-teste é outro instrumento e não conta para o banco do exame.
+      supabaseAdmin.from("banco_questoes").select("curso_id,activa").eq("instrumento", "exame_final"),
       supabaseAdmin.from("workshop_perguntas").select("id", { count: "exact", head: true }),
       supabaseAdmin.from("configuracoes_programa").select("chave,valor"),
       supabaseAdmin.from("exame_configuracoes").select("curso_id,numero_questoes"),
@@ -54,7 +55,11 @@ export const listarCursosPrograma = createServerFn({ method: "GET" }).handler(as
       QUESTOES_POR_EXAME_PADRAO;
     const minimoBanco = questoesPorExame * FACTOR_BANCO_TDR;
     const activas = activasPorCurso.get(curso.id) ?? 0;
-    const minutosCurriculo = modulos.reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0);
+    // Minutos dos módulos mais os blocos de avaliação e orientação que não
+    // pertencem a nenhum módulo (diagnóstico, pós-teste, exame final).
+    const minutosCurriculo =
+      modulos.reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0) +
+      (curso.minutos_avaliacao_orientacao ?? 0);
     const horasCurriculo = Math.round((minutosCurriculo / 60) * 10) / 10;
     return {
       id: curso.id, ordem: curso.ordem, slug: curso.slug, titulo: curso.titulo,
@@ -90,7 +95,7 @@ export const obterCursoPrograma = createServerFn({ method: "GET" })
   .handler(async ({ data: slug }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cursoRes = await supabaseAdmin.from("cursos")
-      .select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia,objectivos,publico_alvo,pre_requisitos,materiais")
+      .select("id,ordem,slug,titulo,carga_horaria,modalidade,formandos_previstos,abrangencia,objectivos,publico_alvo,pre_requisitos,materiais,minutos_avaliacao_orientacao")
       .eq("slug", slug).maybeSingle();
     if (cursoRes.error) throw cursoRes.error;
     if (!cursoRes.data) return null;
@@ -102,7 +107,7 @@ export const obterCursoPrograma = createServerFn({ method: "GET" })
     const ids = (relacoesRes.data ?? []).map((r) => r.modulo_id);
     const [modulosRes, licoesRes] = await Promise.all([
       supabaseAdmin.from("modulos").select("id,titulo,descricao,icone,cor_fundo").in("id", ids),
-      supabaseAdmin.from("licoes").select("id,modulo_id,ordem,titulo,duracao,conteudo_elearning,estado_conteudo").in("modulo_id", ids).order("ordem"),
+      supabaseAdmin.from("licoes").select("id,modulo_id,ordem,titulo,duracao,duracao_minutos,conteudo_elearning,estado_conteudo,proposta_por_validar").in("modulo_id", ids).order("ordem"),
     ]);
     if (modulosRes.error) throw modulosRes.error;
     if (licoesRes.error) throw licoesRes.error;
@@ -113,9 +118,11 @@ export const obterCursoPrograma = createServerFn({ method: "GET" })
         minutos: r.carga_horaria_minutos ?? 0, licoes,
         porFornecer: licoes.filter((l) => l.estado_conteudo === "por_fornecer").length };
     });
-    const minutosCurriculo = modulos.reduce((s, m) => s + m.minutos, 0);
-    return { curso: cursoRes.data, modulos,
+    const minutosAvaliacao = cursoRes.data.minutos_avaliacao_orientacao ?? 0;
+    const minutosCurriculo = modulos.reduce((s, m) => s + m.minutos, 0) + minutosAvaliacao;
+    return { curso: cursoRes.data, modulos, minutosAvaliacao,
       totalPorFornecer: modulos.reduce((s, m) => s + m.porFornecer, 0),
+      propostaPorValidar: modulos.some((m) => m.licoes.some((l) => l.proposta_por_validar)),
       horasCurriculo: Math.round((minutosCurriculo / 60) * 10) / 10 };
   });
 
@@ -126,15 +133,17 @@ export const obterCursoPrograma = createServerFn({ method: "GET" })
 export const pendenciasCurriculares = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [cursosRes, relacoesRes] = await Promise.all([
-    supabaseAdmin.from("cursos").select("id,titulo,carga_horaria,modalidade").order("ordem"),
+    supabaseAdmin.from("cursos").select("id,titulo,carga_horaria,modalidade,minutos_avaliacao_orientacao").order("ordem"),
     supabaseAdmin.from("curso_modulos").select("curso_id,carga_horaria_minutos"),
   ]);
   if (cursosRes.error) throw cursosRes.error;
   if (relacoesRes.error) throw relacoesRes.error;
   return (cursosRes.data ?? []).map((c) => {
-    const minutos = (relacoesRes.data ?? [])
-      .filter((r) => r.curso_id === c.id)
-      .reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0);
+    const minutos =
+      (relacoesRes.data ?? [])
+        .filter((r) => r.curso_id === c.id)
+        .reduce((s, r) => s + (r.carga_horaria_minutos ?? 0), 0) +
+      (c.minutos_avaliacao_orientacao ?? 0);
     const horas = Math.round((minutos / 60) * 10) / 10;
     return {
       id: c.id,

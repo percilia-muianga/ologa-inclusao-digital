@@ -111,7 +111,9 @@ export type Database = {
           enunciado: string
           explicacao: string
           id: string
+          instrumento: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id: string | null
+          objectivo_associado: string | null
           resposta: Json
           tipologia: Database["public"]["Enums"]["tipologia_questao"]
         }
@@ -127,7 +129,9 @@ export type Database = {
           enunciado: string
           explicacao?: string
           id?: string
+          instrumento?: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id?: string | null
+          objectivo_associado?: string | null
           resposta?: Json
           tipologia: Database["public"]["Enums"]["tipologia_questao"]
         }
@@ -143,7 +147,9 @@ export type Database = {
           enunciado?: string
           explicacao?: string
           id?: string
+          instrumento?: Database["public"]["Enums"]["instrumento_avaliacao"]
           modulo_id?: string | null
+          objectivo_associado?: string | null
           resposta?: Json
           tipologia?: Database["public"]["Enums"]["tipologia_questao"]
         }
@@ -385,6 +391,7 @@ export type Database = {
           formandos_previstos: number
           id: string
           materiais: string | null
+          minutos_avaliacao_orientacao: number
           modalidade: string
           objectivos: string | null
           ordem: number
@@ -400,6 +407,7 @@ export type Database = {
           formandos_previstos: number
           id?: string
           materiais?: string | null
+          minutos_avaliacao_orientacao?: number
           modalidade: string
           objectivos?: string | null
           ordem: number
@@ -415,6 +423,7 @@ export type Database = {
           formandos_previstos?: number
           id?: string
           materiais?: string | null
+          minutos_avaliacao_orientacao?: number
           modalidade?: string
           objectivos?: string | null
           ordem?: number
@@ -930,34 +939,40 @@ export type Database = {
         Row: {
           conteudo_elearning: string | null
           duracao: string | null
+          duracao_minutos: number | null
           estado_conteudo: string
           guiao_formador: string | null
           id: string
           ilustracao_svg: string | null
           modulo_id: string
           ordem: number
+          proposta_por_validar: boolean
           titulo: string
         }
         Insert: {
           conteudo_elearning?: string | null
           duracao?: string | null
+          duracao_minutos?: number | null
           estado_conteudo?: string
           guiao_formador?: string | null
           id?: string
           ilustracao_svg?: string | null
           modulo_id: string
           ordem: number
+          proposta_por_validar?: boolean
           titulo: string
         }
         Update: {
           conteudo_elearning?: string | null
           duracao?: string | null
+          duracao_minutos?: number | null
           estado_conteudo?: string
           guiao_formador?: string | null
           id?: string
           ilustracao_svg?: string | null
           modulo_id?: string
           ordem?: number
+          proposta_por_validar?: boolean
           titulo?: string
         }
         Relationships: [
@@ -1960,6 +1975,7 @@ export type Database = {
         | "masculino"
         | "outro"
         | "prefere_nao_indicar"
+      instrumento_avaliacao: "exame_final" | "pre_pos_teste"
       meio_instituicao: "urbano" | "peri_urbano" | "rural"
       modalidade: "presencial" | "virtual" | "misto"
       momento_avaliacao: "pre" | "pos"
@@ -2161,6 +2177,7 @@ export const Constants = {
         "outro",
         "prefere_nao_indicar",
       ],
+      instrumento_avaliacao: ["exame_final", "pre_pos_teste"],
       meio_instituicao: ["urbano", "peri_urbano", "rural"],
       modalidade: ["presencial", "virtual", "misto"],
       momento_avaliacao: ["pre", "pos"],
