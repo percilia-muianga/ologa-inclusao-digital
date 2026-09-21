@@ -509,3 +509,42 @@ continua remetida à área jurídica da instituição.
 
 Pendências que se mantêm: validação pela Ologa/ATDI, revisão por terceiros,
 Língua de Sinais Moçambicana, vídeo e legendagem.
+
+## A17 — Exposição do banco de questões (corrigida em 21/09/2026)
+
+**Observado.** A página de gestão do banco (`/avaliacao/banco`), na pré-visualização
+e na versão publicada, listava questões — enunciado, opções, resposta correcta
+marcada e explicação — sem sessão iniciada na aplicação. A causa não era a base
+de dados: as políticas de acesso da tabela `banco_questoes` só permitem leitura à
+equipa de formação autenticada e o acesso anónimo directo à tabela é recusado
+(`permission denied for table banco_questoes`). A causa eram as funções de
+servidor de gestão (`listarQuestoes`, `referenciasBanco`, `criarQuestao`,
+`actualizarQuestao`, `definirEstadoQuestao`, `guardarConfiguracaoExame`), que
+usavam a chave de serviço — que ignora as políticas — **sem verificar quem
+chamava**. Esconder botões na interface não resolvia: o ponto de acesso era
+invocável directamente.
+
+**Correcção aplicada.** Todas essas funções passaram a exigir sessão real,
+validada no servidor, e a verificar o papel **antes** de qualquer consulta. O
+papel é lido da base de dados com o cliente autenticado do próprio utilizador;
+nunca é aceite do lado do cliente. Leitura: administração Ologa, administração
+ATDI, coordenação nacional e auditoria ATDI. Escrita e activação: os mesmos,
+excepto a auditoria. Anónimo, formando, formador, supervisor provincial e gestor
+de instituição são recusados. A interface só pede a lista depois de o servidor
+confirmar a permissão, e mostra uma página de acesso negado caso contrário. O
+panorama público continua a mostrar apenas contagens agregadas — nunca
+enunciados, opções ou respostas. Nenhuma política de acesso foi enfraquecida.
+
+**Verificações reais.** No navegador sem sessão, a página devolve «sem permissão»
+e a única chamada ao servidor responde «Unauthorized»; nenhuma questão é
+transferida. Leitura anónima directa da tabela: recusada. Seis testes isolados
+cobrem a regra de autorização para anónimo, formando, formador, supervisor,
+auditoria, coordenação, administração e papéis inventados pelo cliente. Não foram
+criados utilizadores, tentativas nem dados de teste, e não se executou nenhuma
+mutação em produção.
+
+**Consequência para o banco.** Porque esteve visível publicamente durante este
+período, o banco de ambos os cursos — Princípios da Transformação Digital e
+Computação em Nuvem — deve ser **revisto e, se possível, renovado antes de
+qualquer activação**: questões que circularam publicamente perdem valor
+certificador. Todas as questões continuam inactivas.
