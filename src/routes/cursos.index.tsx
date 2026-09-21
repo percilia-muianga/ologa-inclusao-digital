@@ -53,7 +53,17 @@ function CursosPage() {
             <p className="mt-1 text-sm text-navy-2">Meta: {curso.formandosPrevistos.toLocaleString("pt-PT")} formandos</p>
             <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4 text-sm">
               <div><dt className="text-navy-2">Módulos</dt><dd className="font-bold text-navy">{curso.totalModulos}</dd></div>
-              <div><dt className="text-navy-2">Lições por fornecer</dt><dd className="font-bold text-amber-800">{curso.licoesPorFornecer}</dd></div>
+              <div>
+                <dt className="text-navy-2">Lições disponíveis</dt>
+                <dd className="font-bold text-navy">
+                  {curso.licoesDisponiveis}
+                  {curso.licoesPorFornecer > 0 ? (
+                    <span className="ml-2 text-xs font-semibold text-navy-2">
+                      · {curso.licoesPorFornecer} em preparação
+                    </span>
+                  ) : null}
+                </dd>
+              </div>
             </dl>
             <Link to="/cursos/$curso" params={{ curso: curso.slug }} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground">Ver estrutura do curso</Link>
           </article>
