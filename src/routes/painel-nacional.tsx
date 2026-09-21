@@ -81,12 +81,42 @@ function PainelNacionalPage() {
     ],
     ["Índice de satisfação dos participantes", pct(satisfacao.indicePct), `${satisfacao.respostas} questionários`],
     ["Aplicam as competências aos três meses", pct(eficacia.aplicamPct), `${eficacia.respostas} inquéritos`],
+    [
+      "Assiduidade estrita média",
+      pct(desempenho.assiduidadeEstritaPct),
+      "Sessões presentes a dividir pelas sessões realizadas; as justificadas contam como ausência",
+    ],
+    [
+      "Assiduidade ajustada média",
+      pct(desempenho.assiduidadeAjustadaPct),
+      "Sessões presentes a dividir pelas sessões realizadas menos as justificadas",
+    ],
+    ["Faltas justificadas registadas", desempenho.faltasJustificadas, ""],
+    [
+      "Sessões marcadas como realizadas",
+      desempenho.sessoesRealizadas,
+      `${desempenho.sessoesPorRegularizar} sessões com a data passada continuam agendadas e não contam`,
+    ],
     ["Workshops provinciais realizados", workshops.provinciaisRealizados, workshops.provinciaisPlaneados],
     ["Workshops distritais realizados", workshops.distritaisRealizados, workshops.distritaisPlaneados],
   ];
 
+  const colunasProvincia = [
+    "Província",
+    "Turmas",
+    "Formandos",
+    "Pré-teste",
+    "Pós-teste",
+    "Evolução",
+    "Assiduidade estrita",
+    "Assiduidade ajustada",
+    "Faltas justificadas",
+    "Workshop provincial",
+    "Workshops distritais",
+  ];
+
   const provincias = [
-    ["Província", "Turmas", "Formandos", "Pré-teste", "Pós-teste", "Evolução", "Workshop provincial", "Workshops distritais"],
+    colunasProvincia,
     ...porProvincia.map((p) => [
       p.provincia,
       p.turmas,
@@ -98,12 +128,14 @@ function PainelNacionalPage() {
         : p.evolucaoPp === null
           ? "—"
           : `${p.evolucaoPp > 0 ? "+" : ""}${p.evolucaoPp} pp`,
+      pct(p.assiduidadeEstritaPct),
+      pct(p.assiduidadeAjustadaPct),
+      p.faltasJustificadas,
       `${p.workshopsProvinciaisRealizados} de 1`,
       `${p.workshopsDistritaisRealizados} de ${p.workshopsDistritaisPlaneados}`,
     ]),
   ];
 
-  const distritos = [
     ["Província", "Distrito", "Realizados", "Previstos"],
     ...porDistrito.map((d) => [d.provincia, d.distrito, d.realizados, d.planeados]),
   ];
