@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   geradorComSemente,
@@ -309,5 +310,37 @@ describe("classificação pedagógica por metadado", () => {
   it("não usa o texto do enunciado para decidir o tipo", () => {
     const comTextoDeCenario = { tipologia: "verdadeiro_falso" as const, cenario: false };
     expect(tipoPedagogico(comTextoDeCenario)).toBe("verdadeiro_falso");
+  });
+});
+
+describe("garantias no motor de exame (regressão sobre o código)", () => {
+  const fonte = readFileSync("src/lib/avaliacao.functions.ts", "utf8");
+
+  it("o exame só carrega questões activas, em uso e do instrumento de exame", () => {
+    const trecho = fonte.slice(fonte.indexOf("export const iniciarExame"));
+    expect(trecho).toContain('.eq("instrumento", "exame_final")');
+    expect(trecho).toContain('.eq("estado_revisao", "em_uso")');
+    expect(trecho).toContain('.eq("activa", true)');
+  });
+
+  it("uma questão retirada não pode ser activada pelo servidor", () => {
+    expect(fonte).toContain("QUESTAO_RETIRADA");
+  });
+
+  it("a retirada de uma versão não apaga nada", () => {
+    const trecho = fonte.slice(fonte.indexOf("export const retirarVersaoBanco"));
+    expect(trecho).toContain('estado_revisao: "retirada"');
+    expect(trecho).not.toContain(".delete(");
+  });
+
+  it("o sorteio bloqueia a prova em vez de a completar em silêncio", () => {
+    expect(fonte).toContain("SORTEIO_BLOQUEADO");
+  });
+
+  it("o módulo de sorteio é puro: não lê a base nem toca em respostas", () => {
+    const motor = readFileSync("src/lib/sorteio-exame.ts", "utf8");
+    expect(motor).not.toContain("supabase");
+    expect(motor).not.toContain("resposta");
+    expect(motor).not.toContain("explicacao");
   });
 });
