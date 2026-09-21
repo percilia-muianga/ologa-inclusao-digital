@@ -177,7 +177,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       titulo: "O portal de inscrições do Serviço Distrital de Ondela (cenário fictício)",
       corpo: [
         "O Serviço Distrital de Ondela abre inscrições escolares durante duas semanas por ano. Nessas duas semanas o portal recebe muitos acessos ao mesmo tempo; nos restantes onze meses e meio quase ninguém lhe toca. A sala de servidores do distrito foi dimensionada para o pico: equipamento parado quase todo o ano, que na mesma consome energia e exige manutenção.",
-        "Se o portal passar a correr em nuvem, a equipa aumenta a capacidade antes do período de inscrições e reduz depois, e paga a diferença apenas nesse período. O auto-serviço permite fazê-lo no próprio dia; o serviço medido mostra ao director quanto custou o pico.",
+        "Se o portal passar a correr em nuvem, a equipa aumenta a capacidade antes do período de inscrições e reduz depois. O auto-serviço permite fazê-lo no próprio dia; o serviço medido mostra ao director quanto foi consumido no pico, e o contrato dirá se isso se traduz em factura variável ou em tarifa fixa. Passar para a nuvem não garante, por si, poupança: o resultado depende do perfil de utilização, do contrato, da ligação à internet disponível e do trabalho de migração.",
         "Este cenário é fictício e serve de exercício. Não descreve nenhum serviço existente nem apresenta valores de preço.",
       ],
     },
