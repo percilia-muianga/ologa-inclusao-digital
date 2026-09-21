@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
 
 export type TurmaResumo = {
   id: string;
@@ -32,7 +33,10 @@ export function rotuloEstadoTurma(valor: string): string {
 }
 
 /** Lista todas as turmas com o curso associado e o número de inscritos. */
-export const listarTurmas = createServerFn({ method: "GET" }).handler(async () => {
+export const listarTurmas = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const [turmasRes, cursosRes, inscricoesRes] = await Promise.all([
@@ -86,8 +90,10 @@ export const listarTurmas = createServerFn({ method: "GET" }).handler(async () =
 
 /** Ficha de uma turma, pelo código de inscrição, com o cronograma de sessões. */
 export const obterTurma = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
   .validator((codigo: string) => codigo)
-  .handler(async ({ data: codigo }) => {
+  .handler(async ({ data: codigo, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "ler");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const turmaRes = await supabaseAdmin
@@ -151,7 +157,10 @@ export type DadosTurma = {
 };
 
 /** Listas de apoio aos formulários de turma: cursos, locais e distritos. */
-export const referenciasTurma = createServerFn({ method: "GET" }).handler(async () => {
+export const referenciasTurma = createServerFn({ method: "GET" })
+  .middleware([sessaoObrigatoria])
+  .handler(async ({ context }) => {
+  await exigirGestao(context as unknown as ContextoAutenticado, "ler");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [cursosRes, locaisRes, distritosRes] = await Promise.all([
     supabaseAdmin.from("cursos").select("id,titulo,carga_horaria,modalidade").order("ordem"),
@@ -181,8 +190,10 @@ export const referenciasTurma = createServerFn({ method: "GET" }).handler(async 
 
 /** Cria uma turma. O código de inscrição é gerado pela base de dados. */
 export const criarTurma = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: DadosTurma) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: criada, error } = await supabaseAdmin
       .from("turmas")
@@ -208,8 +219,10 @@ export const criarTurma = createServerFn({ method: "POST" })
 
 /** Actualiza uma turma. A alteração fica no registo de auditoria (gatilho na base de dados). */
 export const actualizarTurma = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: DadosTurma & { id: string }) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: actualizada, error } = await supabaseAdmin
       .from("turmas")
@@ -245,8 +258,10 @@ export type DadosSessao = {
 
 /** Acrescenta uma sessão ao cronograma, na ordem seguinte. */
 export const criarSessao = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: DadosSessao & { turmaId: string }) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: existentes, error: erroOrdem } = await supabaseAdmin
       .from("turma_sessoes")
@@ -273,8 +288,10 @@ export const criarSessao = createServerFn({ method: "POST" })
 
 /** Altera uma sessão do cronograma. */
 export const actualizarSessao = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: DadosSessao & { id: string }) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("turma_sessoes")
@@ -293,8 +310,10 @@ export const actualizarSessao = createServerFn({ method: "POST" })
 
 /** Remove uma sessão do cronograma. A remoção fica registada na auditoria. */
 export const removerSessao = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: { id: string }) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("turma_sessoes").delete().eq("id", data.id);
     if (error) throw error;
@@ -306,8 +325,10 @@ export const removerSessao = createServerFn({ method: "POST" })
  * atingiu o limite de formandos definido no Termo de Referência.
  */
 export const inscreverFormando = createServerFn({ method: "POST" })
+  .middleware([sessaoObrigatoria])
   .validator((dados: { turmaId: string; nome: string; email: string | null }) => dados)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await exigirGestao(context as unknown as ContextoAutenticado, "escrever");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const turmaRes = await supabaseAdmin
       .from("turmas")
