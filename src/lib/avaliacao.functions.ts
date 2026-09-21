@@ -107,7 +107,9 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   if (relacoesRes.error) throw relacoesRes.error;
   if (modulosRes.error) throw modulosRes.error;
 
-  const questoes = questoesRes.data ?? [];
+  const todas = questoesRes.data ?? [];
+  const questoes = todas.filter((q) => q.instrumento === "exame_final");
+  const diagnostico = todas.filter((q) => q.instrumento === "pre_pos_teste");
   const modulos = modulosRes.data ?? [];
 
   const cursos = (cursosRes.data ?? []).map((curso) => {
@@ -117,21 +119,38 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
     };
     const doCurso = questoes.filter((q) => q.curso_id === curso.id);
     const activas = doCurso.filter((q) => q.activa).length;
+    const rascunhos = doCurso.length - activas;
+    const diagCurso = diagnostico.filter((q) => q.curso_id === curso.id);
+    const diagActivas = diagCurso.filter((q) => q.activa).length;
     const necessarias = cfg.numero_questoes;
     const minimoTdR = necessarias * 3;
     const porModulo = (relacoesRes.data ?? [])
       .filter((r) => r.curso_id === curso.id)
-      .map((r) => ({
-        moduloId: r.modulo_id,
-        titulo: modulos.find((m) => m.id === r.modulo_id)?.titulo ?? "Módulo",
-        activas: doCurso.filter((q) => q.modulo_id === r.modulo_id && q.activa).length,
-      }));
+      .map((r) => {
+        const doModulo = doCurso.filter((q) => q.modulo_id === r.modulo_id);
+        const activasModulo = doModulo.filter((q) => q.activa).length;
+        return {
+          moduloId: r.modulo_id,
+          titulo: modulos.find((m) => m.id === r.modulo_id)?.titulo ?? "Módulo",
+          activas: activasModulo,
+          rascunhos: doModulo.length - activasModulo,
+          total: doModulo.length,
+        };
+      });
     return {
       id: curso.id,
       slug: curso.slug,
       titulo: curso.titulo,
       activas,
-      inactivas: doCurso.length - activas,
+      // Nome antigo mantido para não quebrar quem já o lê.
+      inactivas: rascunhos,
+      rascunhos,
+      total: doCurso.length,
+      diagnostico: {
+        total: diagCurso.length,
+        activas: diagActivas,
+        rascunhos: diagCurso.length - diagActivas,
+      },
       necessarias,
       minimoTdR,
       emFalta: Math.max(0, minimoTdR - activas),
@@ -160,6 +179,10 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   return {
     cursos,
     totalActivas: questoes.filter((q) => q.activa).length,
+    totalRascunhos: questoes.filter((q) => !q.activa).length,
+    totalEscritas: questoes.length,
+    totalDiagnostico: diagnostico.length,
+    totalDiagnosticoActivas: diagnostico.filter((q) => q.activa).length,
     totalEmFalta: cursos.reduce((soma, c) => soma + c.emFalta, 0),
   };
 });
