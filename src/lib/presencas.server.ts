@@ -6,6 +6,7 @@ export type EstadoPresenca = "presente" | "ausente" | "justificado";
 export type MarcacaoBruta = {
   id: string;
   sessao_id: string;
+  turma_id: string;
   inscricao_id: string;
   estado: EstadoPresenca;
   motivo: string | null;
