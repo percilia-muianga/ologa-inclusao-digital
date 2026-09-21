@@ -94,11 +94,9 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
   const s = await admin();
   const [cursosRes, questoesRes, configRes, relacoesRes, modulosRes] = await Promise.all([
     s.from("cursos").select("id,slug,titulo,ordem").order("ordem"),
-    // Só o instrumento certificador: o pré/pós-teste é contado à parte.
-    s
-      .from("banco_questoes")
-      .select("curso_id,modulo_id,activa,dificuldade")
-      .eq("instrumento", "exame_final"),
+    // Os dois instrumentos: o exame final certificador e o pré/pós-teste,
+    // contados em separado. O rácio do TdR só conta questões activas.
+    s.from("banco_questoes").select("curso_id,modulo_id,activa,dificuldade,instrumento"),
     s.from("exame_configuracoes").select("*"),
     s.from("curso_modulos").select("curso_id,modulo_id,ordem").order("ordem"),
     s.from("modulos").select("id,titulo"),
