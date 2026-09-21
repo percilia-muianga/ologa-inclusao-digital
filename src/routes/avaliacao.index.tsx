@@ -105,11 +105,27 @@ function AvaliacaoPage() {
           />
         ) : (
           <div className="space-y-4">
-            {data.totalActivas === 0 ? (
+            {data.totalEscritas === 0 && data.totalDiagnostico === 0 ? (
               <EstadoVazio
                 titulo="O banco de questões ainda está vazio"
-                descricao="A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                descricao="Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
               />
+            ) : data.totalActivas === 0 ? (
+              <section className="rounded-lg border border-amber-300 bg-amber-50 p-5">
+                <h2 className="text-lg font-bold text-navy">
+                  Banco preparado, por validar e activar
+                </h2>
+                <p className="mt-2 text-base text-navy-2">
+                  Já há questões escritas, mas nenhuma está activa. Enquanto assim for, nenhum exame
+                  é gerado e nenhum certificado é emitido. O rácio do Termo de Referência só conta
+                  questões activas.
+                </p>
+                <p className="mt-2 text-base text-navy-2">
+                  Exame final: {data.totalEscritas} questões escritas, {data.totalActivas} activas,{" "}
+                  {data.totalRascunhos} em rascunho. Diagnóstico e pós-teste:{" "}
+                  {data.totalDiagnostico} escritas, {data.totalDiagnosticoActivas} activas.
+                </p>
+              </section>
             ) : null}
 
             {data.cursos.map((curso) => (
@@ -131,17 +147,29 @@ function AvaliacaoPage() {
                   >
                     {curso.cumpreTriplo
                       ? `Rácio cumprido: ${curso.activas} questões activas para ${curso.necessarias} do exame`
-                      : `Rácio por cumprir: faltam ${curso.emFalta} questões activas (mínimo ${curso.minimoTdR})`}
+                      : curso.total === 0
+                        ? `Sem questões escritas: faltam ${curso.minimoTdR} activas (o triplo de ${curso.necessarias})`
+                        : `Por validar e activar: ${curso.rascunhos} em rascunho, ${curso.activas} activas; faltam ${curso.emFalta} activas para o mínimo de ${curso.minimoTdR}`}
                   </p>
                 </div>
                 <dl className="mt-4 grid gap-3 text-base sm:grid-cols-4">
                   <div>
-                    <dt className="font-semibold text-navy-2">Questões activas</dt>
+                    <dt className="font-semibold text-navy-2">Questões escritas</dt>
+                    <dd className="text-navy">{curso.total}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-navy-2">Activas</dt>
                     <dd className="text-navy">{curso.activas}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-navy-2">Questões inactivas</dt>
-                    <dd className="text-navy">{curso.inactivas}</dd>
+                    <dt className="font-semibold text-navy-2">Em rascunho, por validar</dt>
+                    <dd className="text-navy">{curso.rascunhos}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-navy-2">Diagnóstico e pós-teste</dt>
+                    <dd className="text-navy">
+                      {curso.diagnostico.total} escritas, {curso.diagnostico.activas} activas
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-navy-2">Questões por exame</dt>
@@ -163,8 +191,13 @@ function AvaliacaoPage() {
                   <ul className="mt-3 grid gap-1 text-sm text-navy-2 sm:grid-cols-2">
                     {curso.porModulo.map((m) => (
                       <li key={m.moduloId}>
-                        {m.titulo}: {m.activas} questões activas
-                        {m.activas === 0 ? " — por fornecer" : ""}
+                        {m.titulo}: {m.activas} activas
+                        {m.rascunhos > 0 ? `, ${m.rascunhos} em rascunho` : ""}
+                        {m.total === 0
+                          ? " — por fornecer"
+                          : m.activas === 0
+                            ? " — por validar e activar"
+                            : ""}
                       </li>
                     ))}
                   </ul>
