@@ -35,7 +35,7 @@ $P -f "$DIR/scaffold.sql"
 # Partes da 0013 aplicáveis a este andaime, extraídas do ficheiro do repositório
 # sem qualquer alteração: funções de decisão, revogações e políticas de workshops.
 M13="$RAIZ/drizzle/migrations/0013_seguranca_gestao_auditoria.sql"
-{ sed -n '7,31p' "$M13"; sed -n '78,85p' "$M13"; } > "$BASE/0013-parcial.sql"
+{ sed -n '7,31p' "$M13"; sed -n '54,57p' "$M13"; sed -n '72,85p' "$M13"; } > "$BASE/0013-parcial.sql"
 $P -f "$BASE/0013-parcial.sql"
 
 # A 0015 é aplicada na íntegra, tal e qual como está no repositório.
