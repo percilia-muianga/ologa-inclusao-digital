@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { panoramaBanco } from "@/lib/avaliacao.functions";
+import { pendenciasCurriculares } from "@/lib/cursos.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { Button } from "@/components/ui/button";
 
