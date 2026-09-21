@@ -73,3 +73,9 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [ ] Remover `.env` do controlo de versões antes de ligar o GitHub
 - [ ] Áudio pré-gerado (Azure) — planeado, não construído
 - [ ] Email da conta de demonstração e domínio das contas de teste
+
+## Correcções encontradas na versão publicada (em curso)
+- [ ] Retirar a lei e o total incerto de 4000 formandos da abertura e partilha da página inicial
+- [ ] Corrigir metadados de Cursos e restantes metadados comerciais da plataforma
+- [ ] Garantir que Avaliação nunca fica presa no carregamento e mantém contagens no estado vazio
+- [ ] Exportar qualquer vista do Painel Nacional em CSV, XLS e PDF imprimível sem navegação
