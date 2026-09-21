@@ -29,6 +29,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkshopsIndexRouteImport } from './routes/workshops.index'
 import { Route as TurmasIndexRouteImport } from './routes/turmas.index'
+import { Route as PresencasIndexRouteImport } from './routes/presencas.index'
 import { Route as OlogaIndexRouteImport } from './routes/ologa.index'
 import { Route as FormacaoIndexRouteImport } from './routes/formacao.index'
 import { Route as AvaliacaoIndexRouteImport } from './routes/avaliacao.index'
@@ -159,6 +160,11 @@ const TurmasIndexRoute = TurmasIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TurmasRoute,
+} as any)
+const PresencasIndexRoute = PresencasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PresencasRoute,
 } as any)
 const OlogaIndexRoute = OlogaIndexRouteImport.update({
   id: '/',
@@ -338,7 +344,7 @@ export interface FileRoutesByFullPath {
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
-  '/presencas': typeof PresencasRoute
+  '/presencas': typeof PresencasRouteWithChildren
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
@@ -356,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/presencas/': typeof PresencasIndexRoute
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -387,7 +394,6 @@ export interface FileRoutesByTo {
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
   '/painel-nacional': typeof PainelNacionalRoute
-  '/presencas': typeof PresencasRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/verificar': typeof VerificarRoute
   '/avaliacao/banco': typeof AvaliacaoBancoRoute
@@ -400,6 +406,7 @@ export interface FileRoutesByTo {
   '/avaliacao': typeof AvaliacaoIndexRoute
   '/formacao': typeof FormacaoIndexRoute
   '/ologa': typeof OlogaIndexRoute
+  '/presencas': typeof PresencasIndexRoute
   '/turmas': typeof TurmasIndexRoute
   '/workshops': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -436,7 +443,7 @@ export interface FileRoutesById {
   '/inscricao': typeof InscricaoRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
-  '/presencas': typeof PresencasRoute
+  '/presencas': typeof PresencasRouteWithChildren
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
@@ -454,6 +461,7 @@ export interface FileRoutesById {
   '/avaliacao/': typeof AvaliacaoIndexRoute
   '/formacao/': typeof FormacaoIndexRoute
   '/ologa/': typeof OlogaIndexRoute
+  '/presencas/': typeof PresencasIndexRoute
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
@@ -508,6 +516,7 @@ export interface FileRouteTypes {
     | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
+    | '/presencas/'
     | '/turmas/'
     | '/workshops/'
     | '/painel/auditoria'
@@ -539,7 +548,6 @@ export interface FileRouteTypes {
     | '/gestao'
     | '/inscricao'
     | '/painel-nacional'
-    | '/presencas'
     | '/relatorios-mensais'
     | '/verificar'
     | '/avaliacao/banco'
@@ -552,6 +560,7 @@ export interface FileRouteTypes {
     | '/avaliacao'
     | '/formacao'
     | '/ologa'
+    | '/presencas'
     | '/turmas'
     | '/workshops'
     | '/painel/auditoria'
@@ -605,6 +614,7 @@ export interface FileRouteTypes {
     | '/avaliacao/'
     | '/formacao/'
     | '/ologa/'
+    | '/presencas/'
     | '/turmas/'
     | '/workshops/'
     | '/_authenticated/painel/auditoria'
@@ -641,7 +651,7 @@ export interface RootRouteChildren {
   InscricaoRoute: typeof InscricaoRoute
   OlogaRoute: typeof OlogaRouteWithChildren
   PainelNacionalRoute: typeof PainelNacionalRoute
-  PresencasRoute: typeof PresencasRoute
+  PresencasRoute: typeof PresencasRouteWithChildren
   RelatoriosMensaisRoute: typeof RelatoriosMensaisRoute
   TurmasRoute: typeof TurmasRouteWithChildren
   VerificarRoute: typeof VerificarRoute
@@ -791,6 +801,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/turmas/'
       preLoaderRoute: typeof TurmasIndexRouteImport
       parentRoute: typeof TurmasRoute
+    }
+    '/presencas/': {
+      id: '/presencas/'
+      path: '/'
+      fullPath: '/presencas/'
+      preLoaderRoute: typeof PresencasIndexRouteImport
+      parentRoute: typeof PresencasRoute
     }
     '/ologa/': {
       id: '/ologa/'
@@ -1142,6 +1159,18 @@ const OlogaRouteChildren: OlogaRouteChildren = {
 
 const OlogaRouteWithChildren = OlogaRoute._addFileChildren(OlogaRouteChildren)
 
+interface PresencasRouteChildren {
+  PresencasIndexRoute: typeof PresencasIndexRoute
+}
+
+const PresencasRouteChildren: PresencasRouteChildren = {
+  PresencasIndexRoute: PresencasIndexRoute,
+}
+
+const PresencasRouteWithChildren = PresencasRoute._addFileChildren(
+  PresencasRouteChildren,
+)
+
 interface TurmasRouteChildren {
   TurmasCodigoRoute: typeof TurmasCodigoRoute
   TurmasNovaRoute: typeof TurmasNovaRoute
@@ -1191,7 +1220,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscricaoRoute: InscricaoRoute,
   OlogaRoute: OlogaRouteWithChildren,
   PainelNacionalRoute: PainelNacionalRoute,
-  PresencasRoute: PresencasRoute,
+  PresencasRoute: PresencasRouteWithChildren,
   RelatoriosMensaisRoute: RelatoriosMensaisRoute,
   TurmasRoute: TurmasRouteWithChildren,
   VerificarRoute: VerificarRoute,
