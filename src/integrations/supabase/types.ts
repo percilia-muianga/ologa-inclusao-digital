@@ -98,6 +98,79 @@ export type Database = {
           },
         ]
       }
+      banco_questoes: {
+        Row: {
+          activa: boolean
+          actualizado_em: string
+          autor_id: string | null
+          autor_nome: string
+          conteudo: Json
+          criado_em: string
+          curso_id: string
+          dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado: string
+          explicacao: string
+          id: string
+          modulo_id: string | null
+          resposta: Json
+          tipologia: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Insert: {
+          activa?: boolean
+          actualizado_em?: string
+          autor_id?: string | null
+          autor_nome?: string
+          conteudo?: Json
+          criado_em?: string
+          curso_id: string
+          dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado: string
+          explicacao?: string
+          id?: string
+          modulo_id?: string | null
+          resposta?: Json
+          tipologia: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Update: {
+          activa?: boolean
+          actualizado_em?: string
+          autor_id?: string | null
+          autor_nome?: string
+          conteudo?: Json
+          criado_em?: string
+          curso_id?: string
+          dificuldade?: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado?: string
+          explicacao?: string
+          id?: string
+          modulo_id?: string | null
+          resposta?: Json
+          tipologia?: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "banco_questoes_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "banco_questoes_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "banco_questoes_modulo_id_fkey"
+            columns: ["modulo_id"]
+            isOneToOne: false
+            referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificados: {
         Row: {
           codigo_verificacao: string
@@ -142,6 +215,92 @@ export type Database = {
             columns: ["modulo_id"]
             isOneToOne: false
             referencedRelation: "modulos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      certificados_curso: {
+        Row: {
+          assiduidade_pct: number
+          carga_horaria: number
+          codigo_verificacao: string
+          curso_id: string
+          data_fim: string | null
+          data_inicio: string | null
+          emitido_em: string
+          formando_id: string
+          id: string
+          nome_formando: string
+          nota_final_pct: number
+          provincia: string | null
+          tentativa_id: string | null
+          titulo_curso: string
+          turma_designacao: string | null
+          turma_id: string | null
+        }
+        Insert: {
+          assiduidade_pct: number
+          carga_horaria?: number
+          codigo_verificacao: string
+          curso_id: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          emitido_em?: string
+          formando_id: string
+          id?: string
+          nome_formando: string
+          nota_final_pct: number
+          provincia?: string | null
+          tentativa_id?: string | null
+          titulo_curso: string
+          turma_designacao?: string | null
+          turma_id?: string | null
+        }
+        Update: {
+          assiduidade_pct?: number
+          carga_horaria?: number
+          codigo_verificacao?: string
+          curso_id?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          emitido_em?: string
+          formando_id?: string
+          id?: string
+          nome_formando?: string
+          nota_final_pct?: number
+          provincia?: string | null
+          tentativa_id?: string | null
+          titulo_curso?: string
+          turma_designacao?: string | null
+          turma_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificados_curso_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificados_curso_formando_id_fkey"
+            columns: ["formando_id"]
+            isOneToOne: false
+            referencedRelation: "formandos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificados_curso_tentativa_id_fkey"
+            columns: ["tentativa_id"]
+            isOneToOne: false
+            referencedRelation: "exame_tentativas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificados_curso_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
             referencedColumns: ["id"]
           },
         ]
@@ -280,6 +439,192 @@ export type Database = {
           provincia?: string
         }
         Relationships: []
+      }
+      exame_configuracoes: {
+        Row: {
+          actualizado_em: string
+          assiduidade_minima_pct: number
+          curso_id: string
+          minutos: number
+          nota_minima_pct: number
+          numero_questoes: number
+          pct_dificil: number
+          pct_facil: number
+          pct_media: number
+          prazo_dias: number
+          tentativas_max: number
+        }
+        Insert: {
+          actualizado_em?: string
+          assiduidade_minima_pct?: number
+          curso_id: string
+          minutos?: number
+          nota_minima_pct?: number
+          numero_questoes?: number
+          pct_dificil?: number
+          pct_facil?: number
+          pct_media?: number
+          prazo_dias?: number
+          tentativas_max?: number
+        }
+        Update: {
+          actualizado_em?: string
+          assiduidade_minima_pct?: number
+          curso_id?: string
+          minutos?: number
+          nota_minima_pct?: number
+          numero_questoes?: number
+          pct_dificil?: number
+          pct_facil?: number
+          pct_media?: number
+          prazo_dias?: number
+          tentativas_max?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exame_configuracoes_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: true
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exame_tentativa_questoes: {
+        Row: {
+          apresentacao: Json
+          correcta: boolean | null
+          dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado: string
+          explicacao: string
+          id: string
+          modulo_id: string | null
+          ordem: number
+          questao_id: string
+          respondido_em: string | null
+          resposta_correcta: Json
+          resposta_dada: Json | null
+          tentativa_id: string
+          tipologia: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Insert: {
+          apresentacao?: Json
+          correcta?: boolean | null
+          dificuldade: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado: string
+          explicacao?: string
+          id?: string
+          modulo_id?: string | null
+          ordem: number
+          questao_id: string
+          respondido_em?: string | null
+          resposta_correcta?: Json
+          resposta_dada?: Json | null
+          tentativa_id: string
+          tipologia: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Update: {
+          apresentacao?: Json
+          correcta?: boolean | null
+          dificuldade?: Database["public"]["Enums"]["dificuldade_questao"]
+          enunciado?: string
+          explicacao?: string
+          id?: string
+          modulo_id?: string | null
+          ordem?: number
+          questao_id?: string
+          respondido_em?: string | null
+          resposta_correcta?: Json
+          resposta_dada?: Json | null
+          tentativa_id?: string
+          tipologia?: Database["public"]["Enums"]["tipologia_questao"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exame_tentativa_questoes_questao_id_fkey"
+            columns: ["questao_id"]
+            isOneToOne: false
+            referencedRelation: "banco_questoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exame_tentativa_questoes_tentativa_id_fkey"
+            columns: ["tentativa_id"]
+            isOneToOne: false
+            referencedRelation: "exame_tentativas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exame_tentativas: {
+        Row: {
+          criado_em: string
+          curso_id: string
+          estado: Database["public"]["Enums"]["estado_tentativa"]
+          formando_id: string
+          id: string
+          iniciado_em: string
+          limite_em: string
+          nota_pct: number | null
+          numero: number
+          pontuacao: number | null
+          submetido_em: string | null
+          total: number | null
+          turma_id: string | null
+        }
+        Insert: {
+          criado_em?: string
+          curso_id: string
+          estado?: Database["public"]["Enums"]["estado_tentativa"]
+          formando_id: string
+          id?: string
+          iniciado_em?: string
+          limite_em: string
+          nota_pct?: number | null
+          numero?: number
+          pontuacao?: number | null
+          submetido_em?: string | null
+          total?: number | null
+          turma_id?: string | null
+        }
+        Update: {
+          criado_em?: string
+          curso_id?: string
+          estado?: Database["public"]["Enums"]["estado_tentativa"]
+          formando_id?: string
+          id?: string
+          iniciado_em?: string
+          limite_em?: string
+          nota_pct?: number | null
+          numero?: number
+          pontuacao?: number | null
+          submetido_em?: string | null
+          total?: number | null
+          turma_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exame_tentativas_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exame_tentativas_formando_id_fkey"
+            columns: ["formando_id"]
+            isOneToOne: false
+            referencedRelation: "formandos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exame_tentativas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       formandos: {
         Row: {
@@ -1449,6 +1794,8 @@ export type Database = {
         | "mobilidade"
         | "nenhum"
       conectividade: "boa" | "fraca" | "nenhuma"
+      dificuldade_questao: "facil" | "media" | "dificil"
+      estado_tentativa: "em_curso" | "submetida" | "expirada"
       estado_turma:
         | "planeada"
         | "inscricoes_abertas"
@@ -1500,6 +1847,12 @@ export type Database = {
         | "setor_privado"
         | "outro"
       tipo_workshop: "provincial" | "distrital"
+      tipologia_questao:
+        | "escolha_multipla"
+        | "verdadeiro_falso"
+        | "resposta_curta"
+        | "correspondencia"
+        | "ordenacao"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1636,6 +1989,8 @@ export const Constants = {
         "nenhum",
       ],
       conectividade: ["boa", "fraca", "nenhuma"],
+      dificuldade_questao: ["facil", "media", "dificil"],
+      estado_tentativa: ["em_curso", "submetida", "expirada"],
       estado_turma: [
         "planeada",
         "inscricoes_abertas",
@@ -1692,6 +2047,13 @@ export const Constants = {
         "outro",
       ],
       tipo_workshop: ["provincial", "distrital"],
+      tipologia_questao: [
+        "escolha_multipla",
+        "verdadeiro_falso",
+        "resposta_curta",
+        "correspondencia",
+        "ordenacao",
+      ],
     },
   },
 } as const

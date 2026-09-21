@@ -36,6 +36,13 @@
       "when": 1789858658638,
       "tag": "0004_auditar_turmas_sessoes_workshops",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789987715717,
+      "tag": "0005_avaliacao_banco_exame_certificacao",
+      "breakpoints": true
     }
   ]
 }
