@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sessaoObrigatoria, exigirGestao, type ContextoAutenticado } from "@/lib/guardas";
+import {
+  sessaoObrigatoria,
+  exigirGestao,
+  clienteDeEscritaGestao,
+  type ContextoAutenticado,
+} from "@/lib/guardas";
 
 export type TurmaResumo = {
   id: string;

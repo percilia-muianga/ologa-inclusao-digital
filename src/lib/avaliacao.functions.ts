@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { clienteDeEscritaGestao } from "@/lib/guardas";
 import { avaliarCondicoesCertificacao } from "@/lib/certificacao.server";
 import { sortearExame, type QuestaoSorteavel } from "@/lib/sorteio-exame";
 import { QUOTAS_POR_CURSO, quotasDificuldade } from "@/lib/quotas-exame";
@@ -370,7 +371,7 @@ export const criarQuestao = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => questaoSchema.parse(i))
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { conteudo, resposta } = montarConteudo(data);
     const { data: nova, error } = await s
       .from("banco_questoes")
@@ -399,7 +400,7 @@ export const actualizarQuestao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { conteudo, resposta } = montarConteudo(data);
     const { error } = await s
       .from("banco_questoes")
@@ -428,7 +429,7 @@ export const definirEstadoQuestao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     // Uma questão retirada nunca volta ao sorteio: a activação é recusada no
     // servidor (e também por travão na própria base de dados).
     if (data.activa) {
@@ -469,7 +470,7 @@ export const retirarVersaoBanco = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
-    const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { data: linhas, error } = await s
       .from("banco_questoes")
       .update({
@@ -506,7 +507,7 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
     await exigirGestaoBanco(context as unknown as ContextoAutenticado, "escrever");
     if (data.pctFacil + data.pctMedia + data.pctDificil !== 100)
       throw new Error("PERCENTAGENS_NAO_SOMAM_100");
-    const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+    const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
     const { error } = await s.from("exame_configuracoes").upsert(
       {
         curso_id: data.cursoId,
@@ -607,7 +608,7 @@ async function seleccionarQuestoes(
   banco: QuestaoBanco[],
   cfg: { numero_questoes: number; pct_facil: number; pct_media: number; pct_dificil: number },
 ): Promise<QuestaoBanco[]> {
-  const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
   const { data: curso } = await s.from("cursos").select("slug").eq("id", cursoId).maybeSingle();
   const quotasCurso = curso?.slug ? QUOTAS_POR_CURSO[curso.slug] : undefined;
   const pct = { facil: cfg.pct_facil, media: cfg.pct_media, dificil: cfg.pct_dificil };
@@ -647,7 +648,7 @@ async function seleccionarQuestoes(
 }
 
 async function carregarConfig(cursoId: string) {
-  const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
   const { data } = await s
     .from("exame_configuracoes")
     .select("*")
@@ -657,7 +658,7 @@ async function carregarConfig(cursoId: string) {
 }
 
 async function formandoPorToken(token: string, perfilId: string) {
-  const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
   const { data } = await s
     .from("formandos")
     .select("id, nome, token_pessoal, perfil_id")
@@ -686,7 +687,7 @@ async function assiduidadeDoFormando(
   base: "estrita" | "ajustada";
   justificadas: number;
 } | null> {
-  const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
   const { calcularAssiduidade } = await import("@/lib/presencas.server");
   const [sessoesRes, inscricoesRes, presencasRes, cfgRes] = await Promise.all([
     s.from("turma_sessoes").select("id,data,estado").eq("turma_id", turmaId),
@@ -727,7 +728,7 @@ async function assiduidadeDoFormando(
 
 /** Última turma do formando para o curso, se existir inscrição registada. */
 async function turmaDoFormando(nome: string, cursoId: string) {
-  const s = (context as unknown as ContextoAutenticado).supabase as ReturnType<typeof clienteAutenticado>;
+  const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
   const { data: turmas } = await s
     .from("turmas")
     .select("id, designacao, provincia, data_inicio, data_fim")
