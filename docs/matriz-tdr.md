@@ -436,5 +436,76 @@ de referência está apenas no guião do formador. Verificado em
 - Ficha do curso preenchida (objectivos, público-alvo, pré-requisitos e
   materiais), distinguindo em cada campo a exigência do Termo de Referência da
   proposta da equipa.
-- Banco de questões do curso: **pendente**. O exame deste curso continua
-  bloqueado e não foi criado nesta tarefa.
+## A16 — Computação em Nuvem: banco de avaliação (rascunho, inactivo)
+
+Estado: **banco preparado, por validar, inactivo**. Não há aprovação da
+Ologa/ATDI, o exame não está activo e nenhum certificado é emitido.
+
+Contagens verificadas por teste automático e confirmadas na base de dados:
+
+- Exame final: **60 questões**; diagnóstico/pós-teste: **10 questões**;
+  total **70**, todas com `activa = false`.
+- Rácio da secção 10 do Termo de Referência: o exame proposto é de 20
+  questões e o curso não tem configuração própria em `exame_configuracoes`,
+  pelo que vale a configuração por omissão de 20 questões e 60 minutos.
+  60 ÷ 20 = **3×**, o mínimo exigido, cumprido.
+- Distribuição por módulo (proposta pedagógica, não imposição do TdR):
+  18 no módulo 1, 21 no módulo 2, 15 no módulo 3, 6 no transversal.
+- Tipologias pedagógicas: 24 escolha múltipla, 12 verdadeiro/falso,
+  12 associação, 12 cenários. Os cenários usam resposta de escolha múltipla
+  — a única tipologia fechada adequada suportada pelo motor — mas o enunciado
+  contém sempre caso e problema. Na base de dados ficam 36 de escolha
+  múltipla (24 + 12 cenários), 12 verdadeiro/falso e 12 associação.
+- Dificuldades: 24 fáceis, 24 médias, 12 difíceis. O sorteio usa 40/40/20,
+  ou seja 8/8/4 numa prova de 20; há pelo menos o triplo em cada nível.
+
+### Limite conhecido do sorteio
+
+O motor actual estratifica a selecção **apenas por dificuldade**. Não
+garante, por construção, a presença de todos os módulos nem de todas as
+tipologias em cada prova. Com a distribuição escrita, a probabilidade de
+cobertura ampla é alta, mas não é uma garantia. Corrigir isto exige alterar
+o algoritmo de selecção para estratificar também por módulo — trabalho não
+incluído nesta tarefa e por decidir com a Ologa/ATDI.
+
+### Tempo
+
+O exame proposto (20 questões, 60 minutos) cabe no bloco de 120 minutos já
+reservado — diagnóstico 30, revisão e pós-teste 30, orientação e exame 60 —
+sem aumentar as 30 horas do curso.
+
+### Segurança
+
+- Gabaritos e justificações vivem em `scripts/conteudo/computacao-nuvem-questoes.ts`,
+  fora de `src/`. Um teste verifica que nenhum ficheiro de `src/` importa esse
+  módulo, pelo que não entra no pacote do navegador.
+- A tabela `banco_questoes` mantém as políticas em vigor; nada foi
+  enfraquecido e nenhum segredo foi escrito em código.
+- O sorteio só lê questões com `activa = true`; com todas inactivas, o exame
+  falha com banco insuficiente e não chega a ser gerado.
+- Semente `scripts/seed-questoes-computacao-nuvem.ts`: idempotente pela chave
+  instrumento + enunciado, escreve só em `banco_questoes` e só neste curso.
+  Segunda execução: 0 inseridas, 70 actualizadas.
+- Não foram criados formandos, turmas, tentativas nem certificados.
+
+### Cálculos dos cenários de custo (preços e câmbio fictícios)
+
+- Computação: 220 h × 0,10 USD/h = **22,00 USD**, com o pressuposto expresso
+  de libertação da capacidade e ausência de compromissos contratuais.
+- Armazenamento: 400 GB × 0,025 USD/GB-mês = 10,00 USD; × 64 MZN/USD =
+  **640,00 MZN**.
+
+### Cobertura temática
+
+Características do NIST, história, modelos de serviço e de implantação e
+responsabilidade partilhada (M1); máquina virtual, rede virtual e regras,
+contentor privado, publicação em plataforma como serviço, disponibilidade,
+cópias, RPO e RTO, cloud-native, DevOps, microserviços e serverless (M2);
+identidades, MFA distinto de dois passos, chaves e segredos, criptografia e
+os seus limites, registos e incidentes, custos e requisitos de saída (M3);
+acessibilidade e organização da prática contextualizadas à formação
+(transversal). Não foram introduzidos factos jurídicos novos; a matéria legal
+continua remetida à área jurídica da instituição.
+
+Pendências que se mantêm: validação pela Ologa/ATDI, revisão por terceiros,
+Língua de Sinais Moçambicana, vídeo e legendagem.
