@@ -10,9 +10,16 @@ export const Route = createFileRoute("/avaliacao/")({
 
 function AvaliacaoPage() {
   const carregar = useServerFn(panoramaBanco);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["panorama-banco"],
-    queryFn: () => carregar(),
+    queryFn: () =>
+      Promise.race([
+        carregar(),
+        new Promise<never>((_, rejeitar) =>
+          window.setTimeout(() => rejeitar(new Error("TEMPO_ESGOTADO")), 10000),
+        ),
+      ]),
+    retry: false,
   });
 
   return (
@@ -38,9 +45,20 @@ function AvaliacaoPage() {
       <div role="status" aria-live="polite">
         {isLoading ? <p className="text-base text-navy-2">A carregar o banco de questões…</p> : null}
         {isError ? (
-          <p className="text-base text-navy-2">
-            Não foi possível carregar o banco de questões. Volte a tentar dentro de momentos.
-          </p>
+          <EstadoVazio
+            titulo="Não foi possível mostrar o banco de questões"
+            descricao="As contagens por curso e módulo não ficaram disponíveis. Verifique a ligação e volte a tentar; nenhuma questão foi alterada."
+            accao={
+              <button
+                type="button"
+                onClick={() => void refetch()}
+                disabled={isFetching}
+                className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground disabled:opacity-60"
+              >
+                {isFetching ? "A tentar novamente…" : "Tentar novamente"}
+              </button>
+            }
+          />
         ) : null}
       </div>
 

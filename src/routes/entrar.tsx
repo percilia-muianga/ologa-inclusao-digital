@@ -10,16 +10,16 @@ import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button
 export const Route = createFileRoute("/entrar")({
   head: () => ({
     meta: [
-      { title: "Entrar — Ologa" },
+      { title: "Entrar — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Entrada na área reservada da plataforma de literacia digital da Ologa, por email e palavra-passe.",
+          "Entrada na área reservada da Plataforma Nacional de Capacitação Digital, por email e palavra-passe.",
       },
-      { property: "og:title", content: "Entrar — Ologa" },
+      { property: "og:title", content: "Entrar — Plataforma Nacional de Capacitação Digital" },
       {
         property: "og:description",
-        content: "Entrada na área reservada da plataforma de literacia digital da Ologa.",
+        content: "Entrada na área reservada da Plataforma Nacional de Capacitação Digital.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

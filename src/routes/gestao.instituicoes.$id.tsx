@@ -26,7 +26,7 @@ import {
 } from "@/lib/inscricao-schema";
 
 export const Route = createFileRoute("/gestao/instituicoes/$id")({
-  head: () => ({ meta: [{ title: "Ficha da instituição — Ologa" }] }),
+  head: () => ({ meta: [{ title: "Ficha da instituição — Plataforma Nacional de Capacitação Digital" }] }),
   component: FichaPage,
 });
 

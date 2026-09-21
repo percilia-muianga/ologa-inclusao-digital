@@ -8,11 +8,11 @@ import { PlataformaFooter } from "@/components/plataforma-footer";
 export const Route = createFileRoute("/verificar")({
   head: () => ({
     meta: [
-      { title: "Verificar certificado — Ologa" },
+      { title: "Verificar certificado — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Confirme a autenticidade de um certificado emitido pela plataforma Ologa.",
+          "Confirme a autenticidade de um certificado emitido pela Plataforma Nacional de Capacitação Digital.",
       },
     ],
   }),

@@ -83,18 +83,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Ologa — Literacia Digital" },
+      { title: "Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Plataforma de formação em competências digitais para instituições públicas e empresas em Moçambique.",
+          "Plataforma nacional de formação em competências digitais em Moçambique.",
       },
       { name: "author", content: "Ologa" },
-      { property: "og:title", content: "Ologa — Literacia Digital" },
+      { property: "og:title", content: "Plataforma Nacional de Capacitação Digital" },
       {
         property: "og:description",
         content:
-          "Formação em literacia digital, acessível a todas as pessoas, com progresso por formando e modo offline.",
+          "Formação em competências digitais, acessível a todas as pessoas, com progresso por formando e modo offline.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

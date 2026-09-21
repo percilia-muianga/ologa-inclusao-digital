@@ -8,16 +8,16 @@ import { SiteFooter } from "@/components/site-footer";
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
     meta: [
-      { title: "Área reservada — Ologa" },
+      { title: "Área reservada — Plataforma Nacional de Capacitação Digital" },
       {
         name: "description",
         content:
-          "Área reservada da plataforma de literacia digital da Ologa: percurso, turmas, presenças, utilizadores e registos de actividade.",
+          "Área reservada da Plataforma Nacional de Capacitação Digital: percurso, turmas, presenças, utilizadores e registos de actividade.",
       },
-      { property: "og:title", content: "Área reservada — Ologa" },
+      { property: "og:title", content: "Área reservada — Plataforma Nacional de Capacitação Digital" },
       {
         property: "og:description",
-        content: "Acesso por papel à área reservada da plataforma de literacia digital da Ologa.",
+        content: "Acesso por papel à área reservada da Plataforma Nacional de Capacitação Digital.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

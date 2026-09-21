@@ -13,7 +13,7 @@ import {
 } from "@/components/formulario-instituicao";
 
 export const Route = createFileRoute("/gestao/instituicoes/nova")({
-  head: () => ({ meta: [{ title: "Nova instituição — Ologa" }] }),
+  head: () => ({ meta: [{ title: "Nova instituição — Plataforma Nacional de Capacitação Digital" }] }),
   component: NovaInstituicaoPage,
 });
 
