@@ -584,8 +584,8 @@ export const iniciarExame = createServerFn({ method: "POST" })
         tipologia: q.tipologia,
         dificuldade: q.dificuldade,
         enunciado: q.enunciado,
-        apresentacao,
-        resposta_correcta: respostaCorrecta,
+        apresentacao: apresentacao as never,
+        resposta_correcta: respostaCorrecta as never,
         explicacao: q.explicacao,
       };
     });
