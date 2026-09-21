@@ -2,7 +2,7 @@
 # Testes de integração reais contra a base efémera: RLS, autorização,
 # persistência e duplicação. Cada bloco abre uma ligação nova (psql) —
 # leitura depois de gravação é mesmo leitura noutra sessão.
-PSQL="psql -h /tmp/pgtest -p 55432 -U postgres -d postgres -X -q -t -A"
+PSQL="psql -h ${PGDIR:-/tmp/pgtest-rls} -p ${PGPORTA:-55432} -U postgres -d postgres -X -q -t -A"
 A=00000000-0000-0000-0000-00000000000a
 B=00000000-0000-0000-0000-00000000000b
 EQ=00000000-0000-0000-0000-0000000000ee
