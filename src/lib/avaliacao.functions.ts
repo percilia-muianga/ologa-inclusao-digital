@@ -608,6 +608,16 @@ export const iniciarExame = createServerFn({ method: "POST" })
     if ((existentes ?? []).length >= cfg.tentativas_max)
       throw new Error("TENTATIVAS_ESGOTADAS");
 
+    const turmaDoExame = await turmaDoFormando(formando.nome, data.cursoId);
+    // Secção 12.1: o exame só pode ser feito até ao prazo, em dias de
+    // calendário, depois do fim da formação.
+    if (turmaDoExame?.data_fim) {
+      const limitePrazo = new Date(
+        new Date(turmaDoExame.data_fim).getTime() + cfg.prazo_dias * 24 * 60 * 60 * 1000,
+      );
+      if (Date.now() > limitePrazo.getTime()) throw new Error("PRAZO_EXPIRADO");
+    }
+
     const { data: questoesBanco, error } = await s
       .from("banco_questoes")
       .select("id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao")
@@ -615,7 +625,8 @@ export const iniciarExame = createServerFn({ method: "POST" })
       .eq("activa", true);
     if (error) throw error;
     const banco = (questoesBanco ?? []) as unknown as QuestaoBanco[];
-    if (banco.length < cfg.numero_questoes) throw new Error("BANCO_INSUFICIENTE");
+    // Secção 10: banco activo com pelo menos o triplo das questões do exame.
+    if (banco.length < cfg.numero_questoes * 3) throw new Error("BANCO_INSUFICIENTE");
 
     const seleccionadas = seleccionarPorDificuldade(banco, cfg.numero_questoes, {
       facil: cfg.pct_facil,
