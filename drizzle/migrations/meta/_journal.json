@@ -57,6 +57,13 @@
       "when": 1789996244355,
       "tag": "0007_estado_sessao_e_base_assiduidade",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789997950192,
+      "tag": "0008_restringir_leitura_exames_presencas",
+      "breakpoints": true
     }
   ]
 }

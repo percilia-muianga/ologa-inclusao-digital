@@ -1884,6 +1884,7 @@ export type Database = {
     Functions: {
       e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
       e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
+      e_equipa_formacao: { Args: { _uid: string }; Returns: boolean }
       endereco_ip_do_pedido: { Args: never; Returns: string }
       gerar_codigo_turma: { Args: never; Returns: string }
       get_indicadores_por_token: { Args: { _token: string }; Returns: Json }
