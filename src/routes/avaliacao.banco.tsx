@@ -100,7 +100,15 @@ function BancoPage() {
     tipologia: string;
     dificuldade: string;
     estado: "todas" | "activas" | "inactivas";
-  }>({ cursoId: "", moduloId: "", tipologia: "", dificuldade: "", estado: "todas" });
+    revisao: "utilizaveis" | "retiradas" | "todas";
+  }>({
+    cursoId: "",
+    moduloId: "",
+    tipologia: "",
+    dificuldade: "",
+    estado: "todas",
+    revisao: "utilizaveis",
+  });
 
   const [form, setForm] = useState<FormEstado | null>(null);
   const [mensagem, setMensagem] = useState<string | null>(null);
@@ -133,6 +141,7 @@ function BancoPage() {
           tipologia: (filtros.tipologia || null) as Tipologia | null,
           dificuldade: (filtros.dificuldade || null) as Dificuldade | null,
           estado: filtros.estado,
+          revisao: filtros.revisao,
         },
       }),
   });
@@ -373,6 +382,26 @@ function BancoPage() {
             <option value="todas">Todas</option>
             <option value="activas">Activas</option>
             <option value="inactivas">Inactivas</option>
+          </select>
+        </div>
+        <div>
+          <label className={rotulo} htmlFor="f-revisao">
+            Versão
+          </label>
+          <select
+            id="f-revisao"
+            className={campo}
+            value={filtros.revisao}
+            onChange={(e) =>
+              setFiltros((f) => ({
+                ...f,
+                revisao: e.target.value as "utilizaveis" | "retiradas" | "todas",
+              }))
+            }
+          >
+            <option value="utilizaveis">Utilizáveis</option>
+            <option value="retiradas">Retiradas</option>
+            <option value="todas">Todas</option>
           </select>
         </div>
       </fieldset>
@@ -724,6 +753,10 @@ function BancoPage() {
               <p className="mt-1 text-sm text-navy-2">
                 {etiquetaTipologia(q.tipologia)} · {etiquetaDificuldade(q.dificuldade)} ·{" "}
                 {q.activa ? "Activa" : "Inactiva"}
+                {` · Versão ${String(q.versao ?? "—")}`}
+                {q.estado_revisao === "retirada"
+                  ? " · RETIRADA: fora do sorteio e do rácio, não pode ser activada"
+                  : ""}
                 {q.autor_nome ? ` · Autor: ${q.autor_nome}` : ""}
                 {q.jaUsada ? " · Já usada numa tentativa (não pode ser eliminada)" : ""}
               </p>
@@ -738,7 +771,7 @@ function BancoPage() {
                 </button>
                 <button
                   type="button"
-                  disabled={!podeEscrever}
+                  disabled={!podeEscrever || q.estado_revisao === "retirada"}
                   onClick={() => void alternarEstado(q.id, !q.activa)}
                   className="min-h-11 rounded-md border border-line px-3 text-base font-semibold text-navy"
                 >
