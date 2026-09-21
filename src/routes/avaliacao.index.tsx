@@ -16,7 +16,7 @@ function AvaliacaoPage() {
       Promise.race([
         carregar(),
         new Promise<never>((_, rejeitar) =>
-          window.setTimeout(() => rejeitar(new Error("TEMPO_ESGOTADO")), 10000),
+          setTimeout(() => rejeitar(new Error("TEMPO_ESGOTADO")), 10000),
         ),
       ]),
     retry: false,
