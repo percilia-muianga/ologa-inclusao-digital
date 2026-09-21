@@ -303,7 +303,7 @@ vez, + 2 h de diagnóstico, revisão e exame.
 | Criar uma rede virtual | M2L2 Redes e conectividade na nuvem | Rede virtual com três sub-redes (Azure), criada ANTES de qualquer máquina | Captura das sub-redes com intervalos e grupos associados |
 | Criar regras de segurança | M2L2 | Três grupos de segurança, permissões em prioridade 100 e negação explícita em 4000 | Regras de entrada com origens restritas; avaliação de fluxo do portal nomeando a regra que decidiu |
 | Criar uma máquina virtual | M2L2 | Máquina Linux criada dentro da sub-rede de aplicação, acesso remoto só do endereço de saída da sala | Teste positivo (sessão estabelecida) e teste negativo por avaliação de regras |
-| Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service, aplicação Node.js com Express, publicada por arquivo zip | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
+| Publicar aplicação simples via PaaS | M2L3 Bases de dados e aplicações na nuvem | Azure App Service em Linux; exemplo Node.js sem dependências fornecido no projecto (`public/exemplos/paas-node/`), testado localmente, publicado por `az webapp deploy --type zip` | Captura da página publicada, da variável de configuração e da lista vazia após limpeza |
 | Serviços das plataformas populares; IaaS/PaaS/SaaS | M2L1 e M2L3 | — | Tabela de responsabilidades do fornecedor e da instituição |
 | Disponibilidade, cópias e recuperação | M2L4 Disponibilidade, cópias e recuperação | Sem laboratório: planeamento | Plano de continuidade com as duas medidas, plano de cópias, restauro numerado e comunicação |
 | Serverless, microserviços, cloud-native, DevOps, modernização | M2L5 Planear uma arquitectura simples | Sem laboratório: desenho | Desenho A3, justificações por componente, etapas de modernização, pressupostos |
@@ -344,6 +344,27 @@ serviço.
   afirmar que o grupo de recursos fica vazio quando contém infra-estrutura
   partilhada anterior.
 - Material offline é preparação e não substitui a prática no ambiente real.
+
+### Exemplo de aplicação do laboratório de plataforma
+
+Os ficheiros `index.js` e `package.json` estão no projecto, em
+`public/exemplos/paas-node/`, servidos em `/exemplos/paas-node/…`, e o código
+completo está transcrito na lição. Usam apenas o módulo `http` do Node, sem
+dependências, escutam `process.env.PORT` em `0.0.0.0`, lêem a variável não
+secreta `MENSAGEM_EXEMPLO` e registam apenas método e caminho.
+
+Testado localmente nesta etapa: resposta HTTP 200 com a mensagem por omissão e,
+numa segunda execução, com o valor da variável definido; arquivo comprimido
+verificado com `index.js` e `package.json` na raiz. **Não foi executada
+nenhuma operação no Azure.** Método de publicação único e documentado:
+`az webapp deploy --resource-group <grupo> --name <app> --src-path <zip> --type zip`,
+com sessão institucional na linha de comandos, sem tokens nem autenticação
+básica. A documentação oficial de implantação de arquivos regista que o envio
+pela interface Kudu não funciona em Linux e que o arquivo não é construído por
+defeito — daí o exemplo não ter dependências.
+
+O plano de serviço só é apagado quando foi criado para o exercício; um plano
+partilhado nunca é apagado.
 
 ### Estado das lições do curso
 
