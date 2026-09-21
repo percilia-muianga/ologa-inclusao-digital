@@ -60,12 +60,43 @@ export async function permissoesGestao(context: ContextoAutenticado): Promise<Pe
   return avaliarGestao(papeis, perfil);
 }
 
+/**
+ * Regista no servidor um acesso a área de gestão ou a sua recusa.
+ * Guarda o mínimo: quem (id da conta, quando existe), o que foi pedido e o
+ * resultado. Nunca guarda palavras-passe, tokens, gabaritos nem conteúdos
+ * pessoais. O registo é imutável (gatilho na base de dados).
+ */
+export async function registarEventoGestao(
+  utilizadorId: string | null,
+  accao: "leitura_gestao" | "escrita_gestao",
+  resultado: "permitido" | "recusado",
+) {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("registo_auditoria").insert({
+      utilizador_id: utilizadorId,
+      accao,
+      entidade: "acesso_gestao",
+      registo_id: null,
+      valor_novo: { resultado },
+      contexto_actor: utilizadorId ? "sessao_autenticada" : "sem_sessao",
+    } as never);
+  } catch {
+    // O registo não pode impedir a recusa de acesso.
+  }
+}
+
 /** Barra a chamada ANTES de qualquer consulta privilegiada. */
 export async function exigirGestao(
   context: ContextoAutenticado,
   modo: "ler" | "escrever",
 ): Promise<Permissoes> {
   const p = await permissoesGestao(context);
-  if (modo === "ler" ? p.podeLer : p.podeEscrever) return p;
+  const accao = modo === "ler" ? "leitura_gestao" : "escrita_gestao";
+  if (modo === "ler" ? p.podeLer : p.podeEscrever) {
+    await registarEventoGestao(context?.userId ?? null, accao, "permitido");
+    return p;
+  }
+  await registarEventoGestao(context?.userId ?? null, accao, "recusado");
   throw new Error("SEM_PERMISSAO_GESTAO");
 }
