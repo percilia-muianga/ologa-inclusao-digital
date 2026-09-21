@@ -11,14 +11,52 @@ export const verificarCodigo = createServerFn({ method: "GET" })
       .select("nome_formando, titulo_modulo, nome_instituicao, emitido_em")
       .eq("codigo_verificacao", codigo)
       .maybeSingle();
-    if (!cert) return { ok: false as const };
+    if (cert) {
+      return {
+        ok: true as const,
+        certificado: {
+          nome_formando: cert.nome_formando,
+          modulo: cert.titulo_modulo,
+          instituicao: cert.nome_instituicao,
+          data: cert.emitido_em,
+          detalhes: null as null | {
+            carga_horaria: number;
+            provincia: string | null;
+            turma: string | null;
+            data_inicio: string | null;
+            data_fim: string | null;
+            nota_final_pct: string;
+            assiduidade_pct: string;
+          },
+        },
+      };
+    }
+
+    // Certificado de curso (avaliação final): mesmo mecanismo de verificação
+    const { data: certCurso } = await supabaseAdmin
+      .from("certificados_curso")
+      .select(
+        "nome_formando, titulo_curso, carga_horaria, provincia, turma_designacao, data_inicio, data_fim, nota_final_pct, assiduidade_pct, emitido_em",
+      )
+      .eq("codigo_verificacao", codigo)
+      .maybeSingle();
+    if (!certCurso) return { ok: false as const };
     return {
       ok: true as const,
       certificado: {
-        nome_formando: cert.nome_formando,
-        modulo: cert.titulo_modulo,
-        instituicao: cert.nome_instituicao,
-        data: cert.emitido_em,
+        nome_formando: certCurso.nome_formando,
+        modulo: certCurso.titulo_curso,
+        instituicao: certCurso.provincia ?? "",
+        data: certCurso.emitido_em,
+        detalhes: {
+          carga_horaria: certCurso.carga_horaria,
+          provincia: certCurso.provincia,
+          turma: certCurso.turma_designacao,
+          data_inicio: certCurso.data_inicio,
+          data_fim: certCurso.data_fim,
+          nota_final_pct: String(certCurso.nota_final_pct),
+          assiduidade_pct: String(certCurso.assiduidade_pct),
+        },
       },
     };
   });
