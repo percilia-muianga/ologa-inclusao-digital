@@ -159,6 +159,14 @@ export function montarGuiao(
   ].join("");
 }
 
+/**
+ * Descrição a aplicar ao módulo quando TODAS as suas lições já têm conteúdo
+ * escrito. Rascunho: escrito, por validar pela Ologa/ATDI.
+ */
+export const DESCRICOES_MODULO: Record<string, string> = {
+  m1: "Conteúdo escrito, em rascunho por validar pela Ologa/ATDI. Cinco lições: o que é computação em nuvem e as cinco características essenciais; modelos de serviço (infra-estrutura, plataforma e programa como serviço); modelos de implantação (pública, privada, comunitária, híbrida) e multinuvem; vantagens, limites, componentes de infra-estrutura e responsabilidade partilhada; e escolha fundamentada do modelo para um serviço público.",
+};
+
 export const LICOES: Record<string, ConteudoLicao> = {
   m1l1: {
     objectivos: [
