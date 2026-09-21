@@ -18,7 +18,8 @@
  * equipa e não é explicação da divergência acima: a divergência está nos
  * documentos do concurso, não na nossa repartição.
  *
- * Estado geral: rascunho por validar pela Ologa/ATDI.
+ * Estado editorial (validação pedagógica, materiais por produzir, decisões
+ * por confirmar) fica em docs/pontos-por-validar.md, não na plataforma.
  */
 
 /** Âmbito do conteúdo programático da secção 6.2 (páginas 13 e 14). */
@@ -167,7 +168,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
     "m1",
     1,
     "Fundamentos de Inteligência Artificial",
-    "Quatro lições sobre os fundamentos: o que é e o que não é inteligência artificial, com uma breve história e a distinção entre automação por regras e sistemas que inferem a partir de dados; dados, características, rótulos, qualidade e representatividade, e a diferença entre algoritmo e modelo; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo; e aplicações ao trabalho administrativo, com verificação humana obrigatória. Rascunho por validar pela Ologa/ATDI.",
+    "Quatro lições sobre os fundamentos: o que é e o que não é inteligência artificial, com uma breve história e a distinção entre automação por regras e sistemas que inferem a partir de dados; dados, características, rótulos, qualidade e representatividade, e a diferença entre algoritmo e modelo; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo; e aplicações ao trabalho administrativo, com verificação humana obrigatória.",
     M1_LICOES,
   ),
   modulo(
