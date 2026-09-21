@@ -882,39 +882,36 @@ export const iniciarExame = createServerFn({ method: "POST" })
 
     const turma = turmaDoExame;
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();
-    const { data: tentativa, error: eT } = await s
-      .from("exame_tentativas")
-      .insert({
-        formando_id: formando.id,
-        curso_id: data.cursoId,
-        turma_id: turma?.id ?? null,
-        numero: (existentes?.length ?? 0) + 1,
-        limite_em: limite,
-        total: seleccionadas.length,
-      })
-      .select("id")
-      .single();
-    if (eT) throw eT;
-
     const linhas = seleccionadas.map((q, i) => {
       const { apresentacao, respostaCorrecta } = apresentar(q)!;
       return {
-        tentativa_id: tentativa.id,
         questao_id: q.id,
         ordem: i + 1,
         modulo_id: q.modulo_id,
         tipologia: q.tipologia,
         dificuldade: q.dificuldade,
         enunciado: q.enunciado,
-        apresentacao: apresentacao as never,
-        resposta_correcta: respostaCorrecta as never,
+        apresentacao,
+        resposta_correcta: respostaCorrecta,
         explicacao: q.explicacao,
       };
     });
-    const { error: eQ } = await s.from("exame_tentativa_questoes").insert(linhas);
-    if (eQ) throw eQ;
 
-    return { tentativaId: tentativa.id, retomada: false };
+    // Abertura da tentativa e gravação das questões sorteadas numa só
+    // operação, com actor verificado e vínculo confirmado na base.
+    const { data: tentativaId, error: eT } = await s.rpc("rpc_exame_tentativa_criar", {
+      _actor: (context as unknown as ContextoAutenticado).userId,
+      _formando_id: formando.id,
+      _curso_id: data.cursoId,
+      _turma_id: turma?.id ?? null,
+      _numero: (existentes?.length ?? 0) + 1,
+      _limite_em: limite,
+      _total: seleccionadas.length,
+      _questoes: linhas,
+    } as never);
+    if (eT) throw eT;
+
+    return { tentativaId: tentativaId as unknown as string, retomada: false };
   });
 
 export const obterTentativa = createServerFn({ method: "GET" })
@@ -992,14 +989,12 @@ export const guardarResposta = createServerFn({ method: "POST" })
     if (new Date(tentativa.limite_em).getTime() < Date.now())
       throw new Error("TEMPO_ESGOTADO");
 
-    const { error } = await s
-      .from("exame_tentativa_questoes")
-      .update({
-        resposta_dada: data.resposta as never,
-        respondido_em: new Date().toISOString(),
-      })
-      .eq("id", data.questaoId)
-      .eq("tentativa_id", tentativa.id);
+    const { error } = await s.rpc("rpc_exame_resposta_guardar", {
+      _actor: (context as unknown as ContextoAutenticado).userId,
+      _tentativa_id: tentativa.id,
+      _questao_id: data.questaoId,
+      _resposta: data.resposta,
+    } as never);
     if (error) throw error;
     return { ok: true };
   });
@@ -1057,6 +1052,7 @@ export const submeterExame = createServerFn({ method: "POST" })
       .eq("tentativa_id", tentativa.id);
 
     let pontuacao = 0;
+    const correccoes: { id: string; correcta: boolean }[] = [];
     for (const q of questoes ?? []) {
       const acertou = corrigir(
         q.tipologia as Tipologia,
@@ -1064,22 +1060,22 @@ export const submeterExame = createServerFn({ method: "POST" })
         q.resposta_dada,
       );
       if (acertou) pontuacao += 1;
-      await s.from("exame_tentativa_questoes").update({ correcta: acertou }).eq("id", q.id);
+      correccoes.push({ id: q.id, correcta: acertou });
     }
     const total = (questoes ?? []).length;
     const notaPct = total > 0 ? Math.round((pontuacao / total) * 1000) / 10 : 0;
     const expirou = new Date(tentativa.limite_em).getTime() < Date.now();
 
-    const { error } = await s
-      .from("exame_tentativas")
-      .update({
-        estado: expirou ? "expirada" : "submetida",
-        submetido_em: new Date().toISOString(),
-        pontuacao,
-        total,
-        nota_pct: notaPct,
-      })
-      .eq("id", tentativa.id);
+    // Correcção e fecho numa só operação, com actor verificado.
+    const { error } = await s.rpc("rpc_exame_tentativa_submeter", {
+      _actor: (context as unknown as ContextoAutenticado).userId,
+      _tentativa_id: tentativa.id,
+      _correccoes: correccoes,
+      _pontuacao: pontuacao,
+      _total: total,
+      _nota_pct: notaPct,
+      _estado: expirou ? "expirada" : "submetida",
+    } as never);
     if (error) throw error;
 
     return { pontuacao, total, notaPct, expirou };
@@ -1147,30 +1143,29 @@ export const emitirCertificadoCurso = createServerFn({ method: "POST" })
     if (!condicoes.podeCertificar || !melhor || !assiduidade || assiduidade.usadaPct === null)
       throw new Error(condicoes.motivo ?? "SEM_EXAME_SUBMETIDO");
 
-    const { data: cert, error } = await s
-      .from("certificados_curso")
-      .insert({
-        formando_id: formando.id,
-        curso_id: data.cursoId,
-        turma_id: turma?.id ?? null,
-        tentativa_id: melhor.id,
-        codigo_verificacao: gerarCodigo(),
-        nome_formando: formando.nome,
-        titulo_curso: curso?.titulo ?? "",
-        carga_horaria: curso?.carga_horaria ?? 0,
-        provincia: turma?.provincia ?? null,
-        turma_designacao: turma?.designacao ?? null,
-        data_inicio: turma?.data_inicio ?? null,
-        data_fim: turma?.data_fim ?? null,
-        nota_final_pct: melhor.nota,
-        assiduidade_pct: assiduidade.usadaPct,
-        base_assiduidade: assiduidade.base as never,
-        assiduidade_estrita_pct: assiduidade.estritaPct,
-        assiduidade_ajustada_pct: assiduidade.ajustadaPct,
-      })
-      .select("codigo_verificacao, emitido_em")
-      .single();
+    // Operação específica com actor verificado: o nome do formando, o título e
+    // a carga do curso e os dados da turma são lidos dentro da base. Só a nota
+    // e a assiduidade — ambas apuradas acima, no servidor — são passadas.
+    const { data: linhas, error } = await s.rpc("rpc_certificado_curso_emitir", {
+      _actor: (context as unknown as ContextoAutenticado).userId,
+      _formando_id: formando.id,
+      _curso_id: data.cursoId,
+      _turma_id: turma?.id ?? null,
+      _tentativa_id: melhor.id,
+      _codigo: gerarCodigo(),
+      _nota_final_pct: melhor.nota,
+      _assiduidade_pct: assiduidade.usadaPct,
+      _base: assiduidade.base,
+      _assiduidade_estrita_pct: assiduidade.estritaPct,
+      _assiduidade_ajustada_pct: assiduidade.ajustadaPct,
+    } as never);
     if (error) throw error;
-    return { ...cert, jaExistia: false };
+    const cert = (linhas as unknown as { cert_codigo: string; cert_emitido_em: string }[])[0];
+    if (!cert) throw new Error("CERTIFICADO_NAO_EMITIDO");
+    return {
+      codigo_verificacao: cert.cert_codigo,
+      emitido_em: cert.cert_emitido_em,
+      jaExistia: false,
+    };
   });
 

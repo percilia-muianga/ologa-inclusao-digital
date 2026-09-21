@@ -2,7 +2,7 @@
 -- Base efémera, sem dados reais.
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
-CREATE ROLE service_role NOLOGIN;
+CREATE ROLE service_role NOLOGIN BYPASSRLS;  -- como no projecto real
 CREATE ROLE supabase_auth_admin NOLOGIN;
 CREATE SCHEMA auth;
 GRANT USAGE ON SCHEMA auth TO authenticated, anon, service_role;
