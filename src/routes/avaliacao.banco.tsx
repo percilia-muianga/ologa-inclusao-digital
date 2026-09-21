@@ -256,9 +256,16 @@ function BancoPage() {
       titulo="Banco de questões"
       introducao="As questões organizam-se por curso e por módulo, com tipologia, dificuldade, resposta correcta, explicação, estado e autor. Uma questão já usada numa tentativa nunca é eliminada: é desactivada."
     >
+      {podeEscrever ? null : (
+        <p className="mb-5 rounded-md border border-amber-300 bg-amber-50 p-4 text-base text-navy-2">
+          Acesso apenas de leitura: pode consultar o banco, mas não pode criar, alterar nem activar
+          questões.
+        </p>
+      )}
       <div className="mb-5 flex flex-wrap gap-3">
         <button
           type="button"
+          disabled={!podeEscrever}
           onClick={abrirNova}
           className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
         >
