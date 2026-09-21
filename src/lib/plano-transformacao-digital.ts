@@ -29,6 +29,13 @@ export const TOPICOS_SEC_6_1 = [
 
 export type TopicoSec61 = (typeof TOPICOS_SEC_6_1)[number];
 
+export type TemposLicao = {
+  acolhimento: number;
+  exposicao: number;
+  actividade: number;
+  partilha: number;
+};
+
 export type LicaoPlano = {
   /** Chave estável usada pelo seed; a lição na base é identificada por (módulo, ordem). */
   chave: string;
@@ -37,6 +44,14 @@ export type LicaoPlano = {
   minutos: number;
   teoriaMin: number;
   praticaMin: number;
+  /**
+   * Fonte única dos tempos da lição, em minutos. O texto da actividade no
+   * conteúdo e a grelha de condução do guião do formador são gerados a partir
+   * daqui — não são escritos à mão em dois sítios.
+   * Invariantes verificados em teste: acolhimento + exposicao = teoriaMin;
+   * actividade + partilha = praticaMin; a soma dos quatro = minutos.
+   */
+  tempos: TemposLicao;
   topicos: TopicoSec61[];
 };
 
@@ -68,6 +83,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 90,
         teoriaMin: 50,
         praticaMin: 40,
+        tempos: { acolhimento: 10, exposicao: 40, actividade: 30, partilha: 10 },
         topicos: [
           "conceitos_e_impactos_institucionais",
           "tecnologias_ia_bigdata_iot_blockchain_cloud",
@@ -80,6 +96,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 90,
         teoriaMin: 50,
         praticaMin: 40,
+        tempos: { acolhimento: 10, exposicao: 40, actividade: 30, partilha: 10 },
         topicos: [
           "conceitos_e_impactos_institucionais",
           "politicas_publicas_e_competencias_digitais",
@@ -93,6 +110,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 90,
         teoriaMin: 40,
         praticaMin: 50,
+        tempos: { acolhimento: 10, exposicao: 30, actividade: 40, partilha: 10 },
         topicos: [
           "impactos_sociais_economicos_eticos_juridicos",
           "impactos_ambientais_e_sustentabilidade",
@@ -105,6 +123,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 90,
         teoriaMin: 40,
         praticaMin: 50,
+        tempos: { acolhimento: 10, exposicao: 30, actividade: 40, partilha: 10 },
         topicos: [
           "estrategia_planeamento_implementacao_gestao",
           "casos_praticos",
@@ -128,6 +147,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 45,
         praticaMin: 60,
+        tempos: { acolhimento: 10, exposicao: 35, actividade: 50, partilha: 10 },
         topicos: [
           "eficiencia_dos_servicos_e_mudanca_de_comportamentos",
           "politicas_publicas_e_competencias_digitais",
@@ -140,6 +160,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 45,
         praticaMin: 60,
+        tempos: { acolhimento: 10, exposicao: 35, actividade: 50, partilha: 10 },
         topicos: ["casos_praticos", "modelos_de_servico_digitais_e_inovacao"],
       },
       {
@@ -149,6 +170,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 45,
         praticaMin: 60,
+        tempos: { acolhimento: 10, exposicao: 35, actividade: 50, partilha: 10 },
         topicos: [
           "eficiencia_dos_servicos_e_mudanca_de_comportamentos",
           "modelos_de_servico_digitais_e_inovacao",
@@ -161,6 +183,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 45,
         praticaMin: 60,
+        tempos: { acolhimento: 10, exposicao: 35, actividade: 50, partilha: 10 },
         topicos: [
           "seguranca_e_privacidade",
           "tecnologias_ia_bigdata_iot_blockchain_cloud",
@@ -185,6 +208,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 35,
         praticaMin: 70,
+        tempos: { acolhimento: 10, exposicao: 25, actividade: 60, partilha: 10 },
         topicos: [
           "estrategia_planeamento_implementacao_gestao",
           "politicas_publicas_e_competencias_digitais",
@@ -197,6 +221,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 35,
         praticaMin: 70,
+        tempos: { acolhimento: 10, exposicao: 25, actividade: 60, partilha: 10 },
         topicos: [
           "politicas_publicas_e_competencias_digitais",
           "estrategia_planeamento_implementacao_gestao",
@@ -209,6 +234,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 25,
         praticaMin: 80,
+        tempos: { acolhimento: 10, exposicao: 15, actividade: 70, partilha: 10 },
         topicos: [
           "eficiencia_dos_servicos_e_mudanca_de_comportamentos",
           "conceitos_e_impactos_institucionais",
@@ -221,6 +247,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
         minutos: 105,
         teoriaMin: 25,
         praticaMin: 80,
+        tempos: { acolhimento: 10, exposicao: 15, actividade: 70, partilha: 10 },
         topicos: [
           "casos_praticos",
           "impactos_ambientais_e_sustentabilidade",
