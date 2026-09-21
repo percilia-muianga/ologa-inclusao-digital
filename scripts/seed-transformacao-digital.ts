@@ -134,8 +134,8 @@ async function main() {
             titulo: l.titulo,
             duracao: `${l.minutos} minutos`,
             duracao_minutos: l.minutos,
-            conteudo_elearning: montarElearning(conteudo, l.minutos),
-            guiao_formador: montarGuiao(conteudo, l.titulo, l.minutos),
+            conteudo_elearning: montarElearning(conteudo, l.minutos, l.tempos),
+            guiao_formador: montarGuiao(conteudo, l.titulo, l.minutos, l.tempos),
             estado_conteudo: "disponivel",
             proposta_por_validar: true,
           })
