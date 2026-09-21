@@ -148,7 +148,9 @@ function CursoPage() {
               <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-dark">{modulo.transversal ? "Módulo transversal obrigatório" : `Módulo ${modulo.ordem}`}</p><h2 id={`modulo-${modulo.id}`} className="mt-1 text-xl font-extrabold text-navy">{modulo.titulo}</h2>{modulo.descricao ? <p className="mt-2 max-w-3xl text-navy-2">{modulo.descricao}</p> : null}</div>
               <span className="rounded-full bg-page px-3 py-1 text-sm font-bold text-navy">
                 {modulo.porFornecer > 0
-                  ? `${modulo.porFornecer} lições por fornecer`
+                  ? propostaPorValidar
+                    ? `${modulo.porFornecer} lições por fornecer`
+                    : "Em preparação"
                   : modulo.licoes.some((l) => l.proposta_por_validar)
                     ? "Conteúdo escrito, em rascunho por validar"
                     : "Conteúdo disponível"}
