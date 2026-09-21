@@ -538,9 +538,9 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       prazoLimite: prazoLimite?.toISOString() ?? null,
       diasRestantes,
       melhorNota,
-      // A marcação de presenças ainda não existe na plataforma: sem registos,
-      // a assiduidade fica por apurar em vez de ser inventada.
-      assiduidadePct: null as number | null,
+      // Assiduidade real, calculada a partir das presenças marcadas. Fica a
+      // null enquanto a turma não tiver sessões realizadas.
+      assiduidadePct,
       certificado,
     };
   });
