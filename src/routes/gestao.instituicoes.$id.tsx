@@ -372,16 +372,7 @@ function FichaPage() {
                 ["declaracao", "Declaração de desenho universal"],
               ] as const
             ).map(([t, nome]) => (
-              <li key={t} className="rounded-md border border-ink/10 bg-white p-4">
-                <a
-                  href={`/api/public/documentos/${t}/${inst.indicadores_token}`}
-                  target="_blank"
-                  rel="noopener"
-                  className="text-base font-semibold text-brand-dark underline"
-                >
-                  {nome} (PDF)
-                </a>
-              </li>
+              <BotaoDocumento key={t} token={inst.indicadores_token} tipo={t} nome={nome} />
             ))}
           </ul>
           <DeclaracaoAssinaturaCard
