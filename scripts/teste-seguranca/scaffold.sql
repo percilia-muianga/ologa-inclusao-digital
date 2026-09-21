@@ -52,8 +52,6 @@ CREATE POLICY papeis_proprio_ler ON public.utilizador_papeis FOR SELECT TO authe
   USING (utilizador_id = auth.uid());
 CREATE POLICY papeis_inserir ON public.utilizador_papeis FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY papeis_apagar ON public.utilizador_papeis FOR DELETE TO authenticated USING (true);
-CREATE POLICY perfis_admin ON public.perfis FOR ALL TO authenticated
-  USING (public.is_admin(auth.uid())) WITH CHECK (public.is_admin(auth.uid()));
 
 -- Mesmas assinaturas das funções reais.
 CREATE OR REPLACE FUNCTION public.is_admin(_uid uuid) RETURNS boolean
@@ -76,3 +74,7 @@ CREATE OR REPLACE FUNCTION public.listar_tabelas_protegidas() RETURNS TABLE(tabe
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$ SELECT 'x'::text $$;
 GRANT EXECUTE ON FUNCTION public.tem_papel(uuid, public.papel_sistema) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.e_admin_atdi(uuid) TO anon, authenticated;
+
+-- A administração gere perfis (a política depende da função acima).
+CREATE POLICY perfis_admin ON public.perfis FOR ALL TO authenticated
+  USING (public.is_admin(auth.uid())) WITH CHECK (public.is_admin(auth.uid()));
