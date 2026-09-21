@@ -37,6 +37,12 @@ for f in "$RAIZ"/drizzle/migrations/*.sql; do
   $P -f "$f"
 done
 
+# Ajuste de ambiente: no projecto real o Supabase concede EXECUTE a
+# "authenticated" nas funções à medida que são criadas. Aqui isso é reposto
+# depois das migrações, com as MESMAS permissões verificadas na base do
+# projecto (authenticated e service_role), para o teste reflectir a realidade.
+$P -c "GRANT EXECUTE ON FUNCTION public.e_admin_atdi(uuid), public.e_auditor_atdi(uuid), public.tem_papel(uuid, public.papel_sistema), public.is_admin(uuid) TO authenticated, service_role;"
+
 $P -f "$DIR/dados.sql"
 echo
 PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes.sh"

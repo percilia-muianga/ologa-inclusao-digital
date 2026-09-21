@@ -70,9 +70,9 @@ espera_ok "auditoria não guarda valores, só nomes de colunas" \
   END \$\$;")"
 
 espera_recusa "registo de auditoria é imutável (UPDATE)" \
-  "$(como service_role "" "UPDATE public.registo_auditoria SET accao='x';")"
+  "$(como postgres "" "SET LOCAL ROLE authenticated; SET LOCAL request.jwt.claim.sub='$COORD'; INSERT INTO public.turmas(curso_id, designacao, codigo_inscricao, provincia, distrito, modalidade) VALUES ('00000000-0000-0000-0000-00000000c001','TI','CI','Maputo','KaMpfumo','presencial'); RESET ROLE; UPDATE public.registo_auditoria SET accao='x';")"
 espera_recusa "registo de auditoria é imutável (DELETE)" \
-  "$(como service_role "" "DELETE FROM public.registo_auditoria;")"
+  "$(como postgres "" "SET LOCAL ROLE authenticated; SET LOCAL request.jwt.claim.sub='$COORD'; INSERT INTO public.turmas(curso_id, designacao, codigo_inscricao, provincia, distrito, modalidade) VALUES ('00000000-0000-0000-0000-00000000c001','TI','CI','Maputo','KaMpfumo','presencial'); RESET ROLE; DELETE FROM public.registo_auditoria;")"
 
 espera_recusa "se a auditoria falhar, a mutação não fica gravada" \
   "$(como postgres "" "ALTER TABLE public.registo_auditoria ADD CONSTRAINT falha_forcada CHECK (false) NOT VALID;
