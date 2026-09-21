@@ -64,6 +64,20 @@ async function main() {
     await sb.from("curso_modulos").select("modulo_id,ordem,carga_horaria_minutos").eq("curso_id", curso.id).order("ordem"),
   );
 
+  // Ficha do curso. Distingue exigência do Termo de Referência de proposta da equipa.
+  must(
+    await sb
+      .from("cursos")
+      .update({
+        objectivos: FICHA_CURSO.objectivos,
+        publico_alvo: FICHA_CURSO.publicoAlvo,
+        pre_requisitos: FICHA_CURSO.preRequisitos,
+        materiais: `${FICHA_CURSO.materiais} ${FICHA_CURSO.nota}`,
+      })
+      .eq("id", curso.id)
+      .select("id"),
+  );
+
   // Reconciliação dos metadados de duração com o plano (fonte única).
   // A carga do CURSO (30 h) é dos TdR; a distribuição por módulo é proposta.
   const tempos: string[] = [];
