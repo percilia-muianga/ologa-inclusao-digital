@@ -38,9 +38,19 @@ export const listarModulos = createServerFn({ method: 'GET' }).handler(async () 
 // é feita por código escrito pelo formando; a resolução vive dentro de
 // emitirCertificado.)
 
+/**
+ * Um módulo pode pertencer a vários cursos (o transversal pertence aos seis).
+ * Por isso não há «curso pai» — o contexto vem do percurso que a pessoa
+ * seguiu e é sempre validado aqui: só é devolvido se o módulo estiver mesmo
+ * ligado a esse curso. A ordem mostrada é a ordem dentro do curso, não o
+ * índice global da base.
+ */
 export const obterModulo = createServerFn({ method: 'GET' })
-  .inputValidator((i: { moduloId: string }) =>
-    z.object({ moduloId: z.string().uuid() }).parse(i))
+  .inputValidator((i: { moduloId: string; cursoSlug?: string | null }) =>
+    z.object({
+      moduloId: z.string().uuid(),
+      cursoSlug: z.string().trim().min(1).max(120).nullish(),
+    }).parse(i))
   .handler(async ({ data }) => {
     const s = await admin()
     const [m, l, q] = await Promise.all([
@@ -52,7 +62,37 @@ export const obterModulo = createServerFn({ method: 'GET' })
     ])
     if (m.error) throw m.error
     if (l.error) throw l.error
-    return { modulo: m.data, licoes: l.data ?? [], numeroPerguntas: q.count ?? 0 }
+
+    let contexto: {
+      cursoSlug: string
+      cursoTitulo: string
+      ordemNoCurso: number
+      transversal: boolean
+      totalModulos: number
+    } | null = null
+    if (data.cursoSlug) {
+      const curso = await s.from('cursos')
+        .select('id, titulo').eq('slug', data.cursoSlug).maybeSingle()
+      if (curso.error) throw curso.error
+      if (curso.data) {
+        const rel = await s.from('curso_modulos')
+          .select('modulo_id, ordem, transversal')
+          .eq('curso_id', curso.data.id).order('ordem')
+        if (rel.error) throw rel.error
+        const meu = (rel.data ?? []).find((r) => r.modulo_id === data.moduloId)
+        if (meu) {
+          contexto = {
+            cursoSlug: data.cursoSlug,
+            cursoTitulo: curso.data.titulo,
+            ordemNoCurso: meu.ordem,
+            transversal: !!meu.transversal,
+            totalModulos: (rel.data ?? []).length,
+          }
+        }
+      }
+    }
+
+    return { modulo: m.data, licoes: l.data ?? [], numeroPerguntas: q.count ?? 0, contexto }
   })
 
 // guiao_formador é público — separador visível no HTML de referência
