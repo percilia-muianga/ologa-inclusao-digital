@@ -11,14 +11,14 @@ export function ErroPermissao({ erro }: { erro?: unknown }) {
   return (
     <PlataformaPagina
       titulo={semSessao ? "É preciso entrar" : "Sem permissão para esta área"}
-      descricao={
+      introducao={
         semSessao
           ? "Esta área é reservada à equipa autorizada. Entre com a sua conta para continuar."
           : "A sua conta não tem permissão para ver ou alterar esta área. Fale com a administração do programa."
       }
     >
       <p className="text-base text-navy">
-        <Link to="/auth" className="font-semibold underline">
+        <Link to="/entrar" className="font-semibold underline">
           Entrar na plataforma
         </Link>
       </p>
