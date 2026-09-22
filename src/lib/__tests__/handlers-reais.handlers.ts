@@ -413,7 +413,7 @@ describe("inventário: nenhuma função mutadora fica sem sessão e sem guarda",
         if (publicasIntencionais.has(nome)) continue;
         const temSessao = /\.middleware\(\[/.test(bloco);
         const temGuarda =
-          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|exigirAdministrador\(|formandoPorToken\(|perfil_id|context\.userId/.test(bloco);
+          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|exigirAdministrador\(|exigirAdministradorGeral\(|formandoPorToken\(|perfil_id|context\.userId/.test(bloco);
         if (!temSessao || !temGuarda) falhas.push(`${ficheiro}:${nome}`);
       }
     }
