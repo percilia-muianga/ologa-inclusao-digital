@@ -288,9 +288,9 @@ const M3L3: ConteudoLicao = {
   actividade: {
     formato: "em grupos de três pessoas, com o anexo A em papel",
     enunciado: [
-      "Passo 1 (15 minutos). Preencham as duas colunas em falta: a perda máxima real que o esquema actual permite e se há contradição com a paragem tolerável declarada. Escrevam, para os dois casos mais graves, a frequência de cópia que seria coerente.",
-      "Passo 2 (15 minutos). Avaliem o esquema actual contra a regra de três cópias, dois suportes, uma fora do local, e uma inalterável ou desligada. Digam o que falha e proponham um esquema corrigido executável com os meios da instituição.",
-      "Passo 3 (15 minutos). Escrevam o procedimento de atendimento em modo degradado para o balcão: que formulário, que numeração, que instruções e como se faz a reconciliação quando o sistema voltar.",
+      "Passo 1 (10 minutos). Preencham as duas colunas em falta: a perda máxima real que o esquema actual permite e se há contradição com a paragem tolerável declarada. Escrevam, para os dois casos mais graves, a frequência de cópia que seria coerente.",
+      "Passo 2 (10 minutos). Avaliem o esquema actual contra a regra de três cópias, dois suportes, uma fora do local, e uma inalterável ou desligada. Digam o que falha e proponham um esquema corrigido executável com os meios da instituição.",
+      "Passo 3 (5 minutos). Escrevam o procedimento de atendimento em modo degradado para o balcão: que formulário, que numeração, que instruções e como se faz a reconciliação quando o sistema voltar.",
     ],
     produto:
       "Anexo A preenchido, avaliação do esquema de cópias com proposta corrigida e procedimento de modo degradado com regra de reconciliação.",
@@ -303,6 +303,7 @@ const M3L3: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Restaurar e verificar uma cópia, medindo o tempo real",
     objectivo:
       "Restaurar uma cópia de base de dados para um ambiente separado, verificar a integridade por resumos e a utilidade por leitura dos dados, e medir o tempo total.",
@@ -311,6 +312,11 @@ const M3L3: ConteudoLicao = {
       "Ficheiro de cópia «processos-29ago.dump» com dados fictícios (1 500 registos de exercício) e o respectivo resumo criptográfico publicado em papel.",
       "Ficheiro de cópia «processos-12set.dump», propositadamente truncado, com o resumo publicado que NÃO corresponde ao ficheiro.",
       "Cronómetro ou relógio com segundos, e folha de laboratório com campos para tempo de cada etapa.",
+    ],
+    dependenciasPorPreparar: [
+      "A máquina «REST-LAB» com o motor de base de dados instalado não é entregue com o curso.",
+      "Os ficheiros «processos-29ago.dump», «processos-12set.dump» truncado e os resumos publicados são gerados pelo formador com dados fictícios; o curso entrega o procedimento, os critérios e a folha de tempos.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Arrancar REST-LAB no dia anterior e confirmar que o motor de base de dados inicia e que a ferramenta de restauro está disponível.",
@@ -453,8 +459,8 @@ const M3L4: ConteudoLicao = {
     formato: "em equipas de quatro a cinco pessoas, com funções atribuídas, em exercício cronometrado",
     enunciado: [
       "Passo 1 (5 minutos). Atribuam funções — coordenação, análise técnica, registo cronológico, comunicação — e abram a folha de registo com a hora de início.",
-      "Passo 2 (25 minutos). Conduzam o incidente à medida que os envelopes chegam. Cada decisão entra na folha com hora, fundamento e quem decidiu. A resposta à direcção é escrita, em três frases, apenas com factos apurados.",
-      "Passo 3 (15 minutos). Escrevam o relatório de duas páginas com as seis secções: cronologia, factos, evidência com custódia, decisões com fundamento, estado final e recomendações com responsável e prazo.",
+      "Passo 2 (15 minutos). Conduzam o incidente à medida que os envelopes chegam. Cada decisão entra na folha com hora, fundamento e quem decidiu. A resposta à direcção é escrita, em três frases, apenas com factos apurados.",
+      "Passo 3 (5 minutos). Escrevam o relatório de duas páginas com as seis secções: cronologia, factos, evidência com custódia, decisões com fundamento, estado final e recomendações com responsável e prazo.",
     ],
     produto:
       "Folha de registo cronológico completa, resposta escrita à direcção e relatório de incidente com as seis secções.",
@@ -468,6 +474,7 @@ const M3L4: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Exercício integrado nas máquinas virtuais do laboratório",
     objectivo:
       "Executar o ciclo completo de resposta num incidente simulado, usando o recolector, as máquinas e os procedimentos das lições anteriores.",
@@ -476,6 +483,11 @@ const M3L4: ConteudoLicao = {
       "Ficheiro de registos do cenário «ensaio-integrado.log», preparado pelo formador com a sequência do exercício.",
       "Processo de demonstração inofensivo, o mesmo da lição de forense, com código-fonte disponível em papel.",
       "Envelopes do anexo A impressos e selados, folhas de registo cronológico, folhas de custódia e cronómetro.",
+    ],
+    dependenciasPorPreparar: [
+      "Depende de todas as máquinas das lições anteriores («SIEM-LAB», «SRV-FIC-LAB», «EST-FORENSE», «REST-LAB»). Cada laboratório anterior que tenha ficado pendente reduz este exercício à parte documental correspondente.",
+      "O ficheiro «ensaio-integrado.log» é montado pelo formador a partir do cenário entregue; não vem pronto com o curso.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Restaurar os instantâneos iniciais de todas as máquinas e confirmar que arrancam e comunicam entre si na rede isolada.",

@@ -311,9 +311,9 @@ const M1L3: ConteudoLicao = {
   actividade: {
     formato: "em pares, com os anexos A e B em papel, antes de tocar no ambiente",
     enunciado: [
-      "Passo 1 (15 minutos). Sobre o anexo A, marquem cada serviço como necessário ou desnecessário para o papel declarado de SRV-FIC e escrevam a justificação numa linha. Façam o mesmo para as contas locais, indicando o que fazer a cada uma.",
-      "Passo 2 (15 minutos). Escrevam, em linguagem corrente e em forma de tabela, o conjunto de regras de filtragem para os três segmentos do anexo B: origem, destino, porta, decisão. Comecem pela regra final de negação por omissão e construam para cima. Contem quantas regras de permissão são precisas.",
-      "Passo 3 (15 minutos). Escrevam a ordem de aplicação das regras numa máquina a que se acede remotamente, de modo a não perder o próprio acesso, e indiquem o que fariam se o perdessem.",
+      "Passo 1 (10 minutos). Sobre o anexo A, marquem cada serviço como necessário ou desnecessário para o papel declarado de SRV-FIC e escrevam a justificação numa linha. Façam o mesmo para as contas locais, indicando o que fazer a cada uma.",
+      "Passo 2 (10 minutos). Escrevam, em linguagem corrente e em forma de tabela, o conjunto de regras de filtragem para os três segmentos do anexo B: origem, destino, porta, decisão. Comecem pela regra final de negação por omissão e construam para cima. Contem quantas regras de permissão são precisas.",
+      "Passo 3 (5 minutos). Escrevam a ordem de aplicação das regras numa máquina a que se acede remotamente, de modo a não perder o próprio acesso, e indiquem o que fariam se o perdessem.",
     ],
     produto:
       "Uma folha por par com a listagem anotada, a tabela de regras de filtragem com negação por omissão e a ordem de aplicação segura.",
@@ -326,6 +326,7 @@ const M1L3: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Endurecer SRV-FIC numa máquina virtual isolada",
     objectivo:
       "Aplicar, num servidor Linux de laboratório, a desactivação de serviços e as regras de filtragem escritas na actividade, confirmar o resultado por verificação observável e repor o estado inicial.",
@@ -335,6 +336,12 @@ const M1L3: ConteudoLicao = {
       "Imagem de máquina virtual «EST-ADMIN» com ferramentas de linha de comandos para listar portas abertas e testar ligações.",
       "Rede virtual interna, sem interface ligada à rede física da sala, com os três segmentos do anexo B configurados.",
       "Ficha impressa com os comandos equivalentes para a distribuição usada, entregue no início do laboratório.",
+    ],
+    dependenciasPorPreparar: [
+      "Programa de virtualização e imagem «SRV-FIC-LAB» não são entregues com o curso: a instituição de acolhimento tem de os preparar, com os serviços do anexo A activos e as contas indicadas. Enquanto faltarem, o laboratório fica pendente.",
+      "A imagem «EST-ADMIN» e a rede virtual com os três segmentos do anexo B também são preparação local, e não material entregue.",
+      "A ficha de comandos equivalentes depende da distribuição de Linux que a instituição escolher; o curso entrega o exercício e os critérios, não a ficha de comandos dessa distribuição.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Copiar as duas imagens para todos os computadores no dia anterior e arrancar uma vez cada uma para confirmar que abrem.",
@@ -469,9 +476,9 @@ const M1L4: ConteudoLicao = {
   actividade: {
     formato: "em pares, com a matriz do anexo A em papel",
     enunciado: [
-      "Passo 1 (20 minutos). Preencham a coluna «Decisão» para as doze contas. As decisões possíveis são: manter como está; converter em contas nominais; reduzir privilégios, indicando quais; desactivar; ou remover. Cada decisão leva uma justificação de uma linha.",
-      "Passo 2 (15 minutos). Para as duas contas de serviço (backup_svc e portal_svc), escrevam que privilégios exactos são necessários ao trabalho de cada uma e como se controlaria o segredo que as autentica.",
-      "Passo 3 (10 minutos). Escrevam o procedimento de revisão periódica de acessos: com que frequência, quem confirma, o que acontece a uma conta sem confirmação e onde fica o registo da revisão.",
+      "Passo 1 (10 minutos). Preencham a coluna «Decisão» para as doze contas. As decisões possíveis são: manter como está; converter em contas nominais; reduzir privilégios, indicando quais; desactivar; ou remover. Cada decisão leva uma justificação de uma linha.",
+      "Passo 2 (10 minutos). Para as duas contas de serviço (backup_svc e portal_svc), escrevam que privilégios exactos são necessários ao trabalho de cada uma e como se controlaria o segredo que as autentica.",
+      "Passo 3 (5 minutos). Escrevam o procedimento de revisão periódica de acessos: com que frequência, quem confirma, o que acontece a uma conta sem confirmação e onde fica o registo da revisão.",
     ],
     produto:
       "Matriz preenchida com decisão e justificação por conta, especificação dos privilégios das duas contas de serviço e procedimento de revisão periódica.",
@@ -484,6 +491,7 @@ const M1L4: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Autenticação por chave e verificação de integridade",
     objectivo:
       "Substituir a autenticação por palavra-passe por autenticação por chave no acesso remoto de uma máquina de laboratório, confirmar que a palavra-passe deixou de ser aceite e verificar a integridade de um ficheiro por comparação de resumos.",
@@ -492,6 +500,11 @@ const M1L4: ConteudoLicao = {
       "Cliente de acesso remoto seguro e ferramenta de geração de pares de chaves, já incluídos nas imagens.",
       "Ficheiro de exercício «relatorio-fic.txt» e o seu resumo criptográfico publicado, entregues em papel e copiados para EST-ADMIN pelo formador.",
       "Segunda cópia do mesmo ficheiro, alterada num único carácter, chamada «relatorio-fic-alterado.txt».",
+    ],
+    dependenciasPorPreparar: [
+      "Depende inteiramente das máquinas «SRV-FIC-LAB» e «EST-ADMIN» da lição anterior. Se esse laboratório ficou pendente, este também fica.",
+      "Os ficheiros «relatorio-fic.txt», a versão alterada e os resumos publicados são gerados localmente pelo formador; o curso entrega o procedimento e os critérios, não os ficheiros.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Restaurar o instantâneo «inicial» nas duas máquinas e tirar novo instantâneo chamado «antes-chaves».",

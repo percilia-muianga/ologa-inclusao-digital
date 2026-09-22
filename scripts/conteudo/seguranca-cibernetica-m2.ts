@@ -541,9 +541,9 @@ const M2L3: ConteudoLicao = {
   actividade: {
     formato: "em grupos de três pessoas, com os anexos A e B em papel",
     enunciado: [
-      "Passo 1 (15 minutos). Com espaço para 200 gigabytes por mês, escolham as fontes do anexo A a recolher primeiro e justifiquem cada escolha pela detecção que permite. Digam o que deixam de fora e que detecção perdem com isso.",
-      "Passo 2 (25 minutos). Reconstituam a sequência do anexo B numa linha temporal. Marquem o momento em que deixa de ser actividade normal e escrevam a frase que justifica essa marcação. Identifiquem os três momentos em que um alerta deveria ter disparado e não disparou.",
-      "Passo 3 (20 minutos). Escrevam duas regras de detecção com condição, limiar, janela e acção. Uma delas deve apanhar o início desta sequência. Para cada regra, estimem quantos alertas por semana geraria numa instituição com 62 funcionários e digam se a equipa consegue tratá-los.",
+      "Passo 1 (10 minutos). Com espaço para 200 gigabytes por mês, escolham as fontes do anexo A a recolher primeiro e justifiquem cada escolha pela detecção que permite. Digam o que deixam de fora e que detecção perdem com isso.",
+      "Passo 2 (15 minutos). Reconstituam a sequência do anexo B numa linha temporal. Marquem o momento em que deixa de ser actividade normal e escrevam a frase que justifica essa marcação. Identifiquem os três momentos em que um alerta deveria ter disparado e não disparou.",
+      "Passo 3 (10 minutos). Escrevam duas regras de detecção com condição, limiar, janela e acção. Uma delas deve apanhar o início desta sequência. Para cada regra, estimem quantos alertas por semana geraria numa instituição com 62 funcionários e digam se a equipa consegue tratá-los.",
     ],
     produto:
       "Lista ordenada de fontes com justificação, linha temporal com o momento de ruptura e os três alertas em falta, e duas regras de detecção com estimativa de ruído.",
@@ -556,6 +556,7 @@ const M2L3: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 25,
     titulo: "Criar e ensaiar uma regra de correlação no recolector de registos",
     objectivo:
       "Configurar, no ambiente de laboratório, uma regra que dispare perante múltiplas autenticações falhadas seguidas de sucesso, e confirmar que dispara com os dados de ensaio e não dispara com actividade normal.",
@@ -564,6 +565,12 @@ const M2L3: ConteudoLicao = {
       "Ficheiro de registos de ensaio «ensaio-03set.log» com as linhas do anexo B em formato normalizado, copiado para SIEM-LAB.",
       "Segundo ficheiro «ensaio-normal.log» com uma semana de actividade normal fictícia, para medir falsos positivos.",
       "Folha de laboratório com espaço para a regra escrita, o número de alertas em cada ensaio e a conclusão.",
+    ],
+    dependenciasPorPreparar: [
+      "A máquina «SIEM-LAB» e o recolector de registos de código aberto não são entregues com o curso: instalação e escolha da ferramenta são decisão e trabalho da instituição de acolhimento.",
+      "Os ficheiros «ensaio-03set.log» e «ensaio-normal.log» têm de ser montados pelo formador no formato que o recolector escolhido aceitar. O curso entrega as linhas do anexo B e o cenário, não os ficheiros já formatados.",
+      "Sem o recolector, faz-se a análise offline sobre as linhas impressas e regista-se o laboratório como pendente.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 25 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Arrancar SIEM-LAB no dia anterior e confirmar que a interface de regras abre e que a importação de ficheiros funciona.",
@@ -707,9 +714,9 @@ const M2L4: ConteudoLicao = {
   actividade: {
     formato: "em grupos de três pessoas, com os anexos A e B em papel",
     enunciado: [
-      "Passo 1 (15 minutos). Classifiquem a durabilidade de cada indicador do anexo A em baixa, média ou alta e escrevam, para os três de durabilidade mais alta, como os usariam para procurar o mesmo problema noutras máquinas.",
-      "Passo 2 (20 minutos). Escrevam a ordem de recolha de evidência em SRV-BD, do mais volátil ao menos volátil, listando pelo menos oito peças. Ao lado de cada uma, digam o que se perde se for recolhida tarde.",
-      "Passo 3 (25 minutos). Preencham a folha de cadeia de custódia do anexo B para duas peças, com dados do caso, e escrevam a primeira página do relatório com três secções separadas: factos observados, hipóteses em avaliação, e o que não foi possível determinar.",
+      "Passo 1 (10 minutos). Classifiquem a durabilidade de cada indicador do anexo A em baixa, média ou alta e escrevam, para os três de durabilidade mais alta, como os usariam para procurar o mesmo problema noutras máquinas.",
+      "Passo 2 (15 minutos). Escrevam a ordem de recolha de evidência em SRV-BD, do mais volátil ao menos volátil, listando pelo menos oito peças. Ao lado de cada uma, digam o que se perde se for recolhida tarde.",
+      "Passo 3 (10 minutos). Preencham a folha de cadeia de custódia do anexo B para duas peças, com dados do caso, e escrevam a primeira página do relatório com três secções separadas: factos observados, hipóteses em avaliação, e o que não foi possível determinar.",
     ],
     produto:
       "Anexo A com durabilidades, lista ordenada de recolha com justificação, duas folhas de custódia preenchidas e a primeira página do relatório com as três secções.",
@@ -722,6 +729,7 @@ const M2L4: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 25,
     titulo: "Recolha ordenada de evidência em máquina de laboratório, sem software malicioso real",
     objectivo:
       "Executar a recolha de evidência volátil e não volátil numa máquina virtual preparada, calculando resumos criptográficos e preenchendo a cadeia de custódia, sem qualquer amostra de software malicioso.",
@@ -730,6 +738,11 @@ const M2L4: ConteudoLicao = {
       "Máquina virtual «EST-FORENSE» com ferramentas de linha de comandos para listar processos, ligações e utilizadores, e para calcular resumos criptográficos.",
       "Disco virtual de recolha, vazio, montado em EST-FORENSE para guardar as peças.",
       "Folhas de cadeia de custódia impressas, em número suficiente, e a ficha de comandos equivalentes para o sistema usado.",
+    ],
+    dependenciasPorPreparar: [
+      "A máquina «EST-FORENSE», o processo de demonstração inofensivo e os ficheiros de registo do cenário são preparados localmente; o curso entrega o cenário, os indicadores e as folhas, não o ambiente.",
+      "Não é entregue, e nunca se usa, qualquer amostra real de programa malicioso: o exercício trabalha sobre indicadores e registos fornecidos.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 25 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Arrancar as máquinas no dia anterior e confirmar que o processo de demonstração arranca e que a ligação entre as duas máquinas se estabelece.",
