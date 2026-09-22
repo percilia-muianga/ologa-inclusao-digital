@@ -15,11 +15,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+/** Valores simples, seguros de enviar ao navegador. */
+export type Json = string | number | boolean | null | Json[] | { [chave: string]: Json };
+
 export type EstadoPacote = {
   pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial";
   hash: string;
-  resumo: Record<string, unknown>;
-  previsto: Record<string, unknown>;
+  resumo: { [chave: string]: Json };
+  previsto: { [chave: string]: Json };
   erro: string | null;
 };
 
@@ -51,7 +54,7 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
     // Pacote 1 — Segurança Cibernética Avançada.
     {
       const { data, error } = await sb.rpc("rpc_estado_seguranca_cibernetica");
-      let previsto: Record<string, unknown> = {};
+      let previsto: { [chave: string]: Json } = {};
       let erro: string | null = error ? error.message : null;
       try {
         const p = preparados.payloadSeguranca();
@@ -66,7 +69,7 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
       } catch (e) {
         erro = erro ?? (e as Error).message;
       }
-      const estado = (data ?? {}) as Record<string, unknown>;
+      const estado = (data ?? {}) as { [chave: string]: Json };
       resultados.push({
         pacote: "seguranca-cibernetica",
         hash: (estado["hash"] as string) ?? "",
@@ -79,14 +82,14 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
     // Pacote 2 — banco de avaliação de Inteligência Artificial.
     {
       const { data, error } = await sb.rpc("rpc_estado_banco_ia");
-      let previsto: Record<string, unknown> = {};
+      let previsto: { [chave: string]: Json } = {};
       let erro: string | null = error ? error.message : null;
       try {
-        previsto = preparados.resumoBancoIA() as unknown as Record<string, unknown>;
+        previsto = preparados.resumoBancoIA() as unknown as { [chave: string]: Json };
       } catch (e) {
         erro = erro ?? (e as Error).message;
       }
-      const estado = (data ?? {}) as Record<string, unknown>;
+      const estado = (data ?? {}) as { [chave: string]: Json };
       resultados.push({
         pacote: "banco-inteligencia-artificial",
         hash: (estado["hash"] as string) ?? "",
@@ -101,7 +104,7 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
 
 export type ResultadoImportacao = {
   ok: boolean;
-  detalhe: Record<string, unknown> | null;
+  detalhe: { [chave: string]: Json } | null;
   erro: string | null;
 };
 
@@ -153,7 +156,7 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
           _hash_estado: data.hash,
         });
         if (error) return { ok: false, detalhe: null, erro: explicarErro(error.message) };
-        return { ok: true, detalhe: res as Record<string, unknown>, erro: null };
+        return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
       }
 
       const payload = preparados.payloadBancoIA();
@@ -162,7 +165,7 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
         _hash_estado: data.hash,
       });
       if (error) return { ok: false, detalhe: null, erro: explicarErro(error.message) };
-      return { ok: true, detalhe: res as Record<string, unknown>, erro: null };
+      return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
     } catch (e) {
       return { ok: false, detalhe: null, erro: explicarErro((e as Error).message) };
     }

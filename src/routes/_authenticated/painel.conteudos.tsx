@@ -44,12 +44,13 @@ function ConteudosPreparados() {
 
   const estado = useQuery<EstadoPacote[]>({
     queryKey: ["conteudos-preparados"],
-    queryFn: () => obter(),
+    queryFn: () => obter() as Promise<EstadoPacote[]>,
     staleTime: 0,
   });
 
   const mutacao = useMutation({
-    mutationFn: (v: { pacote: string; hash: string }) => importar({ data: v }),
+    mutationFn: (v: { pacote: string; hash: string }) =>
+      importar({ data: v }) as Promise<ResultadoImportacao>,
     onSuccess: (res, v) => {
       setResultados((r) => ({ ...r, [v.pacote]: res }));
       queryClient.invalidateQueries({ queryKey: ["conteudos-preparados"] });
@@ -74,7 +75,7 @@ function ConteudosPreparados() {
         </p>
       ) : null}
 
-      {(estado.data ?? []).map((p) => {
+      {((estado.data ?? []) as EstadoPacote[]).map((p) => {
         const res = resultados[p.pacote];
         const aDecorrer = mutacao.isPending && mutacao.variables?.pacote === p.pacote;
         return (

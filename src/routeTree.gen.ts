@@ -64,6 +64,7 @@ import { Route as AvaliacaoExameTentativaRouteImport } from './routes/avaliacao.
 import { Route as AuthenticatedPainelUtilizadoresRouteImport } from './routes/_authenticated/painel.utilizadores'
 import { Route as AuthenticatedPainelPermissoesRouteImport } from './routes/_authenticated/painel.permissoes'
 import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
+import { Route as AuthenticatedPainelConteudosRouteImport } from './routes/_authenticated/painel.conteudos'
 import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_authenticated/painel.auditoria'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
@@ -348,6 +349,12 @@ const AuthenticatedPainelEquipaRoute =
     path: '/equipa',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelConteudosRoute =
+  AuthenticatedPainelConteudosRouteImport.update({
+    id: '/conteudos',
+    path: '/conteudos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedPainelAuditoriaRoute =
   AuthenticatedPainelAuditoriaRouteImport.update({
     id: '/auditoria',
@@ -405,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -454,6 +462,7 @@ export interface FileRoutesByTo {
   '/turmas': typeof TurmasIndexRoute
   '/workshops': typeof WorkshopsIndexRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -515,6 +524,7 @@ export interface FileRoutesById {
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
+  '/_authenticated/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/_authenticated/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -576,6 +586,7 @@ export interface FileRouteTypes {
     | '/turmas/'
     | '/workshops/'
     | '/painel/auditoria'
+    | '/painel/conteudos'
     | '/painel/equipa'
     | '/painel/permissoes'
     | '/painel/utilizadores'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/turmas'
     | '/workshops'
     | '/painel/auditoria'
+    | '/painel/conteudos'
     | '/painel/equipa'
     | '/painel/permissoes'
     | '/painel/utilizadores'
@@ -685,6 +697,7 @@ export interface FileRouteTypes {
     | '/turmas/'
     | '/workshops/'
     | '/_authenticated/painel/auditoria'
+    | '/_authenticated/painel/conteudos'
     | '/_authenticated/painel/equipa'
     | '/_authenticated/painel/permissoes'
     | '/_authenticated/painel/utilizadores'
@@ -1119,6 +1132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelEquipaRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/painel/conteudos': {
+      id: '/_authenticated/painel/conteudos'
+      path: '/conteudos'
+      fullPath: '/painel/conteudos'
+      preLoaderRoute: typeof AuthenticatedPainelConteudosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/_authenticated/painel/auditoria': {
       id: '/_authenticated/painel/auditoria'
       path: '/auditoria'
@@ -1145,6 +1165,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelAuditoriaRoute: typeof AuthenticatedPainelAuditoriaRoute
+  AuthenticatedPainelConteudosRoute: typeof AuthenticatedPainelConteudosRoute
   AuthenticatedPainelEquipaRoute: typeof AuthenticatedPainelEquipaRoute
   AuthenticatedPainelPermissoesRoute: typeof AuthenticatedPainelPermissoesRoute
   AuthenticatedPainelUtilizadoresRoute: typeof AuthenticatedPainelUtilizadoresRoute
@@ -1153,6 +1174,7 @@ interface AuthenticatedPainelRouteChildren {
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelAuditoriaRoute: AuthenticatedPainelAuditoriaRoute,
+  AuthenticatedPainelConteudosRoute: AuthenticatedPainelConteudosRoute,
   AuthenticatedPainelEquipaRoute: AuthenticatedPainelEquipaRoute,
   AuthenticatedPainelPermissoesRoute: AuthenticatedPainelPermissoesRoute,
   AuthenticatedPainelUtilizadoresRoute: AuthenticatedPainelUtilizadoresRoute,
