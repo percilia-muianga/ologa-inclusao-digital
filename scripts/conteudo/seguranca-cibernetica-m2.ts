@@ -11,7 +11,7 @@ import { NIST_CSF, CISA_KEV, OWASP_WSTG } from "./seguranca-cibernetica-base";
 const M2L1: ConteudoLicao = {
   objectivos: [
     "Classificar as oito ocorrências da ficha segundo a categoria de falha aplicacional a que pertencem — controlo de acesso, injecção, configuração, autenticação, exposição de dados — justificando cada classificação.",
-    "Escrever, para quatro dessas ocorrências, o caso de teste correspondente no formato do guia de testes da OWASP: objectivo, pré-condição, passos, resultado esperado e evidência a recolher.",
+    "Escrever, para as duas ocorrências que vão ser testadas, o caso de teste correspondente no formato do guia de testes da OWASP: objectivo, pré-condição, passos, resultado esperado e evidência a recolher.",
     "Executar, na aplicação vulnerável instalada em máquina virtual isolada, dois testes autorizados de controlo de acesso e registar a evidência observada.",
     "Redigir um achado de relatório com descrição, impacto, passos de reprodução, evidência e recomendação, sem afirmar que a aplicação é segura.",
   ],
