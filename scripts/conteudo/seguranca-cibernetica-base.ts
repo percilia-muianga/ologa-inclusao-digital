@@ -229,8 +229,13 @@ export function montarElearning(c: ConteudoLicao, minutos: number, tempos: Tempo
     paragrafos(c.exemplo.corpo),
     tabelaHtml(c),
     anexosHtml(c),
+    listagensHtml(c),
     "<h3>Trabalho prático</h3>",
-    `<p>Trabalho ${esc(c.actividade.formato)}, com ${tempos.actividade} minutos de trabalho, seguidos de ${tempos.partilha} minutos de partilha e síntese em plenário.</p>`,
+    `<p>Trabalho ${esc(c.actividade.formato)}, com ${tempos.actividade} minutos de trabalho, seguidos de ${tempos.partilha} minutos de partilha e síntese em plenário.` +
+      (c.laboratorio
+        ? ` Desses ${tempos.actividade} minutos, ${tempos.actividade - c.laboratorio.minutos} são do exercício em papel e ${c.laboratorio.minutos} são do laboratório descrito mais abaixo. A explicação e a apreciação do produto decorrem nos blocos de exposição e de partilha, e não dentro deste tempo.`
+        : "") +
+      "</p>",
     AVISO_PRATICA_HTML,
     paragrafos(c.actividade.enunciado),
     `<p><strong>Produto esperado:</strong> ${esc(c.actividade.produto)}</p>`,
