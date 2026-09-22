@@ -27,7 +27,7 @@ const M2L1: ConteudoLicao = {
     corpo: [
       "No portal de marcação, depois de entrar, o cidadão vê os seus pedidos através de um endereço que termina em «/pedido/4821». Um funcionário reparou que, mudando o número para 4820, aparecia o pedido de outra pessoa, com nome, contacto e motivo.",
       "A empresa que desenvolveu a aplicação respondeu que «o ecrã só mostra os pedidos do utilizador» — e mostra mesmo, na lista. O problema está na página de detalhe, que aceita qualquer número e devolve o registo correspondente sem verificar de quem é.",
-      "Este é o caso clássico de referência directa insegura a objectos. É uma falha de controlo de acesso, não de interface, e corrige-se no servidor: a consulta tem de filtrar pelo identificador do utilizador da sessão, e não apenas pelo número do pedido recebido.",
+      "Este é o caso clássico de referência directa insegura a objectos. É uma falha de controlo de acesso, não de interface, e corrige-se no servidor: antes de devolver o registo, a aplicação tem de verificar se a sessão tem permissão para aquele pedido concreto. No portal de Muteva, a regra escrita pela direcção é que o cidadão vê os seus próprios pedidos e que os funcionários do balcão vêem os pedidos da sua unidade; a verificação no servidor aplica essa regra, em vez de aceitar o número recebido do cliente como se bastasse. Noutro serviço, com outras regras de perfil e âmbito, a verificação é a mesma ideia com outro critério.",
     ],
   },
   tabela: {
