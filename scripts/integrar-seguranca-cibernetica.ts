@@ -150,6 +150,7 @@ async function main() {
     return;
   }
 
+  if (!sb) throw new Error("Sem sessão: nada é gravado.");
   const actualizadas: string[] = [];
   for (const a of alvos) {
     must(
