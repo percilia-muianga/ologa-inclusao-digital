@@ -134,6 +134,27 @@
       "when": 1790053686825,
       "tag": "0018_rpc_importacao_conteudos_preparados",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790053828250,
+      "tag": "0019_revogar_execute_rpc_conteudos_preparados",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790054035994,
+      "tag": "0020_importacao_conteudos_invoker_e_politicas_restritas",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1790054273137,
+      "tag": "0021_restringir_execute_rpc_conteudos_invoker",
+      "breakpoints": true
     }
   ]
 }

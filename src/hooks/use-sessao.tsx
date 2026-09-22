@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { obterSessao, type Sessao } from "@/lib/conta.functions";
-import type { PapelSistema } from "@/lib/papeis";
+import type { PapelVista } from "@/lib/papeis";
 
 const CHAVE_PAPEL = "ologa-papel-activo";
 
@@ -17,9 +17,9 @@ export function useSessao() {
 }
 
 type ContextoPapel = {
-  papeis: PapelSistema[];
-  papelActivo: PapelSistema | null;
-  definirPapelActivo: (papel: PapelSistema) => void;
+  papeis: PapelVista[];
+  papelActivo: PapelVista | null;
+  definirPapelActivo: (papel: PapelVista) => void;
 };
 
 const PapelContext = createContext<ContextoPapel>({
@@ -36,10 +36,10 @@ export function PapelActivoProvider({
   papeis,
   children,
 }: {
-  papeis: PapelSistema[];
+  papeis: PapelVista[];
   children: ReactNode;
 }) {
-  const [papelActivo, setPapel] = useState<PapelSistema | null>(null);
+  const [papelActivo, setPapel] = useState<PapelVista | null>(null);
 
   useEffect(() => {
     if (papeis.length === 0) {
@@ -52,8 +52,8 @@ export function PapelActivoProvider({
     } catch {
       guardado = null;
     }
-    const valido = guardado && papeis.includes(guardado as PapelSistema);
-    setPapel(valido ? (guardado as PapelSistema) : papeis[0]);
+    const valido = guardado && papeis.includes(guardado as PapelVista);
+    setPapel(valido ? (guardado as PapelVista) : papeis[0]);
   }, [papeis]);
 
   const valor = useMemo<ContextoPapel>(
