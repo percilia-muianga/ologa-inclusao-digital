@@ -150,6 +150,17 @@ function anexosHtml(c: ConteudoLicao): string {
     .join("");
 }
 
+function listagensHtml(c: ConteudoLicao): string {
+  if (!c.listagens?.length) return "";
+  return c.listagens
+    .map(
+      (l) =>
+        `<h3>${esc(l.titulo)}</h3><p><em>${esc(l.nota)}</em></p>` +
+        `<pre><code>${l.linhas.map((x) => esc(x)).join("\n")}</code></pre>`,
+    )
+    .join("");
+}
+
 function laboratorioHtml(c: ConteudoLicao): string {
   const l = c.laboratorio;
   if (!l) return "";
@@ -157,8 +168,18 @@ function laboratorioHtml(c: ConteudoLicao): string {
     `<h3>Laboratório em ambiente isolado — ${esc(l.titulo)}</h3>`,
     REGRAS_LABORATORIO_HTML,
     `<p><strong>Objectivo:</strong> ${esc(l.objectivo)}</p>`,
+    `<p><strong>Tempo:</strong> ${l.minutos} minutos, dentro do bloco de trabalho prático desta lição. Os minutos do exercício em papel e os minutos do laboratório somam o tempo desse bloco e não se contam duas vezes.</p>`,
+    l.materialFornecido?.length
+      ? "<h4>Material entregue com a lição</h4>" + lista(l.materialFornecido)
+      : "",
     "<h4>Recursos e versões, preparados antes da sessão</h4>",
     lista(l.recursos),
+    "<h4>Dependências ainda por preparar, não entregues com a lição</h4>",
+    "<p>Enquanto qualquer um dos pontos seguintes estiver por preparar, o laboratório " +
+      "regista-se como <strong>pendente</strong>. Nenhum destes laboratórios foi ainda " +
+      "executado nem testado em sala pela equipa autora: os tempos e os resultados descritos " +
+      "são previsões a confirmar na primeira execução.</p>",
+    lista(l.dependenciasPorPreparar),
     "<h4>Preparação prévia, a cargo do formador</h4>",
     lista(l.preparacao),
     "<h4>Passos</h4>",
