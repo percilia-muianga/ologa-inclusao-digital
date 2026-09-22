@@ -596,7 +596,7 @@ const M2L3: ConteudoLicao = {
       resposta:
         "A taxa global é 468 dividido por 600, igual a 0,78. Mas no grupo B o sistema deixa passar 30 dos 60 pedidos realmente incompletos: 30 dividido por 60 é 0,50, ou seja metade. No grupo A deixa passar 15 em 60, isto é 25 por cento. O número global é puxado pelo grupo A, que tem metade de todos os pedidos e os melhores resultados.",
       feedback:
-        "Sempre que um grupo domina o total, a média descreve esse grupo e mais nenhum. A leitura por grupo, com denominadores à vista, é o mínimo antes de qualquer juízo sobre o sistema.",
+        "A média ponderada resume o conjunto todo, mas quando um grupo pesa muito no total aproxima-se sobretudo desse grupo e pode ocultar diferenças importantes nos restantes. Por isso a leitura por grupo, com denominadores à vista, é o mínimo antes de qualquer juízo sobre o sistema.",
     },
     {
       pergunta:
