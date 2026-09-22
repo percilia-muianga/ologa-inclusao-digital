@@ -105,6 +105,7 @@ export type Database = {
           autor_id: string | null
           autor_nome: string
           cenario: boolean
+          codigo: string | null
           conteudo: Json
           criado_em: string
           curso_id: string
@@ -128,6 +129,7 @@ export type Database = {
           autor_id?: string | null
           autor_nome?: string
           cenario?: boolean
+          codigo?: string | null
           conteudo?: Json
           criado_em?: string
           curso_id: string
@@ -151,6 +153,7 @@ export type Database = {
           autor_id?: string | null
           autor_nome?: string
           cenario?: boolean
+          codigo?: string | null
           conteudo?: Json
           criado_em?: string
           curso_id?: string
@@ -1980,6 +1983,7 @@ export type Database = {
         Returns: boolean
       }
       e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
+      e_admin_geral_ologa: { Args: { _uid: string }; Returns: boolean }
       e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
       e_equipa_formacao: { Args: { _uid: string }; Returns: boolean }
       endereco_ip_do_pedido: { Args: never; Returns: string }
@@ -2068,6 +2072,8 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_estado_banco_ia: { Args: never; Returns: Json }
+      rpc_estado_seguranca_cibernetica: { Args: never; Returns: Json }
       rpc_exame_resposta_guardar: {
         Args: {
           _actor: string
@@ -2117,6 +2123,14 @@ export type Database = {
           form_id: string
           form_token: string
         }[]
+      }
+      rpc_importar_banco_ia: {
+        Args: { _hash_estado: string; _payload: Json }
+        Returns: Json
+      }
+      rpc_importar_seguranca_cibernetica: {
+        Args: { _hash_estado: string; _payload: Json }
+        Returns: Json
       }
       rpc_progresso_certificacao: {
         Args: {
