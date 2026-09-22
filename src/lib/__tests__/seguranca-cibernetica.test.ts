@@ -69,7 +69,7 @@ describe("conteúdo escrito das 15 lições", () => {
       if (!c?.laboratorio) continue;
       const lab = c.laboratorio;
       expect(lab.minutos, l.chave).toBeGreaterThan(0);
-      const papel = c.actividade.passos.reduce((s, p) => {
+      const papel = c.actividade.enunciado.reduce((s: number, p: string) => {
         const m = p.match(/\((\d+) minutos\)/);
         return s + (m ? Number(m[1]) : 0);
       }, 0);
