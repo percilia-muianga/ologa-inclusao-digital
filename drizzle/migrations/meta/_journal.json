@@ -148,6 +148,13 @@
       "when": 1790054035994,
       "tag": "0020_importacao_conteudos_invoker_e_politicas_restritas",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1790054273137,
+      "tag": "0021_restringir_execute_rpc_conteudos_invoker",
+      "breakpoints": true
     }
   ]
 }
