@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessao, PapelActivoProvider, usePapelActivo } from "@/hooks/use-sessao";
 import { nomeDoPapel, papeisDeVista, type PapelSistema } from "@/lib/papeis";
+import { ligacoesDoPainel } from "@/lib/navegacao-painel";
 import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/_authenticated/painel")({
@@ -127,6 +128,25 @@ function CabecalhoPainel({ nome, teste }: { nome: string; teste: boolean }) {
           </button>
         </div>
       </div>
+
+      {papelActivo ? (
+        <nav aria-label="Navegação da área reservada" className="border-t border-line bg-page">
+          <ul className="wrap flex flex-wrap gap-1 py-2">
+            {ligacoesDoPainel(papelActivo).map((l) => (
+              <li key={l.to}>
+                <Link
+                  to={l.to}
+                  activeOptions={{ exact: l.to === "/painel" || l.to === "/" }}
+                  activeProps={{ className: "bg-white text-brand ring-1 ring-line" }}
+                  className="inline-flex min-h-11 items-center rounded-md px-3 py-2 text-base font-semibold text-navy-2 hover:bg-white hover:text-brand"
+                >
+                  {l.rotulo}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
     </header>
   );
 }

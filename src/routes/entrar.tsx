@@ -3,6 +3,7 @@ import { useState, useId, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { garantirPerfil } from "@/lib/conta.functions";
+import { destinoAposEntrada } from "@/lib/navegacao-painel";
 import { PlataformaHeader } from "@/components/plataforma-header";
 import { PlataformaFooter } from "@/components/plataforma-footer";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
@@ -53,26 +54,16 @@ function EntrarPage() {
     }
 
     try {
-      const sessao = await criarPerfil();
-      if (sessao.papeis.length > 0) {
-        navigate({ to: "/painel" });
-        return;
-      }
+      // Garante que o perfil existe; o destino não depende do resultado.
+      await criarPerfil();
     } catch {
-      /* segue para a verificação da área interna existente */
+      /* o painel volta a ler a sessão e mostra o que a conta pode ver */
     }
 
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("papel")
-      .eq("id", data.user.id)
-      .maybeSingle();
-    if (perfil?.papel === "admin_ologa") {
-      navigate({ to: "/gestao/instituicoes" });
-      return;
-    }
-
-    navigate({ to: "/painel" });
+    // Destino interno fixo: a área reservada decide o que mostrar conforme o
+    // perfil e os papéis lidos no servidor. Não se segue nenhum endereço vindo
+    // do navegador, por isso não há ciclos nem reencaminhamento para fora.
+    navigate({ to: destinoAposEntrada() });
   }
 
   return (

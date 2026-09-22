@@ -12,6 +12,12 @@ type Atalho = { to: string; titulo: string; texto: string };
 
 const ATALHOS_ADMIN: Atalho[] = [
   {
+    to: "/gestao/instituicoes",
+    titulo: "Instituições",
+    texto:
+      "Lista das instituições inscritas e criação manual de uma instituição. Não é preciso criar nenhuma para usar as restantes áreas.",
+  },
+  {
     to: "/painel/utilizadores",
     titulo: "Gestão de utilizadores",
     texto: "Lista de contas, papéis atribuídos e contas marcadas como TESTE.",
