@@ -17,16 +17,16 @@ const M1L1: ConteudoLicao = {
   ],
   explicacao: [
     "Segurança avançada não começa por ferramentas: começa por saber o que se tem e o que se perde se aquilo falhar. Um curso avançado distingue-se de uma acção de sensibilização exactamente aqui — não ficamos pelo conselho de «usar palavras-passe fortes», passamos a trabalhar com inventário, dependências, risco medido e controlos atribuídos a pessoas com nome.",
-    "A tríade clássica continua a ser o esqueleto do raciocínio: confidencialidade (quem pode ver), integridade (o dado está correcto e não foi alterado sem autorização) e disponibilidade (está acessível quando é preciso). O que muda num nível avançado é que estas três propriedades se avaliam por activo e não em geral, e que entram em conflito entre si. Fechar um sistema para conter um ataque protege a confidencialidade e destrói a disponibilidade; manter um serviço no ar durante uma intrusão preserva o atendimento e pode destruir evidência. A decisão é de gestão, deve estar escrita antes, e é isso que se treina.",
+    "A tríade clássica continua a ser o esqueleto do raciocínio: confidencialidade (quem pode ver), integridade (o dado está correcto e não foi alterado sem autorização) e disponibilidade (está acessível quando é preciso). O que muda num nível avançado é que estas três propriedades se avaliam por activo e não em geral. Em muitas situações reforçam-se umas às outras — um controlo de acesso bem feito protege confidencialidade e integridade sem custo para a disponibilidade. Noutras situações, e só nessas, é preciso ponderar entre elas: isolar um sistema para conter um ataque protege a confidencialidade e reduz ou interrompe a disponibilidade daquele serviço enquanto durar o isolamento, e pode haver formas parciais de manter o atendimento por outra via; manter um serviço no ar durante uma intrusão preserva o atendimento e pode dificultar ou comprometer a recolha de evidência. Estas ponderações dependem do contexto de cada activo e não são um conflito automático. A decisão é de gestão da instituição, que continua responsável pelo serviço, deve estar escrita antes do incidente, e é isso que se treina.",
     "Inventário de activos é a base de tudo. Sem lista de sistemas, servidores, bases de dados, contas privilegiadas e ligações a terceiros, não é possível corrigir vulnerabilidades (não se sabe onde estão), nem detectar (não se sabe o que é normal), nem recuperar (não se sabe o que restaurar primeiro). Um inventário útil tem, por cada activo: responsável nomeado, onde corre, que dados trata, de que outros activos depende e qual o tempo máximo que o serviço aguenta parado.",
     "Risco, aqui, é uma estimativa e não um número exacto. Usamos risco = probabilidade × impacto, ambos numa escala de 1 a 5, porque é simples, é defensável perante a direcção e chega para ordenar. A escala tem de estar definida por escrito: o que significa impacto 4, quantas pessoas afecta, quantas horas de paragem. Sem essa definição, cada pessoa pontua à sua maneira e a ordenação deixa de significar alguma coisa. Este método não é imposto por nenhuma lei nem por nenhuma norma: é a convenção de trabalho desta formação.",
-    "Para organizar o trabalho usamos as seis funções do quadro de segurança cibernética do NIST: Governar, Identificar, Proteger, Detectar, Responder e Recuperar. É um quadro de adesão voluntária, norte-americano na origem e usado internacionalmente como linguagem comum. Não é lei moçambicana, não impõe prazos, não confere certificação e a sua adopção é uma decisão da instituição. A utilidade prática é esta: obriga a verificar se há trabalho em todas as seis funções, e a maior parte das instituições descobre que tem muito em Proteger e quase nada em Detectar e Recuperar.",
+    "Para organizar o trabalho usamos as seis funções do quadro de segurança cibernética do NIST: Governar, Identificar, Proteger, Detectar, Responder e Recuperar. É um quadro de adesão voluntária, norte-americano na origem e usado internacionalmente como linguagem comum. Não é lei moçambicana, não impõe prazos, não confere certificação e a sua adopção é uma decisão da instituição. A utilidade prática é esta: obriga a verificar se há trabalho em todas as seis funções, incluindo aquelas que a instituição ainda não olhou. No caso fictício desta lição, o trabalho está concentrado em Proteger e quase nada existe em Detectar e Recuperar; se essa distribuição se repete noutras instituições é coisa a apurar em cada levantamento, e não um dado que aqui se afirme.",
   ],
   exemplo: {
     titulo: "Caso fictício: Direcção de Serviços Digitais do distrito de Muteva",
     corpo: [
       "A Direcção de Serviços Digitais de Muteva (instituição fictícia) atende cerca de 400 pessoas por dia em dois balcões e mantém um portal de marcação de atendimento. Tem seis servidores próprios numa sala técnica, uma ligação à internet de 50 megabits com um único fornecedor, um serviço de correio electrónico contratado a um fornecedor de nuvem e uma aplicação de registo de processos desenvolvida por uma empresa externa em 2021, com contrato de manutenção terminado em Março de 2026.",
-      "A equipa de informática tem três pessoas: uma responsável, um administrador de sistemas e um técnico de apoio. Não há inventário escrito. Quando se pergunta quem é responsável pela base de dados de processos, a resposta é «a empresa que fez a aplicação» — e o contrato terminou.",
+      "A equipa de informática tem três pessoas: uma responsável, um administrador de sistemas e um técnico de apoio. Não há inventário escrito. Quando se pergunta quem é responsável pela base de dados de processos, a resposta é «a empresa que fez a aplicação» — e o contrato de manutenção terminou. Note-se que o fim do contrato de manutenção não significa, por si só, que o fornecedor deixe de ter qualquer obrigação: há deveres que podem subsistir conforme o que estiver escrito no contrato e na lei aplicável, como confidencialidade, devolução de dados ou garantias. O que é certo do lado de Muteva é que a responsabilidade pelo serviço e pelos dados dos cidadãos continua a ser da instituição, e que, sem responsável nomeado internamente, ninguém está a tratar daquele activo. O alcance exacto das obrigações do fornecedor é matéria a apreciar pela área jurídica da instituição, com o contrato à frente, e não se decide nesta lição.",
       "Em Julho de 2026 o disco do servidor de ficheiros encheu e o portal de marcação deixou de aceitar pedidos durante dois dias. Ninguém tinha previsto que o portal escrevia os anexos nesse servidor: não estava em lado nenhum. Foi uma dependência oculta, e é o tipo de coisa que o inventário serve para apanhar.",
     ],
   },
@@ -114,7 +114,7 @@ const M1L1: ConteudoLicao = {
       "Apresentar os objectivos e pedir a cada pessoa que escreva, em trinta segundos, qual o sistema cuja paragem mais se nota no atendimento. Recolher três respostas em voz alta.",
       "Expor a tríade aplicada a activos concretos, o inventário mínimo útil, a fórmula de risco com a escala definida e as seis funções do quadro. Usar o caso de Muteva como fio condutor e nomear explicitamente a dependência oculta do portal.",
       "Acompanhar os grupos nos quatro passos. Insistir em consequências concretas nas classificações altas e verificar as contas de risco grupo a grupo.",
-      "Dois grupos apresentam a ordenação e as lacunas encontradas. Fechar com a ideia de que a lacuna mais comum é Detectar, que é o tema do módulo 2.",
+      "Dois grupos apresentam a ordenação e as lacunas encontradas. Fechar ligando as lacunas que os grupos encontraram — no caso fictício, Detectar e Recuperar — ao módulo 2, sem afirmar que essas são as lacunas de todas as instituições.",
     ],
     criterios: [
       "Inventário classificado com justificação nas classificações altas.",
@@ -311,9 +311,9 @@ const M1L3: ConteudoLicao = {
   actividade: {
     formato: "em pares, com os anexos A e B em papel, antes de tocar no ambiente",
     enunciado: [
-      "Passo 1 (15 minutos). Sobre o anexo A, marquem cada serviço como necessário ou desnecessário para o papel declarado de SRV-FIC e escrevam a justificação numa linha. Façam o mesmo para as contas locais, indicando o que fazer a cada uma.",
-      "Passo 2 (15 minutos). Escrevam, em linguagem corrente e em forma de tabela, o conjunto de regras de filtragem para os três segmentos do anexo B: origem, destino, porta, decisão. Comecem pela regra final de negação por omissão e construam para cima. Contem quantas regras de permissão são precisas.",
-      "Passo 3 (15 minutos). Escrevam a ordem de aplicação das regras numa máquina a que se acede remotamente, de modo a não perder o próprio acesso, e indiquem o que fariam se o perdessem.",
+      "Passo 1 (10 minutos). Sobre o anexo A, marquem cada serviço como necessário ou desnecessário para o papel declarado de SRV-FIC e escrevam a justificação numa linha. Façam o mesmo para as contas locais, indicando o que fazer a cada uma.",
+      "Passo 2 (10 minutos). Escrevam, em linguagem corrente e em forma de tabela, o conjunto de regras de filtragem para os três segmentos do anexo B: origem, destino, porta, decisão. Comecem pela regra final de negação por omissão e construam para cima. Contem quantas regras de permissão são precisas.",
+      "Passo 3 (5 minutos). Escrevam a ordem de aplicação das regras numa máquina a que se acede remotamente, de modo a não perder o próprio acesso, e indiquem o que fariam se o perdessem.",
     ],
     produto:
       "Uma folha por par com a listagem anotada, a tabela de regras de filtragem com negação por omissão e a ordem de aplicação segura.",
@@ -326,6 +326,7 @@ const M1L3: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Endurecer SRV-FIC numa máquina virtual isolada",
     objectivo:
       "Aplicar, num servidor Linux de laboratório, a desactivação de serviços e as regras de filtragem escritas na actividade, confirmar o resultado por verificação observável e repor o estado inicial.",
@@ -335,6 +336,12 @@ const M1L3: ConteudoLicao = {
       "Imagem de máquina virtual «EST-ADMIN» com ferramentas de linha de comandos para listar portas abertas e testar ligações.",
       "Rede virtual interna, sem interface ligada à rede física da sala, com os três segmentos do anexo B configurados.",
       "Ficha impressa com os comandos equivalentes para a distribuição usada, entregue no início do laboratório.",
+    ],
+    dependenciasPorPreparar: [
+      "Programa de virtualização e imagem «SRV-FIC-LAB» não são entregues com o curso: a instituição de acolhimento tem de os preparar, com os serviços do anexo A activos e as contas indicadas. Enquanto faltarem, o laboratório fica pendente.",
+      "A imagem «EST-ADMIN» e a rede virtual com os três segmentos do anexo B também são preparação local, e não material entregue.",
+      "A ficha de comandos equivalentes depende da distribuição de Linux que a instituição escolher; o curso entrega o exercício e os critérios, não a ficha de comandos dessa distribuição.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Copiar as duas imagens para todos os computadores no dia anterior e arrancar uma vez cada uma para confirmar que abrem.",
@@ -469,9 +476,9 @@ const M1L4: ConteudoLicao = {
   actividade: {
     formato: "em pares, com a matriz do anexo A em papel",
     enunciado: [
-      "Passo 1 (20 minutos). Preencham a coluna «Decisão» para as doze contas. As decisões possíveis são: manter como está; converter em contas nominais; reduzir privilégios, indicando quais; desactivar; ou remover. Cada decisão leva uma justificação de uma linha.",
-      "Passo 2 (15 minutos). Para as duas contas de serviço (backup_svc e portal_svc), escrevam que privilégios exactos são necessários ao trabalho de cada uma e como se controlaria o segredo que as autentica.",
-      "Passo 3 (10 minutos). Escrevam o procedimento de revisão periódica de acessos: com que frequência, quem confirma, o que acontece a uma conta sem confirmação e onde fica o registo da revisão.",
+      "Passo 1 (10 minutos). Preencham a coluna «Decisão» para as doze contas. As decisões possíveis são: manter como está; converter em contas nominais; reduzir privilégios, indicando quais; desactivar; ou remover. Cada decisão leva uma justificação de uma linha.",
+      "Passo 2 (10 minutos). Para as duas contas de serviço (backup_svc e portal_svc), escrevam que privilégios exactos são necessários ao trabalho de cada uma e como se controlaria o segredo que as autentica.",
+      "Passo 3 (5 minutos). Escrevam o procedimento de revisão periódica de acessos: com que frequência, quem confirma, o que acontece a uma conta sem confirmação e onde fica o registo da revisão.",
     ],
     produto:
       "Matriz preenchida com decisão e justificação por conta, especificação dos privilégios das duas contas de serviço e procedimento de revisão periódica.",
@@ -484,6 +491,7 @@ const M1L4: ConteudoLicao = {
     ],
   },
   laboratorio: {
+    minutos: 20,
     titulo: "Autenticação por chave e verificação de integridade",
     objectivo:
       "Substituir a autenticação por palavra-passe por autenticação por chave no acesso remoto de uma máquina de laboratório, confirmar que a palavra-passe deixou de ser aceite e verificar a integridade de um ficheiro por comparação de resumos.",
@@ -492,6 +500,11 @@ const M1L4: ConteudoLicao = {
       "Cliente de acesso remoto seguro e ferramenta de geração de pares de chaves, já incluídos nas imagens.",
       "Ficheiro de exercício «relatorio-fic.txt» e o seu resumo criptográfico publicado, entregues em papel e copiados para EST-ADMIN pelo formador.",
       "Segunda cópia do mesmo ficheiro, alterada num único carácter, chamada «relatorio-fic-alterado.txt».",
+    ],
+    dependenciasPorPreparar: [
+      "Depende inteiramente das máquinas «SRV-FIC-LAB» e «EST-ADMIN» da lição anterior. Se esse laboratório ficou pendente, este também fica.",
+      "Os ficheiros «relatorio-fic.txt», a versão alterada e os resumos publicados são gerados localmente pelo formador; o curso entrega o procedimento e os critérios, não os ficheiros.",
+      "Este laboratório ainda não foi executado numa sala com formandos nem testado pela equipa autora: os 20 minutos previstos e os resultados descritos são estimativa a confirmar na primeira execução, e devem ser corrigidos no guião depois dela.",
     ],
     preparacao: [
       "Restaurar o instantâneo «inicial» nas duas máquinas e tirar novo instantâneo chamado «antes-chaves».",

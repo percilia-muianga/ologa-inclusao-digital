@@ -169,13 +169,32 @@ Registado a 22 de Setembro de 2026.
   sucesso observável e reversão. Não se descarrega nem se executa software
   malicioso real. A alternativa offline é análise documental e **não** conta
   como prática executada.
+- **Nenhum dos 7 laboratórios foi executado nem testado pela equipa autora.**
+  Os laboratórios são M1L3, M1L4, M2L1, M2L3, M2L4, M3L3 e M3L4. Os minutos
+  previstos e os resultados descritos são estimativa, a confirmar e corrigir na
+  primeira execução em sala. Cada laboratório traz agora um campo
+  `dependenciasPorPreparar` com o que **não** é entregue com o curso — imagens
+  de máquinas virtuais, recolector de registos, ficheiros de ensaio, fichas de
+  comandos da distribuição escolhida. Enquanto a dependência faltar, o
+  laboratório fica pendente e usa-se a alternativa offline.
+- **Material concreto entregue em M2L1.** Esta lição entrega o código completo
+  da aplicação didáctica `app_lab.py` (anexo C, contas, pedidos e rotas
+  coerentes, sem dependências externas, Python 3.8 ou superior; executada pela
+  equipa autora em Python 3.13, fora de sala) e os pedidos e respostas
+  completos dos dois testes (anexo D). A aplicação é deliberadamente vulnerável
+  e corre **apenas** em máquina local isolada: nunca é alojada nem servida a
+  partir da plataforma.
+- **Tempos verificados sem dupla contagem.** Em cada lição com laboratório, os
+  minutos do exercício em papel mais os minutos do laboratório igualam
+  exactamente o tempo de actividade do plano. Há um teste automático que o
+  verifica.
 - **Banco de avaliação e exame: não preparados e não activos.** Nenhuma questão
   foi criada para este curso.
 - **Validação pedagógica pela Ologa/ATDI: pendente.** Nenhuma norma, nenhuma
   certificação e nenhuma revisão externa são alegadas. O quadro NIST, o
   catálogo CISA e o guia OWASP são referências internacionais voluntárias: não
   são lei moçambicana e não criam prazos nem obrigações.
-- **Verificação:** 13 testes em `src/lib/__tests__/seguranca-cibernetica.test.ts`
+- **Verificação:** 14 testes em `src/lib/__tests__/seguranca-cibernetica.test.ts`
   (total de 1800 minutos, repartição por módulo, 15 lições e blocos de tempo,
   cobertura dos 16 tópicos e dos 10 resultados da secção 6.4, conteúdo
   substantivo por lição, laboratórios com reversão e alternativa offline,

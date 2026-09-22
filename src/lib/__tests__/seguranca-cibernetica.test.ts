@@ -63,6 +63,21 @@ describe("conteúdo escrito das 15 lições", () => {
     expect(Object.keys(LICOES).sort()).toEqual(LICOES_PLANO.map((l) => l.chave).sort());
   });
 
+  it("nas lições com laboratório, papel mais laboratório cabe no tempo de actividade", () => {
+    for (const l of LICOES_PLANO) {
+      const c = LICOES[l.chave];
+      if (!c?.laboratorio) continue;
+      const lab = c.laboratorio;
+      expect(lab.minutos, l.chave).toBeGreaterThan(0);
+      const papel = c.actividade.enunciado.reduce((s: number, p: string) => {
+        const m = p.match(/\((\d+) minutos\)/);
+        return s + (m ? Number(m[1]) : 0);
+      }, 0);
+      expect(papel + lab.minutos, l.chave).toBe(l.tempos.actividade);
+      expect(lab.dependenciasPorPreparar.length, l.chave).toBeGreaterThan(0);
+    }
+  });
+
   it("cada lição tem objectivos, explicação substantiva, actividade e síntese", () => {
     for (const [chave, c] of Object.entries(LICOES)) {
       expect(c.objectivos.length, chave).toBeGreaterThanOrEqual(3);
