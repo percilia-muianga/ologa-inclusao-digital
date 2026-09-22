@@ -350,8 +350,9 @@ const M2L2: ConteudoLicao = {
       corpo: [
         "Finalidade: que decisão concreta do serviço deixa de ser possível se este campo ficar em branco?",
         "Acesso: que funções, nomeadas, precisam de ver este campo? Quem não precisa não deve conseguir ver.",
-        "Retenção: durante quanto tempo se guarda, contado a partir de que momento?",
-        "Destino no fim do prazo: elimina-se em papel e em ficheiro, ou fica apenas uma versão agregada sem identificação?",
+        "Retenção: durante quanto tempo se propõe guardar, contado a partir de que momento? O prazo escrito nesta ficha é uma proposta de trabalho.",
+        "Destino no fim do prazo: propõe-se eliminar em papel e em ficheiro, ou conservar apenas uma versão agregada sem identificação?",
+        "Confirmação antes de eliminar: que obrigações de arquivo e que outras obrigações legais se aplicam a estes documentos, e quem as confirma — responsável pelo arquivo e área jurídica da instituição — antes de qualquer eliminação?",
       ],
     },
     {
