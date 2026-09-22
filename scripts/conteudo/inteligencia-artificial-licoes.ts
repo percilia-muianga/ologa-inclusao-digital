@@ -10,8 +10,8 @@
  * Este ficheiro vive fora de src/ para não entrar no pacote do navegador; é
  * lido apenas pelo seed (scripts/seed-inteligencia-artificial.ts).
  *
- * Nesta etapa está escrito apenas o módulo 1. As lições do módulo 2 continuam
- * honestamente «por fornecer».
+ * Este ficheiro contém o módulo 1; as quatro lições do módulo 2 vivem em
+ * inteligencia-artificial-m2.ts e são reunidas aqui em LICOES.
  */
 
 import type { TemposLicao } from "../../src/lib/plano-inteligencia-artificial";

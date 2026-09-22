@@ -114,12 +114,12 @@ const M1_LICOES: LicaoPlano[] = [
 ];
 
 /**
- * Módulo 2 — APENAS PLANEADO nesta etapa. Os títulos já existem na base e o
- * conteúdo continua honestamente «por fornecer». A lição 4 deste módulo é o
- * lugar previsto para a governação da IA, incluindo o Regulamento Europeu de
- * Inteligência Artificial (EU AI Act), os actores nacionais e internacionais
- * e a política e diplomacia da IA, com fontes oficiais actualizadas à data em
- * que for escrita. Nada disso é escrito agora.
+ * Módulo 2 — ESCRITO. A lição 4 deste módulo trata a governação da IA,
+ * incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act) como
+ * referência internacional e não como lei aplicável em Moçambique, os actores
+ * nacionais e internacionais e a política e diplomacia da IA, com fontes
+ * oficiais e data de consulta. Conteúdo em
+ * scripts/conteudo/inteligencia-artificial-m2.ts.
  */
 const M2_LICOES: LicaoPlano[] = [
   licao("m2l1", 1, "Casos de uso no serviço público", T120, [
@@ -175,9 +175,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
     "m2",
     2,
     "Uso Responsável da Inteligência Artificial",
-    // Só PLANEADO: o seed não escreve esta descrição enquanto as lições não
-    // estiverem escritas.
-    "Quatro lições planeadas, ainda por escrever.",
+    "Quatro lições sobre o uso responsável da inteligência artificial no serviço público: casos de uso comparados com a alternativa sem inteligência artificial; protecção de dados e privacidade; preconceito algorítmico e inclusão; e supervisão humana, governação e prestação de contas.",
     M2_LICOES,
   ),
   {
