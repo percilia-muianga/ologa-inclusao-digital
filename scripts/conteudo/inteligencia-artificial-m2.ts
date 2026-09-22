@@ -758,7 +758,7 @@ const M2L4: ConteudoLicao = {
       "As condições de suspensão são factos observáveis, com prazo para decidir, e não formulações como «se houver problemas graves».",
       "A minuta indica o que acontece aos casos já decididos e dá à pessoa afectada um caminho concreto de contestação, com destinatário e prazo de resposta.",
       "A proposta de piloto mede indicadores por grupo de submissão, e não apenas no total, e mantém a alternativa acessível.",
-      "Na parte G, o interesse comercial do fornecedor é reconhecido expressamente, e o EU AI Act, se citado, é apresentado como referência europeia e não como norma aplicável em Moçambique.",
+      "Na parte G, o interesse comercial do fornecedor é reconhecido expressamente, e o Regulamento Europeu de Inteligência Artificial, se citado, é apresentado como referência europeia — não é lei moçambicana nem se aplica automaticamente cá, sem que daí se conclua que jamais abrange operadores fora da União.",
       "Nenhuma parte do dossiê afirma que existe lei, estratégia ou política de inteligência artificial aprovada em Moçambique.",
     ],
   },
