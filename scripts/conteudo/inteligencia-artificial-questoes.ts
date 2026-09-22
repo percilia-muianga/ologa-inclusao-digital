@@ -741,7 +741,7 @@ const M2L3: QuestaoIA[] = [
   },
   {
     cod: "IA-M2L3-09", m: "m2", l: 3, t: "em", cen: true, d: "di",
-    e: "Caso fictício. Após a análise anterior, a equipa propõe quatro acções. Qual delas responde à diferença encontrada sem retirar serviço a ninguém?",
+    e: "Caso fictício. Confirmada a diferença entre o grupo A, com 10 por cento de encaminhamentos errados, e o grupo B, com 20 por cento, a equipa reúne-se e propõe quatro acções alternativas. A instituição mantém entretanto o atendimento presencial em funcionamento. Qual das acções responde à diferença encontrada sem retirar serviço a ninguém?",
     opts: [
       "Suspender o atendimento do grupo B até o sistema ser corrigido",
       "Deixar de medir por grupo, para evitar leituras precipitadas",
@@ -842,7 +842,7 @@ const M2L4: QuestaoIA[] = [
   },
   {
     cod: "IA-M2L4-09", m: "m2", l: 4, t: "em", cen: true, d: "di",
-    e: "Caso fictício. Numa minuta de suspensão de um sistema de apoio à triagem, qual é o conjunto de elementos que torna a decisão executável e verificável?",
+    e: "Caso fictício. Verificada uma falha sistemática, a dirigente decide suspender o sistema de apoio à triagem e encarrega a equipa de redigir a minuta da decisão, que tem de ser cumprida pelo atendimento no mesmo dia e verificada mais tarde por quem fiscaliza. Qual é o conjunto de elementos que torna essa decisão executável e verificável?",
     opts: [
       "Identificação do sistema, motivo, âmbito e duração da suspensão, medida alternativa de atendimento e responsável pela reavaliação",
       "Motivo da suspensão, data da decisão e assinatura do dirigente competente",
