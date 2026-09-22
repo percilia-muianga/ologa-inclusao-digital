@@ -111,7 +111,13 @@ describe("mensagens e identificação do perfil", () => {
       "ESTADO_ALTERADO",
       "CONFLITO_CONTEUDO_EXISTENTE",
       "CONFLITO_QUESTOES_EM_USO",
+      "CONFLITO_QUESTOES_DIFERENTES: IA-M1-001",
+      "CODIGO_INESPERADO_NA_BASE",
+      "QUESTOES_SEM_CODIGO",
+      "MODULO_NAO_LIGADO_AO_CURSO",
+      "ESTRUTURA_DE_MODULOS_INESPERADA",
       "MODULO_PARTILHADO_COM_OUTRO_CURSO",
+      "MINUTOS_POR_MODULO_INCOERENTES",
       "MINUTOS_INCOERENTES",
       "new row violates row-level security policy",
     ]) {
