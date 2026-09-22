@@ -198,7 +198,7 @@ const M2L1: ConteudoLicao = {
     ],
     passos: [
       "Abrir a ferramenta com a conta institucional preparada pelo formador.",
-      "Primeira execução: colar a instrução do anexo C seguida dos cinco pedidos do anexo A. Guardar ou copiar a saída para a ficha.",
+      "Primeira execução: colar a instrução do anexo C, seguida das regras de triagem do anexo B e dos cinco pedidos do anexo A. Guardar ou copiar a saída para a ficha.",
       "Comparar a saída com a triagem manual feita na parte C e anotar cada erro, indicando o tipo: sector errado, informação acrescentada que não está no pedido, campo que devia dizer «não consta», ou decisão sobre direitos que a instrução proibia.",
       "Anotar o tempo gasto na verificação desta execução.",
       "Trocar a pessoa que escreve.",
