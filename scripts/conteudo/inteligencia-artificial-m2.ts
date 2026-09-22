@@ -34,7 +34,17 @@ const UE: Referencia = {
   url: "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai",
   consultadoEm: CONSULTA,
   resumo:
-    "A página oficial da Comissão Europeia apresenta o quadro regulamentar europeu para a inteligência artificial. A ideia central é classificar os sistemas segundo o risco que representam para a segurança e para os direitos das pessoas: há usos considerados inaceitáveis, há sistemas de alto risco sujeitos a exigências mais fortes, e há usos de risco limitado a que se aplicam sobretudo deveres de transparência, como informar a pessoa de que está perante um sistema automático. Para os sistemas de alto risco a página descreve obrigações de qualidade dos dados, documentação, registo de funcionamento, informação ao utilizador, supervisão humana e robustez. A aplicação do regulamento é faseada no tempo, por etapas, e a própria página regista que esse calendário tem sido objecto de alterações; por isso não se deve afirmar que tudo já está em vigor. Para Moçambique isto é referência internacional de governação, e não lei aplicável: é legislação da União Europeia, estudada aqui como termo de comparação e fonte de boas práticas. Qualquer leitura jurídica cabe à área jurídica da instituição.",
+    "A página oficial da Comissão Europeia apresenta o quadro regulamentar europeu para a inteligência artificial. A ideia central é classificar os sistemas segundo o risco que representam para a segurança e para os direitos das pessoas: há usos considerados inaceitáveis, há sistemas de alto risco sujeitos a exigências mais fortes, e há usos de risco limitado a que se aplicam sobretudo deveres de transparência, como informar a pessoa de que está perante um sistema automático. Para os sistemas de alto risco descreve obrigações de dados, documentação, registo, informação ao utilizador, supervisão humana e robustez. A aplicação é faseada e o calendário tem sido alterado; não se afirme que está tudo em vigor. Para Moçambique é referência internacional de governação: não é lei moçambicana e não se aplica automaticamente cá. Não se conclua daí que nunca possa tocar uma entidade moçambicana — o próprio regulamento define um âmbito territorial e material que, em certas condições, alcança operadores estabelecidos fora da União. Saber se é esse o caso de um contrato ou de um serviço concreto é apreciação jurídica, e faz-se caso a caso com a área jurídica da instituição.",
+};
+
+/** Fonte primária europeia, conferida na data indicada. */
+const EURLEX: Referencia = {
+  titulo:
+    "EUR-Lex — Regulamento (UE) 2024/1689 relativo à inteligência artificial, artigo 2.º (âmbito de aplicação)",
+  url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202401689",
+  consultadoEm: CONSULTA,
+  resumo:
+    "Texto primário do regulamento europeu, publicado no Jornal Oficial da União Europeia. Interessa aqui sobretudo o artigo 2.º, que delimita o âmbito de aplicação. Além dos fornecedores e responsáveis pela utilização estabelecidos na União, a alínea c) do n.º 1 abrange fornecedores e responsáveis pela utilização estabelecidos ou situados em país terceiro quando as saídas produzidas pelo sistema são utilizadas na União. Daqui retiram-se duas conclusões, ambas necessárias para não se dizer nada de errado numa reunião. Primeira: o regulamento não é lei moçambicana e não se aplica automaticamente em Moçambique. Segunda: estar fora da União não é, por si só, garantia de que nunca se é abrangido, porque o critério do artigo 2.º olha também para onde as saídas são utilizadas. Se um serviço ou uma empresa moçambicana produz saídas destinadas a ser utilizadas na União, a questão tem de ser apreciada em concreto pela área jurídica. Este curso não faz essa apreciação: limita-se a indicar onde ela é devida.",
 };
 
 /** Fonte da UNESCO. Síntese original da equipa. */
@@ -52,7 +62,7 @@ const UA: Referencia = {
   url: "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
   consultadoEm: CONSULTA,
   resumo:
-    "A União Africana disponibiliza uma Estratégia Continental para a Inteligência Artificial. Uma estratégia é um documento de orientação política: define prioridades comuns e propõe caminhos, sem criar obrigações directas para os serviços de cada país. O documento aborda o aproveitamento da inteligência artificial para o desenvolvimento do continente, a criação de capacidades — pessoas formadas, dados, infra-estrutura e capacidade de cálculo —, a atenção aos riscos e a governação, e a cooperação entre Estados africanos, incluindo a preocupação de que África participe na definição das regras internacionais e não apenas as receba. Para uma direcção distrital ou provincial, o valor prático está em situar decisões locais num quadro continental: quando se escolhe uma ferramenta, faz sentido perguntar onde ficam os dados, que dependência se cria face a um fornecedor estrangeiro, e se existe alternativa que desenvolva competências internas. Não se deve citar esta estratégia como se fosse legislação nem como aprovação de qualquer solução concreta.",
+    "A União Africana disponibiliza uma Estratégia Continental para a Inteligência Artificial. Uma estratégia é documento de orientação política: define prioridades e propõe caminhos. Não é lei, mas não se diga que uma estratégia nunca obriga: o efeito depende do acto que a aprova, e uma estratégia adoptada por um governo pode vincular administrativamente os serviços que dela dependem. Esta orienta os Estados e não cria, por si, obrigações directas para um serviço distrital moçambicano. O documento aborda o aproveitamento da inteligência artificial para o desenvolvimento do continente, a criação de capacidades — pessoas, dados e infra-estrutura —, os riscos e a governação, e a cooperação entre Estados africanos, incluindo a preocupação de que África participe na definição das regras internacionais. Para uma direcção distrital, o valor prático está em situar decisões locais num quadro continental: ao escolher uma ferramenta, perguntar onde ficam os dados, que dependência se cria face a um fornecedor estrangeiro e se há alternativa que desenvolva competências internas. Não se deve citar esta estratégia como se fosse legislação nem como aprovação de qualquer solução concreta.",
 };
 
 /** Fonte nacional. É uma PROPOSTA em consulta pública — não é lei aprovada. */
@@ -62,7 +72,7 @@ const INTIC: Referencia = {
   url: "https://intic.gov.mz/consulta-publica-da-proposta-da-estrategia-nacional-de-inteligencia-artificial/",
   consultadoEm: CONSULTA,
   resumo:
-    "O Instituto Nacional de Tecnologias de Informação e Comunicação, o INTIC, divulgou uma consulta pública sobre uma proposta de Estratégia Nacional de Inteligência Artificial. Há três coisas a reter, e a terceira é a mais importante para não se dizer nada de errado numa reunião. Primeira: trata-se de uma proposta submetida a consulta pública, isto é, um texto aberto a comentários. Segunda: consulta pública é precisamente o momento em que instituições, academia, empresas, sociedade civil e organizações de pessoas com deficiência podem enviar contributos. Terceira: a existência desta consulta não prova que exista estratégia aprovada, nem política aprovada, nem lei de inteligência artificial em vigor em Moçambique. Também não se deve inferir da consulta que o INTIC seja autoridade reguladora da inteligência artificial: o que a fonte mostra é a sua intervenção na condução deste processo de consulta. Quem precisar de saber o estado actual do processo deve consultar a fonte na data em que precisa da informação e citar essa data.",
+    "O Instituto Nacional de Tecnologias de Informação e Comunicação, o INTIC, divulgou uma proposta de Estratégia Nacional de Inteligência Artificial para consulta pública. Atenção ao prazo: a página consultada indica 4 de Setembro como data-limite para o envio de contributos, anterior à data desta consulta. Não se deve, por isso, dizer que existe uma consulta actualmente em curso sem confirmar na fonte; o que está documentado é que a proposta foi divulgada para consulta. Há ainda duas coisas a reter. A divulgação de uma proposta não prova que exista estratégia aprovada, política aprovada ou lei de inteligência artificial em vigor em Moçambique. E também não permite concluir que o INTIC seja autoridade reguladora da inteligência artificial: o que a fonte mostra é a sua intervenção na condução deste processo. Quem precisar do estado actual do processo deve consultar a fonte na data em que precisa da informação e citar essa data.",
 };
 
 // ---------------------------------------------------------------------------
@@ -82,7 +92,7 @@ const M2L1: ConteudoLicao = {
     "Comecemos pelos casos de uso onde estas ferramentas costumam ajudar no trabalho administrativo. Resumir documentos longos, para que uma pessoa leia depois o essencial e confirme na fonte. Rever e simplificar texto, incluindo produzir uma versão em linguagem simples de um aviso ao público. Propor a triagem de entradas, isto é, sugerir a que sector pertence cada pedido ou reclamação. Transcrever áudio em texto, o que tem valor de acessibilidade. Ajudar a procurar dentro de um acervo grande de documentos. Em todos, o padrão é o mesmo: a ferramenta propõe e a pessoa decide. Nenhum destes casos inclui decidir sobre direitos de ninguém.",
     "Agora a parte que costuma faltar nas apresentações: a alternativa sem inteligência artificial. Quase todos os problemas do balcão têm mais do que um caminho. Se os pedidos chegam mal preenchidos, a alternativa pode ser mudar o formulário, dar um exemplo preenchido, ou pôr uma pessoa a conferir à entrada. Se a triagem é lenta, a alternativa pode ser uma lista de palavras-chave e uma regra escrita de encaminhamento — que é automação simples, auditável e que qualquer técnico compreende. Se ninguém lê os relatórios, a alternativa pode ser exigir que cada relatório traga um sumário de dez linhas escrito por quem o produz. Comparar sempre o caso de uso com a alternativa evita comprar um problema novo para resolver um problema antigo.",
     "A comparação faz-se em critérios concretos. Custo: licenças, formação, tempo de preparação e tempo de verificação, que é um custo real e costuma ser esquecido. Benefício esperado: o que melhora, para quem, e como se mede. Impacto no trabalho das pessoas: que tarefas mudam, quem fica a fazer o quê, e se alguém fica a fazer apenas correcção de saídas — o que desqualifica o trabalho em vez de o melhorar. Língua: a qualidade não é igual em todas as línguas, e num país onde muita gente é atendida em línguas moçambicanas isto não é detalhe. Conectividade: uma ferramenta que só funciona com ligação estável falha exactamente nos serviços que mais precisam de apoio. Dependência de fornecedor: se o serviço passa a depender de um produto, o que acontece se o preço subir, se o produto mudar ou se for descontinuado, e é possível exportar o que lá está?",
-    "Sobre triagem, uma advertência que vale para o resto do curso. Propor a que sector vai um pedido é diferente de decidir se o pedido é deferido. A primeira é uma sugestão de encaminhamento interno, corrigível e sem efeito sobre a pessoa; a segunda afecta direitos e não se delega a uma ferramenta destas. A instrução que vamos escrever hoje diz isso por escrito, e diz também que, quando a informação necessária não constar do pedido, a saída deve escrever «não consta» em vez de adivinhar.",
+    "Sobre triagem, uma advertência que vale para o resto do curso. Propor a que sector vai um pedido é diferente de decidir se o pedido é deferido. A primeira é uma sugestão de encaminhamento interno, corrigível por quem confere; a segunda afecta direitos e não se delega a uma ferramenta destas. Corrigível não quer dizer inofensiva: um encaminhamento errado que passe despercebido faz o pedido andar de sector em sector, atrasa a resposta e pode fazer a pessoa perder prazos ou deslocações. Por isso a triagem proposta é sempre conferida, e os erros de encaminhamento contam-se e corrigem-se. A instrução que vamos escrever hoje diz isso por escrito, e diz também que, quando a informação necessária não constar do pedido, a saída deve escrever «não consta» em vez de adivinhar.",
     "Por fim, o enquadramento da prática. Usa-se uma ferramenta de inteligência artificial institucional, previamente autorizada pela entidade, com contas e acessos preparados pelo formador antes da sessão. Ninguém cria conta pessoal, ninguém paga, e não se promete que qualquer ferramenta seja gratuita. Os pedidos com que vamos trabalhar são sintéticos — escritos para esta aula — e nenhum dado real de pessoa, processo ou serviço entra na ferramenta. Se a ferramenta não estiver disponível no dia, faz-se a análise documental com as saídas exemplificativas etiquetadas como simuladas, e regista-se que a prática com ferramenta ficou pendente, a reagendar. Uma simulação em papel não substitui a prática real e não se escreve, em documento nenhum, que a prática foi realizada.",
   ],
   exemplo: {
@@ -122,7 +132,7 @@ const M2L1: ConteudoLicao = {
         "Pedido 1. «Bom dia. Venho pedir licença para colocar uma banca de venda de fruta no mercado de Muanzo, junto à entrada principal. Chamo-me Joana Fictícia Cumbe. Já entreguei a fotocópia do documento de identificação no mês passado, mas disseram-me que faltava a declaração da administração do mercado. Junto agora essa declaração. Peço deferimento.»",
         "Pedido 2. «Escrevo para reclamar do atendimento de sexta-feira. Cheguei às doze e trinta e o balcão já estava fechado, embora o aviso na porta diga treze horas. Perdi o dia de trabalho e a viagem. Peço que verifiquem o horário praticado.»",
         "Pedido 3. «Solicito certidão comprovativa de que a minha banca está registada desde dois mil e vinte e três, para apresentar ao banco. Não sei qual é o número do processo.»",
-        "Pedido 4. «Venho na sequência da notificação que recebi sobre documentos em falta. Não consigo obter a declaração pedida porque o serviço que a emite está a funcionar apenas às terças-feiras e nesse dia trabalho. Peço prazo adicional e informação sobre se posso entregar por um familiar.»",
+        "Pedido 4. «Venho na sequência da notificação que recebi sobre documentos em falta no meu pedido de renovação da licença da banca no mercado de Muanzo. Não consigo obter a declaração pedida porque o serviço que a emite está a funcionar apenas às terças-feiras e nesse dia trabalho. Peço prazo adicional para juntar esse documento ao processo de licença e informação sobre se posso entregar por um familiar.»",
         "Pedido 5. «Queremos saber quando é que a estrada que passa atrás do mercado vai ser reparada, porque com as chuvas ninguém chega às bancas. Assinam quinze comerciantes.»",
       ],
     },
@@ -142,7 +152,7 @@ const M2L1: ConteudoLicao = {
     {
       titulo: "Anexo C — instrução concreta a usar na primeira execução",
       nota:
-        "Instrução escrita para esta aula. Copia-se tal e qual na primeira execução; a segunda execução usa a versão melhorada pelo par.",
+        "Instrução escrita para esta aula. Copia-se tal e qual na primeira execução, sempre acompanhada das regras de triagem do anexo B e dos pedidos do anexo A; a segunda execução usa a versão melhorada pelo par, também com o anexo B e o anexo A.",
       corpo: [
         "«Vais receber cinco pedidos escritos por munícipes, que são fictícios. Para cada pedido produz exactamente três coisas: primeiro, um resumo de duas linhas, em português simples, que não acrescente nada que não esteja no texto; segundo, uma proposta de sector, escolhida apenas de entre estas quatro opções — Licenciamento, Atendimento e reclamações, Certidões e arquivo, Fora da competência desta direcção; terceiro, a lista da informação necessária que falta no pedido.",
         "Regras obrigatórias. Se alguma informação não constar do pedido, escreve «não consta» e não inventes. Não decidas se o pedido é deferido ou indeferido, não proponhas sanções, não indiques prazos legais e não cites legislação: essas decisões são de pessoa competente. Não acrescentes nomes, números, datas ou moradas que não estejam no texto. Apresenta o resultado em tabela com as colunas: número do pedido, resumo, sector proposto, informação em falta.»",
@@ -168,8 +178,8 @@ const M2L1: ConteudoLicao = {
       "Parte A, sem computador. Escolham um caso de uso realista para o vosso serviço, em uma frase, e escrevam ao lado a alternativa sem inteligência artificial que resolveria o mesmo problema.",
       "Parte B, sem computador. Preencham a grelha de comparação nos seis critérios, para o caso escolhido e para a alternativa. Uma ou duas frases por célula. Onde não souberem, escrevam «não sabemos» e indiquem a quem é que teriam de perguntar.",
       "Parte C. Leiam os cinco pedidos do anexo A e as regras do anexo B. Sem ferramenta, escrevam à mão qual seria a triagem correcta de cada pedido e que informação falta. Guardem esta folha: é o vosso padrão de comparação.",
-      "Parte D, prática assistida ao computador, se a ferramenta institucional estiver disponível. Primeira execução: copiem a instrução do anexo C e os cinco pedidos do anexo A. Registem a saída. Comparem-na com a vossa folha da parte C e anotem todos os erros: sector errado, informação inventada, decisão sobre direitos que a instrução proibia, campos que deviam dizer «não consta». Anotem o tempo gasto na verificação.",
-      "Parte E. Troquem quem escreve. Melhorem a instrução do anexo C acrescentando pelo menos três elementos que corrijam os erros observados. Façam a segunda execução com a instrução melhorada e repitam a comparação e o registo do tempo.",
+      "Parte D, prática assistida ao computador, se a ferramenta institucional estiver disponível. Primeira execução: copiem, por esta ordem, a instrução do anexo C, as regras de triagem do anexo B e os cinco pedidos do anexo A. Sem as regras do anexo B a ferramenta não conhece as quatro opções de encaminhamento, e a comparação não seria justa. Registem a saída. Comparem-na com a vossa folha da parte C e anotem todos os erros: sector errado, informação inventada, decisão sobre direitos que a instrução proibia, campos que deviam dizer «não consta». Anotem o tempo gasto na verificação.",
+      "Parte E. Troquem quem escreve. Melhorem a instrução do anexo C acrescentando pelo menos três elementos que corrijam os erros observados. Façam a segunda execução com a instrução melhorada, voltando a incluir as regras do anexo B e os mesmos cinco pedidos do anexo A, e repitam a comparação e o registo do tempo.",
       "Parte F. Escrevam a decisão final em duas ou três frases: o caso de uso da parte A é para recomendar, recomendar com condições, ou desaconselhar? Se for com condições, digam quais. A decisão tem de se apoiar na grelha da parte B e nos registos das partes D e E, e não na impressão de qualidade do texto.",
       "Não se escreve na ferramenta nenhum dado real de pessoa, serviço ou processo. Usam-se exclusivamente os textos fictícios dos anexos A, B e C.",
     ],
@@ -179,7 +189,7 @@ const M2L1: ConteudoLicao = {
       "A alternativa sem inteligência artificial é real e resolveria mesmo o problema enunciado, e não uma alternativa de fachada.",
       "Os seis critérios preenchidos nas duas colunas, com o custo de verificação contado como custo e a dependência de fornecedor respondida em termos de saída do produto.",
       "Na triagem manual da parte C: pedido 1 para Licenciamento, pedido 2 para Atendimento e reclamações, pedido 3 para Certidões e arquivo, pedido 4 para Licenciamento, pedido 5 para Fora da competência desta direcção. No pedido 1 e no pedido 3 a informação em falta é o número do processo, que não consta.",
-      "Os erros da saída são identificados por confronto com a folha da parte C e não por impressão. Na saída exemplificativa do anexo D, os erros plantados são três: o pedido 3 encaminhado para Licenciamento quando é Certidões e arquivo; o pedido 5 encaminhado para Atendimento e reclamações quando está fora da competência desta direcção; e, no pedido 4, a frase sobre conceder trinta dias, que é uma decisão sobre direitos expressamente proibida pela instrução.",
+      "Os erros da saída são identificados por confronto com a folha da parte C e não por impressão. Na saída exemplificativa do anexo D, os erros plantados são quatro: primeiro, o pedido 3 encaminhado para Licenciamento quando é Certidões e arquivo; segundo, no mesmo pedido 3, a coluna de informação em falta a dizer «nenhuma» quando o próprio texto declara que o número do processo não é conhecido, e a regra transversal 1 obriga a escrever «não consta»; terceiro, o pedido 5 encaminhado para Atendimento e reclamações quando está fora da competência desta direcção; e quarto, no pedido 4, a frase sobre conceder trinta dias, que é uma decisão sobre direitos expressamente proibida pela instrução.",
       "A instrução melhorada acrescenta três ou mais elementos identificados, e pelo menos um deles responde a um erro efectivamente observado.",
       "Duas execuções registadas, com alternância efectiva de quem escreve e com o tempo de verificação anotado em cada uma; ou, não havendo ferramenta, prática marcada como pendente de forma explícita.",
       "A decisão da parte F é fundamentada nos registos e admite a hipótese de desaconselhar.",
@@ -198,11 +208,11 @@ const M2L1: ConteudoLicao = {
     ],
     passos: [
       "Abrir a ferramenta com a conta institucional preparada pelo formador.",
-      "Primeira execução: colar a instrução do anexo C seguida dos cinco pedidos do anexo A. Guardar ou copiar a saída para a ficha.",
+      "Primeira execução: colar a instrução do anexo C, seguida das regras de triagem do anexo B e dos cinco pedidos do anexo A. Guardar ou copiar a saída para a ficha.",
       "Comparar a saída com a triagem manual feita na parte C e anotar cada erro, indicando o tipo: sector errado, informação acrescentada que não está no pedido, campo que devia dizer «não consta», ou decisão sobre direitos que a instrução proibia.",
       "Anotar o tempo gasto na verificação desta execução.",
       "Trocar a pessoa que escreve.",
-      "Segunda execução: usar a instrução melhorada pelo par sobre os mesmos cinco pedidos. Guardar a saída.",
+      "Segunda execução: usar a instrução melhorada pelo par, novamente com as regras do anexo B e os mesmos cinco pedidos do anexo A. Guardar a saída.",
       "Comparar de novo, anotar erros e tempo de verificação, e registar se a melhoria da instrução reduziu, manteve ou aumentou os erros.",
       "Fechar a sessão da ferramenta e não guardar nada fora da ficha de trabalho.",
     ],
@@ -276,6 +286,9 @@ const M2L1: ConteudoLicao = {
     ],
     errosComuns: [
       "Escrever uma alternativa de fachada, que ninguém consideraria a sério, só para justificar a escolha da ferramenta.",
+      "Colar apenas a instrução do anexo C e os pedidos do anexo A, esquecendo as regras de triagem do anexo B numa das execuções.",
+      "Aceitar «informação em falta: nenhuma» no pedido 3, quando o número do processo não consta.",
+      "Tratar um encaminhamento errado como inofensivo por ser corrigível, esquecendo o atraso que causa a quem espera resposta.",
       "Esquecer o tempo de verificação na coluna do custo.",
       "Confundir propor sector com decidir o pedido.",
       "Não notar a frase do pedido 4 sobre conceder prazo, por parecer razoável.",
@@ -299,10 +312,10 @@ const M2L2: ConteudoLicao = {
     "Identificar, no caso fictício, três riscos de privacidade concretos e propor para cada um uma medida verificável.",
   ],
   explicacao: [
-    "Antes de qualquer coisa, uma advertência jurídica honesta, porque é aqui que se erra com mais facilidade. Neste curso não se afirma que exista, nem que não exista, uma determinada lei moçambicana de protecção de dados aprovada e em vigor, nem se cita nenhum diploma nacional. Não é matéria que se possa resolver de memória numa sala de formação, e uma afirmação errada sobre legislação tem consequências. O que se ensina aqui são boas práticas de tratamento de dados, que são úteis em qualquer enquadramento. Sempre que a decisão tiver implicações jurídicas, quem responde é a área jurídica da instituição, consultando a legislação aplicável na data em que decide.",
-    "Dito isto, comecemos pelo princípio mais poderoso e mais barato: a minimização. Só se recolhe o que é preciso para a finalidade declarada. Parece óbvio e é sistematicamente violado, porque os formulários crescem por acumulação — alguém achou útil um campo, ninguém o retirou, e dez anos depois o serviço recolhe estado civil para emitir uma certidão de banca. Cada campo a mais é trabalho a mais para quem preenche, risco a mais para quem é titular dos dados e responsabilidade a mais para o serviço. A pergunta de controlo é sempre a mesma: se este campo ficar em branco, que decisão deixa de ser possível? Se a resposta for «nenhuma», o campo sai.",
+    "Esta lição ensina boas práticas de tratamento de dados pessoais: recolher pouco, saber para que serve cada campo, saber quem vê, fixar prazos e conhecer o caminho que os dados percorrem. São práticas úteis em qualquer enquadramento e é por elas que trabalhamos hoje. Não se citam aqui diplomas nacionais nem se decide na sala o que é ou não legal: a validação jurídica pede-se à área jurídica da instituição, sempre em concreto — sobre este formulário, este prazo, esta partilha — e na data em que se decide.",
+    "Comecemos pelo princípio mais poderoso e mais barato: a minimização. Só se recolhe o que é preciso para a finalidade declarada. Parece óbvio e é sistematicamente violado, porque os formulários crescem por acumulação — alguém achou útil um campo, ninguém o retirou, e dez anos depois o serviço recolhe estado civil para emitir uma certidão de banca. Cada campo a mais é trabalho a mais para quem preenche, risco a mais para quem é titular dos dados e responsabilidade a mais para o serviço. A pergunta de controlo é sempre a mesma: se este campo ficar em branco, que decisão deixa de ser possível? Se a resposta for «nenhuma», o campo sai.",
     "Há três alternativas intermédias entre manter e remover. Minimizar é reduzir o detalhe: em vez da data de nascimento completa, o ano; em vez da morada exacta, o bairro; em vez do rendimento em meticais, um escalão. Agregar é deixar de guardar linha a linha e passar a guardar contagens: em vez da lista de quem reclamou, o número de reclamações por mês e por sector. Separar é guardar em sítios diferentes o que só junto identifica a pessoa. Estas três decisões resolvem a maior parte dos casos sem prejudicar o serviço, porque a maioria dos usos internos é estatística e não precisa de saber de quem se trata.",
-    "Quatro perguntas acompanham cada campo que se decide manter. Para que serve, em concreto — e «para análise futura» não é finalidade, é adiar a decisão. Quem tem acesso, por nome de função e não por «o serviço». Durante quanto tempo se guarda, com um prazo escrito. E o que acontece no fim: apaga-se, ou fica só a versão agregada? Um serviço que não sabe responder a estas quatro perguntas não controla os dados que tem, mesmo que os tenha em pastas bem arrumadas.",
+    "Quatro perguntas acompanham cada campo que se decide manter. Para que serve, em concreto — e «para análise futura» não é finalidade, é adiar a decisão. Quem tem acesso, por nome de função e não por «o serviço». Durante quanto tempo se guarda, com um prazo escrito. E o que acontece no fim: apaga-se, ou fica só a versão agregada? Um serviço que não sabe responder a estas quatro perguntas não controla os dados que tem, mesmo que os tenha em pastas bem arrumadas. Uma precisão importante sobre o prazo: o que o grupo escreve nesta aula é uma proposta de trabalho, não uma decisão. Documentos de um serviço público estão sujeitos a obrigações de arquivo e a outras obrigações legais, e nada se elimina — em papel ou em ficheiro — sem confirmar previamente essas obrigações com quem responde pelo arquivo e com a área jurídica da instituição.",
     "Agora a distinção que mais confusão causa. Pseudonimizar é substituir o identificador directo por um código, guardando em separado a tabela que liga o código à pessoa. Os dados continuam a ser dados pessoais: com a tabela, volta-se à pessoa em segundos. Anonimizar é tornar a reidentificação razoavelmente impossível, mesmo com esforço e mesmo cruzando com outras fontes — o que normalmente obriga a perder detalhe, agregando ou suprimindo. Chamar «anonimizado» a um ficheiro apenas pseudonimizado é o erro mais comum e o mais consequente, porque leva a partilhar com terceiros um ficheiro que ainda identifica pessoas.",
     "A reidentificação nem precisa da tabela de códigos. Basta a combinação de campos. Numa localidade pequena, «mulher, 34 anos, bairro X, banca de peixe, reclamação sobre o fiscal Y em Março» identifica uma pessoa para quem trabalha ali, mesmo sem nome. É o que se chama quase-identificador: campos que, isolados, não identificam ninguém e, juntos, identificam uma pessoa só. Por isso a decisão sobre um campo nunca se toma olhando para esse campo sozinho; toma-se olhando para o conjunto e perguntando quantas pessoas, naquele universo, partilham aquela combinação.",
     "Falta o fluxo. Os dados raramente ficam onde entram: passam por um formulário em papel, por uma folha de cálculo no computador do balcão, por uma cópia enviada por correio electrónico para a província, por uma pasta partilhada e, às vezes, por uma ferramenta externa. Cada passagem é um ponto de risco e cada cópia é uma cópia que alguém tem de saber apagar. Desenhar o fluxo numa folha, com setas, é o exercício mais simples e mais revelador desta lição: é quase certo que apareça pelo menos uma cópia que ninguém tinha em mente. E, a propósito de ferramentas de inteligência artificial: escrever dados pessoais numa ferramenta externa é uma passagem do fluxo como outra qualquer, que exige autorização expressa da instituição e saber onde os dados ficam. Neste curso, nunca se faz.",
@@ -342,13 +355,15 @@ const M2L2: ConteudoLicao = {
   },
   anexos: [
     {
-      titulo: "Anexo A — quatro perguntas obrigatórias por campo mantido",
+      titulo:
+        "Anexo A — quatro perguntas obrigatórias por campo mantido, e a confirmação antes de eliminar",
       nota: "Grelha de trabalho. Preenche-se apenas para os campos que o grupo decidir manter.",
       corpo: [
         "Finalidade: que decisão concreta do serviço deixa de ser possível se este campo ficar em branco?",
         "Acesso: que funções, nomeadas, precisam de ver este campo? Quem não precisa não deve conseguir ver.",
-        "Retenção: durante quanto tempo se guarda, contado a partir de que momento?",
-        "Destino no fim do prazo: elimina-se em papel e em ficheiro, ou fica apenas uma versão agregada sem identificação?",
+        "Retenção: durante quanto tempo se propõe guardar, contado a partir de que momento? O prazo escrito nesta ficha é uma proposta de trabalho.",
+        "Destino no fim do prazo: propõe-se eliminar em papel e em ficheiro, ou conservar apenas uma versão agregada sem identificação?",
+        "Confirmação antes de eliminar: que obrigações de arquivo e que outras obrigações legais se aplicam a estes documentos, e quem as confirma — responsável pelo arquivo e área jurídica da instituição — antes de qualquer eliminação?",
       ],
     },
     {
@@ -381,7 +396,7 @@ const M2L2: ConteudoLicao = {
     formato: "em grupos de três, apenas com papel; não é necessário computador nesta lição",
     enunciado: [
       "Parte A. Percorram os dezasseis campos da tabela e escrevam, para cada um, a decisão — manter, minimizar, agregar ou remover — e a justificação por referência à finalidade declarada. A pergunta de controlo é: se este campo ficar em branco, que decisão do serviço deixa de ser possível?",
-      "Parte B. Para cada campo que decidiram manter, preencham as quatro perguntas do anexo A: finalidade, acesso por função nomeada, prazo de retenção e destino no fim do prazo.",
+      "Parte B. Para cada campo que decidiram manter, preencham o anexo A: finalidade, acesso por função nomeada, prazo de retenção proposto, destino no fim do prazo e a confirmação de obrigações de arquivo e legais que teria de ser obtida antes de eliminar seja o que for.",
       "Parte C. Leiam o anexo B. Identifiquem que linhas podem corresponder à mesma pessoa e expliquem com que combinação de campos chegaram lá. Escrevam depois, em duas frases, porque é que este ficheiro não está anonimizado.",
       "Parte D. Desenhem numa folha o fluxo do anexo C, com setas e caixas, marcando com um círculo cada ponto em que existe uma cópia dos dados. Contem as cópias.",
       "Parte E. Escolham três riscos concretos do fluxo desenhado e proponham, para cada um, uma medida verificável — isto é, uma medida que outra pessoa possa confirmar que foi cumprida, com um prazo e um responsável por função.",
@@ -390,11 +405,11 @@ const M2L2: ConteudoLicao = {
       "Uma ficha por grupo com: a tabela dos dezasseis campos decidida e justificada; a grelha das quatro perguntas para os campos mantidos; a resposta de reidentificação da parte C; o desenho do fluxo com as cópias marcadas e contadas; e os três riscos com as medidas verificáveis.",
     rubrica: [
       "Pelo menos os campos 5, 6 e 11 — estado civil, número de filhos e rendimento — são removidos, com justificação de que nenhuma decisão do serviço depende deles face à finalidade declarada.",
-      "O campo 3 é minimizado, por exemplo para escalão etário, e o campo 7 é minimizado para bairro, em vez de morada exacta.",
+      "Os campos 3, 4 e 7 — data de nascimento, sexo e morada — não são conservados tal como estão. Aceitam-se duas soluções, desde que justificadas pela finalidade declarada: remover o campo, se nenhuma decisão do serviço depender dele, ou minimizá-lo, por exemplo escalão etário em vez da data completa e bairro em vez da morada exacta. Minimizar não obriga a conservar: um grupo que remova idade, sexo e bairro por serem dispensáveis para tratar a reclamação faz uma escolha correcta, e a morada só se justifica se a resposta tiver mesmo de ser enviada por via postal.",
       "O campo 16, a fotocópia do documento de identificação, é removido ou substituído por conferência presencial sem guardar cópia; guardar a fotocópia não é necessário para responder a uma reclamação.",
       "Os campos 12, 13 e 14 são mantidos, porque sem assunto, descrição e momento não é possível tratar a reclamação.",
-      "As quatro perguntas respondidas com acesso indicado por função e prazo de retenção expresso em tempo, não em «o necessário».",
-      "Na parte C, as linhas R-0041 e R-0045 são identificadas como provavelmente da mesma pessoa, pela combinação de sexo, idade, bairro, ocupação e assunto; e fica escrito que o código R-00xx é pseudonimização, não anonimização.",
+      "As quatro perguntas respondidas com acesso indicado por função e prazo de retenção expresso em tempo, não em «o necessário»; e o prazo apresentado como proposta, com a confirmação de obrigações de arquivo e legais indicada antes de qualquer eliminação.",
+      "Na parte C, as linhas R-0041 e R-0045 são apontadas como podendo corresponder à mesma pessoa, pela combinação de sexo, idade, bairro, ocupação e assunto — sem afirmar que é a mesma pessoa, porque a combinação não o comprova: podem ser duas pessoas com as mesmas características. O que fica demonstrado é o risco de reidentificação, e fica escrito que o código R-00xx é pseudonimização e que a anonimização não está demonstrada.",
       "O fluxo desenhado mostra pelo menos cinco cópias: papel, folha de cálculo local, correio electrónico para a província, pasta partilhada e mensagem para correio pessoal.",
       "As três medidas são verificáveis, com responsável por função e prazo, e não formulações genéricas como «ter mais cuidado».",
     ],
@@ -406,9 +421,12 @@ const M2L2: ConteudoLicao = {
     "Para cada campo guardado: para que serve, quem vê, quanto tempo fica, e o que acontece no fim.",
     "Trocar o nome por um código é pseudonimizar. Os dados continuam a ser da pessoa.",
     "Anonimizar é perder detalhe suficiente para já não se chegar à pessoa.",
-    "Campos que sozinhos não dizem nada podem, juntos, identificar uma pessoa só.",
+    "Campos que sozinhos não dizem nada podem, juntos, apontar para uma pessoa só.",
+    "Duas linhas iguais podem ser da mesma pessoa. Não prova que são. Prova que há risco.",
+    "Se um campo não é preciso, pode ser removido. Reduzir o detalhe não é obrigação de guardar.",
     "Cada cópia dos dados é um risco. Desenhe o caminho dos dados e conte as cópias.",
     "Não se escrevem dados de pessoas em ferramentas externas sem autorização da instituição.",
+    "O prazo que escrevemos na aula é uma proposta. Antes de apagar, confirme as regras de arquivo e a área jurídica.",
     "Sobre o que a lei exige, quem responde é a área jurídica da instituição.",
   ],
   verificacao: [
@@ -424,7 +442,7 @@ const M2L2: ConteudoLicao = {
       pergunta:
         "Um colega diz: «tirei os nomes, agora o ficheiro está anonimizado e pode ser partilhado». Concorda? Use o anexo B na resposta.",
       resposta:
-        "Não concordo. Tirar o nome e pôr um código é pseudonimização: existe ainda ligação à pessoa, e mesmo sem ela a combinação de campos chega. No anexo B, as linhas R-0041 e R-0045 têm a mesma mulher de 34 anos, do Bairro Fictício 3, comerciante de peixe, com reclamação sobre fiscalização — numa localidade pequena isso identifica uma pessoa para quem lá trabalha. Para partilhar seria preciso agregar ou suprimir detalhe.",
+        "Não concordo. Tirar o nome e pôr um código é pseudonimização: existe ainda ligação à pessoa, e mesmo sem essa ligação a combinação de campos chega. No anexo B, as linhas R-0041 e R-0045 apresentam a mesma combinação — mulher, 34 anos, Bairro Fictício 3, comerciante de peixe, reclamação sobre fiscalização. Podem corresponder à mesma pessoa, mas o ficheiro não o comprova: podem ser duas pessoas com as mesmas características. O que fica provado é o risco de reidentificação, porque numa localidade pequena aquela combinação aponta para muito poucas pessoas, talvez uma só, para quem lá trabalha. Ou seja: a anonimização não está demonstrada, e por isso não se partilha. Para partilhar seria preciso agregar ou suprimir detalhe.",
       feedback:
         "A palavra «anonimizado» é usada com demasiada leveza. O teste prático é perguntar quantas pessoas, naquele universo, partilham aquela combinação de campos. Se a resposta for uma, não está anonimizado.",
     },
@@ -435,20 +453,20 @@ const M2L2: ConteudoLicao = {
       "Imprimir a tabela dos dezasseis campos, os anexos A, B e C e folhas A3 em branco para o desenho do fluxo, um conjunto por grupo de três.",
       "Preparar no quadro o esquema vazio do fluxo, com seis caixas, para desenhar durante a exposição.",
       "Não é necessária ligação à internet nem ferramenta de inteligência artificial nesta lição.",
-      "Rever, antes da sessão, a advertência de que não se cita nem se interpreta legislação nacional na sala, e que as questões jurídicas seguem para a área jurídica da instituição.",
+      "Preparar a formulação a usar sempre que surgir uma questão jurídica: a aula ensina boas práticas, e a validação jurídica pede-se à área jurídica da instituição sobre o caso concreto e na data em que se decide.",
       "Ter marcadores de duas cores: uma para o caminho dos dados, outra para marcar as cópias.",
     ],
     conducao: [
       "Abrir com a pergunta da reclamante do caso: porque é que se pede o estado civil para reclamar de um horário? Recolher respostas sem corrigir e apresentar os objectivos.",
-      "Expor a advertência jurídica; a minimização e a pergunta de controlo; as três alternativas intermédias — reduzir detalhe, agregar, separar; as quatro perguntas por campo mantido; a diferença entre pseudonimizar e anonimizar com o exemplo do quase-identificador; e o fluxo de dados, desenhando no quadro as seis caixas do anexo C.",
+      "Expor a minimização e a pergunta de controlo, deixando claro que remover é uma decisão tão correcta como reduzir o detalhe; as três alternativas intermédias — reduzir detalhe, agregar, separar; as quatro perguntas por campo mantido e a confirmação de obrigações de arquivo antes de eliminar; a diferença entre pseudonimizar e anonimizar com o exemplo do quase-identificador, insistindo em «pode corresponder» e não «é»; e o fluxo de dados, desenhando no quadro as seis caixas do anexo C.",
       "Lançar a actividade em grupos de três. Partes A e B nos primeiros 30 minutos; circular e insistir em que a justificação cite a finalidade declarada. Partes C, D e E nos 30 minutos seguintes. Avisar aos 30 e aos 50 minutos.",
-      "Chamar dois grupos, quatro minutos cada: um apresenta as remoções e minimizações com justificação, outro apresenta o fluxo e as cópias contadas. Recolher as fichas restantes. Fechar confirmando as linhas R-0041 e R-0045 e repetindo que o serviço responde pelas cópias que fez.",
+      "Chamar dois grupos, quatro minutos cada: um apresenta as remoções e minimizações com justificação, outro apresenta o fluxo e as cópias contadas. Recolher as fichas restantes. Fechar com as linhas R-0041 e R-0045, insistindo na formulação correcta — podem corresponder à mesma pessoa, não está comprovado, e o que fica demonstrado é o risco de reidentificação — e repetindo que o serviço responde pelas cópias que fez.",
     ],
     criterios: [
       "Decisão e justificação escritas para os dezasseis campos, com a finalidade citada.",
       "Campos 5, 6, 11 e 16 removidos ou substituídos, com fundamento.",
       "Quatro perguntas respondidas para todos os campos mantidos, com prazo em tempo e acesso por função.",
-      "Reidentificação da parte C correcta e explicada pela combinação de campos.",
+      "Risco de reidentificação da parte C explicado pela combinação de campos, sem afirmar que as linhas são comprovadamente da mesma pessoa.",
       "Fluxo desenhado com pelo menos cinco cópias marcadas.",
       "Três medidas verificáveis, com responsável por função e prazo.",
     ],
@@ -456,7 +474,10 @@ const M2L2: ConteudoLicao = {
       "Justificar um campo com «é sempre assim» ou «pode vir a ser útil».",
       "Manter a fotocópia do documento de identificação por hábito.",
       "Escrever «o necessário» no prazo de retenção.",
+      "Tratar o prazo proposto na aula como autorização para eliminar, sem confirmar obrigações de arquivo e legais.",
       "Chamar anonimizado ao ficheiro do anexo B.",
+      "Afirmar que R-0041 e R-0045 são comprovadamente a mesma pessoa, em vez de dizer que podem corresponder e que há risco de reidentificação.",
+      "Julgar que minimizar obriga a conservar o campo, quando remover é opção legítima se nada depender dele.",
       "Esquecer a cópia para o correio electrónico pessoal ao desenhar o fluxo.",
       "Propor medidas não verificáveis, do tipo «sensibilizar os colegas».",
       "Tentar resolver na sala se determinada prática é legal em Moçambique, em vez de encaminhar para a área jurídica.",
@@ -570,7 +591,7 @@ const M2L3: ConteudoLicao = {
     "Um sistema pode acertar muito no total e falhar muito num grupo.",
     "Veja sempre os dois erros separados: deixar passar e chamar sem ser preciso.",
     "Escreva a conta com o número de cima e o número de baixo. Percentagem sozinha não chega.",
-    "Os dados de treino trazem quem estava neles. Quem não estava é servido pior.",
+    "Os dados de treino trazem quem estava neles. Quem não estava pode ser servido pior — é preciso medir para saber.",
     "Retirar o campo do sexo ou da língua não resolve: outros campos dizem a mesma coisa por outro caminho.",
     "Algumas diferenças nascem antes do sistema, no desenho do serviço: língua, internet, acessibilidade.",
     "Uma diferença entre grupos manda investigar. Não prova, sozinha, causa nem discriminação.",
@@ -585,7 +606,7 @@ const M2L3: ConteudoLicao = {
       resposta:
         "A taxa global é 468 dividido por 600, igual a 0,78. Mas no grupo B o sistema deixa passar 30 dos 60 pedidos realmente incompletos: 30 dividido por 60 é 0,50, ou seja metade. No grupo A deixa passar 15 em 60, isto é 25 por cento. O número global é puxado pelo grupo A, que tem metade de todos os pedidos e os melhores resultados.",
       feedback:
-        "Sempre que um grupo domina o total, a média descreve esse grupo e mais nenhum. A leitura por grupo, com denominadores à vista, é o mínimo antes de qualquer juízo sobre o sistema.",
+        "A média ponderada resume o conjunto todo, mas quando um grupo pesa muito no total aproxima-se sobretudo desse grupo e pode ocultar diferenças importantes nos restantes. Por isso a leitura por grupo, com denominadores à vista, é o mínimo antes de qualquer juízo sobre o sistema.",
     },
     {
       pergunta:
@@ -646,11 +667,11 @@ const M2L4: ConteudoLicao = {
   ],
   explicacao: [
     "Supervisão humana é uma expressão que se usa muito e que quase sempre significa menos do que parece. Ter uma pessoa a olhar para o ecrã não é supervisão. Supervisão é ter alguém com poder real de parar o sistema, corrigir a saída e responder por essa decisão. Se a pessoa que verifica não pode suspender, não pode alterar e não é ouvida quando avisa, o que existe é a aparência de supervisão — e a aparência é pior do que nada, porque tranquiliza.",
-    "Três poderes concretos definem supervisão verdadeira. O poder de corrigir: a pessoa pode alterar ou rejeitar a saída sem pedir autorização e sem justificar por escrito cada vez. O poder de suspender: existe alguém, nomeado por função, que pode mandar parar o uso do sistema no mesmo dia, e existe um procedimento escrito para o fazer. E o poder de ser ouvido: os avisos de quem usa o sistema chegam a quem decide, ficam registados e têm resposta. Faltando um destes três, é preciso dizer que falta.",
+    "Três poderes concretos definem supervisão verdadeira. O poder de corrigir: dentro do âmbito que lhe foi autorizado, a pessoa pode alterar ou rejeitar a saída de imediato, sem esperar autorização caso a caso, registando o motivo de forma proporcional ao impacto da decisão — uma anotação curta no processo para correcções de rotina, um registo fundamentado quando a decisão afecta direitos. Registar não é pedir licença: a intervenção é imediata, o registo serve para prestar contas e para melhorar o sistema. O poder de suspender: existe alguém, nomeado por função, que pode mandar parar o uso do sistema no mesmo dia, e existe um procedimento escrito para o fazer. E o poder de ser ouvido: os avisos de quem usa o sistema chegam a quem decide, ficam registados e têm resposta. Faltando um destes três, é preciso dizer que falta.",
     "Ao lado da supervisão está a contestação, que é o direito de quem foi afectado. Uma pessoa que recebe uma decisão apoiada por um sistema tem de poder saber que houve apoio de um sistema, pedir revisão por pessoa, apresentar argumentos e obter resposta em prazo. Isto exige três coisas práticas: informação legível no documento que sai, um canal indicado de forma clara, e registo do que foi decidido e por quem. Sem registo, a contestação é uma conversa.",
     "Prestação de contas é a terceira peça e responde à pergunta: quem responde por isto? A resposta não pode ser «o sistema», nem «o fornecedor», nem «a informática». Responde a pessoa que assina a decisão, e responde a direcção que autorizou o uso. Para que isso seja verificável é preciso saber, a qualquer momento, que sistemas estão em uso, para que servem, quem autorizou, quem supervisiona e onde estão os registos. Um serviço que não consegue responder a isto numa folha não está em condições de prestar contas.",
     "Passemos à governação, e comecemos por arrumar três palavras que são usadas como se fossem sinónimos. Lei é norma obrigatória, aprovada pelo órgão competente de um país, com consequências pelo incumprimento. Recomendação internacional é um instrumento adoptado por Estados que exprime compromissos e orienta políticas, mas que não é, por si, lei em país nenhum — só obriga na medida em que cada país a transponha. Estratégia é documento de orientação política: fixa prioridades e caminhos, não cria obrigações directas para os serviços. E há ainda a proposta em consulta pública, que é um texto aberto a comentários e que não prova que exista nada aprovado. Confundir estas categorias numa reunião é o erro que mais depressa se paga.",
-    "Com estas distinções, as fontes desta lição arrumam-se com facilidade. O quadro regulamentar europeu para a inteligência artificial é legislação da União Europeia, que classifica os sistemas por risco e impõe, aos de alto risco, exigências de dados, documentação, registo, transparência e supervisão humana; a sua aplicação é faseada e o calendário tem sido objecto de alterações, pelo que não se deve afirmar que está tudo em vigor. Para Moçambique é referência internacional de boas práticas e termo de comparação — não é lei aplicável, e nenhuma decisão interna se fundamenta nele. A Recomendação da UNESCO sobre a Ética da Inteligência Artificial é instrumento normativo adoptado entre Estados, útil como lista de verificação ética. A Estratégia Continental da União Africana é orientação política para o continente, com ênfase em capacidades, riscos, governação e cooperação. E a consulta pública do INTIC sobre a proposta de Estratégia Nacional de Inteligência Artificial mostra que existe um processo de consulta em curso — e apenas isso: não prova que exista estratégia aprovada, política aprovada ou lei de inteligência artificial em vigor em Moçambique, e também não permite atribuir ao INTIC a qualidade de autoridade reguladora da inteligência artificial. Quem precisar do estado actual do processo deve consultar a fonte na data em que precisa da informação.",
+    "Com estas distinções, as fontes desta lição arrumam-se com facilidade. O Regulamento Europeu de Inteligência Artificial é legislação da União Europeia, que classifica os sistemas por risco e impõe, aos de alto risco, exigências de dados, documentação, registo, transparência e supervisão humana; a sua aplicação é faseada e o calendário tem sido objecto de alterações, pelo que não se deve afirmar que está tudo em vigor. Para Moçambique é referência internacional de boas práticas e termo de comparação: não é lei moçambicana e não se aplica automaticamente cá. Duas cautelas, porém, em sentidos opostos. Não se fundamenta uma decisão interna dizendo «o regulamento europeu obriga-nos» — não obriga, por si. Mas também não se afirma que nunca poderá abranger uma entidade moçambicana: o artigo 2.º do regulamento, no n.º 1, alínea c), alcança fornecedores e responsáveis pela utilização situados em país terceiro quando as saídas do sistema são utilizadas na União. Se um serviço ou contrato nosso produz saídas destinadas a uso na União, a questão tem de ser verificada em concreto pela área jurídica. A Recomendação da UNESCO sobre a Ética da Inteligência Artificial é instrumento normativo adoptado entre Estados: orienta políticas e serve de lista de verificação ética, mas não é, por si, vinculativa internamente — só obriga na medida em que for transposta para o direito nacional. A Estratégia Continental da União Africana é orientação política para o continente, com ênfase em capacidades, riscos, governação e cooperação; note-se que uma estratégia não é lei, mas pode vincular administrativamente os serviços conforme o acto que a aprova. E a proposta de Estratégia Nacional de Inteligência Artificial divulgada pelo INTIC para consulta pública mostra que existe um processo — e apenas isso: não prova que exista estratégia aprovada, política aprovada ou lei de inteligência artificial em vigor em Moçambique, e também não permite atribuir ao INTIC a qualidade de autoridade reguladora. A página consultada indicava 4 de Setembro como prazo de contributos, anterior à data da nossa consulta, pelo que não se diz que a consulta está em curso sem o confirmar. Quem precisar do estado actual do processo deve consultar a fonte na data em que precisa da informação.",
     "Os actores não são todos a mesma coisa e não querem a mesma coisa, o que é normal. O governo define política e responde perante os cidadãos. A academia produz conhecimento independente e forma pessoas, e é quem pode avaliar um sistema sem interesse na sua venda. Os fornecedores desenvolvem e vendem produtos: têm conhecimento técnico indispensável e têm interesse comercial, e as duas coisas são verdadeiras ao mesmo tempo. A sociedade civil, incluindo muito especialmente as organizações de pessoas com deficiência, traz a experiência de quem é afectado e detecta barreiras que mais ninguém vê. As organizações internacionais — União Africana, UNESCO, União Europeia — produzem referências, recomendações e estratégias, e criam espaços de negociação. Reconhecer o interesse de cada um não é desconfiança: é a base de uma consulta honesta.",
     "É aqui que entra a política e a diplomacia da inteligência artificial, que não é assunto distante. As regras internacionais estão a ser escritas agora, e quem não participa recebe-as feitas. A escolha de fornecedores, o sítio onde ficam os dados, as normas técnicas que se adoptam e a participação em espaços continentais e multilaterais são decisões de soberania, ainda que se apresentem como decisões técnicas. Ao nível de uma direcção distrital isto traduz-se em perguntas muito concretas: onde ficam alojados os nossos dados, que dependência estamos a criar, conseguimos sair deste produto, e estamos a desenvolver competência interna ou apenas a consumir um serviço?",
   ],
@@ -680,7 +701,7 @@ const M2L4: ConteudoLicao = {
     {
       titulo: "Anexo A — fichas de papel para o comité de supervisão",
       nota:
-        "Fichas fictícias de trabalho. Cada grupo distribui os papéis entre si; um papel pode ser desempenhado por quem já tem outras funções, desde que não haja conflito de interesse.",
+        "Fichas fictícias de trabalho. Esta composição, os poderes e os prazos que aqui aparecem são um desenho institucional proposto para efeitos de formação: não correspondem a nenhuma obrigação legal universal nem a nenhum modelo aprovado. Cada serviço define o seu, dentro das suas competências. Cada grupo distribui os papéis entre si; um papel pode ser desempenhado por quem já tem outras funções, desde que não haja conflito de interesse.",
       corpo: [
         "Presidência do comité — função com poder de decisão no serviço. Convoca, decide sobre suspensão e responde perante a direcção. Não pode ser quem propôs a aquisição do sistema.",
         "Representante de quem usa o sistema — pessoa do balcão ou do sector que trabalha com as saídas todos os dias. Traz os problemas reais e tem direito a que o seu aviso fique registado e obtenha resposta escrita.",
@@ -737,7 +758,7 @@ const M2L4: ConteudoLicao = {
       "As condições de suspensão são factos observáveis, com prazo para decidir, e não formulações como «se houver problemas graves».",
       "A minuta indica o que acontece aos casos já decididos e dá à pessoa afectada um caminho concreto de contestação, com destinatário e prazo de resposta.",
       "A proposta de piloto mede indicadores por grupo de submissão, e não apenas no total, e mantém a alternativa acessível.",
-      "Na parte G, o interesse comercial do fornecedor é reconhecido expressamente, e o EU AI Act, se citado, é apresentado como referência europeia e não como norma aplicável em Moçambique.",
+      "Na parte G, o interesse comercial do fornecedor é reconhecido expressamente, e o Regulamento Europeu de Inteligência Artificial, se citado, é apresentado como referência europeia — não é lei moçambicana nem se aplica automaticamente cá, sem que daí se conclua que jamais abrange operadores fora da União.",
       "Nenhuma parte do dossiê afirma que existe lei, estratégia ou política de inteligência artificial aprovada em Moçambique.",
     ],
   },
@@ -747,18 +768,20 @@ const M2L4: ConteudoLicao = {
     "Os avisos de quem usa o sistema têm de ficar escritos e ter resposta.",
     "Quem é afectado tem direito a saber que houve um sistema, a pedir revisão por pessoa e a receber resposta.",
     "Quem responde é quem assina e quem autorizou. Não é «o sistema» nem «a informática».",
-    "Lei obriga. Recomendação internacional orienta os Estados. Estratégia fixa prioridades. Proposta em consulta ainda não é nada disso.",
-    "O regulamento europeu de inteligência artificial é referência internacional. Não é lei de Moçambique.",
-    "A consulta pública do INTIC mostra que há um processo em curso. Não mostra que exista estratégia aprovada.",
+    "Corrigir é imediato dentro do que lhe foi autorizado. Escreve-se o motivo depois, conforme o peso da decisão.",
+    "Lei obriga. Recomendação internacional orienta os Estados e não obriga por si. Estratégia fixa prioridades e pode obrigar os serviços conforme o acto que a aprova. Proposta em consulta ainda não é nada disso.",
+    "O regulamento europeu de inteligência artificial não é lei de Moçambique nem se aplica cá automaticamente. Também não se diz que nunca pode tocar alguém daqui: se as saídas forem usadas na União, pergunte-se à área jurídica.",
+    "O INTIC divulgou uma proposta para consulta pública. Isso não mostra que exista estratégia aprovada. O prazo indicado já tinha passado na data em que consultámos.",
+    "O comité, os prazos e os poderes desenhados nesta lição são uma proposta de trabalho. Não são obrigação legal.",
     "Governo, academia, fornecedores e sociedade civil têm papéis e interesses diferentes. Reconheça-os.",
     "Onde ficam os dados e de quem se depende são decisões de soberania, mesmo quando parecem técnicas.",
   ],
   verificacao: [
     {
       pergunta:
-        "Numa reunião, um colega afirma: «temos de cumprir o EU AI Act, e a estratégia nacional de inteligência artificial já foi aprovada». Que duas correcções faz, e como fundamenta?",
+        "Numa reunião, um colega afirma: «temos de cumprir o Regulamento Europeu de Inteligência Artificial, e a estratégia nacional de inteligência artificial já foi aprovada». Que duas correcções faz, e como fundamenta?",
       resposta:
-        "Primeira correcção: o Regulamento Europeu de Inteligência Artificial é legislação da União Europeia. Estudamo-lo como referência internacional de governação — classificação por risco, transparência, supervisão humana — mas não se aplica automaticamente a Moçambique e não fundamenta decisões internas; a sua aplicação é faseada e o calendário tem sido alterado. Segunda correcção: o que a fonte do INTIC mostra é uma consulta pública sobre uma proposta de Estratégia Nacional de Inteligência Artificial. Consulta sobre proposta não é aprovação, e daí também não se conclui que o INTIC seja autoridade reguladora da inteligência artificial. Para saber o estado actual, consulta-se a fonte na data e cita-se essa data.",
+        "Primeira correcção: o Regulamento Europeu de Inteligência Artificial é legislação da União Europeia. Não é lei moçambicana e não se aplica automaticamente cá, pelo que não se fundamenta nele uma obrigação interna; estudamo-lo como referência de governação — classificação por risco, transparência, supervisão humana — e a sua aplicação é faseada, com calendário alterado. Acrescento, contudo, que também não digo que nunca nos possa abranger: o artigo 2.º, n.º 1, alínea c), alcança operadores situados fora da União quando as saídas do sistema são utilizadas na União, e isso verifica-se caso a caso com a área jurídica. Segunda correcção: o que a fonte do INTIC mostra é uma proposta de Estratégia Nacional de Inteligência Artificial divulgada para consulta pública, com prazo de contributos indicado para 4 de Setembro. Proposta em consulta não é aprovação, não afirmo que a consulta esteja em curso sem confirmar, e daí também não se conclui que o INTIC seja autoridade reguladora. Para saber o estado actual, consulta-se a fonte na data e cita-se essa data.",
       feedback:
         "As duas afirmações corrigidas são das que circulam com mais facilidade em reuniões e apresentações. Distinguir lei, recomendação, estratégia e proposta em consulta evita comprometer a instituição.",
     },
@@ -771,7 +794,7 @@ const M2L4: ConteudoLicao = {
         "A pergunta decisiva é a do registo: sem avisos escritos e respondidos, ninguém consegue depois demonstrar que sabia, nem quando soube, e a prestação de contas desfaz-se.",
     },
   ],
-  referencias: [OECD, NIST, UE, UNESCO, UA, INTIC],
+  referencias: [OECD, NIST, UE, EURLEX, UNESCO, UA, INTIC],
   guiao: {
     preparacao: [
       "Imprimir os anexos A, B e C e a matriz de risco, um conjunto por grupo, com letra grande e espaço para escrever.",
@@ -803,7 +826,10 @@ const M2L4: ConteudoLicao = {
       "Esquecer os casos já decididos ao suspender o sistema.",
       "Pôr o representante do fornecedor a decidir sobre a suspensão.",
       "Tratar o assento da sociedade civil como formalidade.",
-      "Dizer que o EU AI Act obriga Moçambique, ou que já existe estratégia nacional aprovada.",
+      "Dizer que o Regulamento Europeu de Inteligência Artificial obriga Moçambique, ou que já existe estratégia nacional aprovada.",
+      "Cair no erro contrário e garantir que o regulamento europeu nunca poderá abranger uma entidade moçambicana, sem olhar ao artigo 2.º nem à área jurídica.",
+      "Apresentar o comité, os prazos e os poderes desenhados na aula como obrigação legal, quando são proposta de desenho institucional.",
+      "Exigir justificação escrita prévia para cada correcção de rotina, transformando supervisão em pedido de autorização.",
       "Medir o piloto apenas pelo resultado global, sem separar por grupo de submissão.",
     ],
   },

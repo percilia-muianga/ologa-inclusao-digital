@@ -357,7 +357,7 @@ describe("módulo 2 — uso responsável da inteligência artificial", () => {
     const tudo = chaves.map((k) => JSON.stringify(LICOES[k])).join(" ");
     expect(tudo).not.toMatch(/estratégia nacional de inteligência artificial aprovada/i);
     expect(tudo).not.toMatch(/INTIC é a autoridade|INTIC, autoridade reguladora/i);
-    expect(tudo).toMatch(/não se deve inferir da consulta que o INTIC seja autoridade reguladora/i);
+    expect(tudo).toMatch(/não permite (atribuir ao INTIC a qualidade de autoridade reguladora|concluir que o INTIC seja autoridade reguladora)/i);
     expect(tudo).toMatch(/não prova que exista estratégia aprovada/);
     expect(tudo).toMatch(/proposta/i);
     expect(tudo).not.toMatch(/aprovado pela ATDI|validado pela Ologa|Língua de Sinais/i);
