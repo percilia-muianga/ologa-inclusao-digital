@@ -386,7 +386,7 @@ const M2L2: ConteudoLicao = {
     formato: "em grupos de três, apenas com papel; não é necessário computador nesta lição",
     enunciado: [
       "Parte A. Percorram os dezasseis campos da tabela e escrevam, para cada um, a decisão — manter, minimizar, agregar ou remover — e a justificação por referência à finalidade declarada. A pergunta de controlo é: se este campo ficar em branco, que decisão do serviço deixa de ser possível?",
-      "Parte B. Para cada campo que decidiram manter, preencham as quatro perguntas do anexo A: finalidade, acesso por função nomeada, prazo de retenção e destino no fim do prazo.",
+      "Parte B. Para cada campo que decidiram manter, preencham o anexo A: finalidade, acesso por função nomeada, prazo de retenção proposto, destino no fim do prazo e a confirmação de obrigações de arquivo e legais que teria de ser obtida antes de eliminar seja o que for.",
       "Parte C. Leiam o anexo B. Identifiquem que linhas podem corresponder à mesma pessoa e expliquem com que combinação de campos chegaram lá. Escrevam depois, em duas frases, porque é que este ficheiro não está anonimizado.",
       "Parte D. Desenhem numa folha o fluxo do anexo C, com setas e caixas, marcando com um círculo cada ponto em que existe uma cópia dos dados. Contem as cópias.",
       "Parte E. Escolham três riscos concretos do fluxo desenhado e proponham, para cada um, uma medida verificável — isto é, uma medida que outra pessoa possa confirmar que foi cumprida, com um prazo e um responsável por função.",
