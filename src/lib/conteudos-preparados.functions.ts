@@ -119,8 +119,20 @@ export function explicarErro(mensagem: string): string {
     return "Já existe conteúdo diferente em pelo menos uma lição. Nada foi gravado e nada foi substituído.";
   if (mensagem.includes("CONFLITO_QUESTOES_EM_USO"))
     return "Há questões já em uso ou já revistas. Nada foi gravado.";
+  if (mensagem.includes("CONFLITO_QUESTOES_DIFERENTES"))
+    return "Há questões com o mesmo código já na plataforma, mas diferentes das do pacote. Este pacote nunca substitui revisão humana: nada foi gravado.";
+  if (mensagem.includes("CODIGO_INESPERADO_NA_BASE"))
+    return "Existem questões deste curso que não pertencem ao pacote preparado. Nada foi gravado.";
+  if (mensagem.includes("QUESTOES_SEM_CODIGO"))
+    return "Existem questões deste curso sem código estável. Nada foi gravado.";
+  if (mensagem.includes("MODULO_NAO_LIGADO_AO_CURSO"))
+    return "Um módulo indicado no pacote não está ligado a este curso. Nada foi gravado.";
+  if (mensagem.includes("ESTRUTURA_DE_MODULOS_INESPERADA"))
+    return "O curso não tem exactamente três módulos temáticos e um transversal. Nada foi gravado.";
   if (mensagem.includes("MODULO_PARTILHADO_COM_OUTRO_CURSO"))
     return "Um dos módulos está ligado a outro curso. Nada foi gravado.";
+  if (mensagem.includes("MINUTOS_POR_MODULO_INCOERENTES"))
+    return "Os minutos das lições não batem certo com os do respectivo módulo. Nada foi gravado.";
   if (mensagem.includes("MINUTOS_INCOERENTES"))
     return "As horas do pacote não fecham em 30 horas. Nada foi gravado.";
   if (mensagem.includes("PAYLOAD") || mensagem.includes("INVALID") || mensagem.includes("MATRIZ"))
