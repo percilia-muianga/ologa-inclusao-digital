@@ -429,7 +429,7 @@ const M2L2: ConteudoLicao = {
       pergunta:
         "Um colega diz: «tirei os nomes, agora o ficheiro está anonimizado e pode ser partilhado». Concorda? Use o anexo B na resposta.",
       resposta:
-        "Não concordo. Tirar o nome e pôr um código é pseudonimização: existe ainda ligação à pessoa, e mesmo sem ela a combinação de campos chega. No anexo B, as linhas R-0041 e R-0045 têm a mesma mulher de 34 anos, do Bairro Fictício 3, comerciante de peixe, com reclamação sobre fiscalização — numa localidade pequena isso identifica uma pessoa para quem lá trabalha. Para partilhar seria preciso agregar ou suprimir detalhe.",
+        "Não concordo. Tirar o nome e pôr um código é pseudonimização: existe ainda ligação à pessoa, e mesmo sem essa ligação a combinação de campos chega. No anexo B, as linhas R-0041 e R-0045 apresentam a mesma combinação — mulher, 34 anos, Bairro Fictício 3, comerciante de peixe, reclamação sobre fiscalização. Podem corresponder à mesma pessoa, mas o ficheiro não o comprova: podem ser duas pessoas com as mesmas características. O que fica provado é o risco de reidentificação, porque numa localidade pequena aquela combinação aponta para muito poucas pessoas, talvez uma só, para quem lá trabalha. Ou seja: a anonimização não está demonstrada, e por isso não se partilha. Para partilhar seria preciso agregar ou suprimir detalhe.",
       feedback:
         "A palavra «anonimizado» é usada com demasiada leveza. O teste prático é perguntar quantas pessoas, naquele universo, partilham aquela combinação de campos. Se a resposta for uma, não está anonimizado.",
     },
