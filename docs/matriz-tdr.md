@@ -747,7 +747,7 @@ não têm nota, mantêm o texto anterior sem alteração.
 | Bloco | Minutos | Estado |
 | --- | --- | --- |
 | Módulo 1 — Fundamentos de Inteligência Artificial (4 lições × 120) | 480 | escrito, rascunho |
-| Módulo 2 — Uso Responsável da Inteligência Artificial (4 lições × 120) | 480 | **apenas planeado, por fornecer** |
+| Módulo 2 — Uso Responsável da Inteligência Artificial (4 lições × 120) | 480 | escrito, rascunho (22/09/2026) |
 | Transversal — Governo Digital Inclusivo e Acessibilidade (6 lições) | 120 | já existia, contado uma única vez |
 | Diagnóstico 20 + revisão 40 + exame 60 | 120 | fora dos módulos |
 | **Total** | **1200** | |
@@ -766,14 +766,17 @@ sítios.
 | Aprendizagem automática | M1 L3 | tabela de resultados de 200 casos, cálculos à mão | 4 valores calculados com operandos visíveis |
 | Uso de ferramentas de IA | M1 L4 | prática assistida com ferramenta institucional autorizada | folha de registo por execução, ou «PENDENTE» |
 | Aplicações e oportunidades | M1 L4 | 3 tarefas apoiáveis + 2 vedadas sem decisão superior | ficha por par |
-| Ética, riscos e protecção de dados | M1 L2 (introdução) e M2 L2 (por fornecer) | — | — |
-| Governação, EU AI Act, actores, política e diplomacia | **M2 L4 — planeado, por fornecer** | — | — |
+| Ética, riscos e protecção de dados | M1 L2 (introdução), M2 L2 e M2 L3 | tabela de 16 campos: minimizar, agregar, remover, finalidade, acesso, retenção, eliminação; cálculo de falsos positivos e falsos negativos por grupo | ficha de dados preenchida com fluxo e medidas; folha de cálculos por grupo com denominadores |
+| Uso real de ferramentas de IA | M2 L1 | duas execuções por par com ferramenta institucional autorizada, alternando quem escreve, sobre 5 pedidos sintéticos e regras de triagem fornecidas | folha de registo por execução (erros, tempo, instrução melhorada) ou «PENDENTE — a reagendar» |
+| Oportunidades e desafios organizacionais e económicos | M2 L1 | comparação em 6 critérios com a alternativa sem IA: custo, benefício, trabalho, língua, conectividade, dependência de fornecedor | grelha preenchida e recomendação fundamentada |
+| Riscos, preconceito algorítmico e inclusão | M2 L3 | tabela de 600 pedidos com os dois tipos de erro por grupo | taxas por grupo com operandos visíveis, origens da diferença e alternativa acessível |
+| Governação, EU AI Act, actores, política e diplomacia | M2 L4 | comité de supervisão com fichas de função, matriz de risco, minuta de suspensão e proposta de piloto | matriz preenchida com responsável, acção, evidência e prazo; minuta de suspensão |
 
 O EU AI Act é legislação da União Europeia. Fica registado, na ficha e aqui,
 que é estudado como referência internacional de governação e que **não se
 afirma** que se aplica automaticamente a Moçambique. Qualquer leitura jurídica
-cabe à área jurídica da instituição. A lição será escrita com fontes oficiais
-actualizadas à data em que for produzida; nada disso foi escrito neste bloco.
+cabe à área jurídica da instituição. A lição M2 L4 foi escrita no bloco A23,
+com fontes oficiais e data de consulta.
 
 ### Cálculos verificados (M1 L3)
 
@@ -833,3 +836,44 @@ internos, não na plataforma. O que não existe continua a não ser anunciado �
 módulo 2 aparece como «Em preparação», sem ligação. Transformação Digital e
 Computação em Nuvem mantêm o aviso visível de proposta por validar, sem
 alteração de conteúdo.
+
+## A23 — Introdução à Inteligência Artificial, módulo 2 (22/09/2026)
+
+As quatro lições do módulo 2 passaram de «planeadas» a **escritas, em
+rascunho**. Conteúdo em `scripts/conteudo/inteligencia-artificial-m2.ts`,
+reunido em `LICOES` por `scripts/conteudo/inteligencia-artificial-licoes.ts`.
+Estrutura igual à do módulo 1: 10 acolhimento + 35 exposição + 60 actividade +
+15 síntese = 120 minutos por lição; totais do curso inalterados (1200 minutos).
+
+| Lição | Título | Produto esperado |
+| --- | --- | --- |
+| M2 L1 | Casos de uso no serviço público | grelha de 6 critérios comparando com a alternativa sem IA, instrução escrita, registo de duas execuções e recomendação |
+| M2 L2 | Protecção de dados e privacidade | ficha de 16 campos com decisão minimizar/agregar/remover, finalidade, acesso, retenção, eliminação e fluxo de dados |
+| M2 L3 | Preconceito algorítmico e inclusão | taxas dos dois tipos de erro por grupo, com denominadores, origens e medidas de mitigação |
+| M2 L4 | Supervisão humana e prestação de contas | composição do comité, matriz de risco, minuta de suspensão e proposta de piloto |
+
+### Fontes oficiais consultadas em 22/09/2026 (síntese original da equipa)
+
+- Comissão Europeia — Regulatory framework for AI — https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai
+- UNESCO — Recommendation on the Ethics of AI — https://www.unesco.org/en/artificial-intelligence/recommendation-ethics
+- União Africana — Continental AI Strategy — https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy
+- INTIC — consulta pública da **proposta** de Estratégia Nacional de IA — https://intic.gov.mz/consulta-publica-da-proposta-da-estrategia-nacional-de-inteligencia-artificial/
+
+Rigor imposto e verificado por teste: o EU AI Act é referência europeia e não
+lei aplicável a Moçambique; a recomendação da UNESCO e a estratégia da União
+Africana não são lei nacional; a página do INTIC é uma **proposta em consulta
+pública** e não prova estratégia, política ou lei aprovada, nem atribui ao
+INTIC mandato de autoridade reguladora de IA. Não se invoca lei moçambicana de
+protecção de dados aprovada; as matérias jurídicas remetem para a área jurídica
+da instituição.
+
+### Estado honesto no fim deste bloco
+
+- Lições escritas neste curso: **14** (4 do módulo 1 + 4 do módulo 2 + 6 do transversal). Nenhuma por fornecer.
+- Tudo é **rascunho, por validar pela Ologa/ATDI**. Estar na plataforma não é aprovação.
+- A prática com ferramenta da M2 L1 está **por executar**, com as mesmas condições da M1 L4: ferramenta institucional autorizada, sem contas pessoais, sem pagamento, sem promessa de gratuitidade, sem dados reais; se faltar, «PENDENTE — a reagendar», nunca declarada realizada.
+- Todos os casos, pedidos, tabelas e números são fictícios e estão assinalados como tal.
+- Banco de questões do curso continua **por preparar e inactivo**; o exame não está activo e não emite certificados.
+- Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: continuam inexistentes e não anunciados.
+- **Nada foi gravado na base de dados neste bloco**: nenhum seed nem importador foi executado. O conteúdo só chegará à plataforma quando a gestora autorizar expressamente a execução de `scripts/seed-inteligencia-artificial.ts`.
+- Nenhum outro curso, banco, exame, certificado, perfil ou permissão foi tocado. Nada foi publicado.

@@ -10,11 +10,20 @@
  * Este ficheiro vive fora de src/ para não entrar no pacote do navegador; é
  * lido apenas pelo seed (scripts/seed-inteligencia-artificial.ts).
  *
- * Nesta etapa está escrito apenas o módulo 1. As lições do módulo 2 continuam
- * honestamente «por fornecer».
+ * Este ficheiro contém o módulo 1; as quatro lições do módulo 2 vivem em
+ * inteligencia-artificial-m2.ts e são reunidas aqui em LICOES.
  */
 
 import type { TemposLicao } from "../../src/lib/plano-inteligencia-artificial";
+import { LICOES_M2, DESCRICAO_M2 } from "./inteligencia-artificial-m2";
+
+/** Fonte consultada, com data. `resumo` é síntese original da equipa. */
+export type Referencia = {
+  titulo: string;
+  url: string;
+  consultadoEm: string;
+  resumo?: string;
+};
 
 export type Pratica = {
   titulo: string;
@@ -40,7 +49,7 @@ export type ConteudoLicao = {
   pratica?: Pratica;
   sintese: string[];
   verificacao: { pergunta: string; resposta: string; feedback: string }[];
-  referencias?: { titulo: string; url: string; consultadoEm: string }[];
+  referencias?: Referencia[];
   guiao: {
     preparacao: string[];
     /** Quatro passos, pela ordem: acolhimento, exposição, actividade, partilha. */
@@ -156,7 +165,9 @@ function referenciasHtml(c: ConteudoLicao): string {
     c.referencias
       .map(
         (r) =>
-          `<li>${esc(r.titulo)} — <a href="${esc(r.url)}" rel="noreferrer noopener" target="_blank">${esc(r.url)}</a> (consultado em ${esc(r.consultadoEm)}).</li>`,
+          `<li>${esc(r.titulo)} — <a href="${esc(r.url)}" rel="noreferrer noopener" target="_blank">${esc(r.url)}</a> (consultado em ${esc(r.consultadoEm)}).` +
+          (r.resumo ? `<br><em>Síntese da equipa:</em> ${esc(r.resumo)}` : "") +
+          "</li>",
       )
       .join("") +
     "</ul>"
@@ -830,14 +841,14 @@ export const LICOES: Record<string, ConteudoLicao> = {
   m1l2: M1L2,
   m1l3: M1L3,
   m1l4: M1L4,
+  ...LICOES_M2,
 };
 
 /**
  * Descrições dos módulos. Só entram na base quando TODAS as lições do módulo
- * estiverem escritas. O módulo 2 não está aqui: continua planeado e por
- * fornecer.
+ * estiverem escritas. O módulo 2 passou a estar escrito nesta etapa.
  */
 export const DESCRICOES_MODULO: Record<string, string> = {
   m1: "Quatro lições sobre os fundamentos da inteligência artificial: o que é e o que não é, com a distinção entre automação por regras e sistemas que inferem a partir de dados, uma breve história e o facto de que texto fluente não é texto verdadeiro; dados, características, rótulos, qualidade, representatividade, vazamento de dados e a diferença entre algoritmo e modelo, sobre um mini-conjunto fictício fornecido por inteiro; aprendizagem supervisionada, não supervisionada e por reforço em linguagem simples, com sobreajustamento e erros de falso positivo e falso negativo calculados sobre uma tabela fornecida; e aplicações ao trabalho administrativo, com uma prática assistida de resumo de um documento fictício.",
-  m2: "Quatro lições sobre a inteligência artificial no serviço público: casos de uso na administração, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana, governação e prestação de contas. Em preparação.",
+  m2: DESCRICAO_M2,
 };

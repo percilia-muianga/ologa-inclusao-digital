@@ -114,12 +114,12 @@ const M1_LICOES: LicaoPlano[] = [
 ];
 
 /**
- * Módulo 2 — APENAS PLANEADO nesta etapa. Os títulos já existem na base e o
- * conteúdo continua honestamente «por fornecer». A lição 4 deste módulo é o
- * lugar previsto para a governação da IA, incluindo o Regulamento Europeu de
- * Inteligência Artificial (EU AI Act), os actores nacionais e internacionais
- * e a política e diplomacia da IA, com fontes oficiais actualizadas à data em
- * que for escrita. Nada disso é escrito agora.
+ * Módulo 2 — ESCRITO. A lição 4 deste módulo trata a governação da IA,
+ * incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act) como
+ * referência internacional e não como lei aplicável em Moçambique, os actores
+ * nacionais e internacionais e a política e diplomacia da IA, com fontes
+ * oficiais e data de consulta. Conteúdo em
+ * scripts/conteudo/inteligencia-artificial-m2.ts.
  */
 const M2_LICOES: LicaoPlano[] = [
   licao("m2l1", 1, "Casos de uso no serviço público", T120, [
@@ -175,9 +175,7 @@ export const MODULOS_PLANO: ModuloPlano[] = [
     "m2",
     2,
     "Uso Responsável da Inteligência Artificial",
-    // Só PLANEADO: o seed não escreve esta descrição enquanto as lições não
-    // estiverem escritas.
-    "Quatro lições planeadas, ainda por escrever.",
+    "Quatro lições sobre o uso responsável da inteligência artificial no serviço público: casos de uso comparados com a alternativa sem inteligência artificial; protecção de dados e privacidade; preconceito algorítmico e inclusão; e supervisão humana, governação e prestação de contas.",
     M2_LICOES,
   ),
   {
@@ -252,7 +250,7 @@ export const DIVERGENCIA_CARGA_INTERNA =
 
 /** USO INTERNO. Estado editorial; não é apresentado na plataforma. */
 export const ESTADO_EDITORIAL_INTERNO =
-  "Conteúdo do módulo 1 escrito pela equipa e ainda não validado pela Ologa/ATDI. Módulo 2 por escrever. Banco de avaliação por preparar; exame não activo. Prática assistida da lição 4 por executar. Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: inexistentes, não anunciados na plataforma.";
+  "Conteúdo dos módulos 1 e 2 escrito pela equipa e ainda não validado pela Ologa/ATDI. Banco de avaliação por preparar; exame não activo. Prática assistida da lição 4 do módulo 1 e da lição 1 do módulo 2 por executar. Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: inexistentes, não anunciados na plataforma.";
 
 /**
  * Ficha do curso, tal como é apresentada. Apresenta a configuração actual do
@@ -260,7 +258,7 @@ export const ESTADO_EDITORIAL_INTERNO =
  */
 export const FICHA_CURSO = {
   objectivos:
-    "Objectivos assentes no conteúdo programático da secção 6.2 (páginas 13 e 14) do Termo de Referência: compreender o conceito de inteligência artificial e os seus fundamentos; distinguir dados, algoritmos e modelos e perceber, em linguagem simples, o que é a aprendizagem automática; utilizar ferramentas de inteligência artificial no trabalho administrativo, com verificação humana; reconhecer aplicações, oportunidades e riscos para a organização e para a economia; tratar ética, riscos e protecção de dados; e conhecer a governação da inteligência artificial, incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act), os actores nacionais e internacionais e a política e diplomacia da inteligência artificial. O módulo 1 desenvolve os fundamentos. O módulo 2 — casos de uso no serviço público, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana e prestação de contas — está em preparação e é aí que a governação, incluindo o EU AI Act, os actores e a política e diplomacia são desenvolvidos. O EU AI Act é legislação da União Europeia: é estudado como referência internacional de governação e não se aplica automaticamente a Moçambique; qualquer leitura jurídica cabe à área jurídica da instituição.",
+    "Objectivos assentes no conteúdo programático da secção 6.2 (páginas 13 e 14) do Termo de Referência: compreender o conceito de inteligência artificial e os seus fundamentos; distinguir dados, algoritmos e modelos e perceber, em linguagem simples, o que é a aprendizagem automática; utilizar ferramentas de inteligência artificial no trabalho administrativo, com verificação humana; reconhecer aplicações, oportunidades e riscos para a organização e para a economia; tratar ética, riscos e protecção de dados; e conhecer a governação da inteligência artificial, incluindo o Regulamento Europeu de Inteligência Artificial (EU AI Act), os actores nacionais e internacionais e a política e diplomacia da inteligência artificial. O módulo 1 desenvolve os fundamentos. O módulo 2 — casos de uso no serviço público, protecção de dados e privacidade, preconceito algorítmico e inclusão, e supervisão humana e prestação de contas — desenvolve o uso responsável e é aí que se tratam a governação, incluindo o EU AI Act, os actores nacionais e internacionais e a política e diplomacia. O EU AI Act é legislação da União Europeia: é estudado como referência internacional de governação e não se aplica automaticamente a Moçambique; qualquer leitura jurídica cabe à área jurídica da instituição.",
   publicoAlvo:
     "Servidores públicos seleccionados pela entidade beneficiária, segundo os critérios da própria entidade. Não é exigida formação anterior em informática, matemática ou programação.",
   preRequisitos:

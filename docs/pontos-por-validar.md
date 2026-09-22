@@ -4,7 +4,7 @@ Documento **interno**. Não é conteúdo da plataforma e não é visível para
 formandos nem para o público. A plataforma apresenta a configuração actual de
 cada curso; as pendências, decisões e divergências documentais ficam aqui.
 
-Última actualização: 21 de Setembro de 2026.
+Última actualização: 22 de Setembro de 2026.
 
 Regra editorial em vigor, por orientação da gestora do projecto: a experiência
 pública (catálogo, ficha de curso, lições e guiões) apresenta a configuração
@@ -65,11 +65,11 @@ Registado em `ESTADO_EDITORIAL_INTERNO`
 | Item | Estado real | O que a plataforma mostra |
 | --- | --- | --- |
 | Módulo 1, 4 lições | escritas pela equipa, **não validadas** pela Ologa/ATDI | conteúdo disponível, sem rótulo editorial |
-| Módulo 2, 4 lições | por escrever | «Em preparação», sem ligação |
+| Módulo 2, 4 lições | escritas pela equipa em 22/09/2026, **não validadas** pela Ologa/ATDI; **ainda não gravadas na base** (seed por executar, a aguardar autorização) | enquanto o seed não correr, continua «Em preparação», sem ligação |
 | Módulo transversal, 6 lições | já existia | conteúdo disponível |
 | Banco de questões do curso | por preparar; nenhuma questão criada | nada anunciado; a ficha diz que a avaliação final é disponibilizada em fase posterior |
 | Exame final | não activo, não emite certificados | nada anunciado |
-| Prática assistida da lição 4 | guião escrito, **nunca executado** | apresentada como actividade a realizar em sessão, com condições e caminho alternativo; se a ferramenta faltar regista-se «PENDENTE — a reagendar» e nunca se declara realizada |
+| Prática assistida da lição 4 do módulo 1 e da lição 1 do módulo 2 | guião escrito, **nunca executado** | apresentada como actividade a realizar em sessão, com condições e caminho alternativo; se a ferramenta faltar regista-se «PENDENTE — a reagendar» e nunca se declara realizada |
 | Saída do anexo B da lição 4 | escrita pela equipa | mantém-se etiquetada como **saída simulada** (facto, não estado editorial) |
 | Língua de Sinais de Moçambique | inexistente | não mencionada, não anunciada como disponível |
 | Vídeo e legendagem | inexistentes | não mencionados |
@@ -89,3 +89,19 @@ existe, e não encher a plataforma de avisos sobre o processo interno.**
 - Validação pedagógica pela Ologa/ATDI dos conteúdos de Transformação Digital e
   Computação em Nuvem: pendente. Esses cursos mantêm o aviso visível de
   proposta por validar, sem alteração nesta etapa.
+
+---
+
+## PV-04 — Pendências de acesso e de correio electrónico
+
+Registadas aqui a pedido da gestora. **Não investigadas nesta etapa.**
+
+- Perfil de Administrador Geral Ologa para as duas contas da gestora
+  (`percilia@ologa.com` e `perciliamuianga@gmail.com`): o mecanismo revisável
+  existe em `src/lib/perfis-admin.functions.ts` e na área de utilizadores do
+  painel, mas **não foi executado**. A atribuição depende de confirmação
+  expressa da gestora, autenticada na conta Ologa.
+- Recuperação de palavra-passe: as páginas `/recuperar-palavra-passe` e
+  `/nova-palavra-passe` estão feitas e testadas de forma isolada, mas a
+  **entrega real de correio electrónico nunca foi testada** e não há domínio de
+  correio próprio configurado. Fica pendente.

@@ -99,13 +99,12 @@ describe("plano de Introdução à Inteligência Artificial", () => {
   });
 });
 
-describe("conteúdo escrito do módulo 1", () => {
-  const chaves = ["m1l1", "m1l2", "m1l3", "m1l4"];
+describe("conteúdo escrito dos módulos 1 e 2", () => {
+  const chaves = ["m1l1", "m1l2", "m1l3", "m1l4", "m2l1", "m2l2", "m2l3", "m2l4"];
 
-  it("escreve as quatro lições do módulo 1 e nenhuma do módulo 2", () => {
+  it("escreve as oito lições dos módulos 1 e 2", () => {
     expect(Object.keys(LICOES).sort()).toEqual(chaves);
-    // O módulo 2 tem descrição de plano, mas nenhuma lição escrita.
-    expect(DESCRICOES_MODULO["m2"]).toMatch(/Em preparação/);
+    expect(DESCRICOES_MODULO["m2"]).not.toMatch(/Em preparação|por escrever/i);
   });
 
   it("dá a cada lição objectivos, explicação desenvolvida, caso, actividade e duas questões", () => {
@@ -218,5 +217,149 @@ describe("conteúdo escrito do módulo 1", () => {
       expect(g).not.toMatch(/proposta pedagógica|por validar pela Ologa|rascunho por validar/i);
       expect(g).toMatch(/gabarito fica sempre apenas no servidor/);
     }
+  });
+});
+
+describe("módulo 2 — uso responsável da inteligência artificial", () => {
+  const chaves = ["m2l1", "m2l2", "m2l3", "m2l4"];
+  const T = { acolhimento: 10, exposicao: 35, actividade: 60, partilha: 15 };
+
+  it("dá às quatro lições objectivos observáveis, caso fictício, tabela e produto", () => {
+    for (const k of chaves) {
+      const c = LICOES[k]!;
+      expect(c.objectivos.length).toBeGreaterThanOrEqual(4);
+      expect(c.explicacao.length).toBeGreaterThanOrEqual(5);
+      expect(c.explicacao.join(" ").length).toBeGreaterThan(2500);
+      expect(c.tabela!.linhas.length).toBeGreaterThan(0);
+      for (const linha of c.tabela!.linhas)
+        expect(linha).toHaveLength(c.tabela!.colunas.length);
+      expect(c.anexos!.length).toBeGreaterThanOrEqual(2);
+      expect(c.actividade.produto.length).toBeGreaterThan(80);
+      expect(c.actividade.rubrica.length).toBeGreaterThanOrEqual(5);
+      expect(c.sintese.length).toBeGreaterThanOrEqual(8);
+      expect(c.verificacao).toHaveLength(2);
+      expect(c.guiao.conducao).toHaveLength(4);
+      const html = montarElearning(c, 120, T);
+      expect(html).toContain("Acolhimento e objectivos: 10 minutos");
+      expect(html).toContain("Exposição: 35 minutos");
+      expect(html).toContain("Actividade prática: 60 minutos");
+      expect(html).toContain("Partilha e síntese: 15 minutos");
+      expect(html).toContain("são fictícios e servem apenas de exercício");
+      const guiao = montarGuiao(c, "t", 120, T);
+      expect(guiao).toContain("105–120 min");
+      expect(guiao).toMatch(/gabarito fica sempre apenas no servidor/);
+    }
+  });
+
+  it("lição 5: compara com a alternativa sem IA, exige duas execuções e não decide direitos", () => {
+    const c = LICOES["m2l1"]!;
+    const tudo = JSON.stringify(c);
+    for (const criterio of ["Custo", "Benefício", "Língua", "Conectividade", "Dependência de fornecedor"])
+      expect(c.tabela!.linhas.some((l) => l[0]!.includes(criterio))).toBe(true);
+    expect(c.tabela!.linhas).toHaveLength(6);
+    expect(tudo).toMatch(/alternativa sem inteligência artificial/i);
+    expect(tudo).toMatch(/duas execuções/);
+    expect(tudo).toMatch(/não decidas se o pedido é deferido|decisão sobre direitos/i);
+    expect(c.pratica!.contingencia.join(" ")).toMatch(/PENDENTE — a reagendar/);
+    expect(c.pratica!.contingencia.join(" ")).toMatch(/não substitui a prática real/);
+    expect(tudo).toMatch(/não se promete que qualquer ferramenta seja gratuita/);
+    expect(tudo).toMatch(/Ninguém cria conta pessoal, ninguém paga/);
+  });
+
+  it("lição 6: tabela de dezasseis campos e distinção pseudonimização/anonimização", () => {
+    const c = LICOES["m2l2"]!;
+    expect(c.tabela!.linhas).toHaveLength(16);
+    const tudo = JSON.stringify(c);
+    expect(tudo).toMatch(/Pseudonimizar|pseudonimização/i);
+    expect(tudo).toMatch(/Anonimizar|anonimização/i);
+    expect(tudo).toMatch(/retenção/i);
+    expect(tudo).toMatch(/fluxo/i);
+    // Não se inventa legislação nacional aprovada.
+    expect(tudo).not.toMatch(/Lei n\.º|lei moçambicana de protecção de dados em vigor/i);
+    expect(tudo).toMatch(/área jurídica da instituição/);
+  });
+
+  it("lição 7: os cálculos de falsos positivos e falsos negativos fecham", () => {
+    const c = LICOES["m2l3"]!;
+    const linhas = c.tabela!.linhas;
+    expect(linhas).toHaveLength(4);
+    const n = (l: string[], i: number) => Number(l[i]);
+    let total = 0, incompletos = 0, vp = 0, fn = 0, completos = 0, fp = 0, vn = 0;
+    for (const l of linhas.slice(0, 3)) {
+      // total = incompletos + completos; incompletos = VP + FN; completos = FP + VN
+      expect(n(l, 3) + n(l, 4)).toBe(n(l, 2));
+      expect(n(l, 6) + n(l, 7)).toBe(n(l, 5));
+      expect(n(l, 2) + n(l, 5)).toBe(n(l, 1));
+      total += n(l, 1); incompletos += n(l, 2); vp += n(l, 3); fn += n(l, 4);
+      completos += n(l, 5); fp += n(l, 6); vn += n(l, 7);
+    }
+    const t = linhas[3]!;
+    expect([total, incompletos, vp, fn, completos, fp, vn]).toEqual(
+      [1, 2, 3, 4, 5, 6, 7].map((i) => n(t, i)),
+    );
+    expect(total).toBe(600);
+    expect((vp + vn) / total).toBe(0.78);
+    // Taxas por grupo, tal como a rubrica as apresenta.
+    expect(15 / 60).toBe(0.25);
+    expect(24 / 240).toBe(0.1);
+    expect(30 / 60).toBe(0.5);
+    expect(35 / 140).toBe(0.25);
+    expect(8 / 20).toBe(0.4);
+    expect(20 / 80).toBe(0.25);
+    expect(Math.round((fn / incompletos) * 1000) / 10).toBe(37.9);
+    expect(Math.round((fp / completos) * 1000) / 10).toBe(17.2);
+    const rubrica = c.actividade.rubrica.join(" ");
+    expect(rubrica).toMatch(/15 dividido por 60 = 0,25/);
+    expect(rubrica).toMatch(/30 dividido por 60 = 0,50/);
+    expect(rubrica).toMatch(/468 dividido por 600 = 0,78/);
+    const tudo = JSON.stringify(c);
+    expect(tudo).toMatch(/não prova, por si, causalidade|não prova causalidade|é um sinal, não uma prova/);
+    expect(tudo).toMatch(/alternativa acessível/);
+  });
+
+  it("lição 8: supervisão com poder de parar, contestação e distinção lei/recomendação/estratégia", () => {
+    const c = LICOES["m2l4"]!;
+    const tudo = JSON.stringify(c);
+    expect(c.tabela!.colunas).toEqual([
+      "Risco", "Quem é afectado", "Responsável (por função)", "Acção", "Evidência", "Prazo",
+    ]);
+    expect(tudo).toMatch(/poder de suspender|mandar parar/);
+    expect(tudo).toMatch(/contestação/);
+    expect(tudo).toMatch(/minuta de suspensão/i);
+    expect(tudo).toMatch(/piloto/);
+    expect(tudo).toMatch(/organizações de pessoas com deficiência/);
+    expect(tudo).toMatch(/Lei é norma obrigatória/);
+    expect(tudo).toMatch(/não se aplica automaticamente a Moçambique|não é lei aplicável|não é lei de Moçambique/);
+  });
+
+  it("cita as quatro fontes oficiais com data de consulta e síntese própria até 200 palavras", () => {
+    const urls = [
+      "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai",
+      "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "https://intic.gov.mz/consulta-publica-da-proposta-da-estrategia-nacional-de-inteligencia-artificial/",
+    ];
+    const todas = chaves.flatMap((k) => LICOES[k]!.referencias ?? []);
+    for (const url of urls) {
+      const ref = todas.find((r) => r.url === url);
+      expect(ref, url).toBeDefined();
+      expect(ref!.consultadoEm).toBe("22 de Setembro de 2026");
+      expect(ref!.resumo!.split(/\s+/).length).toBeLessThanOrEqual(200);
+      expect(ref!.resumo!.split(/\s+/).length).toBeGreaterThan(80);
+    }
+    const html = montarElearning(LICOES["m2l4"]!, 120, T);
+    for (const url of urls) expect(html).toContain(url);
+    expect(html).toContain("consultado em 22 de Setembro de 2026");
+    expect(html).toContain("Síntese da equipa");
+  });
+
+  it("não afirma estratégia nem lei de IA aprovada em Moçambique, nem mandato regulador do INTIC", () => {
+    const tudo = chaves.map((k) => JSON.stringify(LICOES[k])).join(" ");
+    expect(tudo).not.toMatch(/estratégia nacional de inteligência artificial aprovada/i);
+    expect(tudo).not.toMatch(/INTIC é a autoridade|INTIC, autoridade reguladora/i);
+    expect(tudo).toMatch(/não se deve inferir da consulta que o INTIC seja autoridade reguladora/i);
+    expect(tudo).toMatch(/não prova que exista estratégia aprovada/);
+    expect(tudo).toMatch(/proposta/i);
+    expect(tudo).not.toMatch(/aprovado pela ATDI|validado pela Ologa|Língua de Sinais/i);
   });
 });
