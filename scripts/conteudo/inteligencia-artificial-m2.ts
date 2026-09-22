@@ -453,7 +453,7 @@ const M2L2: ConteudoLicao = {
       "Decisão e justificação escritas para os dezasseis campos, com a finalidade citada.",
       "Campos 5, 6, 11 e 16 removidos ou substituídos, com fundamento.",
       "Quatro perguntas respondidas para todos os campos mantidos, com prazo em tempo e acesso por função.",
-      "Reidentificação da parte C correcta e explicada pela combinação de campos.",
+      "Risco de reidentificação da parte C explicado pela combinação de campos, sem afirmar que as linhas são comprovadamente da mesma pessoa.",
       "Fluxo desenhado com pelo menos cinco cópias marcadas.",
       "Três medidas verificáveis, com responsável por função e prazo.",
     ],
