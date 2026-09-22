@@ -72,7 +72,7 @@ const M1L1: QuestaoIA[] = [
     cod: "IA-M1L1-01", m: "m1", l: 1, t: "em", d: "f",
     e: "Um sistema informático recebe pedidos escritos e produz, para cada um, uma sugestão de encaminhamento que a chefia usa para distribuir o trabalho. Segundo a definição de sistema de inteligência artificial estudada na lição, qual é o elemento que torna esta descrição compatível com essa definição?",
     opts: [
-      "O sistema estar instalado em servidor da própria instituição, sob gestão da equipa interna",
+      "O sistema estar instalado em servidor da própria instituição, sob gestão da equipa interna, sem qualquer serviço contratado no exterior",
       "O sistema produzir, a partir das entradas que recebe, saídas como previsões ou recomendações que influenciam decisões",
       "O sistema ter sido adquirido a um fornecedor internacional através de concurso público",
       "O sistema funcionar sem ligação permanente à internet, em computadores da repartição",
@@ -87,7 +87,7 @@ const M1L1: QuestaoIA[] = [
       "Porque a decisão resulta de uma regra fixa escrita por pessoas, e não de um padrão extraído de exemplos",
       "Porque trata poucos formulários por dia e não precisa de grande capacidade de cálculo",
       "Porque funciona localmente, sem consultar qualquer serviço através da internet",
-      "Porque a decisão produzida é sempre a mesma, independentemente do formulário recebido",
+      "Porque a decisão produzida é sempre a mesma, independentemente do formulário recebido e do momento em que é submetido",
     ], ind: 0,
     exp: "A automatização por regras fixas executa instruções explícitas. Na aprendizagem automática, o comportamento é derivado de exemplos, não escrito à mão regra a regra. O volume, a ligação de rede e o sentido da decisão não distinguem os dois casos.",
     obj: "Distinguir automatização por regras de aprendizagem automática. Lição 1 do módulo 1.",
@@ -96,7 +96,7 @@ const M1L1: QuestaoIA[] = [
     cod: "IA-M1L1-03", m: "m1", l: 1, t: "em", d: "me",
     e: "Um assistente de escrita baseado em modelos de linguagem devolve um parágrafo bem construído, com a citação de um diploma e um número de artigo. O texto lê-se de forma convincente. Que conclusão é legítima retirar daqui?",
     opts: [
-      "Que a citação está correcta, por o modelo ter sido treinado com documentação oficial fiável",
+      "Que a citação está correcta, por o modelo ter sido treinado com documentação oficial fiável e mantida actualizada pelo fornecedor",
       "Que o texto é plausível na forma e que a referência tem de ser confirmada na fonte antes de ser usada",
       "Que o texto pode ser usado tal como está, por estar redigido em linguagem administrativa",
       "Que o modelo consultou a legislação em vigor no momento exacto em que produziu a resposta",
@@ -109,7 +109,7 @@ const M1L1: QuestaoIA[] = [
     e: "Numa sessão de formação, quatro participantes descrevem sistemas usados no trabalho. Qual das descrições corresponde mais claramente a um sistema de inteligência artificial, e não a um sistema informático comum?",
     opts: [
       "Uma folha de cálculo que soma automaticamente as colunas de um mapa mensal e assinala totais",
-      "Um sistema de gestão documental que arquiva os ficheiros por pasta, assunto e data de entrada",
+      "Um sistema de gestão documental que arquiva os ficheiros por pasta, assunto e data de entrada, com pesquisa por palavra do título",
       "Um serviço que transcreve gravações de reuniões em texto, com taxa de erro variável conforme o sotaque",
       "Um sítio na internet que apresenta os horários de atendimento e os contactos de cada sector",
     ], ind: 2,
@@ -158,7 +158,7 @@ const M1L1: QuestaoIA[] = [
     cod: "IA-M1L1-09", m: "m1", l: 1, t: "em", cen: true, d: "di",
     e: "Caso fictício. A Direcção de Serviços de Nantiwe recebe 240 pedidos por mês. Um sistema de sugestão de encaminhamento foi testado num mês completo: sugeriu o sector correcto em 192 pedidos e o sector errado em 48. Dos 48 errados, 30 foram detectados pelo funcionário antes do envio e 18 seguiram para o sector errado, atrasando o processo em média 6 dias úteis. A chefia afirma: «o sistema acerta em mais de três quartos dos casos, portanto pode passar a encaminhar sozinho». Qual é a leitura tecnicamente correcta destes dados?",
     opts: [
-      "A chefia tem razão: 192 em 240 são 80 por cento, valor acima dos três quartos que invocou",
+      "A chefia tem razão: 192 em 240 são 80 por cento, valor acima dos três quartos que invocou, pelo que a verificação deixa de ser necessária",
       "Os dados só permitem concluir que houve 18 encaminhamentos errados efectivos, o que não sustenta a retirada da verificação humana",
       "O sistema deve ser desligado de imediato, por ter errado 48 vezes no período observado",
       "Os dados são inconclusivos, por não se saber quantos pedidos foram efectivamente recebidos",
@@ -186,7 +186,7 @@ const M1L2: QuestaoIA[] = [
     e: "Qual das seguintes frases descreve correctamente a diferença entre algoritmo e modelo?",
     opts: [
       "O algoritmo é o procedimento que aprende a partir dos dados; o modelo é o resultado obtido, que depois é usado para produzir saídas",
-      "O algoritmo é o equipamento onde o sistema corre; o modelo é o programa nele instalado e configurado",
+      "O algoritmo é o equipamento onde o sistema corre; o modelo é o programa nele instalado e configurado pela equipa informática da instituição",
       "São a mesma coisa, designada de maneiras diferentes conforme o fornecedor e a documentação técnica",
       "O modelo é o procedimento de treino aplicado aos dados; o algoritmo é o ficheiro final que se utiliza",
     ], ind: 0,
@@ -198,7 +198,7 @@ const M1L2: QuestaoIA[] = [
     e: "Uma equipa vai treinar um sistema de apoio à triagem com registos dos últimos três anos. Ao rever a tabela, encontra 140 linhas com o distrito por preencher, todas provenientes do atendimento por telefone. Qual é a leitura mais correcta desta situação?",
     opts: [
       "É irrelevante: 140 linhas representam uma parte pequena de um conjunto de grande dimensão",
-      "Deve preencher-se o distrito com o valor mais frequente do conjunto, para não perder registos úteis",
+      "Deve preencher-se o distrito com o valor mais frequente do conjunto, para não perder registos úteis na fase de treino do sistema",
       "A falta não é aleatória — está associada a um canal de atendimento — e pode enviesar o que o sistema aprende sobre esse canal",
       "Devem apagar-se as 140 linhas afectadas, por não ser possível recuperar o distrito em falta",
     ], ind: 2,
@@ -212,7 +212,7 @@ const M1L2: QuestaoIA[] = [
       "A coluna está em formato de data e os procedimentos de treino aceitam apenas valores numéricos",
       "A coluna não existe no momento em que a previsão tem de ser feita, pelo que o desempenho medido no treino não se repete na prática",
       "A coluna assume demasiados valores diferentes para ser tratada como variável de entrada",
-      "A coluna deve ser usada precisamente por melhorar de forma clara o resultado medido no treino",
+      "A coluna deve ser usada precisamente por melhorar de forma clara o resultado medido no treino e nos ensaios internos de avaliação da equipa",
     ], ind: 1,
     exp: "É informação que só existe depois do facto a prever. Usá-la inflaciona artificialmente o desempenho medido e o sistema falha quando entra em uso real, porque nessa altura a coluna está vazia. A avaliação tem de respeitar o momento em que a decisão é tomada.",
     obj: "Identificar informação indisponível no momento da decisão. Lição 2 do módulo 1.",
@@ -259,7 +259,7 @@ const M1L2: QuestaoIA[] = [
     cod: "IA-M1L2-09", m: "m1", l: 2, t: "em", cen: true, d: "di",
     e: "Caso fictício. Um conjunto de 1 200 registos de atendimento foi reunido para treinar um sistema de triagem. A distribuição por canal é: balcão 900 registos, telefone 240, portal 60. No uso previsto, o sistema vai receber sobretudo pedidos entrados pelo portal, que a instituição acabou de abrir e espera que represente metade do volume futuro. Qual é o risco mais directo desta composição?",
     opts: [
-      "Nenhum: com 1 200 registos o conjunto é suficiente para qualquer utilização prevista",
+      "Nenhum: com 1 200 registos o conjunto é suficiente para qualquer utilização prevista, seja qual for o canal de entrada dos pedidos no futuro",
       "O sistema terá aprendido sobretudo com pedidos de balcão e poderá ter desempenho pior justamente no canal onde vai ser mais usado",
       "O sistema ficará mais lento a responder, por causa do peso dos 900 registos de balcão",
       "O risco existente é apenas de protecção de dados pessoais, e não de desempenho do sistema",
@@ -297,7 +297,7 @@ const M1L3: QuestaoIA[] = [
   {
     cod: "IA-M1L3-03", m: "m1", l: 3, t: "em", d: "di",
     e: "Num conjunto reservado de 500 pedidos, 25 são realmente incompletos. Um sistema classifica como incompletos 20 pedidos, dos quais 15 estão efectivamente incompletos. Quantos pedidos incompletos ficaram por assinalar?",
-    opts: ["5", "10", "15", "20"], ind: 1,
+    opts: ["5 pedidos", "10 pedidos", "15 pedidos", "20 pedidos"], ind: 1,
     exp: "Dos 25 realmente incompletos, o sistema assinalou 15; ficaram por assinalar 25 menos 15, ou seja, 10. Os restantes 5 pedidos assinalados eram afinal completos e constituem alarmes falsos.",
     obj: "Calcular casos não detectados a partir de uma tabela de resultados. Lição 3 do módulo 1.",
   },
@@ -342,7 +342,12 @@ const M1L3: QuestaoIA[] = [
   {
     cod: "IA-M1L3-08", m: "m1", l: 3, t: "em", cen: true, d: "me",
     e: "Caso fictício. Num conjunto reservado de 400 pedidos, 80 estavam realmente incompletos. O sistema assinalou 100 pedidos; desses, 60 estavam mesmo incompletos. Quantos alarmes falsos e quantos casos não detectados existem, respectivamente?",
-    opts: ["40 e 20", "20 e 40", "40 e 40", "60 e 20"], ind: 0,
+    opts: [
+      "40 alarmes falsos e 20 casos não detectados",
+      "20 alarmes falsos e 40 casos não detectados",
+      "40 alarmes falsos e 40 casos não detectados",
+      "60 alarmes falsos e 20 casos não detectados",
+    ], ind: 0,
     exp: "Dos 100 assinalados, 60 estavam mesmo incompletos, logo 40 são alarmes falsos. Dos 80 realmente incompletos, o sistema apanhou 60, logo 20 ficaram por detectar. Denominadores diferentes: 100 assinalados e 80 realmente incompletos.",
     obj: "Calcular alarmes falsos e casos não detectados com denominadores explícitos. Lição 3 do módulo 1.",
   },
@@ -360,7 +365,7 @@ const M1L4: QuestaoIA[] = [
     cod: "IA-M1L4-01", m: "m1", l: 4, t: "em", d: "f",
     e: "Uma funcionária pede a um assistente de escrita um resumo de uma acta e vai usá-lo numa nota interna que assina. Qual é a prática correcta antes de enviar?",
     opts: [
-      "Enviar directamente o texto, bastando indicar na nota que foi gerado de forma automática",
+      "Enviar directamente o texto, bastando indicar na nota que foi gerado de forma automática por um assistente institucional",
       "Comparar o resumo com a acta original e corrigir o que não corresponder, assumindo a responsabilidade pelo texto assinado",
       "Pedir um segundo resumo ao mesmo assistente e enviar aquele que estiver mais bem escrito",
       "Enviar a nota e corrigir posteriormente, caso alguém detecte e comunique algum erro",
@@ -374,7 +379,7 @@ const M1L4: QuestaoIA[] = [
     opts: [
       "Escrever a instrução em inglês, mesmo quando o documento final é redigido em português",
       "Indicar o objectivo, o destinatário, o comprimento pretendido e o que não deve ser inventado",
-      "Pedir o texto mais longo possível e depois cortar o que não interessar ao documento",
+      "Pedir o texto mais longo possível e depois cortar o que não interessar ao documento final a assinar",
       "Repetir a mesma instrução várias vezes seguidas, até a resposta estabilizar",
     ], ind: 1,
     exp: "Instruções específicas quanto a objectivo, destinatário, formato e limites reduzem a ambiguidade e tornam a verificação mais rápida. Comprimento excessivo e repetição não acrescentam precisão.",
@@ -387,7 +392,7 @@ const M1L4: QuestaoIA[] = [
       "A ferramenta ser a mais recente do mercado e incorporar os modelos de maior dimensão",
       "Existir comparação com a alternativa sem inteligência artificial, incluindo custo, tempo, efeito no trabalho das pessoas e dependência do fornecedor",
       "A ferramenta apresentar a interface em português e permitir mudar a língua das respostas",
-      "A ferramenta já estar a ser usada por outra instituição do mesmo sector, com bons relatos",
+      "A ferramenta já estar a ser usada por outra instituição do mesmo sector, com bons relatos divulgados pelos serviços que a adoptaram primeiro e recomendação informal das chefias",
     ], ind: 1,
     exp: "A decisão defende-se com comparação explícita entre alternativas e com os custos e riscos assumidos, incluindo a dependência de fornecedor. A novidade, a língua da interface e o exemplo alheio são elementos secundários.",
     obj: "Fundamentar a decisão de adopção com comparação de alternativas. Lição 4 do módulo 1.",
@@ -415,7 +420,7 @@ const M1L4: QuestaoIA[] = [
     cod: "IA-M1L4-06", m: "m1", l: 4, t: "em", cen: true, d: "f",
     e: "Caso fictício. Numa sessão prática, a ferramenta institucional autorizada fica indisponível por falha de ligação na sala. O formador tem preparada uma saída simulada, claramente identificada como tal. Qual é o procedimento correcto, segundo as regras do curso?",
     opts: [
-      "Pedir aos participantes que usem contas pessoais gratuitas para completar o exercício na sala",
+      "Pedir aos participantes que usem contas pessoais gratuitas para completar o exercício na sala, com os pedidos do material",
       "Usar a saída simulada para a análise e registar que a prática com ferramenta real fica por executar, a reagendar",
       "Dar o exercício por cumprido, por a análise da saída simulada ter sido feita pela turma",
       "Substituir o exercício por uma exposição teórica do formador, sem registar qualquer pendência",
@@ -460,7 +465,7 @@ const M2L1: QuestaoIA[] = [
     cod: "IA-M2L1-01", m: "m2", l: 1, t: "em", d: "f",
     e: "Na triagem assistida de pedidos, qual é o papel atribuído ao sistema no desenho estudado na lição?",
     opts: [
-      "Decidir o resultado do pedido e comunicá-lo ao requerente",
+      "Decidir o resultado do pedido e comunicá-lo ao requerente, cabendo ao funcionário apenas registar a decisão tomada",
       "Propor um encaminhamento e assinalar informação em falta, cabendo a decisão a quem tem competência para decidir",
       "Substituir o registo de entrada dos pedidos feito no balcão",
       "Arquivar automaticamente os pedidos que estejam incompletos",
@@ -484,7 +489,7 @@ const M2L1: QuestaoIA[] = [
     cod: "IA-M2L1-03", m: "m2", l: 1, t: "em", d: "me",
     e: "Uma equipa quer avaliar se vale a pena usar assistência automática na triagem. Qual é a comparação que dá resposta a essa pergunta?",
     opts: [
-      "Comparar entre si duas ferramentas de inteligência artificial disponíveis no mercado",
+      "Comparar entre si duas ferramentas de inteligência artificial disponíveis no mercado, escolhendo a que obtiver melhor resultado nos testes",
       "Comparar o processo actual, sem inteligência artificial, com o processo assistido, nos mesmos pedidos e com os mesmos critérios",
       "Comparar o tempo de resposta do sistema com o tempo registado noutra instituição semelhante",
       "Comparar o custo anual das licenças com o orçamento disponível para a área informática",
@@ -496,7 +501,7 @@ const M2L1: QuestaoIA[] = [
     cod: "IA-M2L1-04", m: "m2", l: 1, t: "em", d: "me",
     e: "Qual das seguintes consequências de um encaminhamento errado é correctamente descrita?",
     opts: [
-      "Não tem efeito sobre a pessoa, uma vez que o erro é corrigido internamente pelo serviço",
+      "Não tem efeito sobre a pessoa, uma vez que o erro é corrigido internamente pelo serviço antes de qualquer resposta",
       "Pode atrasar o processo e fazer a pessoa deslocar-se ao sector errado, mesmo sendo corrigível",
       "Obriga sempre ao arquivamento do pedido e à apresentação de um novo requerimento",
       "Impede a apresentação de um novo pedido sobre a mesma matéria durante algum tempo",
@@ -545,7 +550,7 @@ const M2L1: QuestaoIA[] = [
   {
     cod: "IA-M2L1-09", m: "m2", l: 1, t: "em", cen: true, d: "di",
     e: "Caso fictício. Numa execução do exercício, a ferramenta classificou 5 pedidos: encaminhou correctamente 3, encaminhou 1 para o sector errado e, no pedido em que o número de processo não consta, escreveu «informação em falta: nenhuma». A solução prevê ainda que um dos pedidos esteja fora da competência da instituição, o que a ferramenta não assinalou. Quantos desvios em relação à solução devem ser registados na rubrica?",
-    opts: ["1", "2", "3", "4"], ind: 2,
+    opts: ["Um desvio", "Dois desvios", "Três desvios", "Quatro desvios"], ind: 2,
     exp: "São três desvios: o encaminhamento errado, a indicação de «nenhuma» quando o número de processo não consta, e a falta de sinalização do pedido fora da competência. Os três encaminhamentos correctos não contam como desvio.",
     obj: "Aplicar a rubrica de correcção a uma execução concreta. Lição 1 do módulo 2.",
   },
@@ -593,7 +598,7 @@ const M2L2: QuestaoIA[] = [
     e: "Antes de eliminar registos ao fim do prazo de conservação proposto no exercício, que passo é obrigatório?",
     opts: [
       "Confirmar que não existem obrigações de arquivo ou outras obrigações legais aplicáveis, identificando o responsável pela confirmação",
-      "Obter autorização escrita de cada pessoa titular dos dados abrangidos pela eliminação",
+      "Obter autorização escrita de cada pessoa titular dos dados abrangidos pela eliminação, com prova de entrega arquivada no processo",
       "Publicar previamente a lista dos registos a eliminar, para conhecimento dos interessados",
       "Nenhum: cumprido o prazo de conservação proposto, a eliminação dos registos é automática",
     ], ind: 0,
@@ -669,7 +674,7 @@ const M2L3: QuestaoIA[] = [
     cod: "IA-M2L3-02", m: "m2", l: 3, t: "em", d: "me",
     e: "Uma análise mostra que a taxa de casos não detectados é mais alta num grupo do que noutro. Que conclusão é legítima com esta única informação?",
     opts: [
-      "Existe discriminação no sentido jurídico do termo, com as consequências daí decorrentes",
+      "Existe discriminação no sentido jurídico do termo, com as consequências daí decorrentes para a instituição e para os responsáveis designados",
       "Existe uma diferença medida que exige investigação das causas, não ficando provada relação de causa e efeito nem qualificação jurídica",
       "A diferença observada deve-se necessariamente à variável que define os grupos comparados",
       "A diferença é irrelevante desde que a taxa global do sistema se mantenha em bom nível",
@@ -736,7 +741,7 @@ const M2L3: QuestaoIA[] = [
   },
   {
     cod: "IA-M2L3-09", m: "m2", l: 3, t: "em", cen: true, d: "di",
-    e: "Caso fictício. Após a análise anterior, a equipa propõe quatro acções. Qual delas responde à diferença encontrada sem retirar serviço a ninguém?",
+    e: "Caso fictício. Confirmada a diferença entre o grupo A, com 10 por cento de encaminhamentos errados, e o grupo B, com 20 por cento, a equipa reúne-se e propõe quatro acções alternativas. A instituição mantém entretanto o atendimento presencial em funcionamento. Qual das acções responde à diferença encontrada sem retirar serviço a ninguém?",
     opts: [
       "Suspender o atendimento do grupo B até o sistema ser corrigido",
       "Deixar de medir por grupo, para evitar leituras precipitadas",
@@ -767,7 +772,7 @@ const M2L4: QuestaoIA[] = [
     opts: [
       "A indicação de um endereço de correio electrónico genérico da instituição, para contacto",
       "Informação sobre a existência do apoio automático, a quem dirigir a contestação, o prazo de resposta e a garantia de reapreciação por pessoa com competência para decidir",
-      "A publicação integral do código do sistema utilizado no apoio à decisão",
+      "A publicação integral do código do sistema utilizado no apoio à decisão, acompanhada da documentação técnica entregue pelo fornecedor e do registo das versões instaladas desde o início da utilização",
       "A indicação do fornecedor da tecnologia e da data em que foi contratada",
     ], ind: 1,
     exp: "Contestar exige saber que existe apoio automático, a quem se dirige, em que prazo há resposta e que a reapreciação é feita por quem tem competência para decidir. Publicar código ou nomear o fornecedor não dá esse caminho à pessoa.",
@@ -777,7 +782,7 @@ const M2L4: QuestaoIA[] = [
     cod: "IA-M2L4-03", m: "m2", l: 4, t: "em", d: "di",
     e: "Qual das afirmações sobre o Regulamento Europeu de Inteligência Artificial corresponde às fontes usadas na lição?",
     opts: [
-      "É lei plenamente aplicável em Moçambique desde a data da sua publicação oficial na União Europeia",
+      "É lei plenamente aplicável em Moçambique desde a data da sua publicação oficial na União Europeia, produzindo efeitos directos sobre qualquer instituição pública que utilize sistemas de inteligência artificial, sem necessidade de acto interno de recepção",
       "Não é lei moçambicana nem se aplica automaticamente a Moçambique, mas o seu artigo 2.º prevê situações de alcance a operadores estabelecidos fora da União quando as saídas do sistema são utilizadas na União, verificando-se caso a caso",
       "Nunca pode abranger entidades situadas fora da União Europeia, seja qual for o uso dado às saídas",
       "Vincula Moçambique por ter a natureza de recomendação internacional aceite pelos Estados",
@@ -837,7 +842,7 @@ const M2L4: QuestaoIA[] = [
   },
   {
     cod: "IA-M2L4-09", m: "m2", l: 4, t: "em", cen: true, d: "di",
-    e: "Caso fictício. Numa minuta de suspensão de um sistema de apoio à triagem, qual é o conjunto de elementos que torna a decisão executável e verificável?",
+    e: "Caso fictício. Verificada uma falha sistemática, a dirigente decide suspender o sistema de apoio à triagem e encarrega a equipa de redigir a minuta da decisão, que tem de ser cumprida pelo atendimento no mesmo dia e verificada mais tarde por quem fiscaliza. Qual é o conjunto de elementos que torna essa decisão executável e verificável?",
     opts: [
       "Identificação do sistema, motivo, âmbito e duração da suspensão, medida alternativa de atendimento e responsável pela reavaliação",
       "Motivo da suspensão, data da decisão e assinatura do dirigente competente",

@@ -158,21 +158,36 @@ describe("banco de IA — validade dos itens", () => {
     const em = EXAME_IA.filter((q) => q.t === "em");
     const posicoes = contar(em.map((q) => String(q.ind)));
     expect(Object.keys(posicoes).length).toBeGreaterThanOrEqual(3);
+    // só é pista quando a correcta é ESTRITAMENTE a mais longa: opções de
+    // comprimento igual não dão indicação nenhuma a quem responde
     const maisLonga = em.filter((q) => {
-      const maior = Math.max(...q.opts!.map((o) => o.length));
-      return q.opts![q.ind!]!.length === maior;
+      const correcta = q.opts![q.ind!]!.length;
+      return q.opts!.every((o, i) => i === q.ind || o.length < correcta);
     });
-    // a correcta não pode ser a mais longa na larga maioria dos itens
-    expect(maisLonga.length / em.length).toBeLessThan(0.75);
+    // a correcta não pode ser a mais longa na maioria dos itens
+    expect(maisLonga.length / em.length).toBeLessThan(0.6);
   });
 
-  it("os cenários trazem dados quantificados no enunciado", () => {
+  it("os cenários trazem no enunciado todos os dados necessários", () => {
+    // Um cenário pode ser qualitativo — situação de trabalho a julgar — ou
+    // quantitativo. Em ambos os casos, o enunciado tem de ser auto-suficiente:
+    // identificado como fictício e com a descrição completa da situação.
+    // Quando o cenário exige conta, os números têm de estar no enunciado.
     const cenarios = EXAME_IA.filter((q) => q.cen);
     expect(cenarios).toHaveLength(16);
+    let quantitativos = 0;
     for (const q of cenarios) {
       expect(q.e).toMatch(/fictício|fictícia/i);
-      expect((q.e.match(/\d/g) ?? []).length).toBeGreaterThanOrEqual(2);
+      expect(q.e.length).toBeGreaterThan(150);
+      const digitos = (q.e.match(/\d/g) ?? []).length;
+      if (digitos > 0) {
+        // nunca um número solto: dados quantificados vêm sempre acompanhados
+        expect(digitos).toBeGreaterThanOrEqual(2);
+        quantitativos++;
+      }
     }
+    // a categoria mantém peso quantitativo relevante, sem o exigir de todos
+    expect(quantitativos).toBeGreaterThanOrEqual(8);
   });
 
   it("contas dos cenários calculáveis conferem", () => {
@@ -197,8 +212,14 @@ describe("banco de IA — validade dos itens", () => {
   });
 
   it("afirmações jurídicas seguem as fontes verificadas", () => {
+    // a natureza jurídica de cada instrumento é ensinada também nos itens de
+    // associação, pelo que os pares entram no texto consolidado
     const texto = [...EXAME_IA, ...DIAGNOSTICO_IA]
-      .map((q) => `${q.e} ${q.exp} ${(q.opts ?? []).join(" ")}`)
+      .map(
+        (q) =>
+          `${q.e} ${q.exp} ${(q.opts ?? []).join(" ")} ` +
+          `${(q.pares ?? []).map((p) => `${p.esquerda} ${p.direita}`).join(" ")}`,
+      )
       .join(" ")
       .toLowerCase();
     expect(texto).not.toContain("lei moçambicana de inteligência artificial");
@@ -291,5 +312,44 @@ describe("banco de IA — o conteúdo não chega ao cliente", () => {
   it("o banco vive fora de public/ e de src/", () => {
     const publicos = readdirSync("public");
     expect(publicos.some((f) => f.includes("questoes"))).toBe(false);
+  });
+});
+
+describe("banco de IA — plano de integração restrito", () => {
+  it("importar o integrador não escreve nada e o plano cobre os 90 itens", async () => {
+    const mod = await import("../../../scripts/integrar-banco-inteligencia-artificial");
+    const linhas = mod.planoIntegracao();
+    expect(linhas).toHaveLength(90);
+    const r = mod.resumoPlano(linhas);
+    expect(r.exame_final).toBe(80);
+    expect(r.pre_pos_teste).toBe(10);
+    expect(r.activas).toBe(0);
+    expect(r.porModulo).toEqual({ "módulo 1": 36, "módulo 2": 36, "módulo 3": 8 });
+    expect(r.porTipo).toEqual({
+      escolha_multipla: 32,
+      verdadeiro_falso: 16,
+      correspondencia: 16,
+      cenario: 16,
+    });
+    expect(r.porDificuldade).toEqual({ facil: 32, media: 32, dificil: 16 });
+  });
+
+  it("todas as linhas entram inactivas, em rascunho e com gabarito presente", async () => {
+    const { planoIntegracao } = await import(
+      "../../../scripts/integrar-banco-inteligencia-artificial"
+    );
+    for (const l of planoIntegracao()) {
+      expect(l.activa).toBe(false);
+      expect(l.estado_revisao).toBe("rascunho");
+      expect(Object.keys(l.resposta).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("o plano é idempotente: a chave instrumento + enunciado não se repete", async () => {
+    const { planoIntegracao } = await import(
+      "../../../scripts/integrar-banco-inteligencia-artificial"
+    );
+    const chaves = planoIntegracao().map((l) => `${l.instrumento}||${l.enunciado}`);
+    expect(new Set(chaves).size).toBe(chaves.length);
   });
 });

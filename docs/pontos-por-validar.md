@@ -105,3 +105,29 @@ Registadas aqui a pedido da gestora. **Não investigadas nesta etapa.**
   `/nova-palavra-passe` estão feitas e testadas de forma isolada, mas a
   **entrega real de correio electrónico nunca foi testada** e não há domínio de
   correio próprio configurado. Fica pendente.
+
+---
+
+## PV-05 — Banco de avaliação de Inteligência Artificial: integração pendente
+
+Registado a 22 de Setembro de 2026.
+
+- **Ficheiro privado:** escrito e verificado
+  (`scripts/conteudo/inteligencia-artificial-questoes.ts`, 80 questões finais
+  + 10 de diagnóstico). Vive fora de `src/` e de `public/`; os enunciados e os
+  gabaritos não entram no pacote do navegador nem em qualquer página.
+- **Integração na base de dados: PENDENTE.** O comando restrito existe
+  (`scripts/integrar-banco-inteligencia-artificial.ts`) e só escreve na tabela
+  do banco de questões, só deste curso, sempre com questões inactivas. Exige
+  sessão autenticada de uma conta com perfil de administração, para que o
+  autor do registo e a auditoria sejam reais. **Não foi executado:** não há
+  credenciais de administração disponíveis neste ambiente. Não se usou a chave
+  de serviço para contornar essa exigência, não se inventou autor e nenhum
+  gatilho foi desactivado.
+- **Activação do exame: não feita e não pedida.** Nenhuma questão fica activa,
+  `exame_configuracoes` continua vazia e nenhuma prova é sorteável.
+- **Validação pedagógica pela Ologa/ATDI: pendente.** Nada aqui está aprovado.
+
+Para integrar, quando houver decisão: correr primeiro o plano
+(`--plano`, que não escreve nada) e depois `--integrar` com a sessão de
+administração. O comando é idempotente pela chave instrumento + enunciado.
