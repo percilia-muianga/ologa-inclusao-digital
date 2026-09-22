@@ -35,7 +35,21 @@ function must<T>(res: { data: T | null; error: unknown }): T {
   return res.data as T;
 }
 
-async function ligar(): Promise<SupabaseClient> {
+/**
+ * Liga com sessão de administrador real. Devolve null quando não há credenciais
+ * — nesse caso a simulação corre sem tocar na base de dados.
+ */
+async function ligar(): Promise<SupabaseClient | null> {
+  const email = process.env["ADMIN_EMAIL"];
+  const password = process.env["ADMIN_PASSWORD"];
+  if (!email || !password) {
+    if (gravar) {
+      throw new Error(
+        "Integração pendente: sem ADMIN_EMAIL/ADMIN_PASSWORD não há sessão de administrador e nada é gravado.",
+      );
+    }
+    return null;
+  }
   const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"];
   const key =
     process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
@@ -53,17 +67,8 @@ async function ligar(): Promise<SupabaseClient> {
     auth: { persistSession: false },
     global: { fetch: fetchShim as typeof fetch },
   });
-  if (gravar) {
-    const email = process.env["ADMIN_EMAIL"];
-    const password = process.env["ADMIN_PASSWORD"];
-    if (!email || !password) {
-      throw new Error(
-        "Integração pendente: sem ADMIN_EMAIL/ADMIN_PASSWORD não há sessão de administrador e nada é gravado.",
-      );
-    }
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) throw new Error("Sessão de administrador não estabelecida; nada foi gravado.");
-  }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw new Error("Sessão de administrador não estabelecida; nada foi gravado.");
   return sb;
 }
 
@@ -75,36 +80,44 @@ async function main() {
 
   const sb = await ligar();
 
-  const curso = must(await sb.from("cursos").select("id").eq("slug", SLUG_CURSO).maybeSingle());
-  if (!curso) throw new Error(`Curso ${SLUG_CURSO} não encontrado`);
-
-  const rel = must(
-    await sb
-      .from("curso_modulos")
-      .select("modulo_id,ordem")
-      .eq("curso_id", (curso as { id: string }).id),
-  ) as { modulo_id: string; ordem: number }[];
-
   const alvos: Alvo[] = [];
-  const modulos: { chave: string; modulo_id: string; descricao: string | undefined }[] = [];
+  const modulos: { chave: string; modulo_id: string | null; descricao: string | undefined }[] = [];
 
-  for (const m of MODULOS_PLANO.filter((x) => !x.transversal)) {
-    const ligacao = rel.find((r) => r.ordem === m.ordem);
-    if (!ligacao) throw new Error(`Módulo de ordem ${m.ordem} não está ligado ao curso`);
-    modulos.push({ chave: m.chave, modulo_id: ligacao.modulo_id, descricao: DESCRICOES_MODULO[m.chave] });
-    for (const l of montadas.filter((x) => x.moduloChave === m.chave)) {
-      const existente = must(
-        await sb
-          .from("licoes")
-          .select("id")
-          .eq("modulo_id", ligacao.modulo_id)
-          .eq("ordem", l.ordem)
-          .maybeSingle(),
-      ) as { id: string } | null;
-      if (!existente) throw new Error(`Lição ${l.chave} não existe na base — não é criada aqui`);
-      alvos.push({ licao: l, id: existente.id });
+  if (!sb) {
+    for (const m of MODULOS_PLANO.filter((x) => !x.transversal)) {
+      modulos.push({ chave: m.chave, modulo_id: null, descricao: DESCRICOES_MODULO[m.chave] });
+      for (const l of montadas.filter((x) => x.moduloChave === m.chave)) alvos.push({ licao: l, id: null });
+    }
+  } else {
+    const curso = must(await sb.from("cursos").select("id").eq("slug", SLUG_CURSO).maybeSingle());
+    if (!curso) throw new Error(`Curso ${SLUG_CURSO} não encontrado`);
+
+    const rel = must(
+      await sb
+        .from("curso_modulos")
+        .select("modulo_id,ordem")
+        .eq("curso_id", (curso as { id: string }).id),
+    ) as { modulo_id: string; ordem: number }[];
+
+    for (const m of MODULOS_PLANO.filter((x) => !x.transversal)) {
+      const ligacao = rel.find((r) => r.ordem === m.ordem);
+      if (!ligacao) throw new Error(`Módulo de ordem ${m.ordem} não está ligado ao curso`);
+      modulos.push({ chave: m.chave, modulo_id: ligacao.modulo_id, descricao: DESCRICOES_MODULO[m.chave] });
+      for (const l of montadas.filter((x) => x.moduloChave === m.chave)) {
+        const existente = must(
+          await sb
+            .from("licoes")
+            .select("id")
+            .eq("modulo_id", ligacao.modulo_id)
+            .eq("ordem", l.ordem)
+            .maybeSingle(),
+        ) as { id: string } | null;
+        if (!existente) throw new Error(`Lição ${l.chave} não existe na base — não é criada aqui`);
+        alvos.push({ licao: l, id: existente.id });
+      }
     }
   }
+
 
   if (!gravar) {
     console.log(
