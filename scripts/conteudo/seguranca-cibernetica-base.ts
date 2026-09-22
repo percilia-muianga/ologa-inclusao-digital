@@ -28,8 +28,17 @@ export type Referencia = {
 export type Laboratorio = {
   titulo: string;
   objectivo: string;
+  /** Minutos do bloco de trabalho prático ocupados pelo laboratório. */
+  minutos: number;
   /** Recursos com versão ou forma de obtenção, preparados ANTES da sessão. */
   recursos: string[];
+  /** Material didáctico autocontido entregue com o curso, sem dependências externas. */
+  materialFornecido?: string[];
+  /**
+   * Dependências que NÃO são entregues com o curso e que alguém tem de
+   * preparar. Enquanto faltarem, o laboratório fica pendente.
+   */
+  dependenciasPorPreparar: string[];
   preparacao: string[];
   passos: string[];
   /** Como se confirma, de forma observável, que o laboratório correu bem. */
