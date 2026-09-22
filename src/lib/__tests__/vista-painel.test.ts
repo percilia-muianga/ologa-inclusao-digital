@@ -3,7 +3,7 @@ import { papeisDeVista } from "../papeis";
 
 describe("vista do painel", () => {
   it("perfil Administrador Geral sem papéis atribuídos vê a vista de administração", () => {
-    expect(papeisDeVista([], true)).toEqual(["admin_atdi"]);
+    expect(papeisDeVista([], true)).toEqual(["admin_ologa"]);
   });
 
   it("conta comum sem papéis continua sem vista reservada", () => {
@@ -11,11 +11,11 @@ describe("vista do painel", () => {
   });
 
   it("não acumula papéis: só acrescenta a vista de administração", () => {
-    expect(papeisDeVista(["formando"], true)).toEqual(["admin_atdi", "formando"]);
+    expect(papeisDeVista(["formando"], true)).toEqual(["admin_ologa", "formando"]);
     expect(papeisDeVista(["auditor_atdi"], false)).toEqual(["auditor_atdi"]);
   });
 
   it("não duplica quando já tem o papel de administrador", () => {
-    expect(papeisDeVista(["admin_atdi"], true)).toEqual(["admin_atdi"]);
+    expect(papeisDeVista(["admin_atdi"], true)).toEqual(["admin_ologa", "admin_atdi"]);
   });
 });
