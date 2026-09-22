@@ -151,3 +151,11 @@ Pendente: módulo 2 (incluindo governação e EU AI Act na lição 4, com fontes
 oficiais actualizadas); banco de avaliação deste curso, ainda por preparar e
 inactivo; confirmação da carga horária pela ATDI; prática assistida da lição 4
 por executar; LSM, vídeo, legendagem e revisão por terceiros.
+
+## 22/09/2026 — Módulo 2 de Introdução à Inteligência Artificial
+- [x] Escrever as 4 lições do módulo 2 (casos de uso, dados, preconceito, supervisão)
+- [x] Integrar no conteúdo, testes, plano, docs/matriz-tdr.md e docs/pontos-por-validar.md
+- [x] Integração editorial restrita às 4 lições na base; verificação no navegador
+- [ ] Validação pedagógica pela Ologa/ATDI (pendente, externa)
+- [ ] Banco de questões do curso de IA (por preparar, exame inactivo)
+- [ ] Prática com ferramenta institucional de M1L4 e M2L1 (por executar)
