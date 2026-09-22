@@ -60,7 +60,7 @@ const M2L1: ConteudoLicao = {
     {
       titulo: "Anexo C — Aplicação didáctica APP-LAB, código completo (app_lab.py)",
       nota:
-        "Aplicação de formação DELIBERADAMENTE VULNERÁVEL, escrita para este curso. Usa apenas a biblioteca padrão do Python 3 (testada com Python 3.11 e 3.13) e não instala nem descarrega nada. Guardar como app_lab.py na máquina virtual isolada e arrancar com «python3 app_lab.py»; fica a escutar em 127.0.0.1:8080, apenas dentro da própria máquina. Contas: utilizador1/lab1 e utilizador2/lab2. Pedidos fictícios: 4821 pertence a utilizador1 e 4820 pertence a utilizador2. NUNCA colocar esta aplicação em rede da instituição, na internet ou na plataforma de formação.",
+        "Aplicação de formação DELIBERADAMENTE VULNERÁVEL, escrita para este curso. Usa apenas a biblioteca padrão do Python 3 (requer Python 3.8 ou superior; a equipa autora executou-a em Python 3.13) e não instala nem descarrega nada. Guardar como app_lab.py na máquina virtual isolada e arrancar com «python3 app_lab.py»; fica a escutar em 127.0.0.1:8080, apenas dentro da própria máquina. Contas: utilizador1/lab1 e utilizador2/lab2. Pedidos fictícios: 4821 pertence a utilizador1 e 4820 pertence a utilizador2. NUNCA colocar esta aplicação em rede da instituição, na internet ou na plataforma de formação.",
       linhas: [
         "#!/usr/bin/env python3",
         "# app_lab.py - aplicacao didactica DELIBERADAMENTE VULNERAVEL.",
@@ -157,7 +157,7 @@ const M2L1: ConteudoLicao = {
         "POST /entrar HTTP/1.1",
         "Host: 127.0.0.1:8080",
         "Content-Type: application/x-www-form-urlencoded",
-        "Content-Length: 25",
+        "Content-Length: 20",
         "",
         "u=utilizador1&p=lab1",
         "",
