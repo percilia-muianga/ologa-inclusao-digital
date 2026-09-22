@@ -61,7 +61,18 @@ export const PAPEIS: DefinicaoPapel[] = [
   },
 ];
 
+/**
+ * Perfil de origem (perfis.papel), distinto dos papéis de sistema.
+ * Não é um papel atribuído: identifica a conta de administração da Ologa.
+ */
+export const PERFIL_ADMIN_GERAL = "admin_ologa" as const;
+export const NOME_ADMIN_GERAL = "Administrador Geral Ologa";
+
+/** Papel usado apenas para escolher a vista: pode ser o perfil de origem. */
+export type PapelVista = PapelSistema | typeof PERFIL_ADMIN_GERAL;
+
 export function nomeDoPapel(papel: string): string {
+  if (papel === PERFIL_ADMIN_GERAL) return NOME_ADMIN_GERAL;
   return PAPEIS.find((p) => p.valor === papel)?.nome ?? papel;
 }
 
@@ -99,15 +110,15 @@ export const CAMPOS_SENSIVEIS = [
  * Papéis usados APENAS para escolher a vista do painel.
  *
  * Quem tem o perfil "Administrador Geral Ologa" (perfis.papel = 'admin_ologa')
- * passa a ver a vista administrativa, mesmo sem linhas em utilizador_papeis.
- * Isto não concede nada: as regras do servidor (is_admin, pode_gerir_programa)
- * já reconhecem este perfil. Nenhum outro papel é acumulado — quem não tem
- * papéis nem o perfil de administrador geral continua sem vista reservada.
+ * passa a ver a vista administrativa com o SEU nome — não é convertido em
+ * "Administrador ATDI" nem recebe esse papel. Isto não concede nada: as regras
+ * do servidor já reconhecem este perfil e cada função revalida-o. Quem não tem
+ * papéis nem este perfil continua sem vista reservada.
  */
 export function papeisDeVista(
   papeis: PapelSistema[],
   administradorGeral: boolean,
-): PapelSistema[] {
+): PapelVista[] {
   if (!administradorGeral) return papeis;
-  return papeis.includes("admin_atdi") ? papeis : ["admin_atdi", ...papeis];
+  return [PERFIL_ADMIN_GERAL, ...papeis];
 }

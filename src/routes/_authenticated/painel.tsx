@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessao, PapelActivoProvider, usePapelActivo } from "@/hooks/use-sessao";
-import { nomeDoPapel, papeisDeVista, type PapelSistema } from "@/lib/papeis";
+import { nomeDoPapel, papeisDeVista, type PapelSistema, type PapelVista } from "@/lib/papeis";
 import { ligacoesDoPainel } from "@/lib/navegacao-painel";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -105,7 +105,7 @@ function CabecalhoPainel({ nome, teste }: { nome: string; teste: boolean }) {
               <select
                 id="selector-papel"
                 value={papelActivo ?? ""}
-                onChange={(e) => definirPapelActivo(e.target.value as PapelSistema)}
+                onChange={(e) => definirPapelActivo(e.target.value as PapelVista)}
                 className="min-h-11 rounded-md border border-line bg-white px-3 py-2 text-base text-navy"
               >
                 {papeis.map((p) => (

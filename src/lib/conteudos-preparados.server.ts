@@ -92,6 +92,8 @@ export function payloadSeguranca(): PayloadSeguranca {
 }
 
 export type QuestaoPayload = {
+  /** Identidade estável do item. O enunciado é mutável e não identifica nada. */
+  codigo: string;
   ordem_modulo: number;
   instrumento: "exame_final" | "pre_pos_teste";
   tipologia: string;
@@ -113,6 +115,7 @@ export function payloadBancoIA(): { questoes: QuestaoPayload[] } {
   if (linhas.some((l) => l.activa)) throw new Error("PACOTE_COM_QUESTAO_ACTIVA");
   return {
     questoes: linhas.map((l) => ({
+      codigo: l.cod,
       ordem_modulo: l.ordemModulo,
       instrumento: l.instrumento,
       tipologia: l.tipologia,
