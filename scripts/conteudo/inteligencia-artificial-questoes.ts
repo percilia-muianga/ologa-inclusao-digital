@@ -429,12 +429,12 @@ const M1L4: QuestaoIA[] = [
     cod: "IA-M1L4-08", m: "m1", l: 4, t: "em", cen: true, d: "di",
     e: "Caso fictício. Uma direcção paga 9 000 meticais por mês por licenças de uma ferramenta de assistência à escrita e poupa 20 horas de trabalho por mês, avaliadas internamente em 400 meticais por hora. A ferramenta não permite exportar as configurações nem o histórico, e mudar de fornecedor obrigaria a refazer a integração, estimada em 60 horas. Que conclusão é sustentada por estes dados?",
     opts: [
-      "O benefício mensal é negativo, porque as licenças custam mais do que o tempo poupado",
-      "O benefício mensal é de 1 000 meticais, mas existe dependência de fornecedor com custo estimado de saída de 60 horas, que deve constar da decisão",
-      "A dependência de fornecedor é irrelevante quando o benefício mensal é positivo",
-      "Os dados não permitem calcular benefício algum",
-    ], ind: 1,
-    exp: "20 horas a 400 meticais são 8 000 meticais... verificando: o valor poupado é 20 vezes 400, ou seja, 8 000 meticais, inferior aos 9 000 de licenças, pelo que o saldo mensal é negativo em 1 000 meticais. A opção correcta é a que reconhece o saldo desfavorável e a dependência; qualquer leitura que declare benefício positivo contraria as contas apresentadas.",
+      "O saldo mensal é favorável em 1 000 meticais e a dependência de fornecedor não altera a decisão",
+      "Os dados não permitem calcular saldo algum",
+      "O saldo mensal é desfavorável em 1 000 meticais e acresce dependência de fornecedor, com saída estimada em 60 horas, que deve constar da decisão",
+      "O saldo mensal é desfavorável em 9 000 meticais, porque o tempo poupado não tem valor monetário",
+    ], ind: 2,
+    exp: "O tempo poupado vale 20 vezes 400, ou seja, 8 000 meticais por mês, contra 9 000 meticais de licenças: o saldo mensal é desfavorável em 1 000 meticais. A isso acresce a impossibilidade de exportar configurações e histórico, com custo de saída estimado em 60 horas, que tem de constar da decisão.",
     obj: "Comparar custo, benefício e dependência de fornecedor. Lição 4 do módulo 1.",
   },
   {
