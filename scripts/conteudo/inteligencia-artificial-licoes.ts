@@ -15,6 +15,15 @@
  */
 
 import type { TemposLicao } from "../../src/lib/plano-inteligencia-artificial";
+import { LICOES_M2, DESCRICAO_M2 } from "./inteligencia-artificial-m2";
+
+/** Fonte consultada, com data. `resumo` é síntese original da equipa. */
+export type Referencia = {
+  titulo: string;
+  url: string;
+  consultadoEm: string;
+  resumo?: string;
+};
 
 export type Pratica = {
   titulo: string;
