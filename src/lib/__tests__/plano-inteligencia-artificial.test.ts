@@ -262,7 +262,8 @@ describe("módulo 2 — uso responsável da inteligência artificial", () => {
     expect(tudo).toMatch(/não decidas se o pedido é deferido|decisão sobre direitos/i);
     expect(c.pratica!.contingencia.join(" ")).toMatch(/PENDENTE — a reagendar/);
     expect(c.pratica!.contingencia.join(" ")).toMatch(/não substitui a prática real/);
-    expect(tudo).not.toMatch(/gratuita|grátis/i);
+    expect(tudo).toMatch(/não se promete que qualquer ferramenta seja gratuita/);
+    expect(tudo).toMatch(/Ninguém cria conta pessoal, ninguém paga/);
   });
 
   it("lição 6: tabela de dezasseis campos e distinção pseudonimização/anonimização", () => {
@@ -355,7 +356,8 @@ describe("módulo 2 — uso responsável da inteligência artificial", () => {
   it("não afirma estratégia nem lei de IA aprovada em Moçambique, nem mandato regulador do INTIC", () => {
     const tudo = chaves.map((k) => JSON.stringify(LICOES[k])).join(" ");
     expect(tudo).not.toMatch(/estratégia nacional de inteligência artificial aprovada/i);
-    expect(tudo).not.toMatch(/INTIC[^.]{0,60}autoridade reguladora(?! da inteligência artificial: o que a fonte)/i);
+    expect(tudo).not.toMatch(/INTIC é a autoridade|INTIC, autoridade reguladora/i);
+    expect(tudo).toMatch(/não se deve inferir da consulta que o INTIC seja autoridade reguladora/i);
     expect(tudo).toMatch(/não prova que exista estratégia aprovada/);
     expect(tudo).toMatch(/proposta/i);
     expect(tudo).not.toMatch(/aprovado pela ATDI|validado pela Ologa|Língua de Sinais/i);
