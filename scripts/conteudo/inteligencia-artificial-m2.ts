@@ -202,7 +202,7 @@ const M2L1: ConteudoLicao = {
       "Comparar a saída com a triagem manual feita na parte C e anotar cada erro, indicando o tipo: sector errado, informação acrescentada que não está no pedido, campo que devia dizer «não consta», ou decisão sobre direitos que a instrução proibia.",
       "Anotar o tempo gasto na verificação desta execução.",
       "Trocar a pessoa que escreve.",
-      "Segunda execução: usar a instrução melhorada pelo par sobre os mesmos cinco pedidos. Guardar a saída.",
+      "Segunda execução: usar a instrução melhorada pelo par, novamente com as regras do anexo B e os mesmos cinco pedidos do anexo A. Guardar a saída.",
       "Comparar de novo, anotar erros e tempo de verificação, e registar se a melhoria da instrução reduziu, manteve ou aumentou os erros.",
       "Fechar a sessão da ferramenta e não guardar nada fora da ficha de trabalho.",
     ],
