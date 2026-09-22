@@ -99,13 +99,12 @@ describe("plano de Introdução à Inteligência Artificial", () => {
   });
 });
 
-describe("conteúdo escrito do módulo 1", () => {
-  const chaves = ["m1l1", "m1l2", "m1l3", "m1l4"];
+describe("conteúdo escrito dos módulos 1 e 2", () => {
+  const chaves = ["m1l1", "m1l2", "m1l3", "m1l4", "m2l1", "m2l2", "m2l3", "m2l4"];
 
-  it("escreve as quatro lições do módulo 1 e nenhuma do módulo 2", () => {
+  it("escreve as oito lições dos módulos 1 e 2", () => {
     expect(Object.keys(LICOES).sort()).toEqual(chaves);
-    // O módulo 2 tem descrição de plano, mas nenhuma lição escrita.
-    expect(DESCRICOES_MODULO["m2"]).toMatch(/Em preparação/);
+    expect(DESCRICOES_MODULO["m2"]).not.toMatch(/Em preparação|por escrever/i);
   });
 
   it("dá a cada lição objectivos, explicação desenvolvida, caso, actividade e duas questões", () => {
