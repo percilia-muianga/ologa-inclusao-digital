@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessao, PapelActivoProvider, usePapelActivo } from "@/hooks/use-sessao";
-import { nomeDoPapel, type PapelSistema } from "@/lib/papeis";
+import { nomeDoPapel, papeisDeVista, type PapelSistema } from "@/lib/papeis";
 import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/_authenticated/painel")({
@@ -28,7 +28,10 @@ export const Route = createFileRoute("/_authenticated/painel")({
 
 function PainelLayout() {
   const sessao = useSessao();
-  const papeis = (sessao.data?.papeis ?? []) as PapelSistema[];
+  const papeis = papeisDeVista(
+    (sessao.data?.papeis ?? []) as PapelSistema[],
+    sessao.data?.administradorGeral ?? false,
+  );
 
   return (
     <PapelActivoProvider papeis={papeis}>
