@@ -13,9 +13,11 @@ import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as TurmasRouteImport } from './routes/turmas'
 import { Route as RelatoriosMensaisRouteImport } from './routes/relatorios-mensais'
+import { Route as RecuperarPalavraPasseRouteImport } from './routes/recuperar-palavra-passe'
 import { Route as PresencasRouteImport } from './routes/presencas'
 import { Route as PainelNacionalRouteImport } from './routes/painel-nacional'
 import { Route as OlogaRouteImport } from './routes/ologa'
+import { Route as NovaPalavraPasseRouteImport } from './routes/nova-palavra-passe'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
 import { Route as GestaoRouteImport } from './routes/gestao'
 import { Route as FormacaoRouteImport } from './routes/formacao'
@@ -86,6 +88,11 @@ const RelatoriosMensaisRoute = RelatoriosMensaisRouteImport.update({
   path: '/relatorios-mensais',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecuperarPalavraPasseRoute = RecuperarPalavraPasseRouteImport.update({
+  id: '/recuperar-palavra-passe',
+  path: '/recuperar-palavra-passe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PresencasRoute = PresencasRouteImport.update({
   id: '/presencas',
   path: '/presencas',
@@ -99,6 +106,11 @@ const PainelNacionalRoute = PainelNacionalRouteImport.update({
 const OlogaRoute = OlogaRouteImport.update({
   id: '/ologa',
   path: '/ologa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NovaPalavraPasseRoute = NovaPalavraPasseRouteImport.update({
+  id: '/nova-palavra-passe',
+  path: '/nova-palavra-passe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InscricaoRoute = InscricaoRouteImport.update({
@@ -366,9 +378,11 @@ export interface FileRoutesByFullPath {
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/nova-palavra-passe': typeof NovaPalavraPasseRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRouteWithChildren
+  '/recuperar-palavra-passe': typeof RecuperarPalavraPasseRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
@@ -420,7 +434,9 @@ export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/nova-palavra-passe': typeof NovaPalavraPasseRoute
   '/painel-nacional': typeof PainelNacionalRoute
+  '/recuperar-palavra-passe': typeof RecuperarPalavraPasseRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/verificar': typeof VerificarRoute
   '/avaliacao/banco': typeof AvaliacaoBancoRoute
@@ -472,9 +488,11 @@ export interface FileRoutesById {
   '/formacao': typeof FormacaoRouteWithChildren
   '/gestao': typeof GestaoRouteWithChildren
   '/inscricao': typeof InscricaoRoute
+  '/nova-palavra-passe': typeof NovaPalavraPasseRoute
   '/ologa': typeof OlogaRouteWithChildren
   '/painel-nacional': typeof PainelNacionalRoute
   '/presencas': typeof PresencasRouteWithChildren
+  '/recuperar-palavra-passe': typeof RecuperarPalavraPasseRoute
   '/relatorios-mensais': typeof RelatoriosMensaisRoute
   '/turmas': typeof TurmasRouteWithChildren
   '/verificar': typeof VerificarRoute
@@ -531,9 +549,11 @@ export interface FileRouteTypes {
     | '/formacao'
     | '/gestao'
     | '/inscricao'
+    | '/nova-palavra-passe'
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/recuperar-palavra-passe'
     | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
@@ -585,7 +605,9 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/gestao'
     | '/inscricao'
+    | '/nova-palavra-passe'
     | '/painel-nacional'
+    | '/recuperar-palavra-passe'
     | '/relatorios-mensais'
     | '/verificar'
     | '/avaliacao/banco'
@@ -636,9 +658,11 @@ export interface FileRouteTypes {
     | '/formacao'
     | '/gestao'
     | '/inscricao'
+    | '/nova-palavra-passe'
     | '/ologa'
     | '/painel-nacional'
     | '/presencas'
+    | '/recuperar-palavra-passe'
     | '/relatorios-mensais'
     | '/turmas'
     | '/verificar'
@@ -695,9 +719,11 @@ export interface RootRouteChildren {
   FormacaoRoute: typeof FormacaoRouteWithChildren
   GestaoRoute: typeof GestaoRouteWithChildren
   InscricaoRoute: typeof InscricaoRoute
+  NovaPalavraPasseRoute: typeof NovaPalavraPasseRoute
   OlogaRoute: typeof OlogaRouteWithChildren
   PainelNacionalRoute: typeof PainelNacionalRoute
   PresencasRoute: typeof PresencasRouteWithChildren
+  RecuperarPalavraPasseRoute: typeof RecuperarPalavraPasseRoute
   RelatoriosMensaisRoute: typeof RelatoriosMensaisRoute
   TurmasRoute: typeof TurmasRouteWithChildren
   VerificarRoute: typeof VerificarRoute
@@ -736,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelatoriosMensaisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recuperar-palavra-passe': {
+      id: '/recuperar-palavra-passe'
+      path: '/recuperar-palavra-passe'
+      fullPath: '/recuperar-palavra-passe'
+      preLoaderRoute: typeof RecuperarPalavraPasseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/presencas': {
       id: '/presencas'
       path: '/presencas'
@@ -755,6 +788,13 @@ declare module '@tanstack/react-router' {
       path: '/ologa'
       fullPath: '/ologa'
       preLoaderRoute: typeof OlogaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nova-palavra-passe': {
+      id: '/nova-palavra-passe'
+      path: '/nova-palavra-passe'
+      fullPath: '/nova-palavra-passe'
+      preLoaderRoute: typeof NovaPalavraPasseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inscricao': {
@@ -1300,9 +1340,11 @@ const rootRouteChildren: RootRouteChildren = {
   FormacaoRoute: FormacaoRouteWithChildren,
   GestaoRoute: GestaoRouteWithChildren,
   InscricaoRoute: InscricaoRoute,
+  NovaPalavraPasseRoute: NovaPalavraPasseRoute,
   OlogaRoute: OlogaRouteWithChildren,
   PainelNacionalRoute: PainelNacionalRoute,
   PresencasRoute: PresencasRouteWithChildren,
+  RecuperarPalavraPasseRoute: RecuperarPalavraPasseRoute,
   RelatoriosMensaisRoute: RelatoriosMensaisRoute,
   TurmasRoute: TurmasRouteWithChildren,
   VerificarRoute: VerificarRoute,
