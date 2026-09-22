@@ -447,7 +447,7 @@ const M2L2: ConteudoLicao = {
       "Abrir com a pergunta da reclamante do caso: porque é que se pede o estado civil para reclamar de um horário? Recolher respostas sem corrigir e apresentar os objectivos.",
       "Expor a advertência jurídica; a minimização e a pergunta de controlo; as três alternativas intermédias — reduzir detalhe, agregar, separar; as quatro perguntas por campo mantido; a diferença entre pseudonimizar e anonimizar com o exemplo do quase-identificador; e o fluxo de dados, desenhando no quadro as seis caixas do anexo C.",
       "Lançar a actividade em grupos de três. Partes A e B nos primeiros 30 minutos; circular e insistir em que a justificação cite a finalidade declarada. Partes C, D e E nos 30 minutos seguintes. Avisar aos 30 e aos 50 minutos.",
-      "Chamar dois grupos, quatro minutos cada: um apresenta as remoções e minimizações com justificação, outro apresenta o fluxo e as cópias contadas. Recolher as fichas restantes. Fechar confirmando as linhas R-0041 e R-0045 e repetindo que o serviço responde pelas cópias que fez.",
+      "Chamar dois grupos, quatro minutos cada: um apresenta as remoções e minimizações com justificação, outro apresenta o fluxo e as cópias contadas. Recolher as fichas restantes. Fechar com as linhas R-0041 e R-0045, insistindo na formulação correcta — podem corresponder à mesma pessoa, não está comprovado, e o que fica demonstrado é o risco de reidentificação — e repetindo que o serviço responde pelas cópias que fez.",
     ],
     criterios: [
       "Decisão e justificação escritas para os dezasseis campos, com a finalidade citada.",
