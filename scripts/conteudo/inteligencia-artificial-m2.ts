@@ -792,7 +792,7 @@ const M2L4: ConteudoLicao = {
         "A pergunta decisiva é a do registo: sem avisos escritos e respondidos, ninguém consegue depois demonstrar que sabia, nem quando soube, e a prestação de contas desfaz-se.",
     },
   ],
-  referencias: [OECD, NIST, UE, UNESCO, UA, INTIC],
+  referencias: [OECD, NIST, UE, EURLEX, UNESCO, UA, INTIC],
   guiao: {
     preparacao: [
       "Imprimir os anexos A, B e C e a matriz de risco, um conjunto por grupo, com letra grande e espaço para escrever.",
