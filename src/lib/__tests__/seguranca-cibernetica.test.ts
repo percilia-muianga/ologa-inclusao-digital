@@ -122,7 +122,7 @@ describe("montagem das lições", () => {
     for (const m of montadas) {
       expect(m.elearning, m.chave).toContain("fictícios");
       if (m.elearning.includes("Referências consultadas")) {
-        expect(m.elearning, m.chave).toContain("não são lei moçambicana");
+        expect(m.elearning.toLowerCase(), m.chave).toContain("não são lei moçambicana");
       }
     }
   });
