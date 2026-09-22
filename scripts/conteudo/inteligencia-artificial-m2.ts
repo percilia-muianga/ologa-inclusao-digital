@@ -581,7 +581,7 @@ const M2L3: ConteudoLicao = {
     "Um sistema pode acertar muito no total e falhar muito num grupo.",
     "Veja sempre os dois erros separados: deixar passar e chamar sem ser preciso.",
     "Escreva a conta com o número de cima e o número de baixo. Percentagem sozinha não chega.",
-    "Os dados de treino trazem quem estava neles. Quem não estava é servido pior.",
+    "Os dados de treino trazem quem estava neles. Quem não estava pode ser servido pior — é preciso medir para saber.",
     "Retirar o campo do sexo ou da língua não resolve: outros campos dizem a mesma coisa por outro caminho.",
     "Algumas diferenças nascem antes do sistema, no desenho do serviço: língua, internet, acessibilidade.",
     "Uma diferença entre grupos manda investigar. Não prova, sozinha, causa nem discriminação.",
