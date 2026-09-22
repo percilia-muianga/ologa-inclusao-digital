@@ -303,7 +303,7 @@ const M2L1: ConteudoLicao = {
       pergunta:
         "A empresa propõe corrigir O-01 removendo a ligação para a página de detalhe e passando a abrir o pedido por um botão da lista. Resolve?",
       resposta:
-        "Não. O endereço continua a existir e continua a responder a quem o escrever directamente. A correcção tem de ser no servidor: a consulta deve filtrar pelo utilizador da sessão e devolver «não encontrado» quando o pedido não lhe pertence.",
+        "Não. O endereço continua a existir e continua a responder a quem o escrever directamente. A correcção tem de ser no servidor: antes de devolver o registo, verifica-se se a sessão tem permissão para aquele pedido, segundo as regras de acesso escritas — titular, perfil ou âmbito —, e devolve-se «não encontrado» quando não tem.",
       feedback:
         "Alterações de interface não são controlo de acesso. Qualquer defesa que o cliente possa contornar não é defesa.",
     },
@@ -319,9 +319,10 @@ const M2L1: ConteudoLicao = {
   referencias: [OWASP_WSTG, CISA_KEV],
   guiao: {
     preparacao: [
-      "Instalar APP-LAB em todos os computadores no dia anterior e tirar o instantâneo «inicial».",
+      "Criar app_lab.py a partir do anexo C nas máquinas virtuais no dia anterior, confirmar o arranque e tirar o instantâneo «inicial».",
       "Imprimir e assinar a autorização do anexo B e afixá-la na sala.",
-      "Preparar o conjunto impresso de pedido e resposta para a alternativa offline.",
+      "Imprimir o anexo D, com os pedidos e respostas completos, para a alternativa offline.",
+      "Confirmar o tempo: 35 minutos de exercício em papel e 25 minutos de laboratório, dentro dos 60 minutos de trabalho prático. Se o ambiente falhar, o laboratório fica pendente e o tempo passa para a análise do anexo D.",
     ],
     conducao: [
       "Contar o caso do número de processo e perguntar à sala de quem é a falha: da interface ou do servidor.",
