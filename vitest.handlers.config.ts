@@ -12,7 +12,7 @@ import path from "node:path";
 export default defineConfig({
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
   test: {
-    include: ["src/lib/__tests__/handlers-reais.handlers.ts"],
+    include: ["src/lib/__tests__/*.handlers.ts"],
     environment: "node",
   },
 });
