@@ -747,7 +747,7 @@ não têm nota, mantêm o texto anterior sem alteração.
 | Bloco | Minutos | Estado |
 | --- | --- | --- |
 | Módulo 1 — Fundamentos de Inteligência Artificial (4 lições × 120) | 480 | escrito, rascunho |
-| Módulo 2 — Uso Responsável da Inteligência Artificial (4 lições × 120) | 480 | **apenas planeado, por fornecer** |
+| Módulo 2 — Uso Responsável da Inteligência Artificial (4 lições × 120) | 480 | escrito, rascunho (22/09/2026) |
 | Transversal — Governo Digital Inclusivo e Acessibilidade (6 lições) | 120 | já existia, contado uma única vez |
 | Diagnóstico 20 + revisão 40 + exame 60 | 120 | fora dos módulos |
 | **Total** | **1200** | |
@@ -766,14 +766,17 @@ sítios.
 | Aprendizagem automática | M1 L3 | tabela de resultados de 200 casos, cálculos à mão | 4 valores calculados com operandos visíveis |
 | Uso de ferramentas de IA | M1 L4 | prática assistida com ferramenta institucional autorizada | folha de registo por execução, ou «PENDENTE» |
 | Aplicações e oportunidades | M1 L4 | 3 tarefas apoiáveis + 2 vedadas sem decisão superior | ficha por par |
-| Ética, riscos e protecção de dados | M1 L2 (introdução) e M2 L2 (por fornecer) | — | — |
-| Governação, EU AI Act, actores, política e diplomacia | **M2 L4 — planeado, por fornecer** | — | — |
+| Ética, riscos e protecção de dados | M1 L2 (introdução), M2 L2 e M2 L3 | tabela de 16 campos: minimizar, agregar, remover, finalidade, acesso, retenção, eliminação; cálculo de falsos positivos e falsos negativos por grupo | ficha de dados preenchida com fluxo e medidas; folha de cálculos por grupo com denominadores |
+| Uso real de ferramentas de IA | M2 L1 | duas execuções por par com ferramenta institucional autorizada, alternando quem escreve, sobre 5 pedidos sintéticos e regras de triagem fornecidas | folha de registo por execução (erros, tempo, instrução melhorada) ou «PENDENTE — a reagendar» |
+| Oportunidades e desafios organizacionais e económicos | M2 L1 | comparação em 6 critérios com a alternativa sem IA: custo, benefício, trabalho, língua, conectividade, dependência de fornecedor | grelha preenchida e recomendação fundamentada |
+| Riscos, preconceito algorítmico e inclusão | M2 L3 | tabela de 600 pedidos com os dois tipos de erro por grupo | taxas por grupo com operandos visíveis, origens da diferença e alternativa acessível |
+| Governação, EU AI Act, actores, política e diplomacia | M2 L4 | comité de supervisão com fichas de função, matriz de risco, minuta de suspensão e proposta de piloto | matriz preenchida com responsável, acção, evidência e prazo; minuta de suspensão |
 
 O EU AI Act é legislação da União Europeia. Fica registado, na ficha e aqui,
 que é estudado como referência internacional de governação e que **não se
 afirma** que se aplica automaticamente a Moçambique. Qualquer leitura jurídica
-cabe à área jurídica da instituição. A lição será escrita com fontes oficiais
-actualizadas à data em que for produzida; nada disso foi escrito neste bloco.
+cabe à área jurídica da instituição. A lição M2 L4 foi escrita no bloco A23,
+com fontes oficiais e data de consulta.
 
 ### Cálculos verificados (M1 L3)
 
