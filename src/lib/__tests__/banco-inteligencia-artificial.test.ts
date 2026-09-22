@@ -314,3 +314,42 @@ describe("banco de IA — o conteúdo não chega ao cliente", () => {
     expect(publicos.some((f) => f.includes("questoes"))).toBe(false);
   });
 });
+
+describe("banco de IA — plano de integração restrito", () => {
+  it("importar o integrador não escreve nada e o plano cobre os 90 itens", async () => {
+    const mod = await import("../../../scripts/integrar-banco-inteligencia-artificial");
+    const linhas = mod.planoIntegracao();
+    expect(linhas).toHaveLength(90);
+    const r = mod.resumoPlano(linhas);
+    expect(r.exame_final).toBe(80);
+    expect(r.pre_pos_teste).toBe(10);
+    expect(r.activas).toBe(0);
+    expect(r.porModulo).toEqual({ "módulo 1": 36, "módulo 2": 36, "módulo 3": 8 });
+    expect(r.porTipo).toEqual({
+      escolha_multipla: 32,
+      verdadeiro_falso: 16,
+      correspondencia: 16,
+      cenario: 16,
+    });
+    expect(r.porDificuldade).toEqual({ facil: 32, media: 32, dificil: 16 });
+  });
+
+  it("todas as linhas entram inactivas, em rascunho e com gabarito presente", async () => {
+    const { planoIntegracao } = await import(
+      "../../../scripts/integrar-banco-inteligencia-artificial"
+    );
+    for (const l of planoIntegracao()) {
+      expect(l.activa).toBe(false);
+      expect(l.estado_revisao).toBe("rascunho");
+      expect(Object.keys(l.resposta).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("o plano é idempotente: a chave instrumento + enunciado não se repete", async () => {
+    const { planoIntegracao } = await import(
+      "../../../scripts/integrar-banco-inteligencia-artificial"
+    );
+    const chaves = planoIntegracao().map((l) => `${l.instrumento}||${l.enunciado}`);
+    expect(new Set(chaves).size).toBe(chaves.length);
+  });
+});
