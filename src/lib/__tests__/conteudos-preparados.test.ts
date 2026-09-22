@@ -144,3 +144,43 @@ describe("mensagens e identificação do perfil", () => {
     expect(ligacoesDoPainel("formando").map((l) => l.to)).not.toContain("/painel/conteudos");
   });
 });
+
+describe("regras que a base de dados também impõe ao pacote", () => {
+  it("a matriz das 80 finais é 36/36/8 por módulo, 32/16/16 por tipo mais 16 de cenário, 32/32/16 por dificuldade", () => {
+    const finais = payloadBancoIA().questoes.filter((q) => q.instrumento === "exame_final");
+    expect(finais).toHaveLength(80);
+    const conta = (f: (q: (typeof finais)[number]) => boolean) => finais.filter(f).length;
+    expect(conta((q) => q.ordem_modulo === 1)).toBe(36);
+    expect(conta((q) => q.ordem_modulo === 2)).toBe(36);
+    expect(conta((q) => q.ordem_modulo === 3)).toBe(8);
+    expect(conta((q) => q.cenario)).toBe(16);
+    expect(conta((q) => !q.cenario && q.tipologia === "escolha_multipla")).toBe(32);
+    expect(conta((q) => !q.cenario && q.tipologia === "verdadeiro_falso")).toBe(16);
+    expect(conta((q) => !q.cenario && q.tipologia === "correspondencia")).toBe(16);
+    expect(conta((q) => q.dificuldade === "facil")).toBe(32);
+    expect(conta((q) => q.dificuldade === "media")).toBe(32);
+    expect(conta((q) => q.dificuldade === "dificil")).toBe(16);
+  });
+
+  it("nenhum item vai com módulo, conteúdo ou resposta em falta", () => {
+    for (const q of payloadBancoIA().questoes) {
+      expect([1, 2, 3]).toContain(q.ordem_modulo);
+      expect(q.conteudo).toBeTruthy();
+      expect(q.resposta).toBeTruthy();
+      expect(q.codigo.trim()).not.toBe("");
+      expect(q.versao.trim()).not.toBe("");
+      expect(q.cenario === true || q.cenario === false).toBe(true);
+    }
+  });
+
+  it("os minutos das lições batem certo MÓDULO A MÓDULO, não só no total", () => {
+    const p = payloadSeguranca();
+    expect(p.modulos).toHaveLength(3);
+    for (const m of p.modulos) {
+      const soma = p.licoes
+        .filter((l) => l.modulo_ordem === m.ordem)
+        .reduce((s, l) => s + l.minutos, 0);
+      expect(soma).toBe(m.minutos);
+    }
+  });
+});
