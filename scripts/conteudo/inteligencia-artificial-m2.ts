@@ -398,7 +398,7 @@ const M2L2: ConteudoLicao = {
       "O campo 3 é minimizado, por exemplo para escalão etário, e o campo 7 é minimizado para bairro, em vez de morada exacta.",
       "O campo 16, a fotocópia do documento de identificação, é removido ou substituído por conferência presencial sem guardar cópia; guardar a fotocópia não é necessário para responder a uma reclamação.",
       "Os campos 12, 13 e 14 são mantidos, porque sem assunto, descrição e momento não é possível tratar a reclamação.",
-      "As quatro perguntas respondidas com acesso indicado por função e prazo de retenção expresso em tempo, não em «o necessário».",
+      "As quatro perguntas respondidas com acesso indicado por função e prazo de retenção expresso em tempo, não em «o necessário»; e o prazo apresentado como proposta, com a confirmação de obrigações de arquivo e legais indicada antes de qualquer eliminação.",
       "Na parte C, as linhas R-0041 e R-0045 são identificadas como provavelmente da mesma pessoa, pela combinação de sexo, idade, bairro, ocupação e assunto; e fica escrito que o código R-00xx é pseudonimização, não anonimização.",
       "O fluxo desenhado mostra pelo menos cinco cópias: papel, folha de cálculo local, correio electrónico para a província, pasta partilhada e mensagem para correio pessoal.",
       "As três medidas são verificáveis, com responsável por função e prazo, e não formulações genéricas como «ter mais cuidado».",
