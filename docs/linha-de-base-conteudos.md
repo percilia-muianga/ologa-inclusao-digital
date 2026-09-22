@@ -48,3 +48,15 @@ Notas honestas:
   questão. Continua a reflectir a escrita acidental de um turno anterior
   (importação de sementes que só mexeu em datas); essa alteração não foi
   revertida, conforme decidido.
+
+## Linha de estado dos conteúdos de Inteligência Artificial (22/09/2026)
+
+| item | ficheiro privado | integrado na base | activado |
+| --- | --- | --- | --- |
+| Lições do módulo 2 (4) | sim | sim (integração editorial restrita) | não aplicável |
+| Banco de avaliação (80 + 10) | sim | **não** — ver PV-05 | **não** |
+| Configuração de exame | não existe | não existe (tabela vazia) | **não** |
+
+As três colunas são estados distintos: escrever o ficheiro não é integrar na
+base, e integrar na base não é activar. O banco de Inteligência Artificial está
+apenas na primeira coluna.

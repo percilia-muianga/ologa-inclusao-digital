@@ -878,3 +878,49 @@ da instituição.
 - Gravação na base: por autorização expressa da gestora, correu-se `scripts/integrar-m2-inteligencia-artificial.ts`, **restrito às 4 lições do módulo 2** (ordens 1 a 4) e à descrição desse módulo. Nenhum seed nem importador geral foi executado; `scripts/seed-inteligencia-artificial.ts` continua por correr. Nenhuma lição foi criada ou apagada e os identificadores mantiveram-se.
 - Verificação no navegador (22/09/2026): ficha do curso com 14 lições ligadas e zero «Em preparação»; as 4 lições novas devolvem 200, com blocos de 10/35/60/15 minutos, marca de conteúdo fictício, leitura em voz alta e as fontes oficiais com data; sem erros de consola.
 - Nenhum outro curso, banco, exame, certificado, perfil ou permissão foi tocado. Nada foi publicado.
+
+## A24 — Banco de avaliação de Inteligência Artificial (22/09/2026)
+
+**Estado: ficheiro privado escrito e verificado. NÃO integrado na base de
+dados. NÃO activado. Não aprovado pela Ologa/ATDI.**
+
+Três estados distintos, que não se confundem:
+
+| estado | situação |
+| --- | --- |
+| ficheiro privado | FEITO — `scripts/conteudo/inteligencia-artificial-questoes.ts`, fora de `src/` e de `public/` |
+| integração na base | PENDENTE — falta sessão de administração; ver PV-05 |
+| activação do exame | NÃO FEITO e não pedido — nenhuma questão activa, `exame_configuracoes` continua vazia |
+
+Dimensão e matriz (secção 10 do TdR, páginas 24 e 25: banco de pelo menos o
+triplo da prova; exemplo de 80 para uma prova de 20):
+
+- 80 questões finais + 10 de diagnóstico, instrumentos separados.
+- Módulos: 36 do módulo 1 (9 por lição), 36 do módulo 2 (9 por lição), 8 do
+  módulo transversal (as 6 lições representadas).
+- Tipos: 32 escolha múltipla, 16 verdadeiro/falso, 16 associação, 16 cenário.
+- Dificuldade: 32 fáceis, 32 médias, 16 difíceis.
+- Prova proposta: 20 itens em 60 minutos, com quotas 9/9/2 por módulo,
+  8/4/4/4 por tipo e 8/8/4 por dificuldade. **Proposta pedagógica da Ologa,
+  por validar pela ATDI; não é número imposto pelo TdR.** Quotas em
+  `src/lib/quotas-exame.ts`.
+
+Cobertura da secção 6.2 (páginas 13 e 14): conceitos e aprendizagem automática
+(módulo 1, lições 1 a 3); uso real com verificação humana, custos e dependência
+de fornecedor (módulo 1, lição 4, e módulo 2, lição 1); protecção de dados,
+minimização e reidentificação não comprovada (módulo 2, lição 2); inclusão e
+desempenho por grupos (módulo 2, lição 3); supervisão, contestação, governação
+e actores (módulo 2, lição 4); acessibilidade e indicadores (transversal).
+
+Afirmações jurídicas alinhadas com as lições já corrigidas: o Regulamento
+Europeu não é lei moçambicana nem se aplica cá automaticamente, mas o artigo
+2.º prevê alcance condicional a operadores de fora quando as saídas são usadas
+na União, a verificar caso a caso; a Recomendação da UNESCO não é vinculativa
+por si; a proposta divulgada pelo INTIC foi submetida a consulta, o que não é
+aprovação. Nenhuma lei moçambicana de inteligência artificial é afirmada.
+
+Verificação: 21 testes em `src/lib/__tests__/banco-inteligencia-artificial.test.ts`
+(dimensão, matriz, cruzamentos, validade das alternativas, contas dos cenários
+com denominadores, 200 sorteios simulados com cobertura exacta e sem
+duplicados, falha fechada quando o banco é insuficiente, ausência do banco nos
+artefactos do cliente e verificação do plano de integração).
