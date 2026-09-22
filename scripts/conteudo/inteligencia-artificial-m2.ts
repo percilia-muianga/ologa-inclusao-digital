@@ -443,7 +443,7 @@ const M2L2: ConteudoLicao = {
       "Imprimir a tabela dos dezasseis campos, os anexos A, B e C e folhas A3 em branco para o desenho do fluxo, um conjunto por grupo de três.",
       "Preparar no quadro o esquema vazio do fluxo, com seis caixas, para desenhar durante a exposição.",
       "Não é necessária ligação à internet nem ferramenta de inteligência artificial nesta lição.",
-      "Rever, antes da sessão, a advertência de que não se cita nem se interpreta legislação nacional na sala, e que as questões jurídicas seguem para a área jurídica da instituição.",
+      "Preparar a formulação a usar sempre que surgir uma questão jurídica: a aula ensina boas práticas, e a validação jurídica pede-se à área jurídica da instituição sobre o caso concreto e na data em que se decide.",
       "Ter marcadores de duas cores: uma para o caminho dos dados, outra para marcar as cópias.",
     ],
     conducao: [
