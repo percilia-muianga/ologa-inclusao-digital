@@ -701,7 +701,7 @@ const M2L4: ConteudoLicao = {
     {
       titulo: "Anexo A — fichas de papel para o comité de supervisão",
       nota:
-        "Fichas fictícias de trabalho. Cada grupo distribui os papéis entre si; um papel pode ser desempenhado por quem já tem outras funções, desde que não haja conflito de interesse.",
+        "Fichas fictícias de trabalho. Esta composição, os poderes e os prazos que aqui aparecem são um desenho institucional proposto para efeitos de formação: não correspondem a nenhuma obrigação legal universal nem a nenhum modelo aprovado. Cada serviço define o seu, dentro das suas competências. Cada grupo distribui os papéis entre si; um papel pode ser desempenhado por quem já tem outras funções, desde que não haja conflito de interesse.",
       corpo: [
         "Presidência do comité — função com poder de decisão no serviço. Convoca, decide sobre suspensão e responde perante a direcção. Não pode ser quem propôs a aquisição do sistema.",
         "Representante de quem usa o sistema — pessoa do balcão ou do sector que trabalha com as saídas todos os dias. Traz os problemas reais e tem direito a que o seu aviso fique registado e obtenha resposta escrita.",
