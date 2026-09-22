@@ -59,9 +59,9 @@ const M2L1: ConteudoLicao = {
   actividade: {
     formato: "em pares, com os anexos A e B em papel, antes de tocar no ambiente",
     enunciado: [
-      "Passo 1 (20 minutos). Classifiquem as oito ocorrências do anexo A por categoria — controlo de acesso, injecção, configuração, autenticação ou exposição de dados — e atribuam prioridade de 1 a 3, justificando a prioridade pelo que um atacante consegue a partir daquilo.",
-      "Passo 2 (25 minutos). Para O-01, O-03, O-05 e O-08, escrevam o caso de teste no formato do guia: objectivo do teste, pré-condição, passos numerados, resultado esperado se a falha existir, resultado esperado se estiver corrigida, e evidência a recolher.",
-      "Passo 3 (15 minutos). Escrevam o achado completo de O-01 como entraria num relatório: descrição, impacto, reprodução, evidência e recomendação. A recomendação deve dizer onde se corrige, não apenas o que se corrige.",
+      "Passo 1 (15 minutos). Classifiquem as oito ocorrências do anexo A por categoria — controlo de acesso, injecção, configuração, autenticação ou exposição de dados — e atribuam prioridade de 1 a 3, justificando a prioridade pelo que um atacante consegue a partir daquilo. Onde a ocorrência for apenas indício de uma categoria, escrevam «indício» e digam que teste confirmaria.",
+      "Passo 2 (10 minutos). Para O-01 e O-03, escrevam o caso de teste no formato do guia: objectivo do teste, pré-condição, passos numerados, resultado esperado se a falha existir, resultado esperado se estiver corrigida, e evidência a recolher. São estes os dois casos que vão executar no laboratório.",
+      "Passo 3 (10 minutos). Escrevam o achado completo de O-01 como entraria num relatório: descrição, impacto, reprodução, evidência e recomendação. A recomendação deve dizer onde se corrige, não apenas o que se corrige.",
     ],
     produto:
       "Anexo A classificado e priorizado, quatro casos de teste escritos no formato do guia e um achado de relatório completo para O-01.",
