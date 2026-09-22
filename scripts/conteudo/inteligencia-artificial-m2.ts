@@ -399,7 +399,7 @@ const M2L2: ConteudoLicao = {
       "O campo 16, a fotocópia do documento de identificação, é removido ou substituído por conferência presencial sem guardar cópia; guardar a fotocópia não é necessário para responder a uma reclamação.",
       "Os campos 12, 13 e 14 são mantidos, porque sem assunto, descrição e momento não é possível tratar a reclamação.",
       "As quatro perguntas respondidas com acesso indicado por função e prazo de retenção expresso em tempo, não em «o necessário»; e o prazo apresentado como proposta, com a confirmação de obrigações de arquivo e legais indicada antes de qualquer eliminação.",
-      "Na parte C, as linhas R-0041 e R-0045 são identificadas como provavelmente da mesma pessoa, pela combinação de sexo, idade, bairro, ocupação e assunto; e fica escrito que o código R-00xx é pseudonimização, não anonimização.",
+      "Na parte C, as linhas R-0041 e R-0045 são apontadas como podendo corresponder à mesma pessoa, pela combinação de sexo, idade, bairro, ocupação e assunto — sem afirmar que é a mesma pessoa, porque a combinação não o comprova: podem ser duas pessoas com as mesmas características. O que fica demonstrado é o risco de reidentificação, e fica escrito que o código R-00xx é pseudonimização e que a anonimização não está demonstrada.",
       "O fluxo desenhado mostra pelo menos cinco cópias: papel, folha de cálculo local, correio electrónico para a província, pasta partilhada e mensagem para correio pessoal.",
       "As três medidas são verificáveis, com responsável por função e prazo, e não formulações genéricas como «ter mais cuidado».",
     ],
