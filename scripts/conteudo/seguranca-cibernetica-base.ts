@@ -56,6 +56,8 @@ export type ConteudoLicao = {
   tabela?: { titulo: string; nota: string; colunas: string[]; linhas: string[][] };
   /** Material de entrada fornecido por inteiro: registos, configurações, minutas. */
   anexos?: { titulo: string; nota: string; corpo: string[] }[];
+  /** Listagens completas entregues com a lição (código didáctico, pedidos e respostas). */
+  listagens?: { titulo: string; nota: string; linhas: string[] }[];
   /** Exercício em papel. Não é laboratório e não se declara prática executada. */
   actividade: { formato: string; enunciado: string[]; produto: string; rubrica: string[] };
   laboratorio?: Laboratorio;
