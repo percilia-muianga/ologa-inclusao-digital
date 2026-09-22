@@ -124,6 +124,7 @@ async function main() {
       JSON.stringify(
         {
           modo: "plano (simulação, nenhuma escrita)",
+          baseDeDados: sb ? "identificadores resolvidos por leitura" : "não consultada (sem sessão de administrador)",
           curso: SLUG_CURSO,
           licoes: alvos.map((a) => ({
             chave: a.licao.chave,
