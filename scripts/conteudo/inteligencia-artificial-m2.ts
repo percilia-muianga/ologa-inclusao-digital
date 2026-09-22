@@ -122,7 +122,7 @@ const M2L1: ConteudoLicao = {
         "Pedido 1. «Bom dia. Venho pedir licença para colocar uma banca de venda de fruta no mercado de Muanzo, junto à entrada principal. Chamo-me Joana Fictícia Cumbe. Já entreguei a fotocópia do documento de identificação no mês passado, mas disseram-me que faltava a declaração da administração do mercado. Junto agora essa declaração. Peço deferimento.»",
         "Pedido 2. «Escrevo para reclamar do atendimento de sexta-feira. Cheguei às doze e trinta e o balcão já estava fechado, embora o aviso na porta diga treze horas. Perdi o dia de trabalho e a viagem. Peço que verifiquem o horário praticado.»",
         "Pedido 3. «Solicito certidão comprovativa de que a minha banca está registada desde dois mil e vinte e três, para apresentar ao banco. Não sei qual é o número do processo.»",
-        "Pedido 4. «Venho na sequência da notificação que recebi sobre documentos em falta. Não consigo obter a declaração pedida porque o serviço que a emite está a funcionar apenas às terças-feiras e nesse dia trabalho. Peço prazo adicional e informação sobre se posso entregar por um familiar.»",
+        "Pedido 4. «Venho na sequência da notificação que recebi sobre documentos em falta no meu pedido de renovação da licença da banca no mercado de Muanzo. Não consigo obter a declaração pedida porque o serviço que a emite está a funcionar apenas às terças-feiras e nesse dia trabalho. Peço prazo adicional para juntar esse documento ao processo de licença e informação sobre se posso entregar por um familiar.»",
         "Pedido 5. «Queremos saber quando é que a estrada que passa atrás do mercado vai ser reparada, porque com as chuvas ninguém chega às bancas. Assinam quinze comerciantes.»",
       ],
     },
