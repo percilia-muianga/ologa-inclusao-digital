@@ -411,9 +411,12 @@ const M2L2: ConteudoLicao = {
     "Para cada campo guardado: para que serve, quem vê, quanto tempo fica, e o que acontece no fim.",
     "Trocar o nome por um código é pseudonimizar. Os dados continuam a ser da pessoa.",
     "Anonimizar é perder detalhe suficiente para já não se chegar à pessoa.",
-    "Campos que sozinhos não dizem nada podem, juntos, identificar uma pessoa só.",
+    "Campos que sozinhos não dizem nada podem, juntos, apontar para uma pessoa só.",
+    "Duas linhas iguais podem ser da mesma pessoa. Não prova que são. Prova que há risco.",
+    "Se um campo não é preciso, pode ser removido. Reduzir o detalhe não é obrigação de guardar.",
     "Cada cópia dos dados é um risco. Desenhe o caminho dos dados e conte as cópias.",
     "Não se escrevem dados de pessoas em ferramentas externas sem autorização da instituição.",
+    "O prazo que escrevemos na aula é uma proposta. Antes de apagar, confirme as regras de arquivo e a área jurídica.",
     "Sobre o que a lei exige, quem responde é a área jurídica da instituição.",
   ],
   verificacao: [
