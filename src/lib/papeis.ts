@@ -94,3 +94,20 @@ export const CAMPOS_SENSIVEIS = [
   "genero",
   "tipo_deficiencia",
 ] as const;
+
+/**
+ * Papéis usados APENAS para escolher a vista do painel.
+ *
+ * Quem tem o perfil "Administrador Geral Ologa" (perfis.papel = 'admin_ologa')
+ * passa a ver a vista administrativa, mesmo sem linhas em utilizador_papeis.
+ * Isto não concede nada: as regras do servidor (is_admin, pode_gerir_programa)
+ * já reconhecem este perfil. Nenhum outro papel é acumulado — quem não tem
+ * papéis nem o perfil de administrador geral continua sem vista reservada.
+ */
+export function papeisDeVista(
+  papeis: PapelSistema[],
+  administradorGeral: boolean,
+): PapelSistema[] {
+  if (!administradorGeral) return papeis;
+  return papeis.includes("admin_atdi") ? papeis : ["admin_atdi", ...papeis];
+}

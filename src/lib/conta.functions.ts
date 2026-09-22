@@ -14,11 +14,19 @@ export type PerfilSessao = {
   genero: string | null;
   tipo_deficiencia: string | null;
   conta_de_teste: boolean;
+  /** Perfil do LMS gravado em perfis.papel. */
+  papel: string;
 };
 
 export type Sessao = {
   perfil: PerfilSessao | null;
   papeis: PapelSistema[];
+  /**
+   * Verdadeiro quando perfis.papel === "admin_ologa". Calculado no servidor a
+   * partir do perfil já existente; não concede nada de novo — as regras da
+   * base de dados (is_admin) já reconhecem este perfil.
+   */
+  administradorGeral: boolean;
 };
 
 /**
@@ -70,7 +78,7 @@ export const garantirPerfil = createServerFn({ method: "POST" })
       const { data: perfil } = await supabaseAdmin
         .from("perfis")
         .select(
-          "id, nome, email, telefone, entidade_empregadora, provincia, distrito, cargo, genero, tipo_deficiencia, conta_de_teste",
+          "id, nome, email, telefone, entidade_empregadora, provincia, distrito, cargo, genero, tipo_deficiencia, conta_de_teste, papel",
         )
         .eq("id", uid)
         .maybeSingle();
@@ -78,9 +86,11 @@ export const garantirPerfil = createServerFn({ method: "POST" })
         .from("utilizador_papeis")
         .select("papel")
         .eq("utilizador_id", uid);
+      const p = (perfil as PerfilSessao | null) ?? null;
       return {
-        perfil: (perfil as PerfilSessao | null) ?? null,
-        papeis: (papeis ?? []).map((p) => p.papel as PapelSistema),
+        perfil: p,
+        papeis: (papeis ?? []).map((r) => r.papel as PapelSistema),
+        administradorGeral: p?.papel === "admin_ologa",
       };
     }
   });
@@ -92,7 +102,7 @@ export const obterSessao = createServerFn({ method: "GET" })
     const { data: perfil } = await context.supabase
       .from("perfis")
       .select(
-        "id, nome, email, telefone, entidade_empregadora, provincia, distrito, cargo, genero, tipo_deficiencia, conta_de_teste",
+        "id, nome, email, telefone, entidade_empregadora, provincia, distrito, cargo, genero, tipo_deficiencia, conta_de_teste, papel",
       )
       .eq("id", context.userId)
       .maybeSingle();
@@ -102,9 +112,11 @@ export const obterSessao = createServerFn({ method: "GET" })
       .select("papel")
       .eq("utilizador_id", context.userId);
 
+    const perfilLido = (perfil as PerfilSessao | null) ?? null;
     return {
-      perfil: (perfil as PerfilSessao | null) ?? null,
-      papeis: (papeis ?? []).map((p) => p.papel as PapelSistema),
+      perfil: perfilLido,
+      papeis: (papeis ?? []).map((r) => r.papel as PapelSistema),
+      administradorGeral: perfilLido?.papel === "admin_ologa",
     };
   });
 
