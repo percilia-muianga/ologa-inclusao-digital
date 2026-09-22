@@ -345,7 +345,8 @@ const M2L2: ConteudoLicao = {
   },
   anexos: [
     {
-      titulo: "Anexo A — quatro perguntas obrigatórias por campo mantido",
+      titulo:
+        "Anexo A — quatro perguntas obrigatórias por campo mantido, e a confirmação antes de eliminar",
       nota: "Grelha de trabalho. Preenche-se apenas para os campos que o grupo decidir manter.",
       corpo: [
         "Finalidade: que decisão concreta do serviço deixa de ser possível se este campo ficar em branco?",
