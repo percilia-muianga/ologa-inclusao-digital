@@ -65,7 +65,7 @@ Registado em `ESTADO_EDITORIAL_INTERNO`
 | Item | Estado real | O que a plataforma mostra |
 | --- | --- | --- |
 | Módulo 1, 4 lições | escritas pela equipa, **não validadas** pela Ologa/ATDI | conteúdo disponível, sem rótulo editorial |
-| Módulo 2, 4 lições | escritas pela equipa em 22/09/2026, **não validadas** pela Ologa/ATDI; **ainda não gravadas na base** (seed por executar, a aguardar autorização) | enquanto o seed não correr, continua «Em preparação», sem ligação |
+| Módulo 2, 4 lições | escritas pela equipa em 22/09/2026, **não validadas** pela Ologa/ATDI; gravadas na base em 22/09/2026 por integração editorial restrita às 4 lições (`scripts/integrar-m2-inteligencia-artificial.ts`), autorizada pela gestora | conteúdo disponível, sem rótulo editorial |
 | Módulo transversal, 6 lições | já existia | conteúdo disponível |
 | Banco de questões do curso | por preparar; nenhuma questão criada | nada anunciado; a ficha diz que a avaliação final é disponibilizada em fase posterior |
 | Exame final | não activo, não emite certificados | nada anunciado |

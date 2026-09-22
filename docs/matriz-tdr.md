@@ -875,5 +875,6 @@ da instituição.
 - Todos os casos, pedidos, tabelas e números são fictícios e estão assinalados como tal.
 - Banco de questões do curso continua **por preparar e inactivo**; o exame não está activo e não emite certificados.
 - Língua de Sinais de Moçambique, vídeo, legendagem e revisão de acessibilidade por terceiros: continuam inexistentes e não anunciados.
-- **Nada foi gravado na base de dados neste bloco**: nenhum seed nem importador foi executado. O conteúdo só chegará à plataforma quando a gestora autorizar expressamente a execução de `scripts/seed-inteligencia-artificial.ts`.
+- Gravação na base: por autorização expressa da gestora, correu-se `scripts/integrar-m2-inteligencia-artificial.ts`, **restrito às 4 lições do módulo 2** (ordens 1 a 4) e à descrição desse módulo. Nenhum seed nem importador geral foi executado; `scripts/seed-inteligencia-artificial.ts` continua por correr. Nenhuma lição foi criada ou apagada e os identificadores mantiveram-se.
+- Verificação no navegador (22/09/2026): ficha do curso com 14 lições ligadas e zero «Em preparação»; as 4 lições novas devolvem 200, com blocos de 10/35/60/15 minutos, marca de conteúdo fictício, leitura em voz alta e as fontes oficiais com data; sem erros de consola.
 - Nenhum outro curso, banco, exame, certificado, perfil ou permissão foi tocado. Nada foi publicado.
