@@ -158,21 +158,36 @@ describe("banco de IA — validade dos itens", () => {
     const em = EXAME_IA.filter((q) => q.t === "em");
     const posicoes = contar(em.map((q) => String(q.ind)));
     expect(Object.keys(posicoes).length).toBeGreaterThanOrEqual(3);
+    // só é pista quando a correcta é ESTRITAMENTE a mais longa: opções de
+    // comprimento igual não dão indicação nenhuma a quem responde
     const maisLonga = em.filter((q) => {
-      const maior = Math.max(...q.opts!.map((o) => o.length));
-      return q.opts![q.ind!]!.length === maior;
+      const correcta = q.opts![q.ind!]!.length;
+      return q.opts!.every((o, i) => i === q.ind || o.length < correcta);
     });
-    // a correcta não pode ser a mais longa na larga maioria dos itens
-    expect(maisLonga.length / em.length).toBeLessThan(0.75);
+    // a correcta não pode ser a mais longa na maioria dos itens
+    expect(maisLonga.length / em.length).toBeLessThan(0.6);
   });
 
-  it("os cenários trazem dados quantificados no enunciado", () => {
+  it("os cenários trazem no enunciado todos os dados necessários", () => {
+    // Um cenário pode ser qualitativo — situação de trabalho a julgar — ou
+    // quantitativo. Em ambos os casos, o enunciado tem de ser auto-suficiente:
+    // identificado como fictício e com a descrição completa da situação.
+    // Quando o cenário exige conta, os números têm de estar no enunciado.
     const cenarios = EXAME_IA.filter((q) => q.cen);
     expect(cenarios).toHaveLength(16);
+    let quantitativos = 0;
     for (const q of cenarios) {
       expect(q.e).toMatch(/fictício|fictícia/i);
-      expect((q.e.match(/\d/g) ?? []).length).toBeGreaterThanOrEqual(2);
+      expect(q.e.length).toBeGreaterThan(150);
+      const digitos = (q.e.match(/\d/g) ?? []).length;
+      if (digitos > 0) {
+        // nunca um número solto: dados quantificados vêm sempre acompanhados
+        expect(digitos).toBeGreaterThanOrEqual(2);
+        quantitativos++;
+      }
     }
+    // a categoria mantém peso quantitativo relevante, sem o exigir de todos
+    expect(quantitativos).toBeGreaterThanOrEqual(8);
   });
 
   it("contas dos cenários calculáveis conferem", () => {
@@ -197,8 +212,14 @@ describe("banco de IA — validade dos itens", () => {
   });
 
   it("afirmações jurídicas seguem as fontes verificadas", () => {
+    // a natureza jurídica de cada instrumento é ensinada também nos itens de
+    // associação, pelo que os pares entram no texto consolidado
     const texto = [...EXAME_IA, ...DIAGNOSTICO_IA]
-      .map((q) => `${q.e} ${q.exp} ${(q.opts ?? []).join(" ")}`)
+      .map(
+        (q) =>
+          `${q.e} ${q.exp} ${(q.opts ?? []).join(" ")} ` +
+          `${(q.pares ?? []).map((p) => `${p.esquerda} ${p.direita}`).join(" ")}`,
+      )
       .join(" ")
       .toLowerCase();
     expect(texto).not.toContain("lei moçambicana de inteligência artificial");
