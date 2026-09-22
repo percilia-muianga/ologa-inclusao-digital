@@ -82,6 +82,14 @@ function OlogaPage() {
         Saltar para o conteúdo principal
       </a>
       <main id="conteudo" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <p className="mb-4">
+          <Link
+            to="/painel"
+            className="inline-flex min-h-11 items-center text-base font-semibold text-ink underline"
+          >
+            ← Voltar à área reservada
+          </Link>
+        </p>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-3xl font-extrabold text-ink">Ologa — Instituições</h1>
           <div className="flex flex-wrap gap-2">
