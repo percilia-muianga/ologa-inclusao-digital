@@ -125,6 +125,9 @@ describe("mensagens e identificação do perfil", () => {
       expect(m.length).toBeGreaterThan(10);
     }
     expect(explicarErro("ESTADO_ALTERADO")).toContain("Nada foi gravado");
+    expect(explicarErro("CONFLITO_QUESTOES_DIFERENTES: IA-M1-001")).toContain(
+      "nunca substitui revisão humana",
+    );
   });
 
   it("o perfil admin_ologa é identificado como Administrador Geral Ologa", () => {
