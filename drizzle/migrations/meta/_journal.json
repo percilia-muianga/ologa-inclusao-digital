@@ -127,6 +127,13 @@
       "when": 1790024589803,
       "tag": "0017_actor_verificado_certificacao_tentativas_formandos",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790053686825,
+      "tag": "0018_rpc_importacao_conteudos_preparados",
+      "breakpoints": true
     }
   ]
 }

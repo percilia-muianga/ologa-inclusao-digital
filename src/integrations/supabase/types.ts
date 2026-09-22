@@ -2056,6 +2056,18 @@ export type Database = {
           cert_emitido_em: string
         }[]
       }
+      rpc_conteudos_banco_ia: {
+        Args: { _actor: string; _payload: Json }
+        Returns: Json
+      }
+      rpc_conteudos_seguranca_cibernetica: {
+        Args: {
+          _actor: string
+          _confirmar_substituicao?: boolean
+          _payload: Json
+        }
+        Returns: Json
+      }
       rpc_exame_resposta_guardar: {
         Args: {
           _actor: string
