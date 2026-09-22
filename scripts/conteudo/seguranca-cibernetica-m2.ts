@@ -64,12 +64,13 @@ const M2L1: ConteudoLicao = {
       "Passo 3 (10 minutos). Escrevam o achado completo de O-01 como entraria num relatório: descrição, impacto, reprodução, evidência e recomendação. A recomendação deve dizer onde se corrige, não apenas o que se corrige.",
     ],
     produto:
-      "Anexo A classificado e priorizado, quatro casos de teste escritos no formato do guia e um achado de relatório completo para O-01.",
+      "Anexo A classificado e priorizado, dois casos de teste escritos no formato do guia e um achado de relatório completo para O-01.",
     rubrica: [
-      "O-01 e O-03 estão classificadas como controlo de acesso; O-02 e O-05 como injecção; O-06, O-07 e O-08 como configuração; O-04 como gestão de sessão e autenticação.",
-      "A prioridade de O-08 é máxima: a senha da base de dados exposta dá acesso directo aos dados.",
+      "O-01 e O-03 estão classificadas como controlo de acesso; O-05 como injecção no navegador; O-06, O-07 e O-08 como configuração; O-04 como gestão de sessão e autenticação.",
+      "O-02 é classificada como indício de injecção na consulta à base de dados, e não como injecção confirmada: uma mensagem de erro provocada por uma plica mostra que a entrada chega ao motor da base de dados sem tratamento adequado e que a aplicação revela detalhes internos no erro, o que já é achado próprio. A confirmação exige um teste adicional, autorizado e registado, que demonstre alteração do comportamento da consulta.",
+      "A prioridade de O-08 é alta e justificada assim: um ficheiro de configuração acessível com credenciais é exposição grave de credenciais e obriga a trocá-las. Não se conclui daí, sem verificação, que exista acesso directo à base de dados — isso depende de a base aceitar ligações a partir de onde o atacante está, de as credenciais ainda serem válidas e das permissões associadas. O achado escreve-se com esta distinção entre o que foi observado e o que ainda é hipótese.",
       "Os casos de teste indicam evidência concreta a recolher — captura de ecrã, pedido e resposta, hora — e não apenas «verificar se funciona».",
-      "A recomendação de O-01 exige verificação de autorização no servidor com base na sessão, e não esconder a ligação na interface.",
+      "A recomendação de O-01 exige verificação de autorização no servidor, aplicando as regras de acesso escritas da instituição — titular, perfil ou âmbito, conforme o caso — e não esconder a ligação na interface.",
       "O achado não conclui que a aplicação é segura nem generaliza para além do que foi testado.",
     ],
   },
