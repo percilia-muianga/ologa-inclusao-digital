@@ -40,7 +40,12 @@ export const QUOTAS_POR_CURSO: Record<string, QuotasCurso> = {
     },
     nota: "Proposta pedagógica, por validar pela Ologa/ATDI: 6 de Fundamentos da Transformação Digital (111), 6 de Serviços Públicos Centrados no Cidadão (112), 6 de Implementação e Mudança Institucional (113) e 2 do módulo transversal Governo Digital Inclusivo e Acessibilidade (200); 8 de escolha múltipla, 4 de verdadeiro/falso, 4 de associação, 2 de ordenação e 2 de cenário. O cenário conta como categoria própria e exclui a classificação como escolha múltipla, mesmo usando esse formato de resposta.",
   },
-
+  "introducao-inteligencia-artificial": {
+    total: 20,
+    modulosPorOrdem: { 121: 9, 122: 9, 200: 2 },
+    tipos: { escolha_multipla: 8, verdadeiro_falso: 4, correspondencia: 4, cenario: 4 },
+    nota: "Proposta pedagógica, por validar pela Ologa/ATDI: 9 de Fundamentos de Inteligência Artificial (121), 9 de Uso Responsável da Inteligência Artificial (122) e 2 do módulo transversal Governo Digital Inclusivo e Acessibilidade (200); 8 de escolha múltipla, 4 de verdadeiro/falso, 4 de associação e 4 de cenário; 8 fáceis, 8 médias e 4 difíceis. Prova de 20 itens em 60 minutos: proposta pedagógica, não número imposto pelo Termo de Referência. O cenário conta como categoria própria, mesmo usando escolha múltipla ou verdadeiro/falso como formato de resposta.",
+  },
 };
 
 /** Quotas de dificuldade a partir das percentagens configuradas. */
