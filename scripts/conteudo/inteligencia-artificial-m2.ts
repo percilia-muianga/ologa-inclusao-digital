@@ -276,6 +276,9 @@ const M2L1: ConteudoLicao = {
     ],
     errosComuns: [
       "Escrever uma alternativa de fachada, que ninguém consideraria a sério, só para justificar a escolha da ferramenta.",
+      "Colar apenas a instrução do anexo C e os pedidos do anexo A, esquecendo as regras de triagem do anexo B numa das execuções.",
+      "Aceitar «informação em falta: nenhuma» no pedido 3, quando o número do processo não consta.",
+      "Tratar um encaminhamento errado como inofensivo por ser corrigível, esquecendo o atraso que causa a quem espera resposta.",
       "Esquecer o tempo de verificação na coluna do custo.",
       "Confundir propor sector com decidir o pedido.",
       "Não notar a frase do pedido 4 sobre conceder prazo, por parecer razoável.",
