@@ -142,7 +142,7 @@ const M2L1: ConteudoLicao = {
     {
       titulo: "Anexo C — instrução concreta a usar na primeira execução",
       nota:
-        "Instrução escrita para esta aula. Copia-se tal e qual na primeira execução; a segunda execução usa a versão melhorada pelo par.",
+        "Instrução escrita para esta aula. Copia-se tal e qual na primeira execução, sempre acompanhada das regras de triagem do anexo B e dos pedidos do anexo A; a segunda execução usa a versão melhorada pelo par, também com o anexo B e o anexo A.",
       corpo: [
         "«Vais receber cinco pedidos escritos por munícipes, que são fictícios. Para cada pedido produz exactamente três coisas: primeiro, um resumo de duas linhas, em português simples, que não acrescente nada que não esteja no texto; segundo, uma proposta de sector, escolhida apenas de entre estas quatro opções — Licenciamento, Atendimento e reclamações, Certidões e arquivo, Fora da competência desta direcção; terceiro, a lista da informação necessária que falta no pedido.",
         "Regras obrigatórias. Se alguma informação não constar do pedido, escreve «não consta» e não inventes. Não decidas se o pedido é deferido ou indeferido, não proponhas sanções, não indiques prazos legais e não cites legislação: essas decisões são de pessoa competente. Não acrescentes nomes, números, datas ou moradas que não estejam no texto. Apresenta o resultado em tabela com as colunas: número do pedido, resumo, sector proposto, informação em falta.»",
