@@ -11,7 +11,7 @@ secção do Termo de Referência for trabalhada.
 | Princípios da Transformação Digital | 24 h | virtual | 24 h | implementado e verificado na base |
 | Introdução à Inteligência Artificial | 20 h | presencial | 20 h (era 16) | corrigido e verificado |
 | Computação em Nuvem | 30 h | presencial | 30 h | implementado |
-| Segurança Cibernética Avançada | 30 h | presencial | 30 h | implementado |
+| Segurança Cibernética Avançada | 30 h | presencial | 30 h | plano corrigido (era 32 h); 15 lições escritas, sincronização na base pendente — ver PV-06 |
 | Redes Avançadas e Introdução à Segurança Cibernética | 80 h | presencial | 80 h (era 120) | corrigido e verificado |
 | Tecnologias Digitais do Governo | 10 h | presencial | 10 h | implementado |
 

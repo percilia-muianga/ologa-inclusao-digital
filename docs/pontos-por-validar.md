@@ -131,3 +131,53 @@ Registado a 22 de Setembro de 2026.
 Para integrar, quando houver decisão: correr primeiro o plano
 (`--plano`, que não escreve nada) e depois `--integrar` com a sessão de
 administração. O comando é idempotente pela chave instrumento + enunciado.
+
+---
+
+## PV-06 — Segurança Cibernética Avançada: conteúdos escritos, base de dados por sincronizar
+
+Registado a 22 de Setembro de 2026.
+
+- **Erro corrigido no plano.** A configuração anterior somava 15 lições de 120
+  minutos (30 h) **mais** 2 h do módulo transversal e 0 minutos de avaliação,
+  ou seja 32 h. O plano em `src/lib/plano-seguranca-cibernetica.ts` passa a
+  repartir 1800 minutos: módulo 1 com 480, módulo 2 com 600, módulo 3 com 480,
+  transversal com 120 (contado uma única vez) e 120 de diagnóstico, revisão e
+  exame. **A repartição interna é proposta pedagógica da equipa**; o que o
+  Termo de Referência fixa é o total de 30 horas (secção 14) e o conteúdo
+  programático da secção 6.4, página 15.
+- **Conteúdo das 15 lições: escrito.** Ficheiros privados
+  `scripts/conteudo/seguranca-cibernetica-base.ts`, `-m1.ts`, `-m2.ts`,
+  `-m3.ts` e o agregador `-licoes.ts`. Vivem fora de `src/` e de `public/`.
+  Títulos, ordens e identificadores das lições existentes são preservados.
+- **Sincronização na base de dados: PENDENTE.** Na base, as 15 lições continuam
+  com `estado_conteudo = por_fornecer`, `duracao_minutos` nula e os títulos
+  antigos; a ficha do curso continua vazia. O integrador restrito existe
+  (`scripts/integrar-seguranca-cibernetica.ts`): `--plano` é simulação e não
+  escreve nada; `--integrar` exige sessão real de administrador
+  (`ADMIN_EMAIL`/`ADMIN_PASSWORD`) e a chave de serviço é rejeitada, para que a
+  autoria e a auditoria fiquem numa pessoa real. **Não foi executado:** não há
+  credenciais de administração neste ambiente. A simulação correu e montou as
+  15 lições sem tocar na base.
+- **Fora do âmbito do integrador, mesmo com sessão:** a ficha do curso
+  (`cursos.*`), as ligações e cargas em `curso_modulos` — onde os três módulos
+  ainda constam com 600 minutos cada e o módulo transversal não está ligado a
+  este curso — e qualquer outro curso. Estas alterações precisam de decisão e
+  autorização próprias.
+- **Laboratórios: escritos, nunca executados.** Cada laboratório corre em
+  máquinas virtuais numa rede isolada, com autorização escrita, verificação de
+  sucesso observável e reversão. Não se descarrega nem se executa software
+  malicioso real. A alternativa offline é análise documental e **não** conta
+  como prática executada.
+- **Banco de avaliação e exame: não preparados e não activos.** Nenhuma questão
+  foi criada para este curso.
+- **Validação pedagógica pela Ologa/ATDI: pendente.** Nenhuma norma, nenhuma
+  certificação e nenhuma revisão externa são alegadas. O quadro NIST, o
+  catálogo CISA e o guia OWASP são referências internacionais voluntárias: não
+  são lei moçambicana e não criam prazos nem obrigações.
+- **Verificação:** 13 testes em `src/lib/__tests__/seguranca-cibernetica.test.ts`
+  (total de 1800 minutos, repartição por módulo, 15 lições e blocos de tempo,
+  cobertura dos 16 tópicos e dos 10 resultados da secção 6.4, conteúdo
+  substantivo por lição, laboratórios com reversão e alternativa offline,
+  referências datadas, montagem do conteúdo e do guião, e ausência de perguntas
+  ou gabaritos de exame).

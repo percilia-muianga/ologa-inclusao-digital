@@ -60,3 +60,12 @@ Notas honestas:
 As três colunas são estados distintos: escrever o ficheiro não é integrar na
 base, e integrar na base não é activar. O banco de Inteligência Artificial está
 apenas na primeira coluna.
+
+## Segurança Cibernética Avançada — estado a 22 de Setembro de 2026
+
+Nenhuma escrita foi feita na base de dados por causa deste curso. As 15 lições
+mantêm os identificadores, as ordens e o estado `por_fornecer` registados na
+linha de base acima; os três módulos mantêm 600 minutos cada em
+`curso_modulos` e a ficha do curso mantém-se vazia. O conteúdo escrito vive
+apenas em ficheiros privados fora de `src/` e a sincronização está pendente de
+sessão de administrador — ver PV-06 em `docs/pontos-por-validar.md`.
