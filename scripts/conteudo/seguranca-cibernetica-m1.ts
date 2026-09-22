@@ -114,7 +114,7 @@ const M1L1: ConteudoLicao = {
       "Apresentar os objectivos e pedir a cada pessoa que escreva, em trinta segundos, qual o sistema cuja paragem mais se nota no atendimento. Recolher três respostas em voz alta.",
       "Expor a tríade aplicada a activos concretos, o inventário mínimo útil, a fórmula de risco com a escala definida e as seis funções do quadro. Usar o caso de Muteva como fio condutor e nomear explicitamente a dependência oculta do portal.",
       "Acompanhar os grupos nos quatro passos. Insistir em consequências concretas nas classificações altas e verificar as contas de risco grupo a grupo.",
-      "Dois grupos apresentam a ordenação e as lacunas encontradas. Fechar com a ideia de que a lacuna mais comum é Detectar, que é o tema do módulo 2.",
+      "Dois grupos apresentam a ordenação e as lacunas encontradas. Fechar ligando as lacunas que os grupos encontraram — no caso fictício, Detectar e Recuperar — ao módulo 2, sem afirmar que essas são as lacunas de todas as instituições.",
     ],
     criterios: [
       "Inventário classificado com justificação nas classificações altas.",
