@@ -134,6 +134,13 @@
       "when": 1790053686825,
       "tag": "0018_rpc_importacao_conteudos_preparados",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790053828250,
+      "tag": "0019_revogar_execute_rpc_conteudos_preparados",
+      "breakpoints": true
     }
   ]
 }
