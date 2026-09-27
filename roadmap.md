@@ -167,3 +167,4 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [ ] Agregador, pacote server-only, importador/UI, SQL de políticas por aprovar (não aplicar)
 - [ ] Matriz TdR, docs internos (contradição 120/80 h), testes, tipos/build, privacidade
 - [ ] Laboratórios: nenhum executado (ambiente sem permissão para espaços de nomes de rede)
+- [x] Lei n.º 10/2024 corrigida (deficiência, não dados); limpeza do lab com pré-verificação e PIDs por espaço de nomes
