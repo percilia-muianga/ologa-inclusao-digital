@@ -183,6 +183,13 @@
       "when": 1790543222084,
       "tag": "0025_importacao_tecnologias_governo_verificacoes",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1790544037578,
+      "tag": "0026_politicas_tecnologias_governo",
+      "breakpoints": true
     }
   ]
 }
