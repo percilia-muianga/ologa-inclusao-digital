@@ -138,8 +138,14 @@ export function explicarErro(mensagem: string): string {
   if (mensagem.includes("PAYLOAD") || mensagem.includes("INVALID") || mensagem.includes("MATRIZ"))
     return "O pacote preparado não passou na verificação da base de dados. Nada foi gravado.";
   if (mensagem.includes("permission denied") || mensagem.includes("row-level security"))
-    return "A base de dados recusou a escrita para esta conta. Nada foi gravado.";
-  return "Não foi possível importar. Nada foi gravado.";
+    return "A base de dados recusou a escrita para esta conta (código REGRA_DE_ACESSO). Nada foi gravado.";
+  if (mensagem.includes("check constraint"))
+    return "Um valor do pacote não é aceite pelas regras da base de dados (código REGRA_DE_VALIDACAO). Nada foi gravado.";
+  if (mensagem.includes("duplicate key") || mensagem.includes("unique constraint"))
+    return "Já existe um registo com a mesma identificação (código REGISTO_DUPLICADO). Nada foi gravado.";
+  if (mensagem.includes("foreign key"))
+    return "O pacote refere um registo que não existe na plataforma (código REFERENCIA_INEXISTENTE). Nada foi gravado.";
+  return "Não foi possível importar (código ERRO_DESCONHECIDO). Nada foi gravado.";
 }
 
 export const importarConteudosPreparados = createServerFn({ method: "POST" })

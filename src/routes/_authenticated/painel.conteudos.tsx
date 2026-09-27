@@ -36,6 +36,28 @@ const NOMES: Record<string, string> = {
     "Banco de avaliação de Inteligência Artificial (80 de exame + 10 de diagnóstico, todas inactivas)",
 };
 
+const ROTULOS: Record<string, string> = {
+  exame_final: "questões do exame final",
+  pre_pos_teste: "questões de diagnóstico",
+  activas: "questões activas",
+  porModulo: "por módulo",
+  porTipo: "por tipo",
+  porDificuldade: "por dificuldade",
+  escolha_multipla: "escolha múltipla",
+  verdadeiro_falso: "verdadeiro ou falso",
+  correspondencia: "correspondência",
+  cenario: "cenário",
+  facil: "fácil",
+  media: "média",
+  dificil: "difícil",
+  fora_de_rascunho: "fora de rascunho",
+  sem_codigo: "sem código",
+};
+
+function rotulo(k: string) {
+  return ROTULOS[k] ?? k.replaceAll("_", " ");
+}
+
 function ConteudosPreparados() {
   const obter = useServerFn(estadoConteudosPreparados);
   const importar = useServerFn(importarConteudosPreparados);
@@ -109,9 +131,19 @@ function ConteudosPreparados() {
                 <h3 className="text-base font-bold text-navy">O que o pacote traz</h3>
                 <ul className="mt-2 space-y-1 text-base text-navy-2">
                   {Object.entries(p.previsto).map(([k, v]) => (
-                    <li key={k}>
-                      {k.replaceAll("_", " ")}:{" "}
-                      <strong>{typeof v === "object" ? JSON.stringify(v) : String(v)}</strong>
+                    <li key={k} className="break-words">
+                      {rotulo(k)}:{" "}
+                      {v !== null && typeof v === "object" && !Array.isArray(v) ? (
+                        <ul className="mt-1 ml-5 list-disc space-y-0.5">
+                          {Object.entries(v).map(([k2, v2]) => (
+                            <li key={k2}>
+                              {rotulo(k2)}: <strong>{String(v2)}</strong>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <strong>{Array.isArray(v) ? v.join(", ") : String(v)}</strong>
+                      )}
                     </li>
                   ))}
                 </ul>
