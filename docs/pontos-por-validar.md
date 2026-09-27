@@ -230,7 +230,7 @@ Registado a 22 de Setembro de 2026.
   exame não preparado; sem vídeo, legendas nem Língua de Sinais.
 
 ## Tecnologias Digitais do Governo — pendências internas (27/09/2026)
-- Regras de escrita UPDATE em `cursos` e `curso_modulos` para este curso: SQL revisável em `docs/migracoes-por-autorizar/politicas-tecnologias-governo.sql`, NÃO aplicado. Sem elas a importação falha fechada.
+- Regras de escrita UPDATE em `cursos` e `curso_modulos` para este curso: APLICADAS em 27-09-2026 (migração 0026), após autorização expressa; só admin_ologa e só este curso. Importação real pela conta da utilizadora ainda pendente.
 - Validação pedagógica Ologa/ATDI das 5 lições e da repartição 360+120+120 (proposta interna, não fixada pelos TdR).
 - Portal do Cidadão sem texto legível na consulta: serviços/passos concretos não descritos.
 - Sem manuais oficiais de CorreioGov, CloudGov, Sistema de Assinatura Digital e Plataforma do Funcionário: prática real depende de ambientes de treino da ATDI.
