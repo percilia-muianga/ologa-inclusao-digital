@@ -13,7 +13,7 @@ secção do Termo de Referência for trabalhada.
 | Computação em Nuvem | 30 h | presencial | 30 h | implementado |
 | Segurança Cibernética Avançada | 30 h | presencial | 30 h | plano corrigido (era 32 h); 15 lições escritas, sincronização na base pendente — ver PV-06 |
 | Redes Avançadas e Introdução à Segurança Cibernética | 80 h | presencial | 80 h (era 120) | corrigido e verificado |
-| Tecnologias Digitais do Governo | 10 h | presencial | 10 h | implementado |
+| Tecnologias Digitais do Governo | 10 h | presencial | 10 h (proposta 360+120+120; conteúdo escrito, importação bloqueada por falta de regra de escrita) | parcial |
 
 **Referência provisória, pendente de esclarecimento da ATDI.** O documento de
 concurso contém divergências internas: a secção 6.2 (pág. 13) indica um máximo

@@ -169,6 +169,13 @@
       "when": 1790541692175,
       "tag": "0023_banco_questoes_estado_rascunho",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1790542955074,
+      "tag": "0024_importacao_tecnologias_governo_invoker",
+      "breakpoints": true
     }
   ]
 }

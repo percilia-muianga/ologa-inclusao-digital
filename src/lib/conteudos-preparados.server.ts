@@ -136,3 +136,43 @@ export function payloadBancoIA(): { questoes: QuestaoPayload[] } {
 export function resumoBancoIA() {
   return resumoPlano(planoIntegracao());
 }
+
+// ---- Pacote 3 — Tecnologias Digitais do Governo ----
+import {
+  CARGA_HORARIA_HORAS as TDG_HORAS,
+  MODALIDADE as TDG_MODALIDADE,
+  FICHA_CURSO as TDG_FICHA,
+  NOTA_CARGA as TDG_NOTA,
+  DESCRICAO_MODULO as TDG_DESCRICAO,
+  MINUTOS_LICOES as TDG_MIN_LICOES,
+  MINUTOS_TRANSVERSAL as TDG_TRANSVERSAL,
+  MINUTOS_AVALIACAO_ORIENTACAO as TDG_AVAL,
+} from "./plano-tecnologias-governo";
+import { montarTodas as montarTodasTdg } from "../../scripts/conteudo/tecnologias-governo-licoes";
+
+/** Pacote 3 — 5 lições, ficha, descrição do módulo temático e horas (600 min). */
+export function payloadTecnologiasGoverno() {
+  const licoes = montarTodasTdg();
+  if (licoes.length !== 5) throw new Error("PACOTE_INCOMPLETO");
+  return {
+    curso: {
+      carga_horaria: TDG_HORAS,
+      modalidade: TDG_MODALIDADE,
+      objectivos: TDG_FICHA.objectivos,
+      publico_alvo: TDG_FICHA.publicoAlvo,
+      pre_requisitos: TDG_FICHA.preRequisitos,
+      materiais: TDG_FICHA.materiais,
+      nota: TDG_NOTA,
+      minutos_avaliacao_orientacao: TDG_AVAL,
+    },
+    modulo: { descricao: TDG_DESCRICAO, minutos: TDG_MIN_LICOES },
+    transversal_minutos: TDG_TRANSVERSAL,
+    licoes: licoes.map((l) => ({
+      ordem: l.ordem,
+      titulo: l.titulo,
+      minutos: l.minutos,
+      elearning: l.elearning,
+      guiao: l.guiao,
+    })),
+  };
+}

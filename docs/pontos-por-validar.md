@@ -200,3 +200,31 @@ Registado a 22 de Setembro de 2026.
   substantivo por lição, laboratórios com reversão e alternativa offline,
   referências datadas, montagem do conteúdo e do guião, e ausência de perguntas
   ou gabaritos de exame).
+
+## Tecnologias Digitais do Governo (TdR 6.6, p. 17; secção 14, p. 29)
+
+- **Conteúdo escrito, não gravado.** 5 lições completas (60/75/75/75/75 min),
+  ficha, descrição do módulo e guiões em `scripts/conteudo/tecnologias-governo-licoes.ts`;
+  plano em `src/lib/plano-tecnologias-governo.ts`. Na plataforma, as 5 lições
+  continuam «por fornecer» até a importação ser feita.
+- **Horas (proposta interna, não fixada pelos TdR):** 360 lições + 120
+  transversal (uma vez) + 120 avaliação (20/40/60) = 600 min. Hoje a base
+  regista 600 no módulo temático + 120 transversal + 0 avaliação = 720.
+- **Matriz dos 9 tópicos:** L1 Portal do Governo, Portal do Cidadão; L2 Uso e
+  Gestão de contas do CorreioGov; L3 Gestão Documental, Assinatura Digital;
+  L4 CloudGov, Plataforma do Funcionário e Agente do Estado; L5 Interoperabilidade.
+- **Importação bloqueada — falta regra de escrita.** As funções da base
+  (`rpc_estado_tecnologias_governo`, `rpc_importar_tecnologias_governo`,
+  SECURITY INVOKER) existem, mas as regras de escrita em `cursos` e
+  `curso_modulos` só abrangem Segurança Cibernética. Para desbloquear é
+  preciso decisão expressa: política UPDATE para `e_admin_geral_ologa(auth.uid())`
+  e `slug = 'tecnologias-digitais-governo'` nas duas tabelas. Sem ela a
+  importação falha fechada e nada é gravado.
+- **Fontes consultadas a 27/09/2026:** Portal do Governo (menu confirmado);
+  Portal do Cidadão (sem texto legível — serviços não descritos); ATDI (só
+  título). Propostas INTIC 2026 sobre interoperabilidade não são lei aprovada.
+- **Pendentes:** prática real nos sistemas (CorreioGov, CloudGov, gestão
+  documental, assinatura digital, plataforma do funcionário, interoperabilidade)
+  depende de ambientes de treino da ATDI; manuais oficiais não disponíveis;
+  validação pedagógica Ologa/ATDI pendente; nenhuma execução em sala; banco de
+  exame não preparado; sem vídeo, legendas nem Língua de Sinais.
