@@ -2074,6 +2074,7 @@ export type Database = {
       }
       rpc_estado_banco_ia: { Args: never; Returns: Json }
       rpc_estado_seguranca_cibernetica: { Args: never; Returns: Json }
+      rpc_estado_tecnologias_governo: { Args: never; Returns: Json }
       rpc_exame_resposta_guardar: {
         Args: {
           _actor: string
@@ -2129,6 +2130,10 @@ export type Database = {
         Returns: Json
       }
       rpc_importar_seguranca_cibernetica: {
+        Args: { _hash_estado: string; _payload: Json }
+        Returns: Json
+      }
+      rpc_importar_tecnologias_governo: {
         Args: { _hash_estado: string; _payload: Json }
         Returns: Json
       }
