@@ -134,7 +134,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       ],
       errosComuns: ["Contar o endereço de rede ou de difusão como útil.", "Começar um bloco /26 fora do múltiplo de 64 (por exemplo 10.20.0.40/26)."],
     },
-    fontes: ["rfc4632", "rfc1918", "rfc3849", "rfc8200", "python", "iproute2"],
+    fontes: ["rfc4632", "rfc1918", "rfc3849", "rfc8200", "python", "iproute2", "rfc7421", "rfc4862", "rfc6164"],
   },
 
   "r-m01-l3": {
@@ -237,7 +237,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       conducao: ["0–20 min: tabela dos protocolos com portas e exemplos.", "20–65 min: captura e leitura; quem tiver ambiente gráfico abre o ficheiro no Wireshark.", "65–80 min: formativas e verificação oral do aperto de mão (SYN, SYN-ACK, ACK) com a captura aberta; apagar o ficheiro de captura."],
       errosComuns: ["Achar que o pc-adm pede o MAC do servidor noutra rede.", "Deixar o servidor de teste a correr depois da aula."],
     },
-    fontes: ["rfc826", "rfc792", "rfc9293", "rfc768", "rfc1034", "rfc2131", "tcpdump", "wireshark"],
+    fontes: ["rfc826", "rfc792", "rfc9293", "rfc768", "rfc1034", "rfc7766", "rfc2131", "tcpdump", "wireshark"],
   },
 
   "r-m01-l5": {
