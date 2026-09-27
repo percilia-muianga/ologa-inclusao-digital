@@ -53,7 +53,7 @@ export const LICOES_M07: Record<string, ConteudoLicao> = {
     ],
     leituraFacil: ["A rede divide-se em zonas.", "Entre zonas, só passa o que está autorizado.", "Se um computador for atacado, o problema fica na zona dele."],
     guiao: {
-      conducao: ["0–20 min: desenhar as zonas da DPE no quadro e construir a matriz com a turma.", "20–60 min: prática com testes antes/depois registados em folha.", "60–70 min: formativas e comparação das matrizes."],
+      conducao: ["0–20 min: desenhar as zonas da DPE no quadro e construir a matriz com a turma.", "20–60 min: prática com testes antes/depois registados em folha; sem computador de prática, a dupla segue as saídas de exemplo impressas e responde às tarefas em papel.", "60–70 min: formativas e comparação das matrizes."],
       errosComuns: ["Escrever regras antes da matriz.", "Testar só o que deve ser bloqueado e esquecer o que deve continuar a passar."],
     },
     fontes: ["nist800207", "nist80041", "nftables", "iproute2"],
@@ -103,7 +103,7 @@ export const LICOES_M07: Record<string, ConteudoLicao> = {
     ],
     leituraFacil: ["A firewall deixa passar só o que foi autorizado.", "As respostas a pedidos autorizados passam sozinhas.", "Guarde sempre a versão anterior antes de mudar."],
     guiao: {
-      conducao: ["0–20 min: com/sem estado com o exemplo da portaria que regista quem saiu.", "20–65 min: prática com temporizador de reposição.", "65–75 min: formativas."],
+      conducao: ["0–20 min: com/sem estado com o exemplo da portaria que regista quem saiu.", "20–65 min: prática com temporizador de reposição; sem computador de prática, a dupla segue as saídas de exemplo impressas e responde às tarefas em papel.", "65–75 min: formativas."],
       errosComuns: ["Esquecer «established,related» e partir todas as respostas.", "Aplicar regra a regra num equipamento remoto."],
     },
     fontes: ["nist80041", "nftables", "iproute2"],
@@ -240,7 +240,7 @@ export const LICOES_M07: Record<string, ConteudoLicao> = {
     ],
     leituraFacil: ["Desligue o que não usa.", "Troque as palavras-passe de fábrica.", "Anote o que mudou e como desfazer."],
     guiao: {
-      conducao: ["0–20 min: construir a lista de reforço com a turma.", "20–70 min: prática com folha de alterações.", "70–80 min: formativas e troca de folhas entre duplas para revisão."],
+      conducao: ["0–20 min: construir a lista de reforço com a turma.", "20–70 min: prática com folha de alterações; sem computador de prática, a dupla segue as saídas de exemplo impressas e responde às tarefas em papel.", "70–80 min: formativas e troca de folhas entre duplas para revisão."],
       errosComuns: ["Mudar parâmetros sem registar o valor anterior.", "Desligar o encaminhamento IPv4 por engano."],
     },
     fontes: ["debian", "nist80040", "iproute2"],
