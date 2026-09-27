@@ -118,7 +118,7 @@ export const FONTES = {
   rfc4253: { titulo: "IETF RFC 4253 — SSH Transport Layer Protocol", url: "https://www.rfc-editor.org/rfc/rfc4253" },
   rfc6238: { titulo: "IETF RFC 6238 — TOTP: Time-Based One-Time Password", url: "https://www.rfc-editor.org/rfc/rfc6238" },
   rfc5880: { titulo: "IETF RFC 5880 — Bidirectional Forwarding Detection", url: "https://www.rfc-editor.org/rfc/rfc5880" },
-  rfc9199: { titulo: "IETF RFC 5798 — Virtual Router Redundancy Protocol (VRRP) v3", url: "https://www.rfc-editor.org/rfc/rfc5798" },
+  rfc5798: { titulo: "IETF RFC 5798 — Virtual Router Redundancy Protocol (VRRP) v3", url: "https://www.rfc-editor.org/rfc/rfc5798" },
   ieee8021q: { titulo: "IEEE 802.1Q — Bridges and Bridged Networks (VLAN, STP/RSTP)", url: "https://standards.ieee.org/ieee/802.1Q/" },
   ieee80211: { titulo: "IEEE 802.11 — Wireless LAN", url: "https://standards.ieee.org/ieee/802.11/" },
   ieee8021x: { titulo: "IEEE 802.1X — Port-Based Network Access Control", url: "https://standards.ieee.org/ieee/802.1X/" },
