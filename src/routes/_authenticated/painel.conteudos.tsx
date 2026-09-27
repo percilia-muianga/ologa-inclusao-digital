@@ -34,6 +34,7 @@ const NOMES: Record<string, string> = {
   "seguranca-cibernetica": "Curso Segurança Cibernética Avançada (15 lições, ficha e horas)",
   "banco-inteligencia-artificial":
     "Banco de avaliação de Inteligência Artificial (80 de exame + 10 de diagnóstico, todas inactivas)",
+  "tecnologias-governo": "Curso Tecnologias Digitais do Governo (5 lições, ficha e horas: 10 horas)",
 };
 
 const ROTULOS: Record<string, string> = {
@@ -52,6 +53,7 @@ const ROTULOS: Record<string, string> = {
   dificil: "difícil",
   fora_de_rascunho: "fora de rascunho",
   sem_codigo: "sem código",
+  regra_de_escrita_do_curso: "regra de escrita do curso disponível",
 };
 
 function rotulo(k: string) {
@@ -109,10 +111,11 @@ function ConteudosPreparados() {
                 <h3 className="text-base font-bold text-navy">O que está na plataforma</h3>
                 <ul className="mt-2 space-y-1 text-base text-navy-2">
                   {Object.entries(p.resumo)
-                    .filter(([k]) => k !== "hash" && k !== "licoes" && k !== "modulos" && k !== "curso")
+                    .filter(([k]) => k !== "hash" && k !== "licoes" && k !== "modulos" && k !== "curso" && k !== "pacote")
                     .map(([k, v]) => (
                       <li key={k}>
-                        {k.replaceAll("_", " ")}: <strong>{String(v)}</strong>
+                        {rotulo(k)}:{" "}
+                        <strong>{typeof v === "boolean" ? (v ? "sim" : "não") : String(v)}</strong>
                       </li>
                     ))}
                   {"licoes" in p.resumo ? (

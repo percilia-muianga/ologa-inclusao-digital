@@ -19,7 +19,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export type Json = string | number | boolean | null | Json[] | { [chave: string]: Json };
 
 export type EstadoPacote = {
-  pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial";
+  pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial" | "tecnologias-governo";
   hash: string;
   resumo: { [chave: string]: Json };
   previsto: { [chave: string]: Json };
@@ -99,6 +99,36 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
       });
     }
 
+    // Pacote 3 — Tecnologias Digitais do Governo.
+    {
+      const { data, error } = await sb.rpc("rpc_estado_tecnologias_governo");
+      let previsto: { [chave: string]: Json } = {};
+      let erro: string | null = error ? error.message : null;
+      try {
+        const p = preparados.payloadTecnologiasGoverno();
+        previsto = {
+          licoes: p.licoes.length,
+          minutos_licoes: p.licoes.reduce((s, l) => s + l.minutos, 0),
+          transversal_minutos: p.transversal_minutos,
+          minutos_avaliacao: p.curso.minutos_avaliacao_orientacao,
+          horas: p.curso.carga_horaria,
+        };
+      } catch (e) {
+        erro = erro ?? (e as Error).message;
+      }
+      const estado = (data ?? {}) as { [chave: string]: Json };
+      if (!erro && estado["regra_de_escrita_do_curso"] === false) {
+        erro = explicarErro("SEM_REGRA_DE_ESCRITA_CURSO");
+      }
+      resultados.push({
+        pacote: "tecnologias-governo",
+        hash: (estado["hash"] as string) ?? "",
+        resumo: estado,
+        previsto,
+        erro,
+      });
+    }
+
     return resultados;
   });
 
@@ -112,6 +142,8 @@ export type ResultadoImportacao = {
 export function explicarErro(mensagem: string): string {
   if (mensagem.includes("SEM_PERMISSAO_ADMIN_GERAL"))
     return "Esta acção é exclusiva do perfil Administrador Geral Ologa.";
+  if (mensagem.includes("SEM_REGRA_DE_ESCRITA"))
+    return "Falta uma regra de escrita da base de dados, só para o Administrador Geral Ologa e só neste curso, na ficha do curso e nas horas dos módulos. Sem ela a importação fica bloqueada. Nada foi gravado.";
   if (mensagem.includes("SEM_SESSAO")) return "A sessão terminou. Entre outra vez.";
   if (mensagem.includes("ESTADO_ALTERADO"))
     return "Os dados na plataforma mudaram desde a verificação que está no ecrã. Nada foi gravado: verifique outra vez.";
@@ -150,11 +182,15 @@ export function explicarErro(mensagem: string): string {
 
 export const importarConteudosPreparados = createServerFn({ method: "POST" })
   .inputValidator((input: { pacote: string; hash: string }) => {
-    if (input?.pacote !== "seguranca-cibernetica" && input?.pacote !== "banco-inteligencia-artificial") {
+    if (
+      input?.pacote !== "seguranca-cibernetica" &&
+      input?.pacote !== "banco-inteligencia-artificial" &&
+      input?.pacote !== "tecnologias-governo"
+    ) {
       throw new Error("PACOTE_DESCONHECIDO");
     }
     if (typeof input.hash !== "string" || input.hash.length < 8) throw new Error("ESTADO_ALTERADO");
-    return { pacote: input.pacote, hash: input.hash };
+    return { pacote: input.pacote as string, hash: input.hash };
   })
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }): Promise<ResultadoImportacao> => {
@@ -170,6 +206,16 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
       if (data.pacote === "seguranca-cibernetica") {
         const payload = preparados.payloadSeguranca();
         const { data: res, error } = await sb.rpc("rpc_importar_seguranca_cibernetica", {
+          _payload: payload,
+          _hash_estado: data.hash,
+        });
+        if (error) return { ok: false, detalhe: null, erro: explicarErro(error.message) };
+        return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
+      }
+
+      if (data.pacote === "tecnologias-governo") {
+        const payload = preparados.payloadTecnologiasGoverno();
+        const { data: res, error } = await sb.rpc("rpc_importar_tecnologias_governo", {
           _payload: payload,
           _hash_estado: data.hash,
         });
