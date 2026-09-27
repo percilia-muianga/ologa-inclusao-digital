@@ -2,7 +2,7 @@
  * Curso de Redes — módulos 1 a 3 (Fundamentos, Comutação, Encaminhamento).
  * Conteúdo fictício e didáctico; ver regras em redes-base.ts.
  */
-import { SCRIPT_BASE, SCRIPT_REMOVER, TOPOLOGIA_BASE, type ConteudoLicao } from "./redes-base";
+import { SCRIPT_BASE, SCRIPT_REMOVER, SCRIPT_VERIFICAR, TOPOLOGIA_BASE, type ConteudoLicao } from "./redes-base";
 
 export const LICOES_M01_03: Record<string, ConteudoLicao> = {
   // ───────────────────────── MÓDULO 1 — Fundamentos ─────────────────────────
@@ -33,6 +33,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
     pratica: {
       topologia: TOPOLOGIA_BASE,
       passos: [
+        { accao: "Numa máquina virtual Debian 12 descartável e isolada, guarde e corra primeiro a pré-verificação lab-verificar.sh. Só avance se terminar com «Pré-verificação OK» (sem colisões de nomes nem dependências em falta).", comandos: SCRIPT_VERIFICAR },
         { accao: "Guarde o script base num ficheiro lab-base.sh, torne-o executável e corra-o como administrador do computador de prática.", comandos: [...SCRIPT_BASE, "", "# depois de guardar:", "chmod +x lab-base.sh && sudo ./lab-base.sh"] },
         { accao: "Guarde também o script de reversão lab-remover.sh.", comandos: SCRIPT_REMOVER },
         { accao: "Confirme os espaços de nomes criados e o endereço do pc-adm.", comandos: ["sudo ip netns list", "sudo ip -n pc-adm -brief addr"], saida: ["pc-adm-r1@if5   UP   10.10.10.10/24", "lo              UNKNOWN 127.0.0.1/8 ::1/128"] },
@@ -44,7 +45,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
         "O ping do pc-adm ao srv recebe resposta (o r1 encaminha entre as duas redes).",
         "O formando aponta correctamente, na captura, os campos de camada 2 e de camada 3.",
       ],
-      reversao: ["sudo ./lab-remover.sh apaga toda a rede de prática; o computador volta ao estado anterior (nenhuma alteração permanente)."],
+      reversao: ["sudo ./lab-remover.sh termina os processos de cada espaço de nomes do laboratório (PID a PID) e só depois apaga esses espaços de nomes; se algum processo resistir, o script avisa e não apaga.", "Não é reversão total: ficheiros em /tmp e pacotes instalados ficam; a forma segura de repor tudo é descartar a máquina virtual."],
     },
     papel: [
       { tarefa: "Ordene de cima para baixo as camadas TCP/IP e diga a unidade de dados de cada uma.", esperado: "Aplicação (dados/mensagem); transporte (segmento TCP ou datagrama UDP); rede/Internet (pacote); ligação (trama); física (bits)." },
