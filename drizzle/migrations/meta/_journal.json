@@ -176,6 +176,13 @@
       "when": 1790542955074,
       "tag": "0024_importacao_tecnologias_governo_invoker",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1790543222084,
+      "tag": "0025_importacao_tecnologias_governo_verificacoes",
+      "breakpoints": true
     }
   ]
 }
