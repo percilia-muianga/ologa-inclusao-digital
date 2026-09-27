@@ -640,7 +640,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
     ],
     leituraFacil: ["Com OSPF os encaminhadores contam uns aos outros as redes que têm.", "Escolhem o caminho mais barato.", "Só se fala OSPF com encaminhadores de confiança."],
     guiao: {
-      conducao: ["0–20 min: comparar estáticas vs OSPF com o mapa das delegações.", "20–70 min: prática; se o FRR em espaço de nomes falhar, usar duas máquinas virtuais Debian com a mesma configuração.", "70–80 min: formativas."],
+      conducao: ["0–20 min: comparar estáticas vs OSPF com o mapa das delegações.", "20–65 min: prática; se o FRR em espaço de nomes falhar, usar duas máquinas virtuais Debian com a mesma configuração.", "65–75 min: formativas."],
       errosComuns: ["Deixar rotas estáticas antigas que escondem o resultado do OSPF.", "Chaves diferentes nos dois lados."],
     },
     fontes: ["rfc2328", "frr"],
