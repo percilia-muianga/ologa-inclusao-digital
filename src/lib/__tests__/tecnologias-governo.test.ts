@@ -100,7 +100,7 @@ describe("pacote e importador", () => {
   });
   it("funções da base: INVOKER, sessão, perfil, trinco, hash, conflitos; sem DEFINER nem regra nova", () => {
     expect(SQL).not.toMatch(/SECURITY DEFINER/);
-    expect((SQL.match(/SECURITY INVOKER/g) ?? []).length).toBe(2);
+    expect((SQL.match(/plpgsql (STABLE )?SECURITY INVOKER/g) ?? []).length).toBe(2);
     expect(SQL).toContain("auth.uid()");
     expect(SQL).toContain("e_admin_geral_ologa");
     expect(SQL).toContain("pg_advisory_xact_lock");
