@@ -78,7 +78,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
     objectivos: [
       "Calcular rede, difusão, primeiro e último endereço úteis de um prefixo IPv4.",
       "Dividir um bloco em sub-redes de tamanhos diferentes (VLSM) sem sobreposição.",
-      "Ler um endereço IPv6 abreviado e o seu prefixo /64.",
+      "Ler um endereço IPv6 abreviado e o prefixo /64 habitual numa rede local.",
     ],
     explicacao: [
       {
@@ -92,7 +92,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
         titulo: "Planear sem sobreposição",
         paragrafos: [
           "Ordena-se as necessidades da maior para a menor e reserva-se cada bloco no próximo limite livre. Deixar espaço para crescer é decisão de concepção: uma VLAN com 50 pessoas hoje merece /25 ou /24 se a instituição vai crescer.",
-          "IPv6 tem 128 bits. Numa rede local usa-se sempre /64. O endereço 2001:db8:10:10::1 abrevia 2001:0db8:0010:0010:0000:0000:0000:0001: zeros à esquerda caem e uma sequência de grupos a zero passa a «::» uma única vez.",
+          "IPv6 tem 128 bits. Numa rede local o prefixo recomendado e habitual é /64 (RFC 7421), exigido pela autoconfiguração SLAAC (RFC 4862); ligações ponto-a-ponto podem usar /127 (RFC 6164). O endereço 2001:db8:10:10::1 abrevia 2001:0db8:0010:0010:0000:0000:0000:0001: zeros à esquerda caem e uma sequência de grupos a zero passa a «::» uma única vez.",
         ],
       },
     ],
@@ -199,7 +199,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       {
         titulo: "Os protocolos de todos os dias",
         paragrafos: [
-          "ARP descobre o MAC correspondente a um IP na mesma rede. ICMP transporta mensagens de controlo (eco para o ping, «destino inalcançável», «tempo excedido» usado pelo traceroute). TCP garante entrega ordenada e fiável, com ligação estabelecida por três mensagens; UDP envia sem ligação nem garantia, bom para DNS, voz e vídeo.",
+          "ARP descobre o MAC correspondente a um IP na mesma rede. ICMP transporta mensagens de controlo (eco para o ping, «destino inalcançável», «tempo excedido» usado pelo traceroute). TCP garante entrega ordenada e fiável, com ligação estabelecida por três mensagens (RFC 9293); UDP envia sem ligação, sem confirmação nem retransmissão (RFC 768). Por não esperar confirmações, UDP tem menos atraso de arranque e é adequado a consultas curtas (DNS) e a voz e vídeo em tempo real; não é, por si, «mais rápido» em débito — a fiabilidade, se necessária, passa para a aplicação.",
           "DNS traduz nomes em endereços (porta 53). DHCP entrega automaticamente endereço, máscara, porta de ligação e servidores DNS (portas 67/68). Serão configurados no módulo 5.",
         ],
       },
@@ -214,26 +214,27 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
     pratica: {
       topologia: TOPOLOGIA_BASE,
       passos: [
-        { accao: "Ponha um serviço web simples no srv (servidor de teste do Python, só para a prática).", comandos: ["sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53 &"] },
-        { accao: "Limpe a cache ARP do pc-adm e capture ARP e TCP no r1 durante um pedido.", comandos: ["sudo ip -n pc-adm neigh flush all", "sudo ip netns exec r1 tcpdump -ni r1-pc-adm -w /tmp/m1l4.pcap 'arp or tcp port 80' &", "sudo ip netns exec pc-adm python3 -c \"import urllib.request as u; print(u.urlopen('http://10.10.20.53/').status)\"", "sudo pkill -f 'tcpdump -ni r1-pc-adm'"], saida: ["200"] },
-        { accao: "Leia a captura com tshark.", comandos: ["tshark -r /tmp/m1l4.pcap -Y 'arp || tcp.flags.syn==1' -T fields -e frame.number -e _ws.col.Info"], saida: ["1  Who has 10.10.10.1? Tell 10.10.10.10", "2  10.10.10.1 is at aa:aa:aa:00:00:01", "3  50412 → 80 [SYN] Seq=0", "4  80 → 50412 [SYN, ACK] Seq=0 Ack=1"] },
+        { accao: "Ponha um serviço web simples no srv (servidor de teste do Python, só para a prática).", comandos: ["Consola C (deixar aberta): sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53", "Esperar a linha «Serving HTTP on 10.10.20.53 port 80» antes do passo seguinte."] },
+        { accao: "Limpe a cache ARP do pc-adm e capture ARP e TCP no r1 durante um pedido.", comandos: ["Consola B: sudo ip -n pc-adm neigh flush all", "Consola A: sudo ip netns exec r1 tcpdump -ni r1-pc-adm -w /tmp/m1l4.pcap 'arp or tcp port 80'", "Esperar na consola A a linha «tcpdump: listening on r1-pc-adm» antes de continuar.", "Consola B: sudo ip netns exec pc-adm python3 -c \"import urllib.request as u; print(u.urlopen('http://10.10.20.53/').status)\"", "Consola A: terminar a captura com Ctrl+C (termina apenas este tcpdump e fecha o ficheiro)."], saida: ["Consola A: tcpdump: listening on r1-pc-adm, link-type EN10MB (Ethernet), snapshot length 262144 bytes", "Consola B: 200"] },
+        { accao: "Leia a captura com tshark.", comandos: ["tshark -r /tmp/m1l4.pcap -Y 'arp || tcp.flags.syn==1 || (tcp.flags==0x010 && tcp.seq==1 && tcp.ack==1 && tcp.len==0)' -T fields -e frame.number -e _ws.col.Info"], saida: ["1  Who has 10.10.10.1? Tell 10.10.10.10", "2  10.10.10.1 is at aa:aa:aa:00:00:01", "3  50412 → 80 [SYN] Seq=0", "4  80 → 50412 [SYN, ACK] Seq=0 Ack=1", "5  50412 → 80 [ACK] Seq=1 Ack=1 Len=0"] },
+        { accao: "Nota sobre o filtro: tcp.flags.syn==1 sozinho mostra só SYN e SYN-ACK; o ACK final do aperto de mão não tem SYN, por isso acrescenta-se a condição «só ACK, números relativos 1/1, sem dados». Números de sequência relativos são o comportamento por omissão do Wireshark/tshark." },
         { accao: "Compare com um pedido DNS em UDP (será configurado no módulo 5): identifique na tabela do papel as diferenças TCP/UDP." },
       ],
       sucesso: ["O formando identifica ARP antes do TCP e o aperto de mão SYN, SYN-ACK, ACK.", "O ficheiro de captura é apagado no fim."],
-      reversao: ["sudo pkill -f 'http.server 80'", "rm -f /tmp/m1l4.pcap"],
+      reversao: ["Na consola C, terminar o servidor de teste com Ctrl+C (termina só esse processo).", "rm -f /tmp/m1l4.pcap"],
     },
     papel: [
       { tarefa: "Porque aparece ARP antes do TCP na captura?", esperado: "O pc-adm precisa do MAC da porta de ligação 10.10.10.1 para construir a trama; o destino 10.10.20.53 está noutra rede, por isso pergunta pelo MAC do r1, não do srv." },
-      { tarefa: "Complete: DNS usa ___ porta ___; DHCP usa ___ portas ___.", esperado: "DNS: UDP (e TCP para respostas grandes) porta 53. DHCP: UDP portas 67 (servidor) e 68 (cliente)." },
+      { tarefa: "Complete: DNS usa ___ porta ___; DHCP usa ___ portas ___.", esperado: "DNS: porta 53, normalmente UDP para consultas; TCP é também obrigatório de suportar (RFC 7766) e usa-se, por exemplo, quando a resposta é truncada, em transferências de zona e com DNS sobre TLS (porta 853). DHCP: UDP portas 67 (servidor) e 68 (cliente)." },
       { tarefa: "Escreva um filtro de captura para apanhar só tráfego do pc-adm para a porta 443.", esperado: "src host 10.10.10.10 and tcp dst port 443" },
     ],
     formativas: [
       { pergunta: "O traceroute mostra os saltos porque os encaminhadores devolvem:", opcoes: ["TCP RST", "ICMP «tempo excedido»", "ARP reply", "DHCP ACK"], certa: 1, comentario: "Cada salto reduz o TTL; quando chega a zero, o encaminhador devolve ICMP «tempo excedido», revelando o seu endereço." },
       { pergunta: "Qual protocolo é mais indicado para uma chamada de voz?", opcoes: ["TCP, porque garante entrega", "UDP, porque um atraso de retransmissão é pior que uma pequena perda", "ARP", "ICMP"], certa: 1, comentario: "Na voz, um pacote retransmitido chega tarde demais para ser útil. Usa-se UDP (com RTP), aceitando pequenas perdas." },
     ],
-    leituraFacil: ["ARP pergunta: quem tem este endereço?", "TCP confirma tudo; UDP é rápido mas não confirma.", "DNS troca nomes por números."],
+    leituraFacil: ["ARP pergunta: quem tem este endereço?", "TCP confirma que os dados chegaram.", "UDP não confirma: serve para mensagens curtas e para voz ou vídeo ao vivo.", "DNS troca nomes por números."],
     guiao: {
-      conducao: ["0–20 min: tabela dos protocolos com portas e exemplos.", "20–65 min: captura e leitura; quem tiver ambiente gráfico abre o ficheiro no Wireshark.", "65–75 min: formativas."],
+      conducao: ["0–20 min: tabela dos protocolos com portas e exemplos.", "20–65 min: captura e leitura; quem tiver ambiente gráfico abre o ficheiro no Wireshark.", "65–80 min: formativas e verificação oral do aperto de mão (SYN, SYN-ACK, ACK) com a captura aberta; apagar o ficheiro de captura."],
       errosComuns: ["Achar que o pc-adm pede o MAC do servidor noutra rede.", "Deixar o servidor de teste a correr depois da aula."],
     },
     fontes: ["rfc826", "rfc792", "rfc9293", "rfc768", "rfc1034", "rfc2131", "tcpdump", "wireshark"],
@@ -306,7 +307,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       passos: [
         { accao: "Recrie a ponte da lição anterior com três postos.", comandos: ["sudo ip -n r1 link add br-lab type bridge && sudo ip -n r1 link set br-lab up", "for i in 1 2 3; do sudo ip netns add t$i; sudo ip link add t$i-br type veth peer name br-t$i; sudo ip link set t$i-br netns t$i; sudo ip link set br-t$i netns r1; sudo ip -n r1 link set br-t$i master br-lab up; sudo ip -n t$i addr add 192.168.50.$i/24 dev t$i-br; sudo ip -n t$i link set t$i-br up; done"] },
         { accao: "Veja o tempo de envelhecimento e a tabela antes e depois de tráfego.", comandos: ["sudo ip -n r1 -d link show br-lab | grep -o 'ageing_time [0-9]*'", "sudo ip netns exec r1 bridge fdb show br br-lab dynamic", "sudo ip netns exec t1 ping -c 1 192.168.50.3", "sudo ip netns exec r1 bridge fdb show br br-lab dynamic"], saida: ["ageing_time 30000", "(vazio antes do tráfego)", "aa:bb:cc:00:00:01 dev br-t1 master br-lab", "aa:bb:cc:00:00:03 dev br-t3 master br-lab"] },
-        { accao: "Observe a inundação: capture no t2 enquanto t1 fala com t3 pela primeira vez (depois de limpar a tabela).", comandos: ["sudo ip netns exec r1 bridge fdb flush dev br-lab", "sudo ip netns exec t2 tcpdump -ni t2-br -c 1 &", "sudo ip netns exec t1 arping -c 1 -I t1-br 192.168.50.3 || sudo ip netns exec t1 ping -c 1 192.168.50.3"], saida: ["ARP, Request who-has 192.168.50.3 tell 192.168.50.1"] },
+        { accao: "Observe a inundação: capture no t2 enquanto t1 fala com t3 pela primeira vez (depois de limpar a tabela).", comandos: ["sudo ip netns exec r1 bridge fdb flush dev br-lab", "Consola A: sudo ip netns exec t2 tcpdump -ni t2-br -c 1 arp", "Esperar na consola A a linha «listening on t2-br»; o tcpdump termina sozinho após 1 pacote (-c 1).", "Consola B: "sudo ip netns exec t1 arping -c 1 -I t1-br 192.168.50.3 || sudo ip netns exec t1 ping -c 1 192.168.50.3"], saida: ["ARP, Request who-has 192.168.50.3 tell 192.168.50.1"] },
       ],
       sucesso: ["O formando explica porque o t2 viu o pedido ARP (difusão) mas não o eco ICMP seguinte (unicast já aprendido).", "ageing_time 30000 é lido como 300,00 segundos (centésimos)."],
       reversao: ["for i in 1 2 3; do sudo ip netns del t$i; done; sudo ip -n r1 link del br-lab"],
@@ -394,7 +395,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
         { accao: "Crie comutador, encaminhador e postos.", comandos: ["for n in sw rt a1 s1; do sudo ip netns add $n; done", "sudo ip -n sw link add br0 type bridge vlan_filtering 1 && sudo ip -n sw link set br0 up", "lig() { sudo ip link add $1-$2 type veth peer name $2-$1; sudo ip link set $1-$2 netns $1; sudo ip link set $2-$1 netns $2; sudo ip -n $1 link set $1-$2 up; sudo ip -n $2 link set $2-$1 up; }", "lig a1 sw; lig s1 sw; lig rt sw", "for p in sw-a1 sw-s1 sw-rt; do sudo ip -n sw link set $p master br0; sudo ip netns exec sw bridge vlan del dev $p vid 1; done", "sudo ip netns exec sw bridge vlan add dev sw-a1 vid 10 pvid untagged", "sudo ip netns exec sw bridge vlan add dev sw-s1 vid 20 pvid untagged", "sudo ip netns exec sw bridge vlan add dev sw-rt vid 10; sudo ip netns exec sw bridge vlan add dev sw-rt vid 20"] },
         { accao: "No encaminhador, crie as subinterfaces etiquetadas e active o encaminhamento.", comandos: ["sudo ip -n rt link add link rt-sw name rt-sw.10 type vlan id 10", "sudo ip -n rt link add link rt-sw name rt-sw.20 type vlan id 20", "sudo ip -n rt addr add 10.10.10.1/24 dev rt-sw.10; sudo ip -n rt addr add 10.10.20.1/24 dev rt-sw.20", "sudo ip -n rt link set rt-sw.10 up; sudo ip -n rt link set rt-sw.20 up", "sudo ip netns exec rt sysctl -qw net.ipv4.ip_forward=1"] },
         { accao: "Configure os postos e teste.", comandos: ["sudo ip -n a1 addr add 10.10.10.21/24 dev a1-sw; sudo ip -n a1 route add default via 10.10.10.1", "sudo ip -n s1 addr add 10.10.20.21/24 dev s1-sw; sudo ip -n s1 route add default via 10.10.20.1", "sudo ip netns exec a1 traceroute -n 10.10.20.21"], saida: [" 1  10.10.10.1  0.06 ms", " 2  10.10.20.21  0.08 ms"] },
-        { accao: "Veja as etiquetas na porta tronco.", comandos: ["sudo ip netns exec rt tcpdump -eni rt-sw -c 2 icmp & sudo ip netns exec a1 ping -c 1 10.10.20.21"], saida: ["... ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4, 10.10.10.21 > 10.10.20.21: ICMP echo request", "... ethertype 802.1Q (0x8100), length 102: vlan 20, p 0, ethertype IPv4, 10.10.10.21 > 10.10.20.21: ICMP echo request"] },
+        { accao: "Veja as etiquetas na porta tronco.", comandos: ["Consola A: sudo ip netns exec rt tcpdump -eni rt-sw -c 2 'vlan and icmp[icmptype] == icmp-echo'", "Esperar na consola A a linha «listening on rt-sw»; termina sozinho após 2 pacotes.", "Consola B: sudo ip netns exec a1 ping -c 1 10.10.20.21", "Nota: na interface tronco as tramas levam etiqueta 802.1Q; o filtro precisa de «vlan and …», porque «icmp» sozinho procura IPv4 logo após o cabeçalho Ethernet e não apanha tramas etiquetadas."], saida: ["... ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4, 10.10.10.21 > 10.10.20.21: ICMP echo request", "... ethertype 802.1Q (0x8100), length 102: vlan 20, p 0, ethertype IPv4, 10.10.10.21 > 10.10.20.21: ICMP echo request"] },
       ],
       sucesso: ["traceroute mostra o salto pelo encaminhador.", "A captura mostra o mesmo pacote a entrar na VLAN 10 e a sair na VLAN 20."],
       reversao: ["for n in sw rt a1 s1; do sudo ip netns del $n; done"],
@@ -666,11 +667,11 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       passos: [
         { accao: "Confirme que, sem NAT, o servidor externo não sabe responder à rede privada.", comandos: ["sudo ip -n r1 route add default via 203.0.113.1", "sudo ip netns exec pc-adm ping -c 1 -W 1 198.51.100.10"], saida: ["1 packets transmitted, 0 received"] },
         { accao: "Crie a tabela NAT no r1 com mascaramento de saída pela interface do operador.", comandos: ["sudo ip netns exec r1 nft add table ip nat", "sudo ip netns exec r1 nft 'add chain ip nat postrouting { type nat hook postrouting priority srcnat; }'", "sudo ip netns exec r1 nft add rule ip nat postrouting oifname \"r1-isp\" ip saddr 10.10.0.0/16 masquerade", "sudo ip netns exec pc-adm ping -c 1 198.51.100.10"], saida: ["1 packets transmitted, 1 received"] },
-        { accao: "Veja, no isp, que a origem aparece como 203.0.113.2.", comandos: ["sudo ip netns exec isp tcpdump -ni isp-r1 -c 1 icmp & sudo ip netns exec pc-adm ping -c 1 198.51.100.10"], saida: ["IP 203.0.113.2 > 198.51.100.10: ICMP echo request"] },
-        { accao: "Publique o portal do srv na porta 80 (NAT de destino) e teste a partir do isp.", comandos: ["sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53 &", "sudo ip netns exec r1 nft 'add chain ip nat prerouting { type nat hook prerouting priority dstnat; }'", "sudo ip netns exec r1 nft add rule ip nat prerouting iifname \"r1-isp\" tcp dport 80 dnat to 10.10.20.53", "sudo ip netns exec isp python3 -c \"import urllib.request as u; print(u.urlopen('http://203.0.113.2/').status)\"", "sudo ip netns exec r1 nft list table ip nat"], saida: ["200", "table ip nat {", "  chain postrouting { type nat hook postrouting priority srcnat; policy accept;", "    oifname \"r1-isp\" ip saddr 10.10.0.0/16 masquerade }", "  chain prerouting { type nat hook prerouting priority dstnat; policy accept;", "    iifname \"r1-isp\" tcp dport 80 dnat to 10.10.20.53 }", "}"] },
+        { accao: "Veja, no isp, que a origem aparece como 203.0.113.2.", comandos: ["Consola A: sudo ip netns exec isp tcpdump -ni isp-r1 -c 1 'icmp[icmptype] == icmp-echo'", "Esperar na consola A a linha «listening on isp-r1»; termina sozinho após 1 pacote.", "Consola B: sudo ip netns exec pc-adm ping -c 1 198.51.100.10"], saida: ["IP 203.0.113.2 > 198.51.100.10: ICMP echo request"] },
+        { accao: "Publique o portal do srv na porta 80 (NAT de destino) e teste a partir do isp.", comandos: ["Consola C (deixar aberta): sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53", "Esperar a linha «Serving HTTP on 10.10.20.53 port 80» antes do passo seguinte.", "sudo ip netns exec r1 nft 'add chain ip nat prerouting { type nat hook prerouting priority dstnat; }'", "sudo ip netns exec r1 nft add rule ip nat prerouting iifname \"r1-isp\" tcp dport 80 dnat to 10.10.20.53", "sudo ip netns exec isp python3 -c \"import urllib.request as u; print(u.urlopen('http://203.0.113.2/').status)\"", "sudo ip netns exec r1 nft list table ip nat"], saida: ["200", "table ip nat {", "  chain postrouting { type nat hook postrouting priority srcnat; policy accept;", "    oifname \"r1-isp\" ip saddr 10.10.0.0/16 masquerade }", "  chain prerouting { type nat hook prerouting priority dstnat; policy accept;", "    iifname \"r1-isp\" tcp dport 80 dnat to 10.10.20.53 }", "}"] },
       ],
       sucesso: ["pc-adm alcança 198.51.100.10 apenas com NAT activo.", "O isp vê a origem 203.0.113.2.", "O portal responde no endereço público só na porta 80."],
-      reversao: ["sudo ip netns exec r1 nft delete table ip nat", "sudo ip -n r1 route del default via 203.0.113.1", "sudo pkill -f 'http.server 80'"],
+      reversao: ["sudo ip netns exec r1 nft delete table ip nat", "sudo ip -n r1 route del default via 203.0.113.1", "Na consola C, terminar o servidor de teste com Ctrl+C (termina só esse processo)."],
     },
     papel: [
       { tarefa: "Porque o ping falhou antes do NAT?", esperado: "O servidor externo recebeu o pedido com origem 10.10.10.10 (privada); não tem rota para ela, por isso a resposta não volta." },
