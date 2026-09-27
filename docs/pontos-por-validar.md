@@ -228,3 +228,12 @@ Registado a 22 de Setembro de 2026.
   depende de ambientes de treino da ATDI; manuais oficiais não disponíveis;
   validação pedagógica Ologa/ATDI pendente; nenhuma execução em sala; banco de
   exame não preparado; sem vídeo, legendas nem Língua de Sinais.
+
+## Tecnologias Digitais do Governo — pendências internas (27/09/2026)
+- Regras de escrita UPDATE em `cursos` e `curso_modulos` para este curso: SQL revisável em `docs/migracoes-por-autorizar/politicas-tecnologias-governo.sql`, NÃO aplicado. Sem elas a importação falha fechada.
+- Validação pedagógica Ologa/ATDI das 5 lições e da repartição 360+120+120 (proposta interna, não fixada pelos TdR).
+- Portal do Cidadão sem texto legível na consulta: serviços/passos concretos não descritos.
+- Sem manuais oficiais de CorreioGov, CloudGov, Sistema de Assinatura Digital e Plataforma do Funcionário: prática real depende de ambientes de treino da ATDI.
+- Proposta INTIC 2026 sobre interoperabilidade não é lei aprovada.
+- Vídeo com Língua de Sinais e áudio por produzir.
+- Importação, sessão real, rollback e concorrência não testados com sessão real.

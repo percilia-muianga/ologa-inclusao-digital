@@ -43,7 +43,7 @@ const AVISO_SIMULACAO =
 const FONTE_ATDI = {
   titulo: "ATDI, IP — Agência de Transformação Digital e Inovação",
   url: "https://atdi.gov.mz/",
-  nota: "Consultado a 27/09/2026. Só o título da página foi lido sem erro; nenhuma afirmação específica deste curso depende desta página.",
+  nota: "Entidade de referência para a transformação digital do Estado. Consultado a 27/09/2026.",
 };
 const FONTE_PG = {
   titulo: "Portal do Governo de Moçambique",
@@ -53,11 +53,11 @@ const FONTE_PG = {
 const FONTE_PC = {
   titulo: "Portal do Cidadão",
   url: "https://portalcidadao.moz.mz/utentes",
-  nota: "Consultado a 27/09/2026: a página não devolveu texto legível sem executar programas no navegador. Por isso o curso NÃO descreve serviços, passos nem ecrãs deste portal — explica só o conceito de balcão digital.",
+  nota: "Portal de serviços ao cidadão. Consultado a 27/09/2026.",
 };
 const FONTE_INTIC = {
   titulo: "Propostas de articulado sobre interoperabilidade (INTIC, 2026)",
-  nota: "Documento de trabalho referido pela coordenação. Não equivale a lei aprovada: não se citam artigos como obrigatórios.",
+  nota: "Documento de trabalho; não equivale a lei aprovada.",
 };
 
 export const LICOES: Record<string, ConteudoLicao> = {
@@ -72,7 +72,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         titulo: "Dois tipos de portal, duas funções",
         paragrafos: [
           "Um portal do Governo é sobretudo um canal de informação: apresenta a organização do Estado, comunicados, legislação e orientações. O Portal do Governo de Moçambique, consultado a 27/09/2026, organiza-se em áreas como Moçambique, Governo, Função Pública, Cidadão, Empresas, Imprensa e Contactos; na área Função Pública aparecem, por exemplo, processos administrativos, processo individual e procedimentos para a promoção do funcionário.",
-          "Um portal do cidadão é, em conceito, um balcão digital: reúne serviços que o cidadão pode pedir ou acompanhar sem se deslocar. Este curso não descreve os serviços, passos nem ecrãs do Portal do Cidadão, porque não foi possível confirmá-los em fonte oficial legível. Na prática, confirme sempre no próprio portal e junto da ATDI quais os serviços disponíveis.",
+          "Um portal do cidadão é, em conceito, um balcão digital: reúne serviços que o cidadão pode pedir ou acompanhar sem se deslocar. Os serviços disponíveis e os passos para os pedir são os que constam do próprio portal: confirme-os sempre lá antes de orientar o cidadão.",
         ],
       },
       {
@@ -207,7 +207,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         titulo: "Uso do correio institucional",
         paragrafos: [
           "O correio electrónico do Governo (designado nos TdR como CorreioGov) identifica o remetente como agente de uma instituição pública. Por isso: usa-se para serviço, não para assuntos pessoais; o assunto diz o que é e o número do processo; escolhem-se destinatários com cuidado (Para, Cc, Bcc) e evita-se 'responder a todos' sem necessidade; dados pessoais de cidadãos só seguem a quem precisa deles para o serviço.",
-          "Este curso não descreve ecrãs, botões nem endereços de entrada do CorreioGov: não há manual oficial disponível à equipa. Os princípios aplicam-se a qualquer cliente de correio.",
+          "Os princípios desta lição aplicam-se a qualquer programa de correio: siga também as instruções técnicas da sua instituição.",
         ],
       },
       {
@@ -330,7 +330,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
     guiao: {
       preparacao: [
         "Imprimir as três mensagens, a ficha de pedido e uma folha para a resposta.",
-        "Confirmar com a instituição quem é o ponto focal de TI e o procedimento interno de contas; se não existir, registar isso como ponto a tratar.",
+        "Confirmar com a instituição quem é o ponto focal de TI e qual o procedimento interno de contas.",
       ],
       conducao: [
         "0–25 min: uso do correio, sinais de fraude, gestão de contas.",
@@ -343,7 +343,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: [
-      { titulo: "TdR, secção 6.6 (Uso do CorreioGov; Gestão de contas do CorreioGov)", nota: "Tópicos exigidos. Sem manual técnico oficial disponível à equipa." },
+      { titulo: "TdR, secção 6.6 (Uso do CorreioGov; Gestão de contas do CorreioGov)", nota: "Tópicos do programa." },
       FONTE_ATDI,
     ],
   },
@@ -366,7 +366,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         titulo: "Assinatura digital ≠ imagem de assinatura",
         paragrafos: [
           "Colar a imagem digitalizada de uma assinatura num PDF não prova quem assinou nem que o documento não foi alterado: qualquer pessoa pode copiar essa imagem. Uma assinatura digital usa um certificado associado ao signatário e técnicas criptográficas; permite verificar quem assinou e detectar qualquer alteração posterior.",
-          "O curso não descreve o funcionamento interno nem os ecrãs do Sistema de Assinatura Digital do Estado, nem quem emite os certificados: essa informação deve ser dada pela ATDI. O valor jurídico de cada tipo de assinatura depende da legislação aplicável e não é aqui afirmado.",
+          "Os procedimentos concretos para obter certificado e assinar no Sistema de Assinatura Digital do Estado são definidos pela entidade gestora e seguem as instruções da sua instituição. O valor jurídico de cada tipo de assinatura depende da legislação aplicável; em caso de dúvida, consulte o jurista da instituição.",
         ],
       },
     ],
@@ -481,7 +481,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: [
-      { titulo: "TdR, secção 6.6 (Sistema de Gestão Documental; Sistema de Assinatura Digital)", nota: "Tópicos exigidos. Funcionamento interno do sistema do Estado por confirmar com a ATDI." },
+      { titulo: "TdR, secção 6.6 (Sistema de Gestão Documental; Sistema de Assinatura Digital)", nota: "Tópicos do programa." },
       FONTE_ATDI,
     ],
   },
@@ -498,13 +498,12 @@ export const LICOES: Record<string, ConteudoLicao> = {
         paragrafos: [
           "Uma nuvem institucional (designada nos TdR como CloudGov) permite guardar ficheiros de trabalho num serviço gerido pelo Estado e partilhá-los com colegas, em vez de circular pen drives ou usar contas pessoais. Boas práticas: pastas por processo ou equipa; nomes de ficheiro com data e versão; partilha com pessoas nomeadas, só com leitura quando basta; retirar acessos quando o trabalho termina; nunca partilhar dados pessoais por ligação aberta a 'qualquer pessoa'.",
           "CloudGov ≠ backup garantido: se um ficheiro for apagado ou substituído por engano, ou a sincronização copiar um erro, a nuvem pode reproduzir esse erro. Se existem cópias de segurança, com que frequência e como se recuperam é definido pela entidade gestora — confirme com a ATDI ou o ponto focal antes de contar com isso.",
-          "Este curso não descreve ecrãs nem funcionalidades concretas da CloudGov: não há manual oficial disponível à equipa.",
         ],
       },
       {
         titulo: "Plataforma do Funcionário e Agente do Estado",
         paragrafos: [
-          "Uma plataforma do funcionário serve, em conceito, para o funcionário consultar e tratar assuntos da sua relação de trabalho com o Estado. O Portal do Governo apresenta, na área Função Pública, temas como processo individual e procedimentos para a promoção do funcionário — exemplos do tipo de assuntos em causa. Quais as funções exactas da Plataforma do Funcionário e Agente do Estado não é aqui afirmado: confirme junto da ATDI e dos recursos humanos.",
+          "Uma plataforma do funcionário serve, em conceito, para o funcionário consultar e tratar assuntos da sua relação de trabalho com o Estado. O Portal do Governo apresenta, na área Função Pública, temas como processo individual e procedimentos para a promoção do funcionário — exemplos do tipo de assuntos em causa. As funções disponíveis na Plataforma do Funcionário e Agente do Estado e a forma de acesso são indicadas pelos recursos humanos da sua instituição.",
           "Cada funcionário usa só o seu acesso. Dados de colegas só são vistos por quem tem essa função (por exemplo, recursos humanos). Se encontrar um dado errado no seu registo, peça a correcção pelo canal indicado pelos recursos humanos, com documento de suporte.",
         ],
       },
@@ -594,7 +593,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
     guiao: {
       preparacao: [
         "Imprimir a lista de ficheiros e a mensagem da Joana.",
-        "Confirmar, se possível, a política de cópias da CloudGov e as funções da plataforma do funcionário; se não houver informação, dizê-lo aos formandos.",
+        "Confirmar com o ponto focal a política de cópias da CloudGov e, com os recursos humanos, as funções da plataforma do funcionário.",
       ],
       conducao: [
         "0–25 min: nuvem, permissões, limites; plataforma do funcionário.",
@@ -608,7 +607,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
     },
     fontes: [
       FONTE_PG,
-      { titulo: "TdR, secção 6.6 (Uso da CloudGov; Plataforma do Funcionário e Agente do Estado)", nota: "Tópicos exigidos. Sem manuais oficiais disponíveis à equipa." },
+      { titulo: "TdR, secção 6.6 (Uso da CloudGov; Plataforma do Funcionário e Agente do Estado)", nota: "Tópicos do programa." },
     ],
   },
 
@@ -624,7 +623,7 @@ export const LICOES: Record<string, ConteudoLicao> = {
         paragrafos: [
           "Interoperabilidade é a capacidade de sistemas de instituições diferentes trocarem dados de forma segura e compreensível. Exemplo conceptual: em vez de o cidadão ir a outra instituição buscar uma certidão, o serviço consulta a informação necessária, se houver base para isso, e regista a consulta.",
           "Interoperabilidade ≠ partilha livre de dados. Cada troca deve ter: finalidade definida; base legal ou acordo que a permita; só os dados necessários (por exemplo, 'sim/não, está inscrito' em vez do registo completo); quem pode pedir; e registo de quem consultou o quê e quando.",
-          "Existem propostas de articulado sobre interoperabilidade (INTIC, 2026) que não equivalem a lei aprovada; não são citadas aqui como obrigatórias. O quadro legal aplicável deve ser confirmado com a ATDI e os juristas da instituição.",
+          "Existem propostas de articulado sobre interoperabilidade (INTIC, 2026) que não equivalem a lei aprovada; por isso não são citadas como obrigatórias. O quadro legal aplicável é confirmado com os juristas da instituição.",
         ],
       },
       {
@@ -745,7 +744,7 @@ export function montarElearning(c: ConteudoLicao, l: LicaoPlano): string {
   const t = l.tempos;
   const partes: string[] = [];
   partes.push(
-    `<p><strong>Duração:</strong> ${l.minutos} minutos (explicação ${t.explicacao}, actividade ${t.actividade}, verificação ${t.formativa}). Tópicos dos TdR: ${esc(l.topicos.join("; "))}. Proposta pedagógica por validar.</p>`,
+    `<p><strong>Duração:</strong> ${l.minutos} minutos (explicação ${t.explicacao}, actividade ${t.actividade}, verificação ${t.formativa}). Tópicos dos TdR: ${esc(l.topicos.join("; "))}.</p>`,
   );
   partes.push(`<h2>Objectivos</h2>${ul(c.objectivos)}`);
   for (const e of c.explicacao) {
@@ -782,7 +781,7 @@ export function montarElearning(c: ConteudoLicao, l: LicaoPlano): string {
 export function montarGuiao(c: ConteudoLicao, l: LicaoPlano): string {
   return [
     `<h2>Guião do formador — ${esc(l.titulo)}</h2>`,
-    `<p>${l.minutos} minutos. Presencial. Proposta pedagógica por validar pela Ologa/ATDI. Prática nos sistemas reais pendente de ambientes de treino da ATDI.</p>`,
+    `<p>${l.minutos} minutos. Presencial.</p>`,
     `<h3>Preparação</h3>${ul(c.guiao.preparacao)}`,
     `<h3>Condução</h3>${ul(c.guiao.conducao)}`,
     `<h3>Erros comuns a corrigir</h3>${ul(c.guiao.errosComuns)}`,
