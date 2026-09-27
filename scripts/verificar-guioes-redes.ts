@@ -1,9 +1,10 @@
-/** Verifica que o último intervalo de cada guião termina na duração planeada da lição. */
+/** Verifica que os intervalos de cada guião são contínuos e terminam na duração planeada da lição. */
 import { LICOES_PLANO } from "../src/lib/plano-redes";
 import { LICOES_M01_03 } from "./conteudo/redes-m01-03";
 import { LICOES_M04_06 } from "./conteudo/redes-m04-06";
-import...LICOES_M07, ...LICOES_M08 } from "./conteudo/redes-m07";
+import { LICOES_M07 } from "./conteudo/redes-m07";
 import { LICOES_M08 } from "./conteudo/redes-m08";
+
 export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: string[] } }>) {
   const erros: string[] = [];
   for (const l of LICOES_PLANO) {
@@ -21,7 +22,11 @@ export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: s
   }
   return erros;
 }
+
+export const CONTEUDOS_ESCRITOS = { ...LICOES_M01_03, ...LICOES_M04_06, ...LICOES_M07, ...LICOES_M08 };
+
 if (import.meta.main) {
-  const e = verificarGuioes({ ...LICOES_M01_03, ...LICOES_M04_06, ...LICOES_M07, ...LICOES_M08 });
+  const e = verificarGuioes(CONTEUDOS_ESCRITOS);
+  console.log(`${Object.keys(CONTEUDOS_ESCRITOS).length} lições verificadas.`);
   console.log(e.length ? e.join("\n") : "Guiões coerentes com a duração.");
 }
