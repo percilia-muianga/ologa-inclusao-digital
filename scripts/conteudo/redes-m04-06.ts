@@ -667,6 +667,6 @@ export const LICOES_M04_06: Record<string, ConteudoLicao> = {
       conducao: ["0–20 min: o que é e não é incidente.", "20–70 min: simulação e reporte.", "70–80 min: formativas."],
       errosComuns: ["Desligar o equipamento da corrente.", "Misturar suposições com factos."],
     },
-    fontes: ["nist80061", "nistcsf", "lei102024"],
+    fontes: ["nist80061", "nistcsf"],
   },
 };

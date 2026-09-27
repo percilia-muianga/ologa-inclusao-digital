@@ -86,11 +86,51 @@ export const SCRIPT_BASE = [
   "echo 'Rede DPE criada (sem rotas entre sede e delegação: ver módulo 3).'",
 ];
 
+/** Nomes reservados pela rede de prática (espaços de nomes criados pelo lab-base.sh). */
+export const NOMES_LAB = ["pc-adm", "srv", "r1", "r2", "pc-del", "isp"] as const;
+
+/**
+ * Pré-verificação: correr ANTES do lab-base.sh, numa máquina virtual descartável
+ * e isolada (Debian 12, sem ligação à rede institucional). Recusa continuar se
+ * algum nome já existir, para nunca tocar em espaços de nomes que não são do lab.
+ */
+export const SCRIPT_VERIFICAR = [
+  "#!/bin/sh",
+  "# lab-verificar.sh — pré-verificação da rede de prática DPE (fictícia).",
+  "# Não cria nem apaga nada. Termina com código 1 se houver colisão ou dependência em falta.",
+  "erro=0",
+  "[ \"$(id -u)\" = 0 ] || { echo 'Executar como root na VM de prática.'; exit 1; }",
+  "if systemd-detect-virt -q 2>/dev/null; then echo \"Virtualização: $(systemd-detect-virt)\"; else echo 'AVISO: não parece ser uma máquina virtual. Use uma VM descartável.'; erro=1; fi",
+  "for n in " + NOMES_LAB.join(" ") + "; do",
+  "  if ip netns list | awk '{print $1}' | grep -qx \"$n\"; then echo \"Colisão: espaço de nomes $n já existe.\"; erro=1; fi",
+  "done",
+  "for d in ip tcpdump tshark python3 nft; do command -v $d >/dev/null || { echo \"Em falta: $d\"; erro=1; }; done",
+  "echo 'Pacotes Debian 12 necessários (instalar a partir de espelho/cópia local aprovada, antes da aula): iproute2 tcpdump tshark python3 nftables. Opcionais por lição: frr kea-dhcp4-server bind9 rsyslog chrony wireguard-tools suricata iperf3 snmp arping traceroute.'",
+  "[ $erro = 0 ] && echo 'Pré-verificação OK.' || echo 'Pré-verificação FALHOU: corrigir antes de criar a rede.'",
+  "exit $erro",
+];
+
+/**
+ * Limpeza exclusiva do laboratório. Segundo ip-netns(8), «ip netns del» só retira
+ * o nome; processos que ainda correm dentro do espaço de nomes mantêm-no vivo.
+ * Por isso: listar os PID de cada espaço de nomes do lab (ip netns pids), terminá-los
+ * um a um, confirmar, e só depois apagar. Sem pkill/killall globais.
+ */
 export const SCRIPT_REMOVER = [
   "#!/bin/sh",
-  "# lab-remover.sh — apaga toda a rede de prática (reversão total).",
-  "for n in pc-adm srv r1 r2 pc-del isp; do ip netns del $n 2>/dev/null || true; done",
+  "# lab-remover.sh — limpa apenas os espaços de nomes da rede de prática DPE.",
+  "for n in " + NOMES_LAB.join(" ") + "; do",
+  "  ip netns list | awk '{print $1}' | grep -qx \"$n\" || continue",
+  "  for p in $(ip netns pids $n); do echo \"$n: a terminar PID $p ($(cat /proc/$p/comm 2>/dev/null))\"; kill -TERM $p; done",
+  "  sleep 2",
+  "  resto=$(ip netns pids $n)",
+  "  if [ -n \"$resto\" ]; then echo \"$n: ainda activos: $resto — verifique manualmente (kill -KILL <PID>) e volte a correr.\"; continue; fi",
+  "  ip netns del $n && echo \"$n: apagado\"",
+  "done",
+  "echo 'Espaços de nomes extra criados em lições (t1..t3, sw, rt, a1, s1, vis, casa, sa..sc) têm reversão própria em cada lição.'",
+  "echo 'NÃO é reversão total: ficheiros em /tmp criados pelas lições e pacotes instalados na VM não são removidos por este script; confira a secção «Reverter» de cada lição. A forma segura de repor tudo é descartar a VM.'",
 ];
+
 
 export const FONTES = {
   rfc791: { titulo: "IETF RFC 791 — Internet Protocol", url: "https://www.rfc-editor.org/rfc/rfc791" },
@@ -157,7 +197,7 @@ export const FONTES = {
   nist80030: { titulo: "NIST SP 800-30 Rev. 1 — Guide for Conducting Risk Assessments", url: "https://csrc.nist.gov/pubs/sp/800/30/r1/final" },
   nist800207: { titulo: "NIST SP 800-207 — Zero Trust Architecture", url: "https://csrc.nist.gov/pubs/sp/800/207/final" },
   nist80077: { titulo: "NIST SP 800-77 Rev. 1 — Guide to IPsec VPNs", url: "https://csrc.nist.gov/pubs/sp/800/77/r1/final" },
-  lei102024: { titulo: "Lei n.º 10/2024 (Moçambique) — referência do programa para protecção de dados e serviços digitais", nota: "Citada apenas como enquadramento geral do programa; não se interpretam artigos nesta lição." },
+  lei102024: { titulo: "Lei n.º 10/2024, de 7 de Junho (Moçambique) — Lei dos Direitos e Liberdades Fundamentais da Pessoa com Deficiência (BR n.º 111, I Série)", url: "https://faolex.fao.org/docs/pdf/moz228091.pdf", nota: "Fonte oficial de divulgação: INM, https://www.inm.gov.mz/pt-br/node/19130. Não é lei de protecção de dados; nas lições de Redes não é citada como tal." },
 } as const satisfies Record<string, { titulo: string; url?: string; nota?: string }>;
 export type FonteChave = keyof typeof FONTES;
 

@@ -60,7 +60,7 @@ export const LICOES_M08: Record<string, ConteudoLicao> = {
         titulo: "Registos centralizados",
         paragrafos: [
           "Cada equipamento gera registos (syslog, RFC 5424) com data, anfitrião, aplicação, gravidade e mensagem. Guardados só no próprio equipamento, perdem-se se ele avariar ou for comprometido. Por isso enviam-se para um servidor central, com retenção definida, acesso restrito e hora sincronizada (NIST SP 800-92).",
-          "Os registos contêm dados pessoais (utilizadores, endereços). O acesso é limitado a quem precisa, o período de retenção é aprovado e o tratamento respeita a Lei n.º 10/2024 e as regras internas da instituição.",
+          "Os registos contêm dados pessoais (utilizadores, endereços). O acesso é limitado a quem precisa, o período de retenção é aprovado e o tratamento segue a política interna da instituição e a legislação aplicável, confirmada pelo jurista da instituição.",
         ],
       },
     ],
@@ -88,7 +88,7 @@ export const LICOES_M08: Record<string, ConteudoLicao> = {
       conducao: ["0–20 min: estrutura de uma linha syslog e gravidades.", "20–65 min: prática e linha do tempo.", "65–75 min: formativas."],
       errosComuns: ["Esquecer -d (UDP) no logger.", "Ignorar a protecção de dados pessoais nos registos."],
     },
-    fontes: ["rfc5424", "rsyslog", "nist80092", "lei102024"],
+    fontes: ["rfc5424", "rsyslog", "nist80092"],
   },
 
   "r-m08-l3": {
