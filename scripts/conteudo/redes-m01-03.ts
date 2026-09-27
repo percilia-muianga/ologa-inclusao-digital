@@ -572,7 +572,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
     ],
     caso: "A delegação da DPE (fictícia) tem uma ligação principal à sede e um acesso de reserva ao operador. Quer que a reserva só seja usada quando a principal cair.",
     pratica: {
-      topologia: [...TOPOLOGIA_BASE, "Nesta lição acrescenta-se uma ligação r2–isp (reserva) em 198.51.100.0/30 não é usado; usa-se 10.255.1.0/30: r2 = 10.255.1.2, isp = 10.255.1.1."],
+      topologia: [...TOPOLOGIA_BASE, "Nesta lição acrescenta-se uma ligação de reserva r2–isp na rede 10.255.1.0/30: r2 = 10.255.1.2, isp = 10.255.1.1."],
       passos: [
         { accao: "O FRR pode correr uma instância por espaço de nomes (opção de «pathspace» do frrinit.sh, conforme a documentação FRR). Se não funcionar na sua versão, use as linhas ip route equivalentes indicadas no fim.", comandos: ["sudo mkdir -p /etc/frr/r2 && sudo cp /etc/frr/daemons /etc/frr/r2/ && sudo touch /etc/frr/r2/frr.conf /etc/frr/r2/vtysh.conf", "sudo chown -R frr:frr /etc/frr/r2", "sudo /usr/lib/frr/frrinit.sh start r2"] },
         { accao: "Crie a ligação de reserva.", comandos: ["sudo ip link add r2-isp type veth peer name isp-r2; sudo ip link set r2-isp netns r2; sudo ip link set isp-r2 netns isp", "sudo ip -n r2 addr add 10.255.1.2/30 dev r2-isp; sudo ip -n isp addr add 10.255.1.1/30 dev isp-r2", "sudo ip -n r2 link set r2-isp up; sudo ip -n isp link set isp-r2 up"] },
@@ -709,7 +709,7 @@ export const LICOES_M01_03: Record<string, ConteudoLicao> = {
       topologia: TOPOLOGIA_BASE,
       passos: [
         { accao: "Prepare rotas estáticas correctas (sem FRR) e confirme que funcionam.", comandos: ["sudo ip -n r1 route add 10.20.10.0/24 via 10.255.0.2", "sudo ip -n r2 route add 10.10.0.0/16 via 10.255.0.1", "sudo ip netns exec pc-del ping -c 1 10.10.20.53"] },
-        { accao: "Formador: provoque um ciclo — o r1 passa a enviar 10.20.10.0/24 de volta… para si próprio via r2 errado. Aqui simula-se com uma rota mais específica errada no r2.", comandos: ["sudo ip -n r2 route add 10.10.20.0/24 via 10.255.0.1", "sudo ip -n r1 route add 10.10.20.53/32 via 10.255.0.2"] },
+        { accao: "Formador: provoque um ciclo com duas rotas específicas erradas: o r2 envia 10.10.20.0/24 para o r1 (correcto) e o r1 recebe uma rota /32 que devolve 10.10.20.53 ao r2.", comandos: ["sudo ip -n r2 route add 10.10.20.0/24 via 10.255.0.1", "sudo ip -n r1 route add 10.10.20.53/32 via 10.255.0.2"] },
         { accao: "Duplas: diagnostique.", comandos: ["sudo ip netns exec pc-del traceroute -n -m 6 10.10.20.53", "sudo ip -n r1 route get 10.10.20.53"], saida: [" 1  10.20.10.1", " 2  10.255.0.1", " 3  10.255.0.2", " 4  10.255.0.1", " 5  10.255.0.2", " 6  10.255.0.1", "10.10.20.53 via 10.255.0.2 dev r1-r2 src 10.255.0.1"] },
         { accao: "Corrija retirando a rota /32 indevida e prove.", comandos: ["sudo ip -n r1 route del 10.10.20.53/32", "sudo ip netns exec pc-del traceroute -n 10.10.20.53"], saida: [" 1  10.20.10.1", " 2  10.255.0.1", " 3  10.10.20.53"] },
       ],
