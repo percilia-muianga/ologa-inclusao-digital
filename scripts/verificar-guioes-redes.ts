@@ -2,6 +2,7 @@
 import { LICOES_PLANO } from "../src/lib/plano-redes";
 import { LICOES_M01_03 } from "./conteudo/redes-m01-03";
 import { LICOES_M04_06 } from "./conteudo/redes-m04-06";
+import { LICOES_M07 } from "./conteudo/redes-m07";
 export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: string[] } }>) {
   const erros: string[] = [];
   for (const l of LICOES_PLANO) {
@@ -20,6 +21,6 @@ export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: s
   return erros;
 }
 if (import.meta.main) {
-  const e = verificarGuioes({ ...LICOES_M01_03, ...LICOES_M04_06 });
+  const e = verificarGuioes({ ...LICOES_M01_03, ...LICOES_M04_06, ...LICOES_M07 });
   console.log(e.length ? e.join("\n") : "Guiões coerentes com a duração.");
 }

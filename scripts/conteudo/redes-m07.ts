@@ -85,12 +85,13 @@ export const LICOES_M07: Record<string, ConteudoLicao> = {
       topologia: TOPOLOGIA_BASE,
       passos: [
         { accao: "Consola C (deixar aberta): sirva a página de teste no srv e espere «Serving HTTP».", comandos: ["sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53"] },
+        { accao: "Acrescente as rotas sede–delegação (como no módulo 3), para o teste de recusa ser real.", comandos: ["sudo ip -n r1 route add 10.20.10.0/24 via 10.255.0.2", "sudo ip -n r2 route add default via 10.255.0.1", "sudo ip netns exec pc-del ping -c 1 -W 1 10.10.20.53"], saida: ["1 packets transmitted, 1 received"] },
         { accao: "Escreva a política no ficheiro /tmp/r1-politica.nft.", comandos: ["sudo tee /tmp/r1-politica.nft <<'EOF'", "flush ruleset", "table inet filtro {", "  chain forward {", "    type filter hook forward priority 0; policy drop;", "    ct state established,related accept comment \"respostas\"", "    ct state invalid drop", "    ip saddr 10.10.10.0/24 ip daddr 10.10.20.53 tcp dport 80 accept comment \"Adm->portal, pedido 101\"", "    ip saddr 10.10.99.0/24 ip daddr 10.10.20.53 tcp dport 22 accept comment \"Gestao->SSH, pedido 102\"", "    log prefix \"DPE-recusa: \" limit rate 5/minute counter drop", "  }", "}", "EOF", "sudo ip netns exec r1 nft -c -f /tmp/r1-politica.nft && echo sintaxe-ok"], saida: ["sintaxe-ok"] },
         { accao: "Guarde a política actual e aplique a nova com reposição automática em 120 s (consola B).", comandos: ["sudo ip netns exec r1 nft list ruleset > /tmp/r1-anterior.nft", "sudo ip netns exec r1 nft -f /tmp/r1-politica.nft", "Consola B: sleep 120 && sudo ip netns exec r1 sh -c 'nft flush ruleset; nft -f /tmp/r1-anterior.nft'", "(se tudo estiver bem, cancele o temporizador com Ctrl+C na consola B antes dos 120 s)"] },
         { accao: "Teste os fluxos permitidos e recusados.", comandos: ["sudo ip netns exec pc-adm python3 -c \"import urllib.request as u; print(u.urlopen('http://10.10.20.53/', timeout=3).status)\"", "sudo ip netns exec pc-del ping -c 1 -W 1 10.10.20.53", "sudo ip netns exec r1 nft list chain inet filtro forward"], saida: ["200", "1 packets transmitted, 0 received", "log prefix \"DPE-recusa: \" limit rate 5/minute counter packets 1 bytes 84 drop"] },
       ],
       sucesso: ["HTTP da Administração funciona; o ping da delegação é recusado e contado.", "Cada regra tem comentário com o pedido.", "O formando explica porque nft -f é aplicado de uma vez."],
-      reversao: ["sudo ip netns exec r1 sh -c 'nft flush ruleset; nft -f /tmp/r1-anterior.nft'", "Ctrl+C na consola C", "rm -f /tmp/r1-politica.nft /tmp/r1-anterior.nft"],
+      reversao: ["sudo ip netns exec r1 sh -c 'nft flush ruleset; nft -f /tmp/r1-anterior.nft'", "Ctrl+C na consola C", "sudo ip -n r1 route del 10.20.10.0/24 via 10.255.0.2; sudo ip -n r2 route del default via 10.255.0.1", "rm -f /tmp/r1-politica.nft /tmp/r1-anterior.nft"],
     },
     papel: [
       { tarefa: "Porque é que, com «policy drop», o pc-adm continua a receber a página, se nenhuma regra aceita tráfego do srv para o pc-adm?", esperado: "A resposta pertence a uma ligação já aceite; a regra «ct state established,related accept» deixa-a passar." },
@@ -220,13 +221,14 @@ export const LICOES_M07: Record<string, ConteudoLicao> = {
     pratica: {
       topologia: TOPOLOGIA_BASE,
       passos: [
+        { accao: "Prepare a situação encontrada pela auditoria (IPv6 a encaminhar sem uso).", comandos: ["sudo ip netns exec r1 sysctl -qw net.ipv6.conf.all.forwarding=1"] },
         { accao: "Consola C: simule um serviço de gestão inseguro no r1 (servidor HTTP de teste na porta 8080).", comandos: ["sudo ip netns exec r1 python3 -m http.server 8080 --bind 0.0.0.0"] },
         { accao: "Consola B: inventário ANTES — portas à escuta e parâmetros.", comandos: ["sudo ip netns exec r1 ss -lntup", "sudo ip netns exec r1 sysctl net.ipv6.conf.all.forwarding net.ipv4.conf.all.accept_redirects net.ipv4.conf.all.send_redirects"], saida: ["tcp LISTEN 0 5 0.0.0.0:8080 0.0.0.0:* users:((\"python3\",pid=4121,fd=3))", "net.ipv6.conf.all.forwarding = 1", "net.ipv4.conf.all.accept_redirects = 1", "net.ipv4.conf.all.send_redirects = 1"] },
         { accao: "Aplique o reforço: pare o serviço (Ctrl+C na consola C) e ajuste parâmetros.", comandos: ["sudo ip netns exec r1 sysctl -qw net.ipv6.conf.all.forwarding=0", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.accept_redirects=0", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.send_redirects=0"] },
         { accao: "Verifique DEPOIS e confirme que o encaminhamento IPv4 continua.", comandos: ["sudo ip netns exec r1 ss -lntup", "sudo ip netns exec pc-adm ping -c 1 10.10.20.53"], saida: ["(sem serviços à escuta)", "1 packets transmitted, 1 received"] },
       ],
       sucesso: ["A folha de alterações tem, para cada item: antes, depois, motivo, forma de reverter.", "O IPv4 continua a funcionar."],
-      reversao: ["sudo ip netns exec r1 sysctl -qw net.ipv6.conf.all.forwarding=1", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.accept_redirects=1", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.send_redirects=1"],
+      reversao: ["Repor os valores anotados no inventário ANTES (nesta prática: accept_redirects=1 e send_redirects=1; o IPv6 fica desligado, que é o valor inicial do espaço de nomes)", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.accept_redirects=1", "sudo ip netns exec r1 sysctl -qw net.ipv4.conf.all.send_redirects=1"],
     },
     papel: [
       { tarefa: "Preencha uma lista de reforço com 8 itens para um encaminhador (sem comandos, só verificação).", esperado: "Por exemplo: credenciais por omissão trocadas; gestão só por SSH e só da VLAN 99; Telnet/HTTP de gestão desligados; SNMPv3 ou SNMP desligado; hora sincronizada; registos centralizados; firmware/pacotes actualizados; cópia de configuração versionada; serviços não usados desligados." },
