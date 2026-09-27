@@ -1,4 +1,4 @@
--- MIGRAÇÃO REVISÁVEL — NÃO APLICADA.
+-- APLICADA em 27-09-2026 como drizzle/migrations/0026_politicas_tecnologias_governo.sql, após autorização expressa.
 -- Duas regras de escrita (UPDATE) restritas a admin_ologa (perfis.papel, via
 -- e_admin_geral_ologa) e ao curso 'tecnologias-digitais-governo'.
 -- Não cria INSERT/DELETE; não toca outros cursos nem o módulo transversal global
