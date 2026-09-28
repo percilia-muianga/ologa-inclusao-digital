@@ -547,7 +547,7 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
     ],
     guiao: {
       conducao: [
-        "0–20 min: auditoria vs teste técnico; referencial e controlos; escala de resultados; evidência reprodutível; independência; estrutura do relatório e limitações.",
+        "0–20 min: auditoria vs teste técnico; referencial e controlos; escala de resultados (sem prova = «não verificado» com limitação e acção; «não aplicável» só fora do âmbito, justificado); evidência reprodutível; independência; estrutura do relatório e limitações.",
         "20–70 min: prática em duplas cruzadas (lista, âmbito, controlos A01 a A12 com evidência, preenchimento, relatório); quem não tiver laboratório classifica os achados de exemplo e escreve recomendações em papel.",
         "70–80 min: formativas, correcção comentada e troca de relatórios entre duplas.",
       ],
