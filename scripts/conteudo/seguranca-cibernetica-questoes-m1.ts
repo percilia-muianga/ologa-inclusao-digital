@@ -215,9 +215,9 @@ const L4: QuestaoSC[] = [
   },
   {
     cod: "SC-M1L4-05", m: "m1", l: 4, t: "em", cen: true, d: "di",
-    e: "Caso fictício. A matriz de acessos de um serviço de Manica tem 12 contas: 2 contas partilhadas «balcao1» e «balcao2», usadas por 6 pessoas; 1 conta de administração usada no dia-a-dia pelo técnico; e 9 contas individuais, das quais 2 pertencem a pessoas que mudaram de serviço há 3 meses. Depois de aplicar privilégio mínimo e contas individuais, quantas contas devem estar activas para as pessoas em funções, contando o técnico com duas contas?",
-    opts: ["12 contas", "13 contas", "14 contas", "15 contas"], ind: 2,
-    exp: "As 6 pessoas das contas partilhadas passam a ter 6 contas individuais. Das 9 individuais, 2 são desactivadas, ficam 7. O técnico passa a ter conta de uso diário e conta de administração: 2. Total: 6 + 7 + 2 = 15? Não: a conta de administração existente passa a ser a conta de administração e acrescenta-se uma de uso diário, e o técnico já não está entre as 9. 6 + 7 + 2 = 15 seria o total se o técnico estivesse fora das 9; como a matriz conta o técnico apenas na conta de administração, o total é 6 + 7 + 2 = 15.",
+    e: "Caso fictício. A matriz de acessos de um serviço de Manica tem 12 contas: 2 contas partilhadas «balcao1» e «balcao2», usadas no total por 6 pessoas; 1 conta de administração que o único técnico usa também no trabalho diário, e ele não tem outra conta; e 9 contas individuais de outras pessoas, das quais 2 pertencem a pessoas que mudaram de serviço há 3 meses. Depois de eliminar contas partilhadas, desactivar acessos de quem saiu e separar as contas do técnico, quantas contas ficam activas?",
+    opts: ["12 contas", "13 contas", "14 contas", "15 contas"], ind: 3,
+    exp: "As 6 pessoas das contas partilhadas passam a ter 6 contas individuais. Das 9 contas individuais, 2 são desactivadas e ficam 7. O técnico passa a ter duas contas: uma de uso diário e uma de administração. Total: 6 + 7 + 2 = 15.",
     obj: "Reatribuir acessos segundo privilégio mínimo e eliminar contas partilhadas. M1 L4.",
   },
 ];
