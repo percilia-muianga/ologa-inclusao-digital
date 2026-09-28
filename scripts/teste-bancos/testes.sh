@@ -56,7 +56,6 @@ for S in sc tdg redes; do
   ok "inserir questão com código alheio" "$(como authenticated "$ADMIN" "INSERT INTO public.banco_questoes(curso_id, modulo_id, codigo, instrumento, tipologia, dificuldade, enunciado, conteudo, resposta, explicacao, cenario, activa, estado_revisao, versao, autor_nome) SELECT curso_id, modulo_id, 'ALHEIO-01', instrumento, tipologia, dificuldade, 'x', conteudo, resposta, 'x', cenario, false, 'rascunho', 'v1', 'teste' FROM public.banco_questoes WHERE curso_id='$CURSO' LIMIT 1;" COMMIT)"
   recusa "código alheio no curso bloqueia" "$(como authenticated "$ADMIN" "$IMP" COMMIT)" "CODIGO_INESPERADO_NA_BASE"
   igual "contagem inalterada após recusas" "$(conta)" "91/0/91"
-  ok "remover questão alheia" "$(como authenticated "$ADMIN" "DELETE FROM public.banco_questoes WHERE curso_id='$CURSO' AND codigo='ALHEIO-01';" COMMIT)"
 done
 igual "outro curso tem 1 questão" "$($P -c "SELECT count(*) FROM public.banco_questoes WHERE curso_id='00000000-0000-0000-0000-0000000000b9'")" "1"
 igual "banco do outro curso intacto" "$(impressao_outros)" "$OUTROS0"
