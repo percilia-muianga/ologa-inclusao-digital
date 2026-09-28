@@ -237,3 +237,12 @@ Registado a 22 de Setembro de 2026.
 - Proposta INTIC 2026 sobre interoperabilidade não é lei aprovada.
 - Vídeo com Língua de Sinais e áudio por produzir.
 - Importação, sessão real, rollback e concorrência não testados com sessão real.
+
+## Administração de Redes — execução em VM pendente (28/09/2026)
+- **Nenhum laboratório dos módulos 1 a 12 (60 lições) foi executado.** As saídas nas lições são exemplos didácticos. Falta uma primeira execução completa numa VM Debian 12 descartável e isolada, com registo do que falhar e correcção das lições.
+- Scripts embutidos verificados só quanto à sintaxe: Python (M11: inventario, monitor, analisar, recolher, prever; M12: indicadores) e sh (M11: exportar; M12: verificar-r1). Correram aqui com dados de teste apenas `prever.py`, `analisar.py` (M11) e `indicadores.py` (M12). Por validar na VM: regras nftables (M12 L1, L2, L5), configuração sshd de prática (M12 L1), snmpd/rsyslog (M11), tc/netem/htb (M10), nmap (M12).
+- Preparação da VM: instalar `snmpd` e `openssh-server` pode activar serviços do sistema. Não presumir em que endereços escutam: verificar só com leitura (`systemctl is-active`, `ss -ulnp`/`ss -tlnp`, `nft list ruleset`) e registar na ficha da VM, com a lista de pacotes instalados. As lições não alteram esses serviços.
+- M12 L1 pode criar `/run/sshd` na VM se não existir (registado em ficheiro próprio; reversão condicional descrita).
+- Actividade integrada e critérios C01–C18 (um por resultado R01–R18) em `redes-m12.ts`: proposta pedagógica interna, a validar pela Ologa/ATDI.
+- Divergência de horas 120/80 h: mantém-se em `docs/matriz-tdr.md`; o plano de trabalho usa 80 h.
+- Pendentes: pacote server-only, importador e página; matriz TdR por lição; importação (não autorizada); publicação e exames (não autorizados).
