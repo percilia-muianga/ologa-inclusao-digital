@@ -89,7 +89,7 @@ describe("SQL por autorizar", () => {
     expect(pols).toHaveLength(2);
     expect(POL).not.toMatch(/FOR (INSERT|DELETE|ALL|SELECT)/);
     expect((POL.match(/FOR UPDATE/g) ?? []).length).toBe(2);
-    expect((POL.match(/redes-avancadas-seguranca-cibernetica/g) ?? []).length).toBe(4);
+    expect((POL.replace(/^--.*$/gm, "").match(/redes-avancadas-seguranca-cibernetica/g) ?? []).length).toBe(4);
     expect(POL).not.toMatch(/ON public\.modulos/);
   });
   it("nada disto está em migrações autoexecutáveis", () => {
