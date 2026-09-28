@@ -100,6 +100,23 @@ const AUTORIZACAO = [
   "  turma e são apagados no fim (VM descartável).",
 ];
 
+/** Lista de verificação de auditoria (12 controlos), em CSV, preenchida na aula. */
+const LISTA_AUDITORIA = [
+  "id,controlo,fonte,como_verificar,evidencia_minima,resultado,observacao",
+  "A01,Segmentação: negação por omissão no encaminhamento,NIST SP 800-41,ver política da cadeia forward,saída do nft com policy drop,,",
+  "A02,Acesso de gestão limitado à origem autorizada,NIST SP 800-41,regra específica + teste negativo,contador da regra e saída do teste,,",
+  "A03,Gestão por protocolo cifrado (sem telnet/HTTP de gestão),NIST SP 800-41,varrimento de portas do equipamento,ficheiro do varrimento,,",
+  "A04,Autenticação administrativa sem palavra-passe partilhada,NIST SP 800-63B,config do serviço + tentativa recusada,config e mensagem de recusa,,",
+  "A05,Serviços desnecessários desactivados,NIST SP 800-41,lista de portas à escuta no equipamento,saída de ss,,",
+  "A06,Parâmetros de encaminhamento endurecidos,NIST SP 800-41,lista de verificação da lição 2,saída OK/FALHA,,",
+  "A07,Registos enviados para receptor central,NIST SP 800-92,evento de teste visível no receptor,linha do registo,,",
+  "A08,Hora sincronizada em todos os equipamentos,RFC 5905,comparar horas,saídas de data dos equipamentos,,",
+  "A09,Monitorização com alerta definido e responsável,NIST SP 800-137,ficha do alerta,ficha com limiar e responsável,,",
+  "A10,Configurações exportadas e versionadas,NIST SP 800-128,histórico de versões,registo com data e autor,,",
+  "A11,Cópia de segurança com integridade e reposição testada,NIST SP 800-34,soma verificada e reposição,saída da verificação e da reposição,,",
+  "A12,Inventário actualizado e sem credenciais,NIST SP 800-128,comparar inventário com recolha,CSV e lista de diferenças,,",
+];
+
 export const LICOES_M12: Record<string, ConteudoLicao> = {
   "r-m12-l1": {
     objectivos: [
@@ -376,5 +393,96 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["nist800115", "nist80030", "firstcvss", "cve", "nmap", "iproute2", "rfc1918", "rfc5737"],
+  },
+
+  "r-m12-l4": {
+    objectivos: [
+      "Distinguir auditoria de teste técnico: a auditoria compara a realidade com um referencial (política, norma, contrato) e produz conclusões rastreáveis a evidências.",
+      "Preparar uma lista de verificação com controlo, fonte, método, evidência mínima e resultado, e aplicá-la à rede de prática.",
+      "Recolher evidências reprodutíveis, registar «conforme», «não conforme», «parcial» ou «não aplicável» com justificação, e evitar conclusões sem prova.",
+      "Escrever conclusões e recomendações priorizadas, com responsável, prazo e reteste, e conhecer os limites da auditoria realizada.",
+    ],
+    explicacao: [
+      {
+        titulo: "Auditar é comparar com um referencial",
+        paragrafos: [
+          "Um teste técnico procura o que está exposto; uma auditoria verifica se a realidade cumpre o referencial: a política interna, uma norma como a ISO/IEC 27001, guias como os do NIST, ou as obrigações de um contrato. Cada item da auditoria é um controlo com uma fonte identificada, um método de verificação e a evidência mínima que o sustenta. Sem referencial, a auditoria vira opinião.",
+          "Os resultados usam uma escala clara: conforme (evidência mostra que cumpre), não conforme (evidência mostra que não cumpre), parcial (cumpre em parte, com o que falta identificado) e não aplicável (com justificação). Cada resultado aponta para um ficheiro ou saída guardada, de forma a que outra pessoa possa repetir a verificação e chegar ao mesmo resultado. O NIST SP 800-53A descreve exactamente esta lógica de examinar, entrevistar e testar.",
+        ],
+      },
+      {
+        titulo: "Independência, prova e limites",
+        paragrafos: [
+          "Quem audita não deve auditar o seu próprio trabalho: no mínimo, uma dupla verifica o trabalho da outra. A auditoria não altera o sistema; se algo tiver de ser corrigido, isso é remediação e faz-se depois, com pedido de alteração. Durante a auditoria, as evidências são tratadas como informação sensível.",
+          "O relatório indica âmbito, data, método, referencial, equipa, resultados por controlo com evidência, conclusões e recomendações priorizadas com responsável, prazo e reteste. Indica também as limitações: o que não foi verificado, o que dependeu de declaração de terceiros e o que foi observado apenas num momento. Uma recomendação sem prazo nem responsável não é uma recomendação: é um desejo.",
+        ],
+      },
+    ],
+    caso: "A DPE (fictícia) vai ser auditada pela tutela dentro de um mês. O chefe pede uma auditoria interna à rede de prática, com 12 controlos aprovados, para saber o que está conforme e preparar as correcções. Duas duplas trocam de papel: a dupla A audita a rede configurada pela dupla B, e vice-versa. Todos os dados são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Âmbito da auditoria (declarado): rede de prática desta VM, controlos A01 a A12 da lista aprovada; sem alterações ao sistema durante a auditoria.",
+        "Estado a auditar: cada dupla repõe, antes da troca, as configurações das lições 1 e 2 deste módulo (tabelas m12acessos e m12equip, SSH de prática) — a lista de verificação da lição 2 fica disponível.",
+        "Os controlos A07 a A12 referem-se a práticas do módulo 11: nesta aula verificam-se pela evidência guardada nessas lições ou marcam-se «não aplicável» com justificação, se a dupla não as tiver conservado.",
+      ],
+      passos: [
+        PRE_M12,
+        { accao: "Prepare a pasta e a lista de verificação (texto completo abaixo). Leia a coluna «evidência mínima» antes de começar: é o que tem de guardar.", comandos: ["mkdir -p /tmp/dpe-m12/l4/evidencias && cd /tmp/dpe-m12/l4", "cat > lista-auditoria.csv <<'EOF'", ...LISTA_AUDITORIA, "EOF", "column -s, -t lista-auditoria.csv | head -n 5"] },
+        { accao: "Registe o âmbito e a hora de início; declare que a auditoria não altera o sistema.", comandos: ["printf 'Auditoria interna (exercício)\\nAmbito: rede de pratica, controlos A01-A12\\nInicio: %s\\nEquipa: dupla A (audita a configuracao da dupla B)\\nRegra: so leitura; nenhuma alteracao ao sistema\\n' \"$(date '+%F %T')\" | tee evidencias/00-ambito.txt"], saida: ["Auditoria interna (exercício)", "Inicio: 2026-09-28 13:05:12"] },
+        { accao: "A01 e A02 — segmentação e acesso de gestão: examine as regras e faça o teste negativo. Guarde as saídas.", comandos: ["sudo ip netns exec r1 nft list table inet m12acessos | tee evidencias/A01-A02-regras.txt | grep -E 'policy|comment'", "sudo ip netns exec pc-del nmap -Pn -p 22 --host-timeout 20s 10.10.20.53 | tee evidencias/A02-teste-negativo.txt | grep 22/tcp"], saida: ["type filter hook forward priority filter; policy drop;", "… comment \"gestao-ssh\"", "… comment \"delegacao-web\"", "… comment \"recusado\"", "22/tcp filtered ssh"] },
+        { accao: "A03, A04 e A05 — portas do equipamento, autenticação administrativa e serviços à escuta.", comandos: ["sudo ip netns exec pc-adm nmap -Pn -p 1-1024 10.10.10.1 | tee evidencias/A03-portas-r1.txt | grep -cE '^[0-9]+/tcp +open'", "grep -E 'PasswordAuthentication|PubkeyAuthentication|PermitRootLogin' /tmp/dpe-m12/l1/sshd-pratica.conf | tee evidencias/A04-config-ssh.txt", "sudo ip netns exec pc-adm ssh -o BatchMode=yes -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/dpe-m12/l4/known_hosts $(id -un)@10.10.20.53 true 2>&1 | tee -a evidencias/A04-config-ssh.txt", "sudo ip netns exec r1 ss -tuln | tee evidencias/A05-escuta-r1.txt"], saida: ["0", "PermitRootLogin prohibit-password", "PasswordAuthentication no", "PubkeyAuthentication yes", "Permission denied (publickey).", "(nenhuma linha LISTEN no r1)"] },
+        { accao: "A06 — parâmetros endurecidos: use a lista da lição 2 (só leitura) e guarde a saída.", comandos: ["sudo sh /tmp/dpe-m12/l2/verificar-r1.sh | tee evidencias/A06-parametros.txt; echo \"código=$?\""], saida: ["Total de falhas: 0", "código=0"] },
+        { accao: "A07 a A12 — práticas do módulo 11: verifique a evidência guardada dessas lições. Se não existir nesta VM, marque «não aplicável (evidência não conservada nesta VM)» — não invente resultado.", comandos: ["ls -l /tmp/dpe-m11 2>/dev/null || echo 'evidências do módulo 11 não conservadas nesta VM'", "for n in pc-adm srv r1 r2; do printf '%s: ' $n; sudo ip netns exec $n date '+%F %T'; done | tee evidencias/A08-horas.txt"], saida: ["evidências do módulo 11 não conservadas nesta VM", "pc-adm: 2026-09-28 13:12:40", "srv: 2026-09-28 13:12:40", "r1: 2026-09-28 13:12:40", "r2: 2026-09-28 13:12:40", "(todos os espaços de nomes partilham o relógio da VM: A08 conforme nesta rede, mas isto não demonstra sincronização entre equipamentos reais — limitação a registar)"] },
+        { accao: "Preencha as colunas «resultado» e «observação» da lista, apontando o ficheiro de evidência de cada controlo.", comandos: ["nano lista-auditoria.csv"] },
+        { accao: "Escreva o relatório: âmbito, data, método, referencial, equipa, resultados, conclusões, recomendações priorizadas (responsável, prazo, reteste) e limitações.", comandos: ["nano relatorio-auditoria.txt"] },
+      ],
+      sucesso: [
+        "Os 12 controlos têm resultado, e cada resultado aponta um ficheiro de evidência ou uma justificação de «não aplicável».",
+        "Nenhuma configuração foi alterada durante a auditoria (verificável: não há comandos de alteração nos registos da consola).",
+        "As recomendações estão priorizadas e têm responsável, prazo e reteste.",
+        "O relatório declara pelo menos três limitações, incluindo a do relógio partilhado e a dos controlos do módulo 11 não verificados.",
+        "A dupla auditada consegue repetir qualquer verificação e obter o mesmo resultado.",
+      ],
+      reversao: [
+        "A auditoria não alterou nada; não há configuração a repor.",
+        "As evidências são sensíveis: mostrar ao formador e depois rm -r /tmp/dpe-m12/l4.",
+        "As configurações das lições 1 e 2 ficam para a lição 5 ou removem-se com as reversões dessas lições.",
+      ],
+    },
+    papel: [
+      { tarefa: "Classifique (conforme/não conforme/parcial/não aplicável) e justifique: (a) A02 com regra específica e teste negativo «filtered»; (b) A04 com PasswordAuthentication no, mas a chave privada guardada sem frase de acesso; (c) A11 sem qualquer cópia nesta VM; (d) A08 com todos os relógios iguais por partilharem a VM.", esperado: "(a) Conforme: evidência de regra e teste negativo. (b) Parcial: a autenticação por palavra-passe está desactivada, mas a protecção da chave é fraca; falta frase de acesso ou protecção equivalente. (c) Não conforme, se o referencial exige cópias; ou não aplicável se o âmbito excluir cópias — a justificação tem de constar. (d) Conforme no âmbito da rede de prática, com limitação registada: não demonstra sincronização em equipamentos reais." },
+      { tarefa: "Escreva duas recomendações priorizadas a partir dos achados de exemplo.", esperado: "1) Alta: proteger a chave administrativa com frase de acesso e limitar a origem do acesso. Responsável: equipa de redes. Prazo: 15 dias (fictício). Reteste: tentar usar a chave sem frase e confirmar recusa. 2) Média: instituir cópia semanal das configurações com verificação de integridade e reposição testada. Responsável: equipa de redes. Prazo: 30 dias. Reteste: repor numa pasta de teste e comparar." },
+      { tarefa: "Um auditor escreve «a rede está segura». Reescreva de forma defensável.", esperado: "«Dos 12 controlos do âmbito, 9 conformes, 2 parciais e 1 não conforme, verificados em 28-09-2026 na rede de prática, com as evidências indicadas. Fora do âmbito: aplicações, postos de trabalho, rede sem fios e procedimentos de pessoal.»" },
+      { tarefa: "Porque a dupla não deve auditar a sua própria configuração?", esperado: "Falta independência: tende a confirmar o que fez, conhece os atalhos que tomou e pode saltar verificações. A troca entre duplas aproxima-se da separação entre quem executa e quem verifica." },
+    ],
+    formativas: [
+      { pergunta: "Qual é a diferença essencial entre um teste técnico e uma auditoria?", opcoes: ["A auditoria usa mais ferramentas", "A auditoria compara a realidade com um referencial e sustenta cada conclusão numa evidência", "O teste técnico não precisa de autorização", "Não há diferença"], certa: 1, comentario: "O teste procura exposições; a auditoria verifica cumprimento face a política, norma ou contrato, com resultados rastreáveis a evidências." },
+      { pergunta: "Um controlo não pôde ser verificado por falta de dados. O que se escreve?", opcoes: ["Conforme, para não atrasar", "Não aplicável ou não verificado, com justificação e indicação do que falta", "Não conforme, sempre", "Nada"], certa: 1, comentario: "Inventar um resultado destrói a credibilidade da auditoria. Regista-se o que impediu a verificação e o que seria preciso para a concluir." },
+    ],
+    leituraFacil: [
+      "Auditar é comparar o que existe com as regras escritas.",
+      "Cada resposta precisa de uma prova guardada.",
+      "Escreva: cumpre, não cumpre, cumpre em parte ou não se aplica.",
+      "Quem fez o trabalho não deve ser quem verifica.",
+      "A auditoria não muda nada: só observa.",
+      "Diga também o que não foi verificado.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: auditoria vs teste técnico; referencial e controlos; escala de resultados; evidência reprodutível; independência; estrutura do relatório e limitações.",
+        "20–70 min: prática em duplas cruzadas (lista, âmbito, controlos A01 a A12 com evidência, preenchimento, relatório); quem não tiver laboratório classifica os achados de exemplo e escreve recomendações em papel.",
+        "70–80 min: formativas, correcção comentada e troca de relatórios entre duplas.",
+      ],
+      errosComuns: [
+        "Concluir sem apontar a evidência.",
+        "Corrigir problemas durante a auditoria em vez de os registar.",
+        "Marcar «conforme» por declaração verbal.",
+        "Auditar a própria configuração.",
+        "Recomendações sem responsável, prazo nem reteste.",
+        "Esquecer de declarar as limitações, incluindo o relógio partilhado da VM.",
+      ],
+    },
+    fontes: ["nist80053a", "isoiec27001", "nist80041", "nist80092", "nist800128", "nist80034", "rfc5905", "nmap", "nftables"],
   },
 };
