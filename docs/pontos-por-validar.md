@@ -256,3 +256,12 @@ Registado a 22 de Setembro de 2026.
 - Mantêm-se: TdR original completo não disponível na ferramenta (R01–R18 são resumo interno); contradição 120 h (sec. 6.5) vs. 80 h (sec. 14); inclusão do transversal e da avaliação nas 80 h é proposta interna; laboratórios em VM não executados; validação pedagógica Ologa/ATDI pendente; exames não activados; nada publicado.
 
 - Privacidade do pacote Redes: verificada apenas por análise estática dos imports (conteúdo só em *.server.ts). Não existe versão compilada local; a procura de marcadores das 60 lições nos ficheiros enviados ao navegador NÃO foi feita e fica por executar.
+
+## PV-SC-BANCO — Banco de avaliação de Segurança Cibernética Avançada (28/09/2026)
+
+- Escrito em ficheiros privados (`scripts/conteudo/seguranca-cibernetica-questoes*.ts`): 80 finais + 10 diagnóstico. Matriz em `docs/matriz-banco-seguranca-cibernetica.md`.
+- **Não importado** (base continua com 0 questões deste curso), **não activado**, sem configuração de exame, sem quotas de produção. Nenhuma migração, permissão ou escrita na base.
+- Não existe ainda integrador restrito nem função de importação para este banco; a importação exigirá decisão e autorização próprias.
+- A tabela real tem `activa = true` e `estado_revisao = 'em_uso'` por omissão: qualquer importação futura tem de os fixar explicitamente como `false`/`rascunho` (o plano em memória já o faz).
+- Sem quotas próprias em `quotas-exame.ts`, a produção usaria só equilíbrio de dificuldade para este curso. Acrescentar a proposta 6/6/6/2 é decisão pendente.
+- Pendentes: validação pedagógica Ologa/ATDI; calibração das dificuldades (V/F quase só fácil, cenários sem fáceis); revisão por especialista.
