@@ -19,7 +19,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export type Json = string | number | boolean | null | Json[] | { [chave: string]: Json };
 
 export type EstadoPacote = {
-  pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial" | "tecnologias-governo";
+  pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial" | "tecnologias-governo" | "redes";
   hash: string;
   resumo: { [chave: string]: Json };
   previsto: { [chave: string]: Json };
@@ -129,6 +129,37 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
       });
     }
 
+    // Pacote 4 — Administração de Redes (60 lições, 12 módulos, 80 horas).
+    {
+      const { data, error } = await sb.rpc("rpc_estado_redes");
+      let previsto: { [chave: string]: Json } = {};
+      let erro: string | null = error ? explicarErro(error.message) : null;
+      try {
+        const p = preparados.payloadRedes();
+        previsto = {
+          licoes: p.licoes.length,
+          modulos: p.modulos.length,
+          minutos_licoes: p.licoes.reduce((s, l) => s + l.minutos, 0),
+          transversal_minutos: p.transversal.minutos,
+          minutos_avaliacao: p.curso.minutos_avaliacao_orientacao,
+          horas: p.curso.carga_horaria,
+        };
+      } catch (e) {
+        erro = erro ?? (e as Error).message;
+      }
+      const estado = (data ?? {}) as { [chave: string]: Json };
+      if (!erro && estado["regra_de_escrita_do_curso"] === false) {
+        erro = explicarErro("SEM_REGRA_DE_ESCRITA_CURSO");
+      }
+      resultados.push({
+        pacote: "redes",
+        hash: (estado["hash"] as string) ?? "",
+        resumo: estado,
+        previsto,
+        erro,
+      });
+    }
+
     return resultados;
   });
 
@@ -142,6 +173,10 @@ export type ResultadoImportacao = {
 export function explicarErro(mensagem: string): string {
   if (mensagem.includes("SEM_PERMISSAO_ADMIN_GERAL"))
     return "Esta acção é exclusiva do perfil Administrador Geral Ologa.";
+  if (mensagem.includes("rpc_estado_redes") || mensagem.includes("rpc_importar_redes"))
+    return "A importação deste curso ainda não está autorizada na base de dados (funções por aprovar). Nada foi gravado.";
+  if (mensagem.includes("IDS_INESPERADOS"))
+    return "As identificações do curso, módulos ou lições na plataforma não são as esperadas pelo pacote. Nada foi gravado.";
   if (mensagem.includes("SEM_REGRA_DE_ESCRITA"))
     return "Falta uma regra de escrita da base de dados, só para o Administrador Geral Ologa e só neste curso, na ficha do curso e nas horas dos módulos. Sem ela a importação fica bloqueada. Nada foi gravado.";
   if (mensagem.includes("SEM_SESSAO")) return "A sessão terminou. Entre outra vez.";
@@ -166,7 +201,7 @@ export function explicarErro(mensagem: string): string {
   if (mensagem.includes("MINUTOS_POR_MODULO_INCOERENTES"))
     return "Os minutos das lições não batem certo com os do respectivo módulo. Nada foi gravado.";
   if (mensagem.includes("MINUTOS_INCOERENTES"))
-    return "As horas do pacote não fecham em 30 horas. Nada foi gravado.";
+    return "As horas do pacote não fecham com a carga horária do curso. Nada foi gravado.";
   if (mensagem.includes("PAYLOAD") || mensagem.includes("INVALID") || mensagem.includes("MATRIZ"))
     return "O pacote preparado não passou na verificação da base de dados. Nada foi gravado.";
   if (mensagem.includes("permission denied") || mensagem.includes("row-level security"))
@@ -185,7 +220,8 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
     if (
       input?.pacote !== "seguranca-cibernetica" &&
       input?.pacote !== "banco-inteligencia-artificial" &&
-      input?.pacote !== "tecnologias-governo"
+      input?.pacote !== "tecnologias-governo" &&
+      input?.pacote !== "redes"
     ) {
       throw new Error("PACOTE_DESCONHECIDO");
     }
@@ -216,6 +252,16 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
       if (data.pacote === "tecnologias-governo") {
         const payload = preparados.payloadTecnologiasGoverno();
         const { data: res, error } = await sb.rpc("rpc_importar_tecnologias_governo", {
+          _payload: payload,
+          _hash_estado: data.hash,
+        });
+        if (error) return { ok: false, detalhe: null, erro: explicarErro(error.message) };
+        return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
+      }
+
+      if (data.pacote === "redes") {
+        const payload = preparados.payloadRedes();
+        const { data: res, error } = await sb.rpc("rpc_importar_redes", {
           _payload: payload,
           _hash_estado: data.hash,
         });

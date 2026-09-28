@@ -246,3 +246,10 @@ Registado a 22 de Setembro de 2026.
 - Actividade integrada e critérios C01–C18 (um por resultado R01–R18) em `redes-m12.ts`: proposta pedagógica interna, a validar pela Ologa/ATDI.
 - Divergência de horas 120/80 h: mantém-se em `docs/matriz-tdr.md`; o plano de trabalho usa 80 h.
 - Pendentes: pacote server-only, importador e página; matriz TdR por lição; importação (não autorizada); publicação e exames (não autorizados).
+
+## Administração de Redes — pacote e importador (28/09/2026)
+- Pacote (60 lições, 12 módulos × 380 min, transversal 120, avaliação 120 = 4800 min) e importador prontos na área «Conteúdos preparados». **Nada importado.** A base real continua com 0/60 lições com conteúdo.
+- **Por autorizar (não aplicado):** `docs/migracoes-por-autorizar/importacao-redes.sql` (funções rpc_estado_redes / rpc_importar_redes, SECURITY INVOKER, EXECUTE só para authenticated) e `docs/migracoes-por-autorizar/politicas-redes.sql` (2 regras UPDATE, só admin_ologa, só o slug de Redes). Até lá a página mostra «importação ainda não autorizada».
+- Simulação completa em base temporária descartável (`scripts/teste-redes/correr.sh`): 38/38.
+- Dados actuais na base (antes de importar): módulos com 590 min cada e avaliação 0 — a importação corrige para 380/120.
+- Mantêm-se: TdR original completo não disponível na ferramenta (R01–R18 são resumo interno); contradição 120 h (sec. 6.5) vs. 80 h (sec. 14); inclusão do transversal e da avaliação nas 80 h é proposta interna; laboratórios em VM não executados; validação pedagógica Ologa/ATDI pendente; exames não activados; nada publicado.

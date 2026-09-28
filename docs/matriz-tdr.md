@@ -12,7 +12,7 @@ secção do Termo de Referência for trabalhada.
 | Introdução à Inteligência Artificial | 20 h | presencial | 20 h (era 16) | corrigido e verificado |
 | Computação em Nuvem | 30 h | presencial | 30 h | implementado |
 | Segurança Cibernética Avançada | 30 h | presencial | 30 h | plano corrigido (era 32 h); 15 lições escritas, sincronização na base pendente — ver PV-06 |
-| Redes Avançadas e Introdução à Segurança Cibernética | 80 h | presencial | 80 h (era 120) | corrigido e verificado |
+| Redes Avançadas e Introdução à Segurança Cibernética | 80 h | presencial | 80 h (era 120); proposta 4560+120+120; 60 lições escritas; pacote e importador prontos, funções e regras por autorizar; matriz R01–R18 em `docs/matriz-redes-r01-r18.md` | parcial |
 | Tecnologias Digitais do Governo | 10 h | presencial | 10 h (proposta 360+120+120; conteúdo escrito, importação bloqueada por falta de regra de escrita) | parcial |
 
 **Referência provisória, pendente de esclarecimento da ATDI.** O documento de
