@@ -391,4 +391,95 @@ export const LICOES_M10: Record<string, ConteudoLicao> = {
     },
     fontes: ["tcqdisc", "iproute2", "rfc8289", "rfc8290", "rfc2475", "rfc6349", "iperf3"],
   },
+
+  "r-m10-l5": {
+    objectivos: [
+      "Aplicar um método de diagnóstico de lentidão: delimitar o sintoma, medir por etapas (resolução de nomes, ligação, primeira resposta, transferência), comparar com uma referência e confirmar a causa antes de corrigir.",
+      "Usar curl --write-out, ping, mtr, iperf3 e os contadores do tc para separar lentidão do servidor, perda na ligação e limitação de débito.",
+      "Escrever um relatório de incidente de desempenho com evidências, causa provável, correcção, verificação e limites das medições.",
+    ],
+    explicacao: [
+      {
+        titulo: "«Está lento» não é um diagnóstico",
+        paragrafos: [
+          "Primeiro delimita-se: que serviço, que utilizadores, desde quando, sempre ou a certas horas, e comparado com quê. Depois divide-se o tempo de um pedido em etapas. O curl mostra, com --write-out, o tempo de resolução do nome (time_namelookup), de ligação TCP (time_connect), até ao primeiro byte da resposta (time_starttransfer) e total (time_total), e a velocidade média de transferência. Os tempos do curl são acumulados desde o início do pedido.",
+          "Leitura típica: resolução alta aponta para DNS; ligação alta aponta para rede ou servidor sobrecarregado a aceitar ligações; primeiro byte alto com ligação rápida aponta para a aplicação ou o servidor; transferência lenta com primeiro byte rápido aponta para débito, perda ou filas no caminho. São indícios, não provas: cada hipótese confirma-se com outra medição independente (ping e mtr para perda e atraso, iperf3 para débito, contadores do equipamento para descartes).",
+        ],
+      },
+      {
+        titulo: "Confirmar, corrigir, verificar, registar",
+        paragrafos: [
+          "Mede-se antes de mexer, muda-se uma coisa de cada vez e volta-se a medir com os mesmos parâmetros. Sem uma referência (medição de quando estava normal) não se sabe o que é «lento». Nos equipamentos que a equipa gere, os contadores (por exemplo tc -s qdisc show: sent, dropped, overlimits) mostram se há descartes ou filas; nos equipamentos do operador, pede-se a informação com evidências.",
+          "O relatório diz o que foi medido, com que ferramenta e quando; distingue facto medido de hipótese; e indica limites (amostra pequena, horário, simulação). Uma medição feita na rede de prática nunca se apresenta como medição da rede real.",
+        ],
+      },
+    ],
+    caso: "Na delegação da DPE (fictícia), três pessoas dizem em dias diferentes que «descarregar relatórios do srv está lento». O formador, sem revelar, activa uma de três falhas na rede de prática. As duplas diagnosticam com medições, identificam a causa, pedem a correcção ao formador e verificam. Todos os valores são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Serviço: servidor web de teste no srv, porto 80, a servir um ficheiro de 1 000 000 bytes em /tmp/dpe-m10/l5.",
+        "Falhas escondidas (só o formador aplica, uma de cada vez, sempre na saída r1-r2, sentido sede → delegação, ou no próprio servidor): A — atraso 20 ms e 3 % de perda (netem); B — limitação a 512 kbit/s (tbf); C — servidor que espera 2 s antes de responder.",
+        "Limite da simulação: cada falha é artificial e isolada; na realidade podem coexistir várias causas.",
+      ],
+      passos: [
+        PRE_M10,
+        { accao: "Prepare a pasta própria, o ficheiro de teste e o servidor lento (este só é usado na falha C).", comandos: ["mkdir -p /tmp/dpe-m10/l5", "head -c 1000000 /dev/zero > /tmp/dpe-m10/l5/relatorio.bin", "cat > /tmp/dpe-m10/l5/lento.py <<'EOF'", "import functools, http.server, time", "class H(http.server.SimpleHTTPRequestHandler):", "    def do_GET(self):", "        time.sleep(2)", "        super().do_GET()", "http.server.ThreadingHTTPServer(('10.10.20.53', 80), functools.partial(H, directory='/tmp/dpe-m10/l5')).serve_forever()", "EOF"] },
+        { accao: "Consola C: servidor web normal (esperar «Serving HTTP»). Meça a referência três vezes e registe.", comandos: ["C: sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53 --directory /tmp/dpe-m10/l5", "for i in 1 2 3; do sudo ip netns exec pc-del curl -o /dev/null -s -w 'ligacao=%{time_connect} primeiro_byte=%{time_starttransfer} total=%{time_total} bytes_s=%{speed_download}\\n' http://10.10.20.53/relatorio.bin; done"], saida: ["ligacao=0.000210 primeiro_byte=0.001310 total=0.004920 bytes_s=203252032", "(três linhas semelhantes; é a referência na rede de prática, não um valor real)"] },
+        { accao: "Formador (consola própria, sem mostrar): aplica UMA falha. Para C, faz Ctrl+C no servidor normal da consola C e inicia o servidor lento.", comandos: ["A: sudo ip netns exec r1 tc qdisc add dev r1-r2 root netem delay 20ms loss 3%", "B: sudo ip netns exec r1 tc qdisc add dev r1-r2 root tbf rate 512kbit burst 16kb latency 400ms", "C: sudo ip netns exec srv python3 /tmp/dpe-m10/l5/lento.py"] },
+        { accao: "Etapa 1 — decompor o pedido com curl (três repetições). Compare com a referência.", comandos: ["for i in 1 2 3; do sudo ip netns exec pc-del curl -o /dev/null -s -w 'ligacao=%{time_connect} primeiro_byte=%{time_starttransfer} total=%{time_total} bytes_s=%{speed_download}\\n' http://10.10.20.53/relatorio.bin; done"], saida: ["Falha A: ligacao=0.020400 primeiro_byte=0.041200 total=2.310000 bytes_s=432900", "Falha B: ligacao=0.000300 primeiro_byte=0.001600 total=15.980000 bytes_s=62578", "Falha C: ligacao=0.000220 primeiro_byte=2.003100 total=2.007400 bytes_s=498156"] },
+        { accao: "Etapa 2 — atraso e perda: ping com amostra suficiente e mtr.", comandos: ["sudo ip netns exec pc-del ping -c 100 -i 0.1 10.10.20.53 | tail -2", "sudo ip netns exec pc-del mtr -n -r -c 50 10.10.20.53"], saida: ["Falha A: 100 transmitted, 97 received, 3% packet loss; rtt avg 20.3 ms; mtr: perda a partir do salto 2 (10.255.0.1) e no destino", "Falha B: 0% packet loss; rtt avg 0.08 ms (sem carga, a limitação não se vê no ping)", "Falha C: 0% packet loss; rtt avg 0.07 ms"] },
+        { accao: "Etapa 3 — débito no sentido sede → delegação (consola D: servidor iperf3; esperar «Server listening»).", comandos: ["D: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -R -t 10 | tail -3"], saida: ["Falha A: sender … 3.9 Mbits/sec  Retr 212; receiver 3.8 Mbits/sec", "Falha B: sender … 0.50 Mbits/sec  Retr 4; receiver 0.49 Mbits/sec", "Falha C: receiver com o débito da referência (a rede está normal)"] },
+        { accao: "Etapa 4 — confirmar no equipamento gerido (r1): contadores da fila de saída.", comandos: ["sudo ip netns exec r1 tc -s qdisc show dev r1-r2"], saida: ["Falha A: qdisc netem 8001: root … delay 20ms loss 3% … Sent … (dropped 212 …)", "Falha B: qdisc tbf 8002: root … rate 512Kbit burst 16Kb lat 400ms … (dropped 4, overlimits 1840 …)", "Falha C: qdisc noqueue 0: root (nenhuma fila configurada)"] },
+        { accao: "Etapa 5 — conclusão e pedido de correcção ao formador (que remove a falha: comandos na reversão). Repita a Etapa 1 para verificar que voltou à referência. Escreva o relatório.", comandos: ["nano /tmp/dpe-m10/l5/relatorio-incidente.txt"] },
+      ],
+      sucesso: [
+        "Para cada falha, a dupla identifica a etapa anómala no curl e confirma com pelo menos uma medição independente (ping/mtr, iperf3 ou contadores).",
+        "A dupla distingue as três causas: perda na ligação (A), limitação de débito (B), servidor lento (C).",
+        "A dupla verifica após a correcção, com os mesmos comandos, que os tempos voltaram à referência.",
+        "O relatório separa factos medidos de hipóteses e indica que as medições são da rede de prática.",
+      ],
+      reversao: [
+        "Falhas A ou B: sudo ip netns exec r1 tc qdisc del dev r1-r2 root",
+        "Falha C: Ctrl+C na consola onde corre lento.py (não usar pkill/killall).",
+        "Ctrl+C nas consolas C e D se algum servidor ainda estiver activo.",
+        "Guardar o relatório fora da VM, se necessário, e depois: rm -r /tmp/dpe-m10/l5 (remove ficheiro de teste, lento.py e relatório).",
+        "Verificar: tc qdisc show dev r1-r2 mostra só «qdisc noqueue»; ip netns pids srv não lista python3 nem iperf3.",
+      ],
+    },
+    papel: [
+      { tarefa: "Para cada linha de curl de exemplo (falhas A, B e C), diga que etapa está anómala e qual a hipótese.", esperado: "A: ligação e primeiro byte cerca de 20–40 ms (atraso) e transferência lenta → atraso e perda na ligação. B: ligação e primeiro byte normais, transferência muito lenta (≈ 62 kB/s ≈ 0,5 Mbit/s) → limitação de débito. C: ligação normal, primeiro byte 2 s, transferência rápida → servidor/aplicação." },
+      { tarefa: "Na falha B o ping sem carga era normal. Porque isso não descarta um problema de rede?", esperado: "O ping sem carga usa muito pouco débito e não enche a fila; uma limitação de débito só se revela com transferências (iperf3, curl) ou com ping durante a carga, e nos contadores (overlimits) do equipamento." },
+      { tarefa: "Escreva o relatório de incidente para a falha A.", esperado: "Sintoma: descargas lentas na delegação. Medições (rede de prática, data/hora): curl total 2,31 s vs referência 0,005 s; ping 100 amostras 3 % perda, RTT 20,3 ms; mtr perda a partir do salto 2; iperf3 -R 3,8 Mbit/s com 212 retransmissões; tc em r1 mostra netem com loss 3 %. Causa: perda e atraso na saída r1-r2 (simulados). Correcção: remoção da fila netem. Verificação: curl voltou à referência. Limites: falha artificial, amostras curtas." },
+      { tarefa: "Um colega reinicia o servidor e o encaminhador «para ver se resolve» antes de medir. Que problemas isso cria?", esperado: "Perdem-se as evidências (contadores, estado), não se sabe qual acção resolveu, pode causar interrupção desnecessária e o problema pode voltar sem explicação. Primeiro mede-se, depois muda-se uma coisa de cada vez." },
+    ],
+    formativas: [
+      { pergunta: "O curl mostra ligação em 0,2 ms e primeiro byte em 2 s. Onde procurar primeiro?", opcoes: ["No cabo de rede", "No servidor ou na aplicação, porque a ligação TCP foi rápida e a espera é pela resposta", "No DNS", "Na VLAN"], certa: 1, comentario: "A rede estabeleceu a ligação depressa; o tempo gasto até ao primeiro byte é, sobretudo, processamento do servidor. Confirma-se com medições de rede normais e com os registos do servidor." },
+      { pergunta: "Porque se mede com os mesmos comandos antes e depois da correcção?", opcoes: ["Para gastar tempo", "Para comparar de forma justa e provar que a correcção resolveu o problema", "Porque o curl só funciona assim", "Para apagar os registos"], certa: 1, comentario: "Sem a mesma medição antes e depois, não há evidência de que a mudança resolveu nada; pode ter sido coincidência (por exemplo, a carga ter baixado)." },
+    ],
+    leituraFacil: [
+      "Primeiro pergunte: o quê, quem, quando.",
+      "Meça antes de mudar qualquer coisa.",
+      "Divida o pedido em partes: ligar, esperar resposta, receber.",
+      "Confirme a causa com outra medição.",
+      "Mude uma coisa de cada vez e volte a medir.",
+      "Escreva o que mediu e o que ainda é só uma ideia.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: delimitar o sintoma; etapas de um pedido com curl; leituras típicas e porque são indícios; confirmar, corrigir, verificar, registar.",
+        "20–70 min: prática em duplas com rotação das falhas A, B e C (referência, curl, ping/mtr, iperf3, contadores, conclusão, verificação, relatório); quem não tiver laboratório diagnostica em papel com as saídas de exemplo.",
+        "70–80 min: formativas e correcção comentada; comparar relatórios.",
+      ],
+      errosComuns: [
+        "Mexer em configurações antes de medir e perder as evidências.",
+        "Concluir «a rede está boa» só com um ping sem carga.",
+        "Ler os tempos do curl como parciais (são acumulados desde o início).",
+        "Aplicar duas correcções ao mesmo tempo.",
+        "Apresentar medições da rede de prática como se fossem da rede real.",
+        "Esquecer a reversão da falha antes da próxima dupla.",
+      ],
+    },
+    fontes: ["curl", "mtr", "iperf3", "tcqdisc", "iproute2", "rfc2681", "rfc7680", "rfc6349", "nist80061"],
+  },
 };
