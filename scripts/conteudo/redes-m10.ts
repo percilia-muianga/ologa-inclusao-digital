@@ -125,4 +125,93 @@ export const LICOES_M10: Record<string, ConteudoLicao> = {
     },
     fontes: ["rfc2681", "rfc7679", "rfc3393", "rfc7680", "rfc6349", "rfc3550", "iperf3", "mtr", "tcqdisc", "iproute2"],
   },
+
+  "r-m10-l2": {
+    objectivos: [
+      "Explicar o modelo de serviços diferenciados (DiffServ): classificação, marcação DSCP, comportamento por salto e fronteira de confiança.",
+      "Marcar tráfego de voz com DSCP EF num encaminhador com nftables e dar-lhe prioridade numa fila htb com tc, só na ligação congestionada.",
+      "Justificar porque a marcação não cria largura de banda, só actua quando há congestionamento e não é um mecanismo de segurança.",
+    ],
+    explicacao: [
+      {
+        titulo: "DiffServ: marcar e tratar",
+        paragrafos: [
+          "No cabeçalho IP há um campo de 6 bits chamado DSCP (RFC 2474). O valor não faz nada sozinho: cada equipamento que o lê aplica um comportamento por salto (PHB) configurado pelo administrador (arquitectura no RFC 2475). O RFC 4594 sugere classes: EF (46, RFC 3246) para voz, AF41 (34) para videoconferência, CS0/predefinido (0) para o resto, e classes de menor prioridade para cópias de segurança.",
+          "Três passos: classificar (reconhecer o tráfego, por exemplo porto UDP ou endereço do servidor de voz), marcar (escrever o DSCP) e tratar (colocar cada marca numa fila com regras próprias na interface de saída). Se um equipamento do caminho ignorar ou apagar a marca, o tratamento pára aí. Na Internet pública os operadores normalmente não respeitam marcas de clientes; numa WAN de operador, só vale o que estiver no contrato.",
+        ],
+      },
+      {
+        titulo: "O que a prioridade não faz",
+        paragrafos: [
+          "A prioridade só muda a ordem de saída quando há fila, isto é, quando chega mais tráfego do que a ligação consegue enviar. Sem congestionamento, todas as filas estão vazias e a marcação não tem efeito visível. A prioridade também não aumenta a capacidade: numa ligação de 2 Mbit/s, dar prioridade à voz tira tempo às outras aplicações. Se a voz marcada exceder a capacidade reservada, também sofre.",
+          "A marcação não é segurança. Qualquer computador pode escrever EF nos seus pacotes; se a rede confiar cegamente, um programa de descarregamentos marcado EF passa à frente da voz. Por isso define-se uma fronteira de confiança: no primeiro equipamento controlado pela equipa, apagam-se as marcas recebidas dos postos e volta-se a marcar segundo a política. O DSCP também não cifra nem autentica nada.",
+        ],
+      },
+    ],
+    caso: "Na delegação da DPE (fictícia), as chamadas de voz para a sede cortam quando alguém envia relatórios grandes. A WAN simulada tem 2 Mbit/s. A política aprovada pelo chefe diz: a voz (fictícia, UDP porto 5202) recebe EF e até 500 kbit/s garantidos; o resto partilha o que sobra; marcas vindas dos postos não são aceites. Todos os valores são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "A ligação r1–r2 representa a WAN; na saída r2-r1 (delegação → sede) cria-se congestionamento com htb a 2 Mbit/s.",
+        "Voz simulada: iperf3 UDP a 300 kbit/s para o porto 5202 do srv. Tráfego pesado: iperf3 TCP para o porto 5201.",
+        "Marcação em r2 com a tabela nftables «qos_lab» (nome reservado desta lição).",
+      ],
+      passos: [
+        PRE_M10,
+        { accao: "Crie a ligação congestionável: htb a 2 Mbit/s com duas classes (1:10 voz, garantia 500 kbit/s; 1:20 restante, 1500 kbit/s), ambas podendo usar até 2 Mbit/s. Por omissão tudo vai para 1:20. Ainda não há filtro: a voz vai para 1:20.", comandos: ["sudo ip netns exec r2 tc qdisc add dev r2-r1 root handle 1: htb default 20", "sudo ip netns exec r2 tc class add dev r2-r1 parent 1: classid 1:1 htb rate 2mbit", "sudo ip netns exec r2 tc class add dev r2-r1 parent 1:1 classid 1:10 htb rate 500kbit ceil 2mbit prio 0", "sudo ip netns exec r2 tc class add dev r2-r1 parent 1:1 classid 1:20 htb rate 1500kbit ceil 2mbit prio 1", "sudo ip netns exec r2 tc class show dev r2-r1"], saida: ["class htb 1:1 root rate 2Mbit ceil 2Mbit …", "class htb 1:10 parent 1:1 prio 0 rate 500Kbit ceil 2Mbit …", "class htb 1:20 parent 1:1 prio 1 rate 1500Kbit ceil 2Mbit …"] },
+        { accao: "Consolas C e D: dois servidores iperf3 no srv, um por porto (esperar «Server listening» em cada).", comandos: ["C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "D: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5202"] },
+        { accao: "Medição sem prioridade. Consola B: tráfego pesado TCP durante 30 s. Logo a seguir, na consola A: voz simulada durante 20 s. Anote jitter e perda da voz.", comandos: ["B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -t 30", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5202 -u -b 300k -l 200 -t 20 | tail -2"], saida: ["[  5] 0.00-20.00 sec  …  297 Kbits/sec  21.7 ms  412/3750 (11%)  receiver", "(jitter e perda altos: a voz espera na mesma fila que o TCP; os números variam em cada execução)"] },
+        { accao: "Acrescente o filtro que envia DSCP EF (46; byte TOS 0xb8) para a classe 1:10. Sem marcação ainda, nada muda — confirme repetindo o passo anterior se houver tempo.", comandos: ["sudo ip netns exec r2 tc filter add dev r2-r1 parent 1: protocol ip prio 1 u32 match ip dsfield 0xb8 0xfc flowid 1:10"] },
+        { accao: "Fronteira de confiança e marcação em r2: primeiro apagar todas as marcas que chegam dos postos da delegação; depois marcar EF só a voz (UDP 5202). A ordem das regras importa.", comandos: ["sudo ip netns exec r2 nft add table ip qos_lab", "sudo ip netns exec r2 nft add chain ip qos_lab marcar '{ type filter hook prerouting priority mangle; policy accept; }'", "sudo ip netns exec r2 nft add rule ip qos_lab marcar iifname \"r2-pc-del\" ip dscp set cs0", "sudo ip netns exec r2 nft add rule ip qos_lab marcar iifname \"r2-pc-del\" udp dport 5202 ip dscp set ef", "sudo ip netns exec r2 nft list table ip qos_lab"], saida: ["table ip qos_lab {", "  chain marcar {", "    type filter hook prerouting priority mangle; policy accept;", "    iifname \"r2-pc-del\" ip dscp set cs0", "    iifname \"r2-pc-del\" udp dport 5202 ip dscp set ef", "  }", "}"] },
+        { accao: "Consola E: confirme a marca depois de r2, capturando na entrada de r1 (esperar «Capturing on 'r1-r2'»). Reinicie os servidores nas consolas C e D e repita a medição do passo 3.", comandos: ["E: sudo ip netns exec r1 tshark -i r1-r2 -c 5 -f 'udp port 5202' -T fields -e ip.dsfield.dscp", "(repetir consolas C, D, B e A do passo 3)"], saida: ["46", "46", "46", "46", "46", "A: [  5] 0.00-20.00 sec  …  299 Kbits/sec  0.35 ms  0/3750 (0%)  receiver", "B: débito TCP cerca de 1,6 Mbit/s (a voz usa parte dos 2 Mbit/s)"] },
+        { accao: "Teste da fronteira de confiança: um posto tenta marcar o TCP pesado como EF (-S 0xb8). Capture na consola E durante o teste. A marca deve chegar a r1 como 0.", comandos: ["E: sudo ip netns exec r1 tshark -i r1-r2 -c 5 -f 'tcp port 5201' -T fields -e ip.dsfield.dscp", "C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -t 5 -S 0xb8"], saida: ["0", "0", "0", "0", "0"] },
+        { accao: "Veja os contadores por classe: a classe 1:10 tem os bytes da voz, a 1:20 os do TCP e as descartadas (dropped).", comandos: ["sudo ip netns exec r2 tc -s class show dev r2-r1"], saida: ["class htb 1:10 … Sent 752000 bytes 3760 pkt (dropped 0, overlimits 0 requeues 0)", "class htb 1:20 … Sent 9870000 bytes 6520 pkt (dropped 87, overlimits 0 requeues 0)"] },
+      ],
+      sucesso: [
+        "A dupla mostra jitter e perda da voz antes e depois da prioridade, com os mesmos parâmetros.",
+        "A captura mostra DSCP 46 na voz e 0 no TCP marcado pelo posto.",
+        "O formando explica porque o débito TCP desceu quando a voz passou a ter prioridade e porque, sem o TCP a correr, não haveria diferença.",
+        "O formando justifica a regra que apaga marcas dos postos com um exemplo de abuso.",
+      ],
+      reversao: [
+        "sudo ip netns exec r2 nft delete table ip qos_lab",
+        "sudo ip netns exec r2 tc qdisc del dev r2-r1 root (remove também classes e filtros)",
+        "Ctrl+C nas consolas C, D e E se algum processo ainda estiver à espera (não usar pkill/killall).",
+        "Verificar: tc qdisc show dev r2-r1 mostra só «qdisc noqueue»; nft list tables em r2 não mostra qos_lab; ip netns pids srv não lista iperf3.",
+      ],
+    },
+    papel: [
+      { tarefa: "Com as saídas de exemplo, preencha: cenário | jitter da voz | perda da voz | débito TCP. (sem prioridade; com EF e classe 1:10).", esperado: "Sem prioridade | 21,7 ms | 11 % | quase 2 Mbit/s menos a voz. Com EF | 0,35 ms | 0 % | cerca de 1,6 Mbit/s." },
+      { tarefa: "O chefe pergunta: «Se marcarmos tudo como EF, tudo fica rápido?» Responda.", esperado: "Não. Se tudo for EF, tudo cai na mesma fila e ninguém tem prioridade; a capacidade continua 2 Mbit/s. A prioridade só serve para escolher quem espera menos quando há congestionamento." },
+      { tarefa: "Porque a regra «ip dscp set cs0» vem antes da regra que marca EF? O que aconteceria se estivessem ao contrário?", esperado: "As regras são avaliadas por ordem e ambas alteram o pacote. Ao contrário, a voz seria marcada EF e logo a seguir apagada para CS0, perdendo a prioridade." },
+      { tarefa: "Um fornecedor diz que o DSCP EF «protege» as chamadas contra escutas. Comente.", esperado: "Errado. O DSCP é um número no cabeçalho, visível e alterável; não cifra nem autentica. A confidencialidade exige cifra (por exemplo SRTP ou uma VPN)." },
+    ],
+    formativas: [
+      { pergunta: "Numa ligação sem congestionamento, o que muda ao marcar a voz com EF?", opcoes: ["A voz passa a ter mais largura de banda", "Praticamente nada: sem fila, todos os pacotes saem logo", "A voz fica cifrada", "O RTT reduz para metade"], certa: 1, comentario: "A prioridade reordena filas. Sem fila não há o que reordenar. A marcação também não aumenta capacidade nem cifra." },
+      { pergunta: "Porque se apagam as marcas DSCP que chegam dos postos de trabalho?", opcoes: ["Porque o DSCP ocupa demasiados bytes", "Porque qualquer posto pode marcar-se como EF e roubar prioridade à voz", "Porque o nftables não lê DSCP", "Porque a lei obriga"], certa: 1, comentario: "A marcação não prova nada sobre quem enviou. A fronteira de confiança fica no primeiro equipamento gerido, que volta a marcar segundo a política aprovada." },
+    ],
+    leituraFacil: [
+      "Pode dar prioridade a alguns pacotes, como a voz.",
+      "O encaminhador põe uma marca no pacote.",
+      "A prioridade só ajuda quando a ligação está cheia.",
+      "A prioridade não aumenta a velocidade total.",
+      "A marca não protege os dados: não é segurança.",
+      "Não confie nas marcas que vêm dos computadores.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: DSCP e PHB; classes do RFC 4594; classificar, marcar, tratar; fronteira de confiança; o que a prioridade não faz.",
+        "20–65 min: prática em duplas (htb sem filtro, medição, filtro, marcação nftables, captura, repetição, teste de abuso, contadores); quem não tiver laboratório preenche a tabela em papel e responde às tarefas.",
+        "65–75 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Testar a prioridade sem criar congestionamento e concluir que «não funciona».",
+        "Marcar os pacotes mas não criar filtro/fila que use a marca.",
+        "Pôr a regra de marcação EF antes da regra que apaga marcas.",
+        "Confundir o valor DSCP (46) com o byte TOS completo (0xb8 = 184).",
+        "Prometer à direcção que a QoS «aumenta a largura de banda» ou «dá segurança».",
+      ],
+    },
+    fontes: ["rfc2474", "rfc2475", "rfc4594", "rfc3246", "tcqdisc", "nftables", "iperf3", "wireshark"],
+  },
 };
