@@ -7,7 +7,8 @@ it("d",()=>{
  const rows:Record<string,string[]>={};
  for(const q of EXAME_REDES){const m=ordemModuloRedes(q);(rows[m]??=[]).push(`${q.cod.slice(4)}:${q.cen?"cen":q.t}/${q.d}`);}
  for(const k of Object.keys(rows).sort((a,b)=>+a-+b)) console.log(k, rows[k]!.join(" "));
- const b=EXAME_REDES.map(q=>({id:q.cod,moduloId:String(ordemModuloRedes(q)),tipologia:T[q.t],dificuldade:D[q.d],cenario:!!q.cen}));
+ const OV:Record<string,string>=JSON.parse(process.env.OV||"{}");
+ const b=EXAME_REDES.map(q=>q.cod in OV?{...q,d:OV[q.cod]}:q).map((q:any)=>({id:q.cod,moduloId:String(ordemModuloRedes(q)),tipologia:T[q.t],dificuldade:D[q.d],cenario:!!q.cen}));
  const quotas={total:20,dificuldade:quotasDificuldade(20,PROPOSTA_PROVA_REDES.pct),modulos:Object.fromEntries(Object.entries(PROPOSTA_PROVA_REDES.modulosPorOrdem)),tipos:{...PROPOSTA_PROVA_REDES.tipos}} as any;
- const f=[];for(let s=1;s<=200;s++){if(!sortearExame(b,quotas,geradorComSemente(s)).ok)f.push(s);} console.log("falhas",f);
-});
+ const f=[];for(let s=1;s<=200;s++){if(!sortearExame(b,quotas,geradorComSemente(s)).ok)f.push(s);} console.log("falhas",f.length,f);
+},120000);
