@@ -74,6 +74,85 @@ for ip, ns in donos.items():
 print(f"{len(linhas)} endereços inventariados; {falhas} equipamento(s) com erro.")
 sys.exit(1 if falhas else 0)`.split("\n");
 
+/** Configuração do agente SNMP de prática (só SNMPv3 authPriv; sem comunidades v1/v2c). */
+const SNMPD_CONF = [
+  "agentaddress udp:10.10.20.53:161",
+  "rouser monitor priv",
+  "sysLocation Rede de pratica DPE (ficticia)",
+  "sysContact ti@dpe.example",
+];
+/** Utilizador USM com segredos FICTÍCIOS, lido do directório persistente próprio. */
+const SNMPD_UTILIZADOR = ['createUser monitor SHA-256 "PraticaAuth-2026-fict" AES "PraticaPriv-2026-fict"'];
+/** Configuração do cliente, para não escrever segredos na linha de comando. */
+const SNMP_CLIENTE = [
+  "defVersion 3",
+  "defSecurityName monitor",
+  "defSecurityLevel authPriv",
+  "defAuthType SHA-256",
+  "defAuthPassphrase PraticaAuth-2026-fict",
+  "defPrivType AES",
+  "defPrivPassphrase PraticaPriv-2026-fict",
+];
+
+const SCRIPT_MONITOR = `#!/usr/bin/env python3
+"""monitor.py — utilização de entrada de uma interface por SNMPv3 (rede de prática DPE).
+Uso: sudo ip netns exec pc-adm env SNMPCONFPATH=... SNMP_PERSISTENT_DIR=... python3 monitor.py
+Alerta: acima de 80 % em 3 ciclos seguidos; volta ao normal abaixo de 70 % em 2 ciclos."""
+import os, subprocess, sys, time
+
+ALVO, IFNAME, CAP_BPS = "10.10.20.53", "srv-r1", 10_000_000  # capacidade DECLARADA
+LIM_ALTO, LIM_BAIXO, N_ALTO, N_BAIXO, INTERVALO = 0.80, 0.70, 3, 2, 10
+OID_NOME = "1.3.6.1.2.1.31.1.1.1.1"   # IF-MIB::ifName
+OID_IN = "1.3.6.1.2.1.31.1.1.1.6"     # IF-MIB::ifHCInOctets (contador de 64 bits)
+
+def snmp(cmd, oid):
+    r = subprocess.run([cmd, "-On", "-Oq", ALVO, oid], capture_output=True, text=True, timeout=10)
+    if r.returncode != 0 or not r.stdout.strip() or "No Such" in r.stdout:
+        raise RuntimeError((r.stderr or r.stdout).strip() or "sem resposta")
+    return r.stdout.strip().splitlines()
+
+def hora():
+    return time.strftime("%H:%M:%S")
+
+if "SNMPCONFPATH" not in os.environ:
+    sys.exit("Defina SNMPCONFPATH com a configuração do cliente (passo 3).")
+try:
+    idx = next(l.split()[0].rsplit(".", 1)[1] for l in snmp("snmpwalk", OID_NOME)
+               if l.split()[-1].strip('"') == IFNAME)
+except StopIteration:
+    sys.exit(f"Interface {IFNAME} não encontrada no agente.")
+except (RuntimeError, subprocess.TimeoutExpired) as e:
+    sys.exit(f"ERRO SNMP: {e}")
+print(f"{IFNAME} = ifIndex {idx}; capacidade declarada {CAP_BPS // 1_000_000} Mbit/s; Ctrl+C para parar")
+
+anterior, altos, baixos, falhas, estado = None, 0, 0, 0, "NORMAL"
+while True:
+    try:
+        valor = int(snmp("snmpget", f"{OID_IN}.{idx}")[0].split()[-1])
+        agora, falhas = time.monotonic(), 0
+    except (RuntimeError, subprocess.TimeoutExpired, ValueError) as e:
+        falhas += 1
+        print(f"{hora()} SEM DADOS ({e})")
+        if falhas == 3:
+            print(f"{hora()} ALERTA: agente não responde há 3 ciclos")
+        time.sleep(INTERVALO)
+        continue
+    if anterior and valor < anterior[0]:
+        print(f"{hora()} contador recuou (reinício do agente?): amostra ignorada")
+    elif anterior:
+        util = (valor - anterior[0]) * 8 / (agora - anterior[1]) / CAP_BPS
+        altos = altos + 1 if util > LIM_ALTO else 0
+        baixos = baixos + 1 if util < LIM_BAIXO else 0
+        if estado == "NORMAL" and altos >= N_ALTO:
+            estado = "ALERTA"
+            print(f"{hora()} ALERTA: entrada em {IFNAME} acima de 80 % em {N_ALTO} ciclos seguidos")
+        elif estado == "ALERTA" and baixos >= N_BAIXO:
+            estado = "NORMAL"
+            print(f"{hora()} NORMAL: entrada abaixo de 70 % em {N_BAIXO} ciclos seguidos")
+        print(f"{hora()} utilização {util:6.1%}  estado {estado}")
+    anterior = (valor, agora)
+    time.sleep(INTERVALO)`.split("\n");
+
 export const LICOES_M11: Record<string, ConteudoLicao> = {
   "r-m11-l1": {
     objectivos: [
@@ -154,5 +233,95 @@ export const LICOES_M11: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["nist80034", "nist800128", "iproute2", "pythonstd", "rfc1918", "rfc5737"],
+  },
+
+  "r-m11-l2": {
+    objectivos: [
+      "Explicar a arquitectura SNMP (gestor, agente, MIB, OID) e porque se prefere SNMPv3 com autenticação e cifra (authPriv) às comunidades v1/v2c.",
+      "Configurar um agente SNMPv3 de prática, isolado no espaço de nomes srv, e consultá-lo com um cliente que não expõe segredos na linha de comando.",
+      "Calcular a utilização de uma interface a partir de contadores e definir um alerta com limiar, persistência e histerese justificados.",
+      "Distinguir falta de dados (agente sem resposta) de valor normal, e tratar reinícios de contador.",
+    ],
+    explicacao: [
+      {
+        titulo: "SNMP e segurança",
+        paragrafos: [
+          "No SNMP, o gestor pergunta e o agente, no equipamento, responde. Cada valor tem um identificador numérico (OID) definido numa MIB; por exemplo, a IF-MIB (RFC 2863) define ifName (nome da interface) e ifHCInOctets (bytes recebidos, contador de 64 bits). Os contadores só crescem; a utilização calcula-se pela diferença entre duas leituras a dividir pelo tempo entre elas.",
+          "SNMPv1 e v2c usam uma «comunidade» enviada em claro: quem capturar o tráfego fica a conhecê-la. SNMPv3 com o modelo USM (RFC 3414, arquitectura no RFC 3411) acrescenta utilizadores, autenticação e cifra: o nível authPriv autentica (aqui HMAC-SHA-256, RFC 7860) e cifra (AES, RFC 3826). Mesmo assim, o agente só deve responder na rede de gestão, com acesso de leitura limitado e segredos guardados num cofre. Nesta prática o agente escuta só em 10.10.20.53, dentro do espaço de nomes srv: não fica visível na rede da VM nem da instituição.",
+        ],
+      },
+      {
+        titulo: "Alertas que merecem ser atendidos",
+        paragrafos: [
+          "Um alerta útil diz o quê, onde, desde quando e o que fazer, e tem um responsável. Limiar sem persistência gera alarmes por picos de segundos; persistência (várias amostras seguidas) confirma que o problema dura. Histerese — limiar de entrada maior do que o de saída, aqui 80 % e 70 % — evita que o alerta ligue e desligue sem parar quando o valor anda à volta do limiar. Os números justificam-se pelo serviço: acima de cerca de 80 % de utilização sustentada, as filas crescem e o atraso sobe (módulo 10), por isso é altura de investigar, não de entrar em pânico.",
+          "Na prática usam-se ciclos de 10 s para caber na aula; em produção são comuns amostras de 1 a 5 minutos. «Sem dados» é um estado próprio: não é zero nem normal. A capacidade usada no cálculo é a declarada pela equipa (contrato ou velocidade da porta); nas interfaces virtuais da prática o valor reportado pelo agente não corresponde a uma ligação real.",
+        ],
+      },
+    ],
+    caso: "Na DPE (fictícia), a ligação ao servidor fica saturada sem que ninguém saiba até os utilizadores reclamarem. O chefe aprova: monitorizar por SNMPv3 authPriv a interface do srv, capacidade declarada 10 Mbit/s; alertar acima de 80 % em 3 amostras seguidas e voltar ao normal abaixo de 70 % em 2 amostras; alertar se o agente não responder em 3 amostras. Todos os valores e segredos são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Agente SNMP: snmpd em primeiro plano no espaço de nomes srv, a escutar só em 10.10.20.53 UDP 161, com configuração e directório persistente próprios em /tmp/dpe-m11/l2.",
+        "Gestor: script monitor.py no pc-adm. Tráfego de carga: iperf3 UDP do pc-del para o srv.",
+        "Nota: no Debian, instalar o pacote snmpd activa o serviço do sistema a escutar em 127.0.0.1. Esta lição não usa nem altera esse serviço; como a VM é descartável, a situação fica registada.",
+      ],
+      passos: [
+        PRE_M11,
+        { accao: "Prepare a pasta, a configuração do agente, o utilizador USM (segredos fictícios) e a configuração do cliente. Restrinja as permissões dos ficheiros com segredos.", comandos: ["mkdir -p /tmp/dpe-m11/l2/agente-persist /tmp/dpe-m11/l2/cliente /tmp/dpe-m11/l2/cliente-persist && cd /tmp/dpe-m11/l2", "cat > snmpd.conf <<'EOF'", ...SNMPD_CONF, "EOF", "cat > agente-persist/snmpd.conf <<'EOF'", ...SNMPD_UTILIZADOR, "EOF", "cat > cliente/snmp.conf <<'EOF'", ...SNMP_CLIENTE, "EOF", "chmod 600 agente-persist/snmpd.conf cliente/snmp.conf"] },
+        { accao: "Consola C: inicie o agente em primeiro plano no srv, só com esta configuração (-C ignora os ficheiros do sistema). Espere pela linha «NET-SNMP version … ».", comandos: ["C: sudo ip netns exec srv env SNMP_PERSISTENT_DIR=/tmp/dpe-m11/l2/agente-persist snmpd -f -Lo -C -c /tmp/dpe-m11/l2/snmpd.conf"], saida: ["NET-SNMP version 5.9.3"] },
+        { accao: "Consulte o agente a partir do pc-adm: tempo de funcionamento e nomes das interfaces (OIDs numéricos, pois o Debian não instala todas as MIB por omissão).", comandos: ["export CLI='env SNMPCONFPATH=/tmp/dpe-m11/l2/cliente SNMP_PERSISTENT_DIR=/tmp/dpe-m11/l2/cliente-persist'", "sudo ip netns exec pc-adm $CLI snmpget -On 10.10.20.53 1.3.6.1.2.1.1.3.0", "sudo ip netns exec pc-adm $CLI snmpwalk -On 10.10.20.53 1.3.6.1.2.1.31.1.1.1.1"], saida: [".1.3.6.1.2.1.1.3.0 = Timeticks: (2310) 0:00:23.10", ".1.3.6.1.2.1.31.1.1.1.1.1 = STRING: lo", ".1.3.6.1.2.1.31.1.1.1.1.2 = STRING: srv-r1", "(o número de índice pode variar)"] },
+        { accao: "Confirme a segurança: sem cifra, com segredo errado e com comunidade v2c o agente recusa ou não responde.", comandos: ["sudo ip netns exec pc-adm $CLI snmpget -l authNoPriv 10.10.20.53 1.3.6.1.2.1.1.3.0", "sudo ip netns exec pc-adm $CLI snmpget -A SegredoErrado-000 10.10.20.53 1.3.6.1.2.1.1.3.0", "sudo ip netns exec pc-adm snmpget -v2c -c public -t 1 -r 0 10.10.20.53 1.3.6.1.2.1.1.3.0"], saida: ["Error in packet … Reason: authorizationError (access denied to that object)", "snmpget: Authentication failure (incorrect password, community or key)", "Timeout: No Response from 10.10.20.53"] },
+        { accao: "Grave o script de monitorização (texto completo abaixo) e inicie-o na consola M.", comandos: ["cat > monitor.py <<'EOF'", ...SCRIPT_MONITOR, "EOF", "M: sudo ip netns exec pc-adm env SNMPCONFPATH=/tmp/dpe-m11/l2/cliente SNMP_PERSISTENT_DIR=/tmp/dpe-m11/l2/cliente-persist python3 /tmp/dpe-m11/l2/monitor.py"], saida: ["srv-r1 = ifIndex 2; capacidade declarada 10 Mbit/s; Ctrl+C para parar", "12:00:10 utilização   0.0%  estado NORMAL"] },
+        { accao: "Gere carga de cerca de 9 Mbit/s durante 60 s (consola D: servidor iperf3, esperar «Server listening»; consola B: cliente) e observe o alerta e o regresso ao normal.", comandos: ["D: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53", "B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -u -b 9M -t 60"], saida: ["12:00:20 utilização  92.4%  estado NORMAL", "12:00:30 utilização  92.6%  estado NORMAL", "12:00:40 ALERTA: entrada em srv-r1 acima de 80 % em 3 ciclos seguidos", "12:00:40 utilização  92.5%  estado ALERTA", "…", "12:01:30 utilização   8.1%  estado ALERTA", "12:01:40 NORMAL: entrada abaixo de 70 % em 2 ciclos seguidos", "(a percentagem inclui cabeçalhos Ethernet, IP e UDP, por isso passa um pouco dos 90 %)"] },
+        { accao: "Teste a falta de dados: Ctrl+C no agente (consola C) e observe três ciclos; volte a iniciar o agente com o mesmo comando do passo 3 e observe o tratamento do contador.", comandos: ["C: Ctrl+C; depois repetir o comando do passo 3"], saida: ["12:02:10 SEM DADOS (Timeout: No Response from 10.10.20.53.)", "12:02:20 SEM DADOS (…)", "12:02:30 SEM DADOS (…)", "12:02:30 ALERTA: agente não responde há 3 ciclos", "12:02:50 utilização   0.0%  estado NORMAL"] },
+      ],
+      sucesso: [
+        "O agente responde em authPriv e recusa authNoPriv, segredo errado e v2c.",
+        "Nenhum segredo aparece na linha de comando nem nos registos da dupla; os ficheiros com segredos têm permissões 600.",
+        "O alerta dispara só depois de 3 amostras acima de 80 % e desliga só depois de 2 abaixo de 70 %.",
+        "A falta de resposta aparece como «SEM DADOS» e gera o alerta próprio; o script não inventa valores.",
+        "A dupla escreve, para o alerta de utilização, a acção esperada e o responsável.",
+      ],
+      reversao: [
+        "Ctrl+C nas consolas M (monitor), C (agente) e D (iperf3, se ainda estiver à espera). Não usar pkill/killall.",
+        "Verificar: sudo ip netns pids srv e sudo ip netns pids pc-adm não listam snmpd, iperf3 nem python3.",
+        "rm -r /tmp/dpe-m11/l2 (apaga configurações, segredos fictícios e script). O serviço snmpd do sistema da VM não foi tocado.",
+      ],
+    },
+    papel: [
+      { tarefa: "Duas leituras de ifHCInOctets com 10 s de intervalo: 1 000 000 e 12 500 000. Capacidade declarada 10 Mbit/s. Calcule a utilização.", esperado: "(12 500 000 − 1 000 000) × 8 / 10 = 9 200 000 bit/s = 9,2 Mbit/s → 92 %." },
+      { tarefa: "Sequência de utilizações (uma por ciclo): 85, 60, 90, 88, 83, 75, 72, 65, 68 %. Em que ciclo dispara e em que ciclo desliga o alerta, com as regras do caso?", esperado: "Dispara no 5.º ciclo (90, 88, 83: três seguidas acima de 80 %; o 85 foi interrompido pelo 60). Os ciclos 6 e 7 (75, 72) não baixam de 70 %. Desliga no 9.º ciclo (65 e 68: duas seguidas abaixo de 70 %)." },
+      { tarefa: "Porque não se usa SNMPv2c com a comunidade «public» nesta rede?", esperado: "A comunidade vai em claro e é conhecida; qualquer pessoa na rede lê os dados e, se houver escrita, altera. SNMPv3 authPriv autentica o utilizador e cifra o conteúdo." },
+      { tarefa: "O script não conseguiu ler o agente durante 3 ciclos. Um colega quer mostrar «0 %» no painel nesses ciclos. Comente.", esperado: "Errado: 0 % significaria ligação parada mas medida. A falta de dados é outro estado e deve gerar o alerta «agente não responde»; mostrar 0 % esconde o problema." },
+    ],
+    formativas: [
+      { pergunta: "Para que serve a histerese (80 % para entrar em alerta, 70 % para sair)?", opcoes: ["Para aumentar a largura de banda", "Para evitar que o alerta ligue e desligue repetidamente quando o valor oscila perto do limiar", "Para cifrar o SNMP", "Para reduzir o número de OID"], certa: 1, comentario: "Com um só limiar, um valor a oscilar entre 79 e 81 % geraria um alerta a cada ciclo. Limiares diferentes para entrar e sair estabilizam o estado." },
+      { pergunta: "Qual o nível de segurança SNMPv3 que autentica e cifra?", opcoes: ["noAuthNoPriv", "authNoPriv", "authPriv", "v2c"], certa: 2, comentario: "authPriv usa autenticação (por exemplo HMAC-SHA-256) e cifra (AES). authNoPriv autentica mas deixa o conteúdo legível; v2c usa comunidade em claro." },
+    ],
+    leituraFacil: [
+      "A monitorização vigia a rede o tempo todo.",
+      "O SNMP pergunta números aos equipamentos.",
+      "Use a versão 3 com palavra-passe e cifra.",
+      "O alerta só toca se o problema durar.",
+      "Sem resposta não é zero: é outro alerta.",
+      "Cada alerta deve dizer o que fazer e quem faz.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: gestor, agente, MIB e OID; contadores e cálculo de utilização; v2c em claro vs v3 authPriv; alertas com limiar, persistência, histerese e responsável.",
+        "20–65 min: prática em duplas (agente isolado, consultas, testes de segurança, script, carga, falta de dados); quem não tiver laboratório resolve as contas e a sequência de alertas em papel.",
+        "65–75 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Deixar comunidades v2c activas «por compatibilidade».",
+        "Escrever segredos na linha de comando (ficam no histórico e na lista de processos).",
+        "Pôr o agente a escutar em todas as interfaces.",
+        "Alertar em cada pico sem persistência nem histerese.",
+        "Mostrar «0 %» quando não há dados.",
+        "Esquecer que a capacidade é declarada pela equipa, não medida pelo SNMP.",
+      ],
+    },
+    fontes: ["rfc3411", "rfc2863", "rfc3826", "rfc7860", "netsnmp", "pythonstd", "iperf3"],
   },
 };
