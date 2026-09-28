@@ -243,3 +243,102 @@ export function payloadRedes() {
   };
 }
 export type PayloadRedes = ReturnType<typeof payloadRedes>;
+
+// ---- Pacotes 5 a 7 — bancos privados de avaliação (SC, Governo, Redes) ----
+// Mesmo padrão do banco de IA: 80 questões de exame + 10 de diagnóstico, todas
+// inactivas e em rascunho. A base de dados só identifica o módulo pela ordem
+// dentro do curso (curso_modulos.ordem); os planos de SC e Governo usam a
+// ordem global do módulo, convertida aqui por uma tabela fixa.
+import { planoLinhasSC } from "../../scripts/conteudo/seguranca-cibernetica-questoes";
+import { planoLinhasTDG } from "../../scripts/conteudo/tecnologias-governo-questoes";
+import { planoLinhasRedes } from "../../scripts/conteudo/redes-questoes";
+import { AUTOR_NOME as AUTOR_BANCO } from "../../scripts/integrar-banco-inteligencia-artificial";
+
+export type PacoteBanco = "banco-seguranca-cibernetica" | "banco-tecnologias-governo" | "banco-redes";
+
+type LinhaBancoPrivado = {
+  cod: string;
+  ordemModulo: number;
+  instrumento: "exame_final" | "pre_pos_teste";
+  tipologia: string;
+  dificuldade: string;
+  enunciado: string;
+  conteudo: Record<string, unknown>;
+  resposta: Record<string, unknown>;
+  explicacao: string;
+  objectivo_associado: string;
+  cenario: boolean;
+  activa: boolean;
+  estado_revisao: string;
+  versao: string;
+};
+
+/** Ordem global do módulo (modulos.ordem) → ordem no curso (curso_modulos.ordem). */
+export const ORDEM_NO_CURSO: Record<PacoteBanco, Record<number, number>> = {
+  "banco-seguranca-cibernetica": { 141: 1, 142: 2, 143: 3, 200: 4 },
+  "banco-tecnologias-governo": { 161: 1, 200: 2 },
+  "banco-redes": Object.fromEntries(Array.from({ length: 13 }, (_, i) => [i + 1, i + 1])),
+};
+
+/** Contagem esperada de questões de exame por ordem no curso (igual à verificada na base). */
+export const MATRIZ_MODULOS: Record<PacoteBanco, Record<number, number>> = {
+  "banco-seguranca-cibernetica": { 1: 24, 2: 25, 3: 23, 4: 8 },
+  "banco-tecnologias-governo": { 1: 72, 2: 8 },
+  "banco-redes": { ...Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i + 1, 6])), 13: 8 },
+};
+
+function linhasBanco(pacote: PacoteBanco): LinhaBancoPrivado[] {
+  if (pacote === "banco-seguranca-cibernetica") return planoLinhasSC() as LinhaBancoPrivado[];
+  if (pacote === "banco-tecnologias-governo") return planoLinhasTDG() as LinhaBancoPrivado[];
+  return planoLinhasRedes() as LinhaBancoPrivado[];
+}
+
+export function payloadBanco(pacote: PacoteBanco): { questoes: QuestaoPayload[] } {
+  const linhas = linhasBanco(pacote);
+  if (linhas.length !== 90) throw new Error("PACOTE_INCOMPLETO");
+  if (linhas.some((l) => l.activa !== false || l.estado_revisao !== "rascunho")) {
+    throw new Error("PACOTE_COM_QUESTAO_ACTIVA");
+  }
+  const mapa = ORDEM_NO_CURSO[pacote];
+  const questoes = linhas.map((l) => {
+    const ordem = mapa[l.ordemModulo];
+    if (!ordem) throw new Error("PACOTE_INCOMPLETO");
+    return {
+      codigo: l.cod,
+      ordem_modulo: ordem,
+      instrumento: l.instrumento,
+      tipologia: l.tipologia,
+      dificuldade: l.dificuldade,
+      enunciado: l.enunciado,
+      conteudo: l.conteudo,
+      resposta: l.resposta,
+      explicacao: l.explicacao,
+      objectivo_associado: l.objectivo_associado,
+      cenario: l.cenario,
+      versao: l.versao,
+      autor_nome: AUTOR_BANCO,
+    };
+  });
+  const exame = questoes.filter((q) => q.instrumento === "exame_final");
+  for (const [ordem, n] of Object.entries(MATRIZ_MODULOS[pacote])) {
+    if (exame.filter((q) => q.ordem_modulo === Number(ordem)).length !== n) throw new Error("PACOTE_INCOMPLETO");
+  }
+  return { questoes };
+}
+
+/** Resumo para o ecrã: só contagens, nunca enunciados nem gabaritos. */
+export function resumoBanco(pacote: PacoteBanco) {
+  const { questoes } = payloadBanco(pacote);
+  const contar = (vals: string[]) =>
+    vals.reduce<Record<string, number>>((r, v) => ({ ...r, [v]: (r[v] ?? 0) + 1 }), {});
+  const exame = questoes.filter((q) => q.instrumento === "exame_final");
+  return {
+    total: questoes.length,
+    exame_final: exame.length,
+    pre_pos_teste: questoes.length - exame.length,
+    porModulo: contar(exame.map((q) => `módulo ${q.ordem_modulo}`)),
+    porTipo: contar(exame.map((q) => (q.cenario ? "cenario" : q.tipologia))),
+    porDificuldade: contar(exame.map((q) => q.dificuldade)),
+    activas: 0,
+  };
+}

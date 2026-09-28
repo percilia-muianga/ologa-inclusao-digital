@@ -19,11 +19,27 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export type Json = string | number | boolean | null | Json[] | { [chave: string]: Json };
 
 export type EstadoPacote = {
-  pacote: "seguranca-cibernetica" | "banco-inteligencia-artificial" | "tecnologias-governo" | "redes";
+  pacote:
+    | "seguranca-cibernetica"
+    | "banco-inteligencia-artificial"
+    | "tecnologias-governo"
+    | "redes"
+    | "banco-seguranca-cibernetica"
+    | "banco-tecnologias-governo"
+    | "banco-redes";
   hash: string;
   resumo: { [chave: string]: Json };
   previsto: { [chave: string]: Json };
   erro: string | null;
+};
+
+type PacoteBanco = "banco-seguranca-cibernetica" | "banco-tecnologias-governo" | "banco-redes";
+
+/** Nomes das funções da base propostas em docs/migracoes-por-autorizar/bancos-sc-governo-redes.sql. */
+export const RPC_BANCOS: Record<PacoteBanco, { estado: string; importar: string }> = {
+  "banco-seguranca-cibernetica": { estado: "rpc_estado_banco_sc", importar: "rpc_importar_banco_sc" },
+  "banco-tecnologias-governo": { estado: "rpc_estado_banco_tdg", importar: "rpc_importar_banco_tdg" },
+  "banco-redes": { estado: "rpc_estado_banco_redes", importar: "rpc_importar_banco_redes" },
 };
 
 type Contexto = { supabase: any; userId: string };
@@ -160,6 +176,26 @@ export const estadoConteudosPreparados = createServerFn({ method: "POST" })
       });
     }
 
+    // Pacotes 5 a 7 — bancos privados de SC, Governo e Redes (funções por aprovar).
+    for (const [pacote, rpc] of Object.entries(RPC_BANCOS)) {
+      const { data, error } = await sb.rpc(rpc.estado);
+      let previsto: { [chave: string]: Json } = {};
+      let erro: string | null = error ? explicarErro(error.message) : null;
+      try {
+        previsto = preparados.resumoBanco(pacote as PacoteBanco) as unknown as { [chave: string]: Json };
+      } catch (e) {
+        erro = erro ?? (e as Error).message;
+      }
+      const estado = (data ?? {}) as { [chave: string]: Json };
+      resultados.push({
+        pacote: pacote as PacoteBanco,
+        hash: (estado["hash"] as string) ?? "",
+        resumo: estado,
+        previsto,
+        erro,
+      });
+    }
+
     return resultados;
   });
 
@@ -173,6 +209,8 @@ export type ResultadoImportacao = {
 export function explicarErro(mensagem: string): string {
   if (mensagem.includes("SEM_PERMISSAO_ADMIN_GERAL"))
     return "Esta acção é exclusiva do perfil Administrador Geral Ologa.";
+  if (/rpc_(estado|importar)_banco_(sc|tdg|redes)/.test(mensagem))
+    return "A importação deste banco ainda não está autorizada na base de dados (funções por aprovar). Nada foi gravado.";
   if (mensagem.includes("rpc_estado_redes") || mensagem.includes("rpc_importar_redes"))
     return "A importação deste curso ainda não está autorizada na base de dados (funções por aprovar). Nada foi gravado.";
   if (mensagem.includes("IDS_INESPERADOS"))
@@ -221,7 +259,8 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
       input?.pacote !== "seguranca-cibernetica" &&
       input?.pacote !== "banco-inteligencia-artificial" &&
       input?.pacote !== "tecnologias-governo" &&
-      input?.pacote !== "redes"
+      input?.pacote !== "redes" &&
+      !(input?.pacote in RPC_BANCOS)
     ) {
       throw new Error("PACOTE_DESCONHECIDO");
     }
@@ -252,6 +291,17 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
       if (data.pacote === "tecnologias-governo") {
         const payload = preparados.payloadTecnologiasGoverno();
         const { data: res, error } = await sb.rpc("rpc_importar_tecnologias_governo", {
+          _payload: payload,
+          _hash_estado: data.hash,
+        });
+        if (error) return { ok: false, detalhe: null, erro: explicarErro(error.message) };
+        return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
+      }
+
+      if (data.pacote in RPC_BANCOS) {
+        const pacote = data.pacote as PacoteBanco;
+        const payload = preparados.payloadBanco(pacote);
+        const { data: res, error } = await sb.rpc(RPC_BANCOS[pacote].importar, {
           _payload: payload,
           _hash_estado: data.hash,
         });
