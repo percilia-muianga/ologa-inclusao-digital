@@ -75,7 +75,7 @@ const L2: QuestaoSC[] = [
     opts: [
       "Para saber, sem adivinhar, se a instituição usa o componente afectado e em que sistemas",
       "Para calcular o custo de licenciamento das bibliotecas usadas pela aplicação",
-      "Para provar ao fornecedor que a aplicação foi desenvolvida segundo o contrato",
+      "Para provar ao fornecedor que a aplicação foi desenvolvida segundo o que o contrato estabelece",
       "Para substituir a análise de dependências feita na cadeia de entrega",
     ], ind: 0,
     exp: "Sem inventário de componentes, no dia da divulgação ninguém sabe se é afectado. Serve para responder à pergunta «usamos isto e onde?».",
@@ -116,7 +116,7 @@ const L2: QuestaoSC[] = [
     cod: "SC-M2L2-05", m: "m2", l: 2, t: "em", cen: true, d: "di",
     e: "Caso fictício. O relatório de dependências da aplicação de gestão documental de Milange indica uma falha grave, com exploração já observada, no motor de modelos que a aplicação usa. O projecto desse motor foi abandonado e não há versão corrigida. Qual é a decisão mais defensável?",
     opts: [
-      "Aceitar o risco sem prazo, por não existir correcção disponível do lado do projecto",
+      "Aceitar o risco sem prazo definido, por não existir correcção disponível do lado do projecto",
       "Aguardar que a comunidade retome o projecto e publique uma versão corrigida",
       "Substituir o componente ou isolar a funcionalidade, com prazo, responsável e reteste",
       "Manter o componente e acrescentar um aviso na página inicial da aplicação",
@@ -203,7 +203,7 @@ const L4: QuestaoSC[] = [
     cod: "SC-M2L4-02", m: "m2", l: 4, t: "em", d: "di",
     e: "Porque é que um endereço de rede associado a um ataque é um indicador menos durável do que o resumo criptográfico de um ficheiro encontrado?",
     opts: [
-      "Porque o endereço é mais difícil de registar nos sistemas de detecção da instituição",
+      "Porque o endereço é mais difícil de registar e de pesquisar nos sistemas de detecção da instituição",
       "Porque quem ataca muda de endereço com facilidade, enquanto o resumo muda só se o ficheiro mudar",
       "Porque o resumo identifica a pessoa responsável pelo ataque de forma inequívoca",
       "Porque os endereços não podem ser guardados por motivos de protecção de dados",
@@ -250,7 +250,7 @@ const L5: QuestaoSC[] = [
     e: "Qual é a diferença entre conter e erradicar, na resposta a um incidente?",
     opts: [
       "Conter é travar a propagação já; erradicar é remover a presença do atacante e fechar a entrada",
-      "Conter é avisar a direcção; erradicar é comunicar publicamente o incidente aos cidadãos",
+      "Conter é avisar a direcção por escrito; erradicar é comunicar publicamente o incidente aos cidadãos afectados",
       "Conter é restaurar cópias; erradicar é apagar os registos afectados pelo incidente",
       "Conter é escrever o relatório; erradicar é aplicar as recomendações desse relatório",
     ], ind: 0,
@@ -262,7 +262,7 @@ const L5: QuestaoSC[] = [
     cod: "SC-M2L5-02", m: "m2", l: 5, t: "em", d: "me",
     e: "Que condição tem de estar cumprida antes de repor um sistema em serviço depois de um incidente com credenciais comprometidas?",
     opts: [
-      "Que o sistema tenha sido reiniciado pelo menos uma vez sem erros no arranque",
+      "Que o sistema tenha sido reiniciado pelo menos uma vez sem quaisquer erros no arranque",
       "Que a direcção tenha aprovado por escrito o texto do comunicado público",
       "Que as credenciais tenham sido substituídas e a via de entrada esteja fechada",
       "Que o relatório final do incidente esteja concluído e entregue à tutela",

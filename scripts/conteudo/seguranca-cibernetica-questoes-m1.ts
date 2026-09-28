@@ -19,7 +19,7 @@ const L1: QuestaoSC[] = [
     cod: "SC-M1L1-02", m: "m1", l: 1, t: "em", d: "me",
     e: "A equipa de uma direcção provincial classificou o registo de certidões emitidas. Qual das justificações sustenta correctamente a classificação de integridade «alta»?",
     opts: [
-      "O registo contém nomes e números de documento que não devem ser divulgados a terceiros",
+      "O registo contém nomes e números de documento de cidadãos que não devem ser divulgados a terceiros",
       "Uma alteração não detectada num registo faz emitir certidões com dados errados ao cidadão",
       "O servidor que guarda o registo fica fora de serviço várias vezes por mês",
       "O registo é consultado diariamente por muitos funcionários de balcão",
@@ -108,7 +108,7 @@ const L2: QuestaoSC[] = [
     opts: [
       "Serve, desde que o técnico registe as acções num relatório entregue no fim do teste",
       "Serve para o portal, mas não para os outros sistemas, que exigem outro documento",
-      "Não serve só porque falta a janela; os restantes elementos estão aceitáveis como estão",
+      "Não serve só porque falta a janela temporal; os restantes elementos estão aceitáveis tal como estão",
       "Não serve: âmbito aberto, janela indefinida, falta de assinatura de quem autoriza e sem contacto",
     ], ind: 3,
     exp: "A minuta tem quatro defeitos: âmbito aberto, janela indefinida, assinada por quem executa e não por quem tem poder para autorizar, e sem contacto de emergência. Com qualquer deles, o teste não fica autorizado nem documentável.",
@@ -186,7 +186,7 @@ const L4: QuestaoSC[] = [
     cod: "SC-M1L4-02", m: "m1", l: 4, t: "em", d: "di",
     e: "Um ficheiro de instalação foi descarregado e o seu resumo criptográfico coincide com o resumo publicado na mesma página de onde foi descarregado. O que se pode concluir?",
     opts: [
-      "Que o ficheiro está livre de software malicioso e pode ser instalado sem mais análise",
+      "Que o ficheiro está livre de software malicioso e pode ser instalado sem qualquer outra análise",
       "Que o ficheiro recebido é igual ao publicado nessa página, mas não que a página é fidedigna",
       "Que o ficheiro foi assinado pelo fabricante e que a assinatura é válida e verificada",
       "Que a ligação usada no descarregamento estava cifrada de ponta a ponta sem falhas",

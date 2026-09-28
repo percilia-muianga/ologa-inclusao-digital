@@ -26,7 +26,7 @@ const L1: QuestaoSC[] = [
     e: "Um plano de resposta indica para cada função apenas um nome e um endereço de correio institucional. Que lacuna é mais grave numa madrugada de incidente?",
     opts: [
       "A falta de indicação do cargo de cada pessoa no organigrama da instituição",
-      "A falta de uma fotografia de cada pessoa para identificação na sala técnica",
+      "A falta de uma fotografia actualizada de cada pessoa para identificação à entrada da sala técnica",
       "A falta de substituto e de contacto alternativo que não dependa dos sistemas afectados",
       "A falta de indicação da data de nascimento de cada pessoa responsável",
     ], ind: 2,
@@ -85,7 +85,7 @@ const L2: QuestaoSC[] = [
     opts: [
       "Publicar o aviso nas redes sociais da instituição com letra grande",
       "Afixar o aviso impresso em letra grande no balcão e dizê-lo em voz alta a quem chega",
-      "Enviar o aviso por correio electrónico a todos os cidadãos registados no portal",
+      "Enviar o aviso por correio electrónico a todos os cidadãos que se registaram anteriormente no portal",
       "Colocar o aviso na página inicial do portal assim que este voltar a funcionar",
     ], ind: 1,
     exp: "Se o canal digital falhou, o aviso tem de chegar por meios que não dependam dele: papel legível e voz no local, com linguagem simples.",
