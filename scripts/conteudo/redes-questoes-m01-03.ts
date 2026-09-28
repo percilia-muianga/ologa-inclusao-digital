@@ -8,7 +8,7 @@ export const EXAME_REDES_M01_03: QuestaoRedes[] = [
   // ─── Módulo 1 — Fundamentos de Redes de Dados ───
   {
     cod: "RED-M01-L1-01", m: 1, l: 1, t: "em", d: "f",
-    e: "Quando o r1 reencaminha para a VLAN de servidores um pacote enviado pelo pc-adm, que informação é reescrita pelo r1 ao construir a nova trama?",
+    e: "Numa sessão de formador replicador, um formando pergunta o que o r1 reescreve quando reencaminha para a VLAN de servidores um pacote vindo do pc-adm. Qual resposta, dada com o vocabulário das camadas, está correcta?",
     opts: [
       "Os endereços MAC de origem e de destino da trama",
       "O endereço IP de destino que consta do pacote",
@@ -17,7 +17,7 @@ export const EXAME_REDES_M01_03: QuestaoRedes[] = [
     ], ind: 0,
     exp: "Em cada troço a trama Ethernet é substituída por outra, com novos endereços MAC; o pacote IP mantém origem e destino (salvo NAT) e a porta TCP não é tocada pelo encaminhamento.",
     obj: "Explicar as camadas do modelo TCP/IP e a sua correspondência com o modelo OSI.",
-    r: ["R01"], fonte: "rfc791",
+    r: ["R01", "R18"], fonte: "rfc791",
   },
   {
     cod: "RED-M01-L2-01", m: 1, l: 2, t: "em", d: "me",
@@ -148,7 +148,7 @@ export const EXAME_REDES_M01_03: QuestaoRedes[] = [
   // ─── Módulo 3 — Encaminhamento de Redes ───
   {
     cod: "RED-M03-L1-01", m: 3, l: 1, t: "em", d: "me",
-    e: "A tabela do r1 tem: 0.0.0.0/0 via 203.0.113.1; 10.20.0.0/16 via 10.255.0.2; 10.20.10.0/24 via 10.255.0.6. Por onde segue um pacote para 10.20.11.5?",
+    e: "Entradas instaladas no r1: 0.0.0.0/0 via 203.0.113.1; 10.20.0.0/16 via 10.255.0.2; 10.20.10.0/24 via 10.255.0.6. Qual próximo salto escolhe para o destino 10.20.11.5?",
     opts: ["Via 10.255.0.6", "Via 203.0.113.1", "É descartado", "Via 10.255.0.2"], ind: 3,
     exp: "10.20.11.5 não pertence a 10.20.10.0/24 (que vai de .10.0 a .10.255). A rota mais específica que o contém é 10.20.0.0/16. A rota por omissão só se usa quando nenhuma outra contém o destino.",
     obj: "Ler uma tabela de encaminhamento e aplicar a regra do prefixo mais longo.",
