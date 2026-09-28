@@ -269,4 +269,196 @@ export const LICOES_M09: Record<string, ConteudoLicao> = {
     },
     fontes: ["rfc4632", "rfc1918", "iproute2", "nftables"],
   },
+
+  "r-m09-l4": {
+    objectivos: [
+      "Calcular o tempo de indisponibilidade admitido por uma percentagem de disponibilidade num contrato.",
+      "Identificar o que um contrato de ligação (acordo de nível de serviço) deve conter e como se verifica.",
+      "Demonstrar porque uma rota de reserva baseada só no estado da interface não detecta uma falha «silenciosa», e aplicar uma verificação activa do próximo salto.",
+    ],
+    explicacao: [
+      {
+        titulo: "Percentagens que se traduzem em horas",
+        paragrafos: [
+          "Um contrato de 99,5 % de disponibilidade mensal admite 0,5 % de um mês sem serviço: em 30 dias (720 horas) são 3,6 horas. 99,9 % admite cerca de 43 minutos; 99,99 %, cerca de 4 minutos. Antes de assinar, pergunta-se: como mede o operador, em que período (mês, ano), se as manutenções programadas contam, qual o tempo de reposição, que compensação existe e como se abre uma avaria (contacto, horário, número de registo).",
+          "A instituição deve medir por si própria (monitoria da ligação, módulo 11) para poder comparar com o relatório do operador. Sem medição própria, o contrato é difícil de fazer cumprir.",
+        ],
+      },
+      {
+        titulo: "Redundância que detecta a falha certa",
+        paragrafos: [
+          "No módulo 3 a rota de reserva entrava quando a interface principal ficava em baixo. Na WAN é frequente o contrário: a interface local continua «em cima» (o equipamento do operador responde ao nível físico), mas o tráfego não passa mais à frente. Nesse caso a rota principal continua activa e o tráfego perde-se.",
+          "Soluções: um protocolo de encaminhamento dinâmico com temporizadores (OSPF, módulo 3), a detecção bidireccional BFD (RFC 5880, suportada pelo FRRouting e por muitos fabricantes) ou, em ambientes simples, uma verificação activa que testa o próximo salto e muda a rota. A redundância real exige também caminhos independentes: duas ligações do mesmo operador pela mesma vala podem falhar juntas. O plano de contingência (NIST SP 800-34) regista o que fazer e quem avisar quando a reserva entra.",
+        ],
+      },
+    ],
+    caso: "A DPE (fictícia) contratou uma ligação principal de 99,5 % mensais e uma reserva de outro operador (ligação 10.255.4.0/30: r1 = 10.255.4.1, r2 = 10.255.4.2). Numa segunda-feira a delegação ficou 2 horas sem sistema, apesar da reserva: o equipamento do operador principal continuava ligado, mas não encaminhava tráfego.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Novo: ligação de reserva r1-r2b / r2b-r1 com 10.255.4.1/30 (r1) e 10.255.4.2/30 (r2).",
+        "Falha silenciosa simulada com tc netem loss 100% em r2-r1: a interface fica UP, mas nada passa.",
+      ],
+      passos: [
+        { accao: "Pré-verificação: as interfaces novas não existem.", comandos: ["sudo ip -n r1 link show r1-r2b 2>/dev/null && echo 'r1-r2b JA EXISTE: parar'", "sudo ip -n r2 link show r2b-r1 2>/dev/null && echo 'r2b-r1 JA EXISTE: parar'", "echo verificado"], saida: ["verificado"] },
+        { accao: "Crie a ligação de reserva e as rotas de reserva com métrica maior.", comandos: [
+          "sudo ip link add r1-r2b type veth peer name r2b-r1; sudo ip link set r1-r2b netns r1; sudo ip link set r2b-r1 netns r2",
+          "sudo ip -n r1 addr add 10.255.4.1/30 dev r1-r2b; sudo ip -n r2 addr add 10.255.4.2/30 dev r2b-r1",
+          "sudo ip -n r1 link set r1-r2b up; sudo ip -n r2 link set r2b-r1 up",
+          "sudo ip -n r1 route add 10.20.10.0/24 via 10.255.4.2 metric 200",
+          "sudo ip -n r2 route add 10.10.0.0/16 via 10.255.4.1 metric 200",
+          "sudo ip -n r1 route show 10.20.10.0/24",
+        ], saida: ["10.20.10.0/24 via 10.255.0.2 dev r1-r2", "10.20.10.0/24 via 10.255.4.2 dev r1-r2b metric 200"] },
+        { accao: "Provoque a falha silenciosa na principal e observe que a rota não muda.", comandos: ["sudo ip netns exec r2 tc qdisc add dev r2-r1 root netem loss 100%", "sudo ip -n r2 link show r2-r1 | grep -o 'state [A-Z]*'", "sudo ip netns exec pc-del ping -c 3 -W 1 10.10.20.53", "sudo ip -n r2 route get 10.10.20.53"], saida: ["state UP", "3 packets transmitted, 0 received, 100% packet loss", "10.10.20.53 via 10.255.0.1 dev r2-r1 ..."] },
+        { accao: "Crie o script de verificação activa (didáctico: corre na máquina de prática e muda as rotas das duas pontas). Guarde-o como /tmp/m9-verificar.sh.", comandos: [
+          "sudo tee /tmp/m9-verificar.sh <<'EOF'",
+          "#!/bin/sh",
+          "# Testa o próximo salto da ligação principal a partir de r2; se falhar 3 vezes, usa a reserva.",
+          "if ip netns exec r2 ping -c 3 -W 1 -q 10.255.0.1 >/dev/null; then",
+          "  ip -n r1 route replace 10.20.10.0/24 via 10.255.0.2 metric 0",
+          "  ip -n r2 route replace 10.10.0.0/16 via 10.255.0.1 metric 0",
+          "  echo \"$(date -Is) principal OK\"",
+          "else",
+          "  ip -n r1 route del 10.20.10.0/24 via 10.255.0.2 2>/dev/null",
+          "  ip -n r2 route del 10.10.0.0/16 via 10.255.0.1 2>/dev/null",
+          "  echo \"$(date -Is) principal FALHOU: reserva em uso\"",
+          "fi",
+          "EOF",
+          "sudo sh /tmp/m9-verificar.sh",
+          "sudo ip netns exec pc-del ping -c 3 10.10.20.53",
+        ], saida: ["2026-09-28T10:15:03+02:00 principal FALHOU: reserva em uso", "3 packets transmitted, 3 received, 0% packet loss"] },
+        { accao: "Reponha a principal e confirme o regresso.", comandos: ["sudo ip netns exec r2 tc qdisc del dev r2-r1 root", "sudo sh /tmp/m9-verificar.sh", "sudo ip -n r2 route get 10.10.20.53"], saida: ["2026-09-28T10:17:40+02:00 principal OK", "10.10.20.53 via 10.255.0.1 dev r2-r1 ..."] },
+      ],
+      sucesso: [
+        "A dupla mostra que, com a falha silenciosa, a interface fica UP e a rota principal não muda sozinha.",
+        "Depois do script, o tráfego passa pela reserva; ao repor, volta à principal.",
+        "A dupla calcula as horas admitidas pelo contrato e indica se as 2 horas do caso o violam num mês sem outras falhas.",
+        "A dupla nomeia a solução de produção (BFD ou OSPF com temporizadores) e porque o script é só didáctico.",
+      ],
+      reversao: [
+        "sudo ip netns exec r2 tc qdisc del dev r2-r1 root 2>/dev/null",
+        "sudo ip -n r1 route replace 10.20.10.0/24 via 10.255.0.2; sudo ip -n r2 route replace 10.10.0.0/16 via 10.255.0.1",
+        "sudo ip -n r1 link del r1-r2b  (apaga também r2b-r1 e as rotas de reserva)",
+        "sudo rm -f /tmp/m9-verificar.sh",
+        "Verificar: sudo ip -n r1 route show 10.20.10.0/24 mostra só a rota via 10.255.0.2.",
+      ],
+    },
+    papel: [
+      { tarefa: "Calcule o tempo admitido por mês (30 dias) para 99,5 %, 99,9 % e 99,99 %.", esperado: "720 h × 0,005 = 3,6 h (3 h 36 min); 720 h × 0,001 = 0,72 h (43,2 min); 720 h × 0,0001 = 0,072 h (cerca de 4,3 min)." },
+      { tarefa: "As 2 horas do caso violam o contrato de 99,5 % mensais, se não houve outras falhas?", esperado: "Não: 2 h é menos do que as 3,6 h admitidas. Mesmo assim, é um incidente a registar, e a reserva devia ter entrado — é uma falha do desenho, não do contrato." },
+      { tarefa: "Com as saídas de exemplo do passo 3, explique porque a reserva não entrou.", esperado: "A interface r2-r1 continua «state UP» e a rota principal continua a mais preferida (métrica 0); o sistema não sabe que o tráfego se perde mais à frente. É preciso verificação activa (BFD, OSPF ou teste do próximo salto)." },
+      { tarefa: "Liste cinco pontos a exigir no contrato de ligação.", esperado: "Disponibilidade e período de medição; se as manutenções contam; tempo máximo de reposição; forma e horário de abertura de avaria; compensação por incumprimento; relatório mensal do operador." },
+    ],
+    formativas: [
+      { pergunta: "Porque a rota de reserva não entrou na falha do caso?", opcoes: ["Porque a métrica da reserva era baixa", "Porque a interface principal continuava UP e nada verificava se o tráfego passava", "Porque o operador de reserva estava em baixo", "Porque faltava NAT"], certa: 1, comentario: "Uma rota estática depende do estado da interface; falhas mais à frente exigem detecção activa (BFD, protocolo dinâmico ou teste)." },
+      { pergunta: "Duas ligações do mesmo operador, pelo mesmo cabo até ao edifício, são redundância suficiente?", opcoes: ["Sim, porque são duas", "Não necessariamente: partilham pontos de falha (cabo, central, operador)", "Sim, se tiverem VPN", "Sim, se forem de fibra"], certa: 1, comentario: "Redundância útil exige caminhos independentes; pergunta-se ao operador por onde passa cada ligação." },
+    ],
+    leituraFacil: [
+      "99,5 % por mês quer dizer até 3 horas e meia sem serviço.",
+      "Meça a ligação você mesmo, para comparar com o operador.",
+      "Às vezes o cabo parece ligado, mas nada passa.",
+      "Por isso a reserva precisa de testar se o caminho funciona.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: percentagens em horas; conteúdo de um contrato; falha silenciosa com o caso da DPE.",
+        "20–70 min: prática da reserva e do script; quem não tiver o laboratório resolve as quatro tarefas em papel com as saídas impressas.",
+        "70–80 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Calcular a disponibilidade sobre 31 dias sem dizer o período usado.",
+        "Deixar o script em produção em vez de usar BFD ou encaminhamento dinâmico.",
+        "Esquecer a rota de volta: redundância só num sentido.",
+      ],
+    },
+    fontes: ["rfc5880", "frr", "iproute2", "nist80034"],
+  },
+
+  "r-m09-l5": {
+    objectivos: [
+      "Aplicar um método por etapas ao diagnóstico de uma ligação de longa distância (ligação local, próximo salto, caminho, serviço).",
+      "Localizar perda num salto com mtr e distinguir perda real de limitação de respostas ICMP num encaminhador.",
+      "Diagnosticar um problema de MTU (pedidos pequenos passam, transferências grandes param) e corrigi-lo com ajuste do MSS.",
+    ],
+    explicacao: [
+      {
+        titulo: "Método em quatro etapas",
+        paragrafos: [
+          "1) Ligação local: a interface está activa e tem endereço? 2) Próximo salto: o encaminhador do outro lado responde? 3) Caminho: onde se perde o tráfego (traceroute, mtr)? 4) Serviço: o protocolo concreto funciona (DNS, web, tamanho dos pacotes)? Registam-se hora, comando e resultado de cada etapa: é esse registo que se envia ao operador ao abrir avaria.",
+          "No mtr, perda que aparece num salto intermédio mas não nos seguintes significa normalmente que esse encaminhador limita as respostas ICMP, não que o tráfego se perde. Perda real aparece no salto onde começa e mantém-se até ao destino.",
+        ],
+      },
+      {
+        titulo: "MTU: quando o ping funciona e a aplicação não",
+        paragrafos: [
+          "A MTU é o maior pacote que uma ligação transporta sem fragmentar (1500 bytes em Ethernet). Túneis e algumas ligações WAN reduzem-na (por exemplo WireGuard acrescenta cabeçalhos). Com a descoberta da MTU do caminho (RFC 1191), o emissor envia pacotes com «não fragmentar» e espera uma mensagem ICMP «fragmentation needed» se forem grandes demais. Se uma firewall no caminho bloquear essas mensagens ICMP, os pacotes grandes perdem-se sem aviso: o ping pequeno e o início da ligação passam, mas a página ou o ficheiro não chega.",
+          "Correcções: não bloquear as mensagens ICMP necessárias; e, no encaminhador da ligação reduzida, ajustar o MSS do TCP à MTU do caminho, para que as ligações TCP usem segmentos que cabem.",
+        ],
+      },
+    ],
+    caso: "Na DPE (fictícia) os utilizadores da delegação conseguem abrir a página inicial pequena do srv, mas o descarregamento de um relatório de 200 kB fica parado. O ping funciona. A ligação principal foi migrada para um operador cuja ligação tem MTU 1400, e um técnico bloqueou todo o ICMP no r1 «por segurança».",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Simulação: MTU 1400 na ligação r1–r2 (interfaces r1-r2 e r2-r1) e bloqueio de ICMP «fragmentation needed» numa tabela nft própria no r1 (m9mtu).",
+      ],
+      passos: [
+        { accao: "Prepare o cenário do caso (formador) e um ficheiro de 200 kB no srv.", comandos: [
+          "sudo ip -n r1 link set r1-r2 mtu 1400; sudo ip -n r2 link set r2-r1 mtu 1400",
+          "sudo ip netns exec r1 nft add table inet m9mtu",
+          "sudo ip netns exec r1 nft add chain inet m9mtu saida '{ type filter hook output priority 0; policy accept; }'",
+          "sudo ip netns exec r1 nft add rule inet m9mtu saida icmp type destination-unreachable icmp code frag-needed counter drop",
+          "mkdir -p /tmp/m9-web && head -c 200000 /dev/zero > /tmp/m9-web/relatorio.bin",
+          "Consola C: sudo ip netns exec srv python3 -m http.server 80 --bind 10.10.20.53 --directory /tmp/m9-web",
+        ] },
+        { accao: "Etapas 1 e 2: interface e próximo salto a partir da delegação.", comandos: ["sudo ip -n pc-del addr show pc-del-r2 | grep inet", "sudo ip netns exec pc-del ping -c 2 10.20.10.1", "sudo ip netns exec r2 ping -c 2 10.255.0.1"], saida: ["inet 10.20.10.10/24 ...", "2 packets transmitted, 2 received", "2 packets transmitted, 2 received"] },
+        { accao: "Etapa 3: caminho com mtr (10 ciclos, relatório).", comandos: ["sudo ip netns exec pc-del mtr -n -r -c 10 10.10.20.53"], saida: ["HOST                Loss%  Snt  Avg", "1. 10.20.10.1         0.0%   10  0.1", "2. 10.255.0.1         0.0%   10  0.1", "3. 10.10.20.53        0.0%   10  0.1"] },
+        { accao: "Etapa 4: serviço. O ficheiro grande pára; teste o tamanho com «não fragmentar».", comandos: ["sudo ip netns exec pc-del python3 -c \"import urllib.request as u; print(len(u.urlopen('http://10.10.20.53/relatorio.bin', timeout=5).read()))\"", "sudo ip netns exec srv ping -c 1 -W 1 -M do -s 1372 10.20.10.10", "sudo ip netns exec srv ping -c 1 -W 1 -M do -s 1472 10.20.10.10", "sudo ip netns exec r1 nft list chain inet m9mtu saida"], saida: ["TimeoutError: timed out", "1 packets transmitted, 1 received  (1372 + 28 = 1400 bytes)", "1 packets transmitted, 0 received  (1500 bytes não passam e o aviso ICMP é descartado)", "... counter packets 3 bytes ... drop"] },
+        { accao: "Correcção 1: deixe passar as mensagens ICMP necessárias (retire a regra errada).", comandos: ["sudo ip netns exec r1 nft delete table inet m9mtu", "sudo ip netns exec srv ping -c 1 -W 1 -M do -s 1472 10.20.10.10"], saida: ["ping: local error: message too long, mtu=1400  (o emissor passa a saber a MTU do caminho)"] },
+        { accao: "Correcção 2 (complementar): ajuste do MSS no r1 para as ligações TCP que atravessam a ligação reduzida; depois repita o descarregamento.", comandos: ["sudo ip netns exec r1 nft add table inet m9mss", "sudo ip netns exec r1 nft add chain inet m9mss fwd '{ type filter hook forward priority 0; policy accept; }'", "sudo ip netns exec r1 nft add rule inet m9mss fwd oifname r1-r2 tcp flags syn tcp option maxseg size set rt mtu", "sudo ip netns exec pc-del python3 -c \"import urllib.request as u; print(len(u.urlopen('http://10.10.20.53/relatorio.bin', timeout=5).read()))\""], saida: ["200000"] },
+      ],
+      sucesso: [
+        "A folha de diagnóstico tem as quatro etapas com hora, comando e resultado.",
+        "A dupla explica porque o ping de 1372 bytes passa e o de 1472 não.",
+        "Depois das correcções, o ficheiro de 200000 bytes chega completo.",
+        "A dupla escreve a mensagem de abertura de avaria ao operador com os dados recolhidos.",
+      ],
+      reversao: [
+        "Ctrl+C na consola C.",
+        "sudo ip netns exec r1 nft delete table inet m9mss; sudo ip netns exec r1 nft delete table inet m9mtu 2>/dev/null",
+        "sudo ip -n r1 link set r1-r2 mtu 1500; sudo ip -n r2 link set r2-r1 mtu 1500",
+        "rm -rf /tmp/m9-web",
+        "Verificar: sudo ip netns exec r1 nft list tables não mostra m9mtu nem m9mss; ip -n r1 link show r1-r2 mostra mtu 1500.",
+      ],
+    },
+    papel: [
+      { tarefa: "Relatório mtr de exemplo: salto 2 (10.255.0.1) com 40 % de perda; salto 3 (destino) com 0 %. Há perda real?", esperado: "Não no caminho: o destino recebe tudo. O salto 2 limita respostas ICMP dirigidas a ele. Perda real apareceria também nos saltos seguintes e no destino." },
+      { tarefa: "Outro relatório: salto 2 com 12 % e salto 3 com 12 %. Onde começa o problema e o que envia ao operador?", esperado: "Começa entre o salto 1 e o salto 2 (a ligação WAN). Envia: hora, origem e destino, relatório mtr com 12 % a partir do salto 2, confirmação de que a rede local está sem perda, número de contrato." },
+      { tarefa: "Com as saídas do passo 4, explique o caso em três frases.", esperado: "A ligação tem MTU 1400. Pacotes de 1500 bytes com «não fragmentar» não passam e o r1 descarta o aviso ICMP que diria ao emissor para reduzir. Pedidos pequenos passam; o ficheiro grande pára." },
+      { tarefa: "Porque bloquear todo o ICMP «por segurança» é mau desenho?", esperado: "Algumas mensagens ICMP são necessárias ao funcionamento (descoberta da MTU, destino inalcançável). Filtra-se de forma selectiva, não por completo." },
+    ],
+    formativas: [
+      { pergunta: "Num relatório mtr, só o salto intermédio mostra perda e o destino tem 0 %. O que significa normalmente?", opcoes: ["O cabo está partido nesse salto", "Esse encaminhador limita as respostas ICMP; o tráfego passa", "O destino está em baixo", "O DNS falhou"], certa: 1, comentario: "Perda real mantém-se até ao destino; perda isolada num salto costuma ser limitação de respostas ICMP." },
+      { pergunta: "O ping funciona, a página pequena abre, mas ficheiros grandes param. Primeira hipótese?", opcoes: ["Vírus no servidor", "Problema de MTU com mensagens ICMP bloqueadas no caminho", "Falta de licença", "Endereço IP duplicado"], certa: 1, comentario: "É o sintoma típico de «buraco negro» de MTU; testa-se com ping -M do e tamanhos diferentes." },
+    ],
+    leituraFacil: [
+      "Diagnostique por etapas: cabo, vizinho, caminho, serviço.",
+      "Anote a hora e o resultado de cada teste.",
+      "Se o ping funciona e os ficheiros grandes não, suspeite do tamanho dos pacotes.",
+      "Não bloqueie todo o ICMP.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: método em quatro etapas; leitura do mtr; MTU e descoberta da MTU do caminho, com o caso da DPE.",
+        "20–70 min: prática do diagnóstico e das duas correcções; redacção da mensagem ao operador; quem não tiver o laboratório resolve as quatro tarefas em papel com as saídas impressas.",
+        "70–80 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Concluir perda num salto intermédio sem olhar para o destino.",
+        "Esquecer os 28 bytes de cabeçalhos IP e ICMP no cálculo do ping.",
+        "Corrigir só com MSS e manter o bloqueio total de ICMP.",
+      ],
+    },
+    fontes: ["rfc792", "rfc791", "iproute2", "nftables", "wireshark"],
+  },
 };
