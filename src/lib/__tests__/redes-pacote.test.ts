@@ -92,9 +92,11 @@ describe("SQL por autorizar", () => {
     expect((POL.replace(/^--.*$/gm, "").match(/redes-avancadas-seguranca-cibernetica/g) ?? []).length).toBe(4);
     expect(POL).not.toMatch(/ON public\.modulos/);
   });
-  it("nada disto está em migrações autoexecutáveis", () => {
+  it("migrações aplicadas (autorizadas) são cópia exacta dos textos revistos", () => {
+    expect(readFileSync("drizzle/migrations/0027_importacao_redes.sql", "utf8")).toBe(FUN);
+    expect(readFileSync("drizzle/migrations/0028_politicas_redes.sql", "utf8")).toBe(POL);
     for (const f of readdirSync("drizzle/migrations")) {
-      if (!f.endsWith(".sql")) continue;
+      if (!f.endsWith(".sql") || /^002[78]_/.test(f)) continue;
       expect(readFileSync(join("drizzle/migrations", f), "utf8")).not.toMatch(/rpc_importar_redes|redes_admin_ologa/);
     }
   });
