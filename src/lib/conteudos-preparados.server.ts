@@ -176,3 +176,70 @@ export function payloadTecnologiasGoverno() {
     })),
   };
 }
+
+// ---- Pacote 4 — Administração de Redes e Segurança Cibernética ----
+import {
+  SLUG_CURSO as REDES_SLUG,
+  CARGA_HORARIA_HORAS as REDES_HORAS,
+  MODALIDADE as REDES_MODALIDADE,
+  FICHA_CURSO as REDES_FICHA,
+  NOTA_CARGA as REDES_NOTA,
+  MODULOS_PLANO as REDES_MODULOS,
+  MINUTOS_TRANSVERSAL as REDES_TRANSVERSAL,
+  MINUTOS_AVALIACAO_ORIENTACAO as REDES_AVAL,
+  MINUTOS_CONTEUDOS as REDES_MIN_LICOES,
+} from "./plano-redes";
+import { montarTodasRedes } from "../../scripts/conteudo/redes-licoes";
+import {
+  ID_CURSO_REDES,
+  ID_MODULO_TRANSVERSAL as REDES_ID_TRANSVERSAL,
+  IDS_MODULOS_REDES,
+  IDS_LICOES_REDES,
+} from "../../scripts/conteudo/redes-ids";
+
+export { REDES_SLUG };
+
+/** Pacote 4 — 60 lições com IDs exactos, 12 módulos (380 min), ficha e horas (4800 min). */
+export function payloadRedes() {
+  const licoes = montarTodasRedes();
+  if (licoes.length !== 60 || REDES_MODULOS.length !== 12 || IDS_MODULOS_REDES.length !== 12) {
+    throw new Error("PACOTE_INCOMPLETO");
+  }
+  return {
+    curso: {
+      id: ID_CURSO_REDES,
+      slug: REDES_SLUG,
+      carga_horaria: REDES_HORAS,
+      modalidade: REDES_MODALIDADE,
+      objectivos: REDES_FICHA.objectivos,
+      publico_alvo: REDES_FICHA.publicoAlvo,
+      pre_requisitos: REDES_FICHA.preRequisitos,
+      materiais: REDES_FICHA.materiais,
+      nota: REDES_NOTA,
+      minutos_avaliacao_orientacao: REDES_AVAL,
+    },
+    modulos: REDES_MODULOS.map((m) => ({
+      id: IDS_MODULOS_REDES[m.ordem - 1]!,
+      ordem: m.ordem,
+      descricao: m.descricao,
+      minutos: m.minutos,
+    })),
+    transversal: { id: REDES_ID_TRANSVERSAL, minutos: REDES_TRANSVERSAL },
+    licoes: licoes.map((l) => {
+      const id = IDS_LICOES_REDES[l.chave];
+      if (!id) throw new Error("PACOTE_INCOMPLETO");
+      return {
+        id,
+        modulo_id: IDS_MODULOS_REDES[l.modulo_ordem - 1]!,
+        modulo_ordem: l.modulo_ordem,
+        ordem: l.ordem,
+        titulo: l.titulo,
+        minutos: l.minutos,
+        elearning: l.elearning,
+        guiao: l.guiao,
+      };
+    }),
+    minutos_licoes: REDES_MIN_LICOES,
+  };
+}
+export type PayloadRedes = ReturnType<typeof payloadRedes>;
