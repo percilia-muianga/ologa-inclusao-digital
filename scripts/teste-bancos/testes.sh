@@ -14,7 +14,8 @@ SQL
 ok()     { if echo "$2" | grep -qi "ERROR"; then echo "FALHA  $1 -> $2"; MAU=$((MAU+1)); else echo "ok     $1"; OK=$((OK+1)); fi; }
 recusa() { if echo "$2" | grep -q "$3"; then echo "ok     $1 ($3)"; OK=$((OK+1)); else echo "FALHA  $1 -> esperado $3: $2"; MAU=$((MAU+1)); fi; }
 igual()  { if [ "$2" = "$3" ]; then echo "ok     $1 ($2)"; OK=$((OK+1)); else echo "FALHA  $1 -> obtido '$2', esperado '$3'"; MAU=$((MAU+1)); fi; }
-$P -c "INSERT INTO public.banco_questoes(curso_id, modulo_id, codigo, instrumento, tipologia, dificuldade, enunciado, conteudo, resposta, explicacao, cenario, activa, estado_revisao, versao, autor_nome) VALUES ('00000000-0000-0000-0000-0000000000b9','3d0dd3a0-a53b-4800-a032-68527d708eb1','OUTRO-01','exame_final','verdadeiro_falso','facil','Questão de outro curso (teste)','{}','{\"valor\":true}','x',false,true,'em_uso','v1','teste')" >/dev/null
+# Preparação feita como Administrador Geral autenticado (o gatilho exige actor verificado).
+ok "preparar questão de outro curso" "$(como authenticated "$ADMIN" "INSERT INTO public.banco_questoes(curso_id, modulo_id, codigo, instrumento, tipologia, dificuldade, enunciado, conteudo, resposta, explicacao, cenario, activa, estado_revisao, versao, autor_nome) VALUES ('00000000-0000-0000-0000-0000000000b9','3d0dd3a0-a53b-4800-a032-68527d708eb1','OUTRO-01','exame_final','verdadeiro_falso','facil','Questão de outro curso (teste)','{}','{\"valor\":true}','x',false,false,'rascunho','v1','teste');" COMMIT)"
 impressao_outros() { $P -c "SELECT md5(string_agg(b::text,'|' ORDER BY b.id)) FROM public.banco_questoes b WHERE curso_id='00000000-0000-0000-0000-0000000000b9'"; }
 OUTROS0=$(impressao_outros)
 conta_aud() { $P -c "SELECT count(*) FROM public.registo_auditoria WHERE entidade='banco_questoes'"; }
@@ -49,14 +50,15 @@ for S in sc tdg redes; do
   recusa "segunda importação: 0 inseridas" "$R" '"inseridas": 0'
   recusa "segunda importação: 90 inalteradas" "$R" '"inalteradas": 90'
   igual "segunda importação sem writes auditados" "$(conta_aud)" "$A1"
-  $P -c "UPDATE public.banco_questoes SET enunciado = enunciado || ' (editado)' WHERE curso_id='$CURSO' AND codigo=(SELECT min(codigo) FROM public.banco_questoes WHERE curso_id='$CURSO')" >/dev/null
+  ok "edição humana de uma questão" "$(como authenticated "$ADMIN" "UPDATE public.banco_questoes SET enunciado = enunciado || ' (editado)' WHERE curso_id='$CURSO' AND codigo=(SELECT min(codigo) FROM public.banco_questoes WHERE curso_id='$CURSO');" COMMIT)"
   recusa "questão editada: conflito, sem sobrescrever" "$(como authenticated "$ADMIN" "$IMP" COMMIT)" "CONFLITO_QUESTOES_DIFERENTES"
   igual "edição humana preservada" "$($P -c "SELECT count(*) FROM public.banco_questoes WHERE curso_id='$CURSO' AND enunciado LIKE '% (editado)'")" "1"
-  $P -c "INSERT INTO public.banco_questoes(curso_id, modulo_id, codigo, instrumento, tipologia, dificuldade, enunciado, conteudo, resposta, explicacao, cenario, activa, estado_revisao, versao, autor_nome) SELECT curso_id, modulo_id, 'ALHEIO-01', instrumento, tipologia, dificuldade, 'x', conteudo, resposta, 'x', cenario, false, 'rascunho', 'v1', 'teste' FROM public.banco_questoes WHERE curso_id='$CURSO' LIMIT 1" >/dev/null
+  ok "inserir questão com código alheio" "$(como authenticated "$ADMIN" "INSERT INTO public.banco_questoes(curso_id, modulo_id, codigo, instrumento, tipologia, dificuldade, enunciado, conteudo, resposta, explicacao, cenario, activa, estado_revisao, versao, autor_nome) SELECT curso_id, modulo_id, 'ALHEIO-01', instrumento, tipologia, dificuldade, 'x', conteudo, resposta, 'x', cenario, false, 'rascunho', 'v1', 'teste' FROM public.banco_questoes WHERE curso_id='$CURSO' LIMIT 1;" COMMIT)"
   recusa "código alheio no curso bloqueia" "$(como authenticated "$ADMIN" "$IMP" COMMIT)" "CODIGO_INESPERADO_NA_BASE"
   igual "contagem inalterada após recusas" "$(conta)" "91/0/91"
-  $P -c "DELETE FROM public.banco_questoes WHERE curso_id='$CURSO' AND codigo='ALHEIO-01'" >/dev/null
+  ok "remover questão alheia" "$(como authenticated "$ADMIN" "DELETE FROM public.banco_questoes WHERE curso_id='$CURSO' AND codigo='ALHEIO-01';" COMMIT)"
 done
+igual "outro curso tem 1 questão" "$($P -c "SELECT count(*) FROM public.banco_questoes WHERE curso_id='00000000-0000-0000-0000-0000000000b9'")" "1"
 igual "banco do outro curso intacto" "$(impressao_outros)" "$OUTROS0"
 igual "funções sem SECURITY DEFINER" "$($P -c "SELECT count(*) FROM pg_proc WHERE proname ~ '^rpc_(estado|importar)_banco_(sc|tdg|redes)$' AND prosecdef")" "0"
 igual "6 funções criadas" "$($P -c "SELECT count(*) FROM pg_proc WHERE proname ~ '^rpc_(estado|importar)_banco_(sc|tdg|redes)$'")" "6"
