@@ -260,7 +260,7 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
       input?.pacote !== "banco-inteligencia-artificial" &&
       input?.pacote !== "tecnologias-governo" &&
       input?.pacote !== "redes" &&
-      !(input?.pacote in RPC_BANCOS)
+      !Object.prototype.hasOwnProperty.call(RPC_BANCOS, input?.pacote)
     ) {
       throw new Error("PACOTE_DESCONHECIDO");
     }
@@ -298,7 +298,7 @@ export const importarConteudosPreparados = createServerFn({ method: "POST" })
         return { ok: true, detalhe: res as { [chave: string]: Json }, erro: null };
       }
 
-      if (data.pacote in RPC_BANCOS) {
+      if (Object.prototype.hasOwnProperty.call(RPC_BANCOS, data.pacote)) {
         const pacote = data.pacote as PacoteBanco;
         const payload = preparados.payloadBanco(pacote);
         const { data: res, error } = await sb.rpc(RPC_BANCOS[pacote].importar, {
