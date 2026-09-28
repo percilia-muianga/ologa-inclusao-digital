@@ -43,7 +43,7 @@ export const EXAME_TDG_L3: QuestaoTDG[] = [
     cod: "TDG-L3-03", m: "m1", l: 3, t: "em", d: "me",
     e: "Chegam à secretaria, no mesmo dia, quatro documentos. Qual deve ser registado com grau de acesso restrito?",
     opts: [
-      "Um convite de outra direcção para uma reunião pública de balanço anual",
+      "Um convite de outra direcção para uma reunião pública de balanço anual das actividades",
       "Um pedido de justificação de faltas com atestado médico de um funcionário",
       "Uma circular sobre o horário de funcionamento durante a época festiva",
       "Um ofício a pedir o número de salas de reunião disponíveis no edifício",

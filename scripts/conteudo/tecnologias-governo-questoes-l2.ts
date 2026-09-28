@@ -32,7 +32,7 @@ export const EXAME_TDG_L2: QuestaoTDG[] = [
     e: "Uma convocatória vai ser enviada a 40 cidadãos que não se conhecem entre si. Onde se devem colocar os endereços deles?",
     opts: [
       "Todos no campo Para, para que cada um saiba quem mais foi convocado",
-      "No campo Cc, porque são destinatários só para conhecimento da reunião",
+      "No campo Cc, porque são destinatários apenas para conhecimento da reunião marcada",
       "No campo Bcc (cópia oculta), para não mostrar os endereços uns aos outros",
       "Metade no campo Para e metade no campo Cc, para equilibrar a lista",
     ], ind: 2,

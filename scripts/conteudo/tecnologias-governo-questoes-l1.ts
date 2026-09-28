@@ -17,7 +17,7 @@ export const EXAME_TDG_L1: QuestaoTDG[] = [
     cod: "TDG-L1-01", m: "m1", l: 1, t: "em", d: "f",
     e: "Um utente quer consultar informação sobre a organização do Conselho de Ministros e dos governos provinciais. Segundo a lição, que canal lhe indica?",
     opts: [
-      "O Portal do Cidadão, por ser o balcão digital onde se pedem os serviços",
+      "O Portal do Cidadão, por ser o balcão digital onde se pedem e acompanham os serviços",
       "O Portal do Governo, que é sobretudo um canal de informação sobre o Estado",
       "O correio institucional do funcionário, para lhe enviar os documentos",
       "O balcão da secretaria, que é o único sítio onde essa informação existe",

@@ -79,7 +79,7 @@ const TRANSVERSAL: QuestaoTDG[] = [
   },
   {
     cod: "TDG-TR-L4-01", m: "transversal", l: 4, t: "em", d: "f",
-    e: "Numa acção de formação de funcionários sobre os sistemas digitais do Estado, que medida está alinhada com a lição sobre o artigo 24 da Lei n.º 10/2024?",
+    e: "Vão ser preparados os materiais para ensinar os funcionários de um distrito a usar o correio e a nuvem institucionais. Qual das opções respeita a lição do módulo transversal dedicada ao artigo 24 da Lei n.º 10/2024?",
     opts: [
       "Entregar os materiais em texto acessível e aceitar respostas orais ou em papel",
       "Entregar os materiais só em fotografia dos diapositivos, tirada na sala",

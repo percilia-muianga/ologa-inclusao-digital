@@ -115,7 +115,7 @@ export const EXAME_TDG_L5: QuestaoTDG[] = [
     cod: "TDG-L5-10", m: "m1", l: 5, t: "em", cen: true, d: "me",
     e: "Caso fictício. A secretaria do Distrito de Namaacha (fictício) pede à unidade sanitária local: «Enviem a lista de todos os utentes, com diagnósticos, moradas e contactos, para cruzarmos quando precisarmos em futuros apoios.» Qual é o problema principal deste pedido?",
     opts: [
-      "Deveria ter sido enviado por ofício em papel e não por meio digital",
+      "Deveria ter sido enviado por ofício em papel e nunca por qualquer meio digital",
       "Não tem finalidade concreta e pede dados a mais, para uso indefinido",
       "Deveria pedir também os dados dos familiares, para ficar completo",
       "Não tem problema, porque as duas entidades pertencem ao Estado",

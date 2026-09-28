@@ -67,7 +67,7 @@ export const EXAME_TDG_L4: QuestaoTDG[] = [
     cod: "TDG-L4-05", m: "m1", l: 4, t: "em", d: "di",
     e: "Que afirmação sobre a Plataforma do Funcionário e Agente do Estado é compatível com as fontes usadas no curso?",
     opts: [
-      "Permite pedir férias, receber o salário e mudar de categoria sem outros passos",
+      "Permite pedir férias, receber o salário e mudar de categoria sem quaisquer outros passos",
       "As funções disponíveis e a forma de acesso são indicadas pelos recursos humanos",
       "É o Portal do Cidadão com outro nome, destinado a funcionários do Estado",
       "Dá a cada funcionário acesso aos dados de todos os colegas da sua unidade",
