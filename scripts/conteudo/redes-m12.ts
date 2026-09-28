@@ -475,7 +475,7 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
     objectivos: [
       "Distinguir auditoria de teste técnico: a auditoria compara a realidade com um referencial (política, norma, contrato) e produz conclusões rastreáveis a evidências.",
       "Preparar uma lista de verificação com controlo, fonte, método, evidência mínima e resultado, e aplicá-la à rede de prática.",
-      "Recolher evidências reprodutíveis, registar «conforme», «não conforme», «parcial» ou «não aplicável» com justificação, e evitar conclusões sem prova.",
+      "Recolher evidências reprodutíveis, registar «conforme», «não conforme», «parcial», «não verificado (evidência insuficiente)» ou, só para controlos fora do âmbito, «não aplicável» com justificação, e evitar conclusões sem prova.",
       "Escrever conclusões e recomendações priorizadas, com responsável, prazo e reteste, e conhecer os limites da auditoria realizada.",
     ],
     explicacao: [
@@ -483,7 +483,7 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
         titulo: "Auditar é comparar com um referencial",
         paragrafos: [
           "Um teste técnico procura o que está exposto; uma auditoria verifica se a realidade cumpre o referencial: a política interna, uma norma como a ISO/IEC 27001, guias como os do NIST, ou as obrigações de um contrato. Cada item da auditoria é um controlo com uma fonte identificada, um método de verificação e a evidência mínima que o sustenta. Sem referencial, a auditoria vira opinião.",
-          "Os resultados usam uma escala clara: conforme (evidência mostra que cumpre), não conforme (evidência mostra que não cumpre), parcial (cumpre em parte, com o que falta identificado) e não aplicável (com justificação). Cada resultado aponta para um ficheiro ou saída guardada, de forma a que outra pessoa possa repetir a verificação e chegar ao mesmo resultado. O NIST SP 800-53A descreve exactamente esta lógica de examinar, entrevistar e testar.",
+          "Os resultados usam uma escala clara: conforme (evidência mostra que cumpre), não conforme (evidência mostra que não cumpre), parcial (cumpre em parte, com o que falta identificado), não verificado (evidência insuficiente: regista-se a limitação e a acção necessária para concluir) e não aplicável (apenas quando o controlo está realmente fora do âmbito, com justificação sustentada no referencial ou no âmbito aprovado). Falta de prova nunca é «não aplicável». Cada resultado aponta para um ficheiro ou saída guardada, de forma a que outra pessoa possa repetir a verificação e chegar ao mesmo resultado. O NIST SP 800-53A descreve exactamente esta lógica de examinar, entrevistar e testar.",
         ],
       },
       {
@@ -500,7 +500,7 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
         ...TOPOLOGIA_BASE,
         "Âmbito da auditoria (declarado): rede de prática desta VM, controlos A01 a A12 da lista aprovada; sem alterações ao sistema durante a auditoria.",
         "Estado a auditar: cada dupla repõe, antes da troca, as configurações das lições 1 e 2 deste módulo (tabelas m12acessos e m12equip, SSH de prática) — a lista de verificação da lição 2 fica disponível.",
-        "Os controlos A07 a A12 referem-se a práticas do módulo 11: nesta aula verificam-se pela evidência guardada nessas lições ou marcam-se «não aplicável» com justificação, se a dupla não as tiver conservado.",
+        "Os controlos A07 a A12 referem-se a práticas do módulo 11: nesta aula verificam-se pela evidência guardada nessas lições ou, se a dupla não as tiver conservado, marcam-se «não verificado (evidência insuficiente)», com a limitação e a acção para concluir (repetir a prática ou obter a evidência). Não são «não aplicável»: estão dentro do âmbito.",
       ],
       passos: [
         PRE_M12,
@@ -509,12 +509,12 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
         { accao: "A01 e A02 — segmentação e acesso de gestão: examine as regras e faça o teste negativo. Guarde as saídas.", comandos: ["sudo ip netns exec r1 nft list table inet m12acessos | tee evidencias/A01-A02-regras.txt | grep -E 'policy|comment'", "sudo ip netns exec pc-del nmap -Pn -p 22 --host-timeout 20s 10.10.20.53 | tee evidencias/A02-teste-negativo.txt | grep 22/tcp"], saida: ["type filter hook forward priority filter; policy drop;", "… comment \"gestao-ssh\"", "… comment \"delegacao-web\"", "… comment \"recusado\"", "22/tcp filtered ssh"] },
         { accao: "A03, A04 e A05 — portas do equipamento, autenticação administrativa e serviços à escuta.", comandos: ["sudo ip netns exec pc-adm nmap -Pn -p 1-1024 10.10.10.1 | tee evidencias/A03-portas-r1.txt | grep -cE '^[0-9]+/tcp +open'", "grep -E 'PasswordAuthentication|PubkeyAuthentication|PermitRootLogin' /tmp/dpe-m12/l1/sshd-pratica.conf | tee evidencias/A04-config-ssh.txt", "sudo ip netns exec pc-adm ssh -o BatchMode=yes -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/dpe-m12/l4/known_hosts $(id -un)@10.10.20.53 true 2>&1 | tee -a evidencias/A04-config-ssh.txt", "sudo ip netns exec r1 ss -tuln | tee evidencias/A05-escuta-r1.txt"], saida: ["0", "PasswordAuthentication no", "PermitRootLogin prohibit-password", "PubkeyAuthentication yes", "Permission denied (publickey).", "(nenhuma linha LISTEN no r1)"] },
         { accao: "A06 — parâmetros endurecidos: use a lista da lição 2 (só leitura) e guarde a saída.", comandos: ["sudo sh /tmp/dpe-m12/l2/verificar-r1.sh | tee evidencias/A06-parametros.txt; echo \"código=$?\""], saida: ["Total de falhas: 0", "código=0"] },
-        { accao: "A07 a A12 — práticas do módulo 11: verifique a evidência guardada dessas lições. Se não existir nesta VM, marque «não aplicável (evidência não conservada nesta VM)» — não invente resultado.", comandos: ["ls -l /tmp/dpe-m11 2>/dev/null || echo 'evidências do módulo 11 não conservadas nesta VM'", "for n in pc-adm srv r1 r2; do printf '%s: ' $n; sudo ip netns exec $n date '+%F %T'; done | tee evidencias/A08-horas.txt"], saida: ["evidências do módulo 11 não conservadas nesta VM", "pc-adm: 2026-09-28 13:12:40", "srv: 2026-09-28 13:12:40", "r1: 2026-09-28 13:12:40", "r2: 2026-09-28 13:12:40", "(todos os espaços de nomes partilham o relógio da VM: A08 conforme nesta rede, mas isto não demonstra sincronização entre equipamentos reais — limitação a registar)"] },
+        { accao: "A07 a A12 — práticas do módulo 11: verifique a evidência guardada dessas lições. Se não existir nesta VM, marque «não verificado — evidência insuficiente (não conservada nesta VM)», registe a limitação e a acção (repetir a prática do módulo 11 ou obter a evidência) — não invente resultado nem use «não aplicável».", comandos: ["ls -l /tmp/dpe-m11 2>/dev/null || echo 'evidências do módulo 11 não conservadas nesta VM'", "for n in pc-adm srv r1 r2; do printf '%s: ' $n; sudo ip netns exec $n date '+%F %T'; done | tee evidencias/A08-horas.txt"], saida: ["evidências do módulo 11 não conservadas nesta VM", "pc-adm: 2026-09-28 13:12:40", "srv: 2026-09-28 13:12:40", "r1: 2026-09-28 13:12:40", "r2: 2026-09-28 13:12:40", "(todos os espaços de nomes partilham o relógio da VM: A08 conforme nesta rede, mas isto não demonstra sincronização entre equipamentos reais — limitação a registar)"] },
         { accao: "Preencha as colunas «resultado» e «observação» da lista, apontando o ficheiro de evidência de cada controlo.", comandos: ["nano lista-auditoria.csv"] },
         { accao: "Escreva o relatório: âmbito, data, método, referencial, equipa, resultados, conclusões, recomendações priorizadas (responsável, prazo, reteste) e limitações.", comandos: ["nano relatorio-auditoria.txt"] },
       ],
       sucesso: [
-        "Os 12 controlos têm resultado, e cada resultado aponta um ficheiro de evidência ou uma justificação de «não aplicável».",
+        "Os 12 controlos têm resultado, e cada resultado aponta um ficheiro de evidência; os «não verificado» indicam limitação e acção; qualquer «não aplicável» só é aceite com justificação de fora de âmbito — marcar «não aplicável» por falta de prova conta como erro de classificação.",
         "Nenhuma configuração foi alterada durante a auditoria (verificável: não há comandos de alteração nos registos da consola).",
         "As recomendações estão priorizadas e têm responsável, prazo e reteste.",
         "O relatório declara pelo menos três limitações, incluindo a do relógio partilhado e a dos controlos do módulo 11 não verificados.",
@@ -527,22 +527,23 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
       ],
     },
     papel: [
-      { tarefa: "Classifique (conforme/não conforme/parcial/não aplicável) e justifique: (a) A02 com regra específica e teste negativo «filtered»; (b) A04 com PasswordAuthentication no, mas a chave privada guardada sem frase de acesso; (c) A11 sem qualquer cópia nesta VM; (d) A08 com todos os relógios iguais por partilharem a VM.", esperado: "(a) Conforme: evidência de regra e teste negativo. (b) Parcial: a autenticação por palavra-passe está desactivada, mas a protecção da chave é fraca; falta frase de acesso ou protecção equivalente. (c) Não conforme, se o referencial exige cópias; ou não aplicável se o âmbito excluir cópias — a justificação tem de constar. (d) Conforme no âmbito da rede de prática, com limitação registada: não demonstra sincronização em equipamentos reais." },
+      { tarefa: "Classifique (conforme/não conforme/parcial/não verificado/não aplicável) e justifique: (a) A02 com regra específica e teste negativo «filtered»; (b) A04 com PasswordAuthentication no, mas a chave privada guardada sem frase de acesso; (c) A11 sem qualquer cópia nesta VM; (d) A08 com todos os relógios iguais por partilharem a VM.", esperado: "(a) Conforme: evidência de regra e teste negativo. (b) Parcial: a autenticação por palavra-passe está desactivada, mas a protecção da chave é fraca; falta frase de acesso ou protecção equivalente. (c) Se a lista exige cópias e a verificação mostrou que não existem: não conforme. Se simplesmente não houve dados para verificar: não verificado (evidência insuficiente), com limitação e acção. Só é não aplicável se o âmbito aprovado excluir cópias — e essa justificação tem de constar; falta de prova não é motivo. (d) Conforme no âmbito da rede de prática, com limitação registada: não demonstra sincronização em equipamentos reais." },
       { tarefa: "Escreva duas recomendações priorizadas a partir dos achados de exemplo.", esperado: "1) Alta: proteger a chave administrativa com frase de acesso e limitar a origem do acesso. Responsável: equipa de redes. Prazo: 15 dias (fictício). Reteste: tentar usar a chave sem frase e confirmar recusa. 2) Média: instituir cópia semanal das configurações com verificação de integridade e reposição testada. Responsável: equipa de redes. Prazo: 30 dias. Reteste: repor numa pasta de teste e comparar." },
       { tarefa: "Um auditor escreve «a rede está segura». Reescreva de forma defensável.", esperado: "«Dos 12 controlos do âmbito, 9 conformes, 2 parciais e 1 não conforme, verificados em 28-09-2026 na rede de prática, com as evidências indicadas. Fora do âmbito: aplicações, postos de trabalho, rede sem fios e procedimentos de pessoal.»" },
       { tarefa: "Porque a dupla não deve auditar a sua própria configuração?", esperado: "Falta independência: tende a confirmar o que fez, conhece os atalhos que tomou e pode saltar verificações. A troca entre duplas aproxima-se da separação entre quem executa e quem verifica." },
     ],
     formativas: [
       { pergunta: "Qual é a diferença essencial entre um teste técnico e uma auditoria?", opcoes: ["A auditoria usa mais ferramentas", "A auditoria compara a realidade com um referencial e sustenta cada conclusão numa evidência", "O teste técnico não precisa de autorização", "Não há diferença"], certa: 1, comentario: "O teste procura exposições; a auditoria verifica cumprimento face a política, norma ou contrato, com resultados rastreáveis a evidências." },
-      { pergunta: "Um controlo não pôde ser verificado por falta de dados. O que se escreve?", opcoes: ["Conforme, para não atrasar", "Não aplicável ou não verificado, com justificação e indicação do que falta", "Não conforme, sempre", "Nada"], certa: 1, comentario: "Inventar um resultado destrói a credibilidade da auditoria. Regista-se o que impediu a verificação e o que seria preciso para a concluir." },
+      { pergunta: "Um controlo não pôde ser verificado por falta de dados. O que se escreve?", opcoes: ["Conforme, para não atrasar", "Não verificado (evidência insuficiente), com a limitação e a acção necessária para concluir", "Não conforme, sempre", "Nada"], certa: 1, comentario: "Inventar um resultado destrói a credibilidade da auditoria. Regista-se o que impediu a verificação e o que seria preciso para a concluir. «Não aplicável» é outra coisa: só para controlos fora do âmbito, com justificação." },
     ],
     leituraFacil: [
       "Auditar é comparar o que existe com as regras escritas.",
       "Cada resposta precisa de uma prova guardada.",
-      "Escreva: cumpre, não cumpre, cumpre em parte ou não se aplica.",
+      "Escreva: cumpre, não cumpre, cumpre em parte ou não verificado.",
       "Quem fez o trabalho não deve ser quem verifica.",
       "A auditoria não muda nada: só observa.",
-      "Diga também o que não foi verificado.",
+      "Sem prova, escreva «não verificado» e diga o que falta.",
+      "«Não se aplica» só quando a regra está fora do trabalho combinado.",
     ],
     guiao: {
       conducao: [
