@@ -302,4 +302,93 @@ export const LICOES_M10: Record<string, ConteudoLicao> = {
     },
     fontes: ["rfc3550", "itug114", "itug711", "rfc7679", "rfc3393", "rfc768", "iperf3", "tcqdisc", "wireshark"],
   },
+
+  "r-m10-l4": {
+    objectivos: [
+      "Distinguir modelação (shaping, que atrasa em fila) de policiamento (policing, que descarta), e saber que ambos só actuam no sentido e no equipamento onde estão configurados.",
+      "Configurar com tc htb uma divisão da WAN por classes com garantia mínima e limite máximo, e confirmar com contadores.",
+      "Reconhecer o excesso de fila (bufferbloat) e reduzi-lo com a gestão activa de fila fq_codel.",
+      "Calcular o débito útil máximo de uma classe a partir do débito configurado e dos cabeçalhos.",
+    ],
+    explicacao: [
+      {
+        titulo: "Modelar ou policiar",
+        paragrafos: [
+          "Modelar (shaping) é guardar numa fila os pacotes que excedem o ritmo definido e enviá-los mais tarde: o tráfego sai liso, mas ganha atraso. Policiar (policing) é descartar ou remarcar o excesso logo à chegada: não há fila, mas o TCP vê perdas, retransmite e pode ficar com débito irregular. Os operadores costumam policiar à entrada da sua rede; por isso convém modelar do lado da instituição um pouco abaixo do débito contratado, para que a fila fique num equipamento que a equipa controla.",
+          "O tc só controla a saída de uma interface. Para controlar o que chega à delegação, modela-se na saída da sede (ou usa-se um dispositivo intermédio). O htb do Linux divide um débito por classes: cada uma tem uma taxa garantida (rate) e pode usar até um tecto (ceil) quando as outras não precisam. A garantia vale só dentro deste equipamento; não controla o que o operador faz depois.",
+        ],
+      },
+      {
+        titulo: "Filas grandes e gestão activa de fila",
+        paragrafos: [
+          "Uma fila grande evita perdas, mas quando enche todos os pacotes esperam: uma ligação de 5 Mbit/s com 1000 pacotes de 1514 bytes em fila acumula até cerca de 2,4 s de espera. É o excesso de fila (bufferbloat): descarregar um ficheiro torna chamadas e páginas web lentíssimas. A gestão activa de fila CoDel (RFC 8289) descarta ou marca pacotes quando o tempo de permanência na fila fica alto durante algum tempo; o FQ-CoDel (RFC 8290) separa também os fluxos em filas pequenas, para que um fluxo pesado não atrase os leves.",
+          "Contas de débito útil: o htb conta o pacote com o cabeçalho Ethernet (14 bytes na captura, sem verificação). Um segmento TCP com 1448 bytes de dados ocupa 1514 bytes. Numa classe de 5 Mbit/s, o máximo de dados úteis é 5 × 1448 / 1514 ≈ 4,78 Mbit/s. Numa WAN real, a forma como o operador conta os bytes pode ser outra; confirma-se no contrato.",
+        ],
+      },
+    ],
+    caso: "A sede da DPE (fictícia) envia para a delegação cópias de segurança nocturnas que se prolongam pela manhã e deixam o sistema de gestão documental (servidor web no srv, porto 80) inutilizável. A WAN contratada (simulada) tem 5 Mbit/s. A política aprovada: gestão documental com 3 Mbit/s garantidos, o resto com 2 Mbit/s garantidos, ambos podendo usar até 5 Mbit/s quando o outro não precisa. Todos os valores são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Sentido controlado: sede → delegação, na saída r1-r2 do espaço de nomes r1. Os testes usam iperf3 -R: o cliente fica em pc-del e o srv envia os dados.",
+        "Gestão documental simulada: iperf3 no porto 80 do srv. Cópias de segurança simuladas: iperf3 no porto 5201.",
+        "Limite da simulação: tudo corre no mesmo processador da VM; com processadores lentos, o limite pode ser o próprio processador e não o htb.",
+      ],
+      passos: [
+        PRE_M10,
+        { accao: "Limite de 5 Mbit/s na saída r1-r2 com uma só classe e uma fila simples grande (pfifo de 1000 pacotes).", comandos: ["sudo ip netns exec r1 tc qdisc add dev r1-r2 root handle 1: htb default 20", "sudo ip netns exec r1 tc class add dev r1-r2 parent 1: classid 1:1 htb rate 5mbit", "sudo ip netns exec r1 tc class add dev r1-r2 parent 1:1 classid 1:20 htb rate 5mbit", "sudo ip netns exec r1 tc qdisc add dev r1-r2 parent 1:20 handle 20: pfifo limit 1000"] },
+        { accao: "Excesso de fila: consola C servidor iperf3 (esperar «Server listening»); consola B descarga de 30 s; na consola A, durante a descarga, ping ao srv.", comandos: ["C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -R -t 30", "A: sudo ip netns exec pc-del ping -c 20 10.10.20.53 | tail -1"], saida: ["A: rtt min/avg/max/mdev = 310.4/1180.6/2351.2/620.3 ms", "B: [  5] 0.00-30.00 sec  16.8 MBytes  4.70 Mbits/sec  receiver", "(o ping de regresso espera atrás dos pacotes da descarga; valores variam em cada execução)"] },
+        { accao: "Troque a fila da classe por fq_codel e repita o passo anterior.", comandos: ["sudo ip netns exec r1 tc qdisc replace dev r1-r2 parent 1:20 handle 20: fq_codel", "(repetir C, B e A)"], saida: ["A: rtt min/avg/max/mdev = 0.9/4.8/9.7/2.1 ms", "B: [  5] 0.00-30.00 sec  16.7 MBytes  4.68 Mbits/sec  receiver", "(débito útil quase igual; atraso muito menor)"] },
+        { accao: "Aplique a política: classe 1:10 (gestão documental, porto de origem 80) com 3 Mbit/s garantidos e classe 1:20 ajustada para 2 Mbit/s garantidos; ambas com tecto 5 Mbit/s e fq_codel.", comandos: ["sudo ip netns exec r1 tc class change dev r1-r2 parent 1:1 classid 1:20 htb rate 2mbit ceil 5mbit", "sudo ip netns exec r1 tc class add dev r1-r2 parent 1:1 classid 1:10 htb rate 3mbit ceil 5mbit", "sudo ip netns exec r1 tc qdisc add dev r1-r2 parent 1:10 handle 10: fq_codel", "sudo ip netns exec r1 tc filter add dev r1-r2 parent 1: protocol ip prio 1 u32 match ip sport 80 0xffff flowid 1:10"] },
+        { accao: "Dois fluxos ao mesmo tempo: consolas C e D com servidores nos portos 5201 e 80; consola B cópias (40 s); consola A gestão documental (20 s), iniciada logo depois.", comandos: ["C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "D: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 80", "B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -R -t 40", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 80 -R -t 20 | tail -2"], saida: ["A: [  5] 0.00-20.00 sec  6.80 MBytes  2.85 Mbits/sec  receiver", "B: débito por intervalo cerca de 4,7 Mbit/s antes e depois de A, cerca de 1,9 Mbit/s enquanto A corre"] },
+        { accao: "Contadores por classe (bytes enviados, descartes, excessos).", comandos: ["sudo ip netns exec r1 tc -s class show dev r1-r2"], saida: ["class htb 1:10 parent 1:1 leaf 10: prio 0 rate 3Mbit ceil 5Mbit … Sent 7210000 bytes …", "class htb 1:20 parent 1:1 leaf 20: prio 0 rate 2Mbit ceil 5Mbit … Sent 41300000 bytes …"] },
+        { accao: "Contraste com policiamento: retire a modelação e policie a 1 Mbit/s o que entra em r1 vindo de r2 (sentido delegação → sede). Repita um iperf3 normal (sem -R) e observe as retransmissões.", comandos: ["sudo ip netns exec r1 tc qdisc del dev r1-r2 root", "sudo ip netns exec r1 tc qdisc add dev r1-r2 ingress", "sudo ip netns exec r1 tc filter add dev r1-r2 parent ffff: protocol ip prio 1 u32 match u32 0 0 police rate 1mbit burst 20k drop", "C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53 -p 5201", "B: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -p 5201 -t 10 | tail -3"], saida: ["[  5] 0.00-10.00 sec  1.12 MBytes  0.94 Mbits/sec  187   sender", "[  5] 0.00-10.02 sec  1.05 MBytes  0.88 Mbits/sec        receiver", "(muitas retransmissões: o excesso é descartado, não esperado em fila)"] },
+      ],
+      sucesso: [
+        "A dupla mostra o RTT sob carga com pfifo e com fq_codel, com débito útil semelhante.",
+        "A dupla mostra que, com os dois fluxos, a gestão documental recebe pelo menos cerca de 2,8 Mbit/s de débito útil e que as cópias usam os 5 Mbit/s quando estão sozinhas.",
+        "O formando explica a diferença entre modelação e policiamento usando as retransmissões observadas.",
+        "O formando calcula ≈ 4,78 Mbit/s como débito útil máximo de uma classe de 5 Mbit/s.",
+      ],
+      reversao: [
+        "sudo ip netns exec r1 tc qdisc del dev r1-r2 ingress",
+        "sudo ip netns exec r1 tc qdisc del dev r1-r2 root 2>/dev/null (só se a modelação ainda existir)",
+        "Ctrl+C nas consolas C e D se algum servidor ainda estiver à espera (não usar pkill/killall).",
+        "Verificar: sudo ip netns exec r1 tc qdisc show dev r1-r2 mostra só «qdisc noqueue» (sem «ingress»); ip netns pids srv não lista iperf3.",
+      ],
+    },
+    papel: [
+      { tarefa: "Com as saídas de exemplo, preencha: fila | RTT médio sob carga | débito útil. (pfifo 1000; fq_codel).", esperado: "pfifo 1000 | ≈ 1181 ms | 4,70 Mbit/s. fq_codel | ≈ 4,8 ms | 4,68 Mbit/s. O débito quase não muda; o atraso cai muito." },
+      { tarefa: "Quanto tempo de espera acumulam, no máximo, 1000 pacotes de 1514 bytes numa ligação de 5 Mbit/s?", esperado: "1000 × 1514 × 8 = 12 112 000 bits; a 5 000 000 bit/s dá cerca de 2,4 s." },
+      { tarefa: "Escreva as classes htb para uma WAN de 10 Mbit/s: videoconferência 3 Mbit/s garantidos, gestão documental 4 Mbit/s, resto 3 Mbit/s, todas com tecto 10 Mbit/s.", esperado: "Classe mãe 1:1 rate 10mbit; 1:10 rate 3mbit ceil 10mbit; 1:20 rate 4mbit ceil 10mbit; 1:30 rate 3mbit ceil 10mbit (default 30); soma das garantias = 10 Mbit/s; fq_codel em cada classe; filtros por endereço/porto de cada serviço." },
+      { tarefa: "O director pede para «garantir 3 Mbit/s à gestão documental até à delegação» configurando só o r1. O que fica garantido e o que não fica?", esperado: "Fica garantido que, à saída do r1 da sede, a gestão documental tem pelo menos 3 Mbit/s quando pede. Não fica garantido o que acontece na rede do operador nem no sentido delegação → sede; isso exige configurar o r2 e/ou constar do contrato." },
+    ],
+    formativas: [
+      { pergunta: "Qual é a principal diferença entre modelação (shaping) e policiamento (policing)?", opcoes: ["A modelação cifra o tráfego", "A modelação guarda o excesso em fila; o policiamento descarta-o ou remarca-o", "O policiamento aumenta o débito", "Não há diferença"], certa: 1, comentario: "Modelar alisa o tráfego à custa de atraso; policiar descarta e provoca retransmissões TCP, como se viu no último passo." },
+      { pergunta: "Com fq_codel, o RTT sob carga caiu de mais de 1 s para poucos milissegundos. O que aconteceu?", opcoes: ["A ligação passou a ter mais largura de banda", "A fila deixou de acumular pacotes durante muito tempo e os fluxos leves não esperam atrás do pesado", "O ICMP passou a ser prioritário por lei", "O iperf3 parou"], certa: 1, comentario: "O débito útil é quase igual; o que mudou foi o tempo de permanência na fila. O CoDel reage ao atraso na fila e o FQ separa os fluxos." },
+    ],
+    leituraFacil: [
+      "Pode dividir a ligação entre serviços.",
+      "Cada serviço tem um mínimo garantido e um máximo.",
+      "Uma fila muito grande deixa tudo lento.",
+      "O fq_codel mantém a fila curta.",
+      "Modelar põe em fila. Policiar deita fora.",
+      "Só controla a saída do seu equipamento, não a rede do operador.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: modelação e policiamento; só a saída se controla; classes htb com rate e ceil; excesso de fila; CoDel e FQ-CoDel; contas de débito útil.",
+        "20–70 min: prática em duplas (pfifo e ping sob carga, fq_codel, política por classes com dois fluxos, contadores, policiamento); quem não tiver laboratório faz as contas e as classes em papel.",
+        "70–80 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Configurar a modelação na interface errada (só a saída é controlada).",
+        "Fazer a soma das garantias exceder o débito da classe mãe.",
+        "Modelar exactamente ao débito contratado e deixar a fila no equipamento do operador.",
+        "Prometer uma garantia que depende da rede do operador.",
+        "Esquecer de remover a fila ingress: o passo final deixa a delegação limitada a 1 Mbit/s.",
+      ],
+    },
+    fontes: ["tcqdisc", "iproute2", "rfc8289", "rfc8290", "rfc2475", "rfc6349", "iperf3"],
+  },
 };
