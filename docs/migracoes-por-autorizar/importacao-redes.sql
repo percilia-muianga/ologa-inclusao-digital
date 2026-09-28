@@ -150,9 +150,19 @@ BEGIN
   END IF;
 
   -- Curso e estrutura na base: IDs exactos.
-  SELECT id INTO _curso FROM public.cursos WHERE slug = _slug FOR UPDATE;
+  SELECT id INTO _curso FROM public.cursos WHERE slug = _slug;
   IF _curso IS NULL THEN RAISE EXCEPTION 'CURSO_INEXISTENTE' USING ERRCODE='22023'; END IF;
   IF _curso <> _id_curso THEN RAISE EXCEPTION 'IDS_INESPERADOS' USING ERRCODE='22023'; END IF;
+  -- Sem as regras de escrita deste curso, falha fechada antes de qualquer trinco de linha
+  -- (FOR UPDATE sob RLS só vê linhas abrangidas por uma regra UPDATE).
+  IF NOT (EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='cursos'
+                   AND cmd='UPDATE' AND qual ILIKE '%' || _slug || '%')
+      AND EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='curso_modulos'
+                   AND cmd='UPDATE' AND qual ILIKE '%' || _slug || '%')) THEN
+    RAISE EXCEPTION 'SEM_REGRA_DE_ESCRITA_CURSO' USING ERRCODE='42501';
+  END IF;
+  PERFORM 1 FROM public.cursos WHERE id = _curso FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'SEM_REGRA_DE_ESCRITA_CURSO' USING ERRCODE='42501'; END IF;
   PERFORM 1 FROM public.curso_modulos WHERE curso_id=_curso FOR UPDATE;
   SELECT count(*) FILTER (WHERE NOT transversal), count(*) FILTER (WHERE transversal)
     INTO _tem, _trans FROM public.curso_modulos WHERE curso_id = _curso;

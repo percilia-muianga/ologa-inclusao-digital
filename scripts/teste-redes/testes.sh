@@ -39,7 +39,6 @@ recusa "horas alteradas (81 h)" "$(como authenticated "$ADMIN" "SELECT public.rp
 recusa "transversal com 90 min" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{transversal,minutos}','90') FROM public._pacote_teste),'x');")" "MINUTOS_INCOERENTES"
 recusa "curso com outro ID" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{curso,id}','\"00000000-0000-0000-0000-00000000c0f2\"') FROM public._pacote_teste),'x');")" "IDS_INESPERADOS"
 recusa "slug de outro curso" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{curso,slug}','\"outro-curso\"') FROM public._pacote_teste),'x');")" "IDS_INESPERADOS"
-recusa "lição com ID trocado" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{licoes,0,id}','\"00000000-0000-0000-0000-000000000999\"') FROM public._pacote_teste),'x');")" "LICOES_EXISTENTES_INESPERADAS"
 recusa "minutos de um módulo incoerentes" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(jsonb_set(p,'{modulos,0,minutos}','370'),'{modulos,1,minutos}','390') FROM public._pacote_teste),'x');")" "MINUTOS_POR_MODULO_INCOERENTES"
 recusa "título JSON null" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{licoes,3,titulo}','null') FROM public._pacote_teste),'x');")" "PAYLOAD_FORA_DO_ESPERADO"
 
@@ -49,6 +48,7 @@ igual "estado reconhece as regras" "$(como authenticated "$ADMIN" "SELECT public
 recusa "coordenação continua sem escrever na ficha" "$(como authenticated "$COORD" "UPDATE public.cursos SET carga_horaria=1 WHERE id='$CURSO'; DO \$\$ BEGIN IF (SELECT carga_horaria FROM public.cursos WHERE id='$CURSO')=1 THEN RAISE EXCEPTION 'ESCREVEU'; END IF; RAISE EXCEPTION 'NAO_ESCREVEU'; END \$\$;")" "NAO_ESCREVEU"
 recusa "admin não altera outro curso pela nova regra" "$(como authenticated "$ADMIN" "UPDATE public.cursos SET carga_horaria=1 WHERE slug='outro-curso'; DO \$\$ BEGIN IF (SELECT carga_horaria FROM public.cursos WHERE slug='outro-curso')=1 THEN RAISE EXCEPTION 'ESCREVEU'; END IF; RAISE EXCEPTION 'NAO_ESCREVEU'; END \$\$;")" "NAO_ESCREVEU"
 
+recusa "lição com ID trocado" "$(como authenticated "$ADMIN" "SELECT public.rpc_importar_redes((SELECT jsonb_set(p,'{licoes,0,id}','\"00000000-0000-0000-0000-000000000999\"') FROM public._pacote_teste),'x');")" "LICOES_EXISTENTES_INESPERADAS"
 echo "— simulação (dry-run): importa e anula —"
 ok "importação completa dentro de transacção anulada" "$(como authenticated "$ADMIN" "$IMPORTAR")"
 igual "após ROLLBACK nada ficou gravado" "$(conta_conteudo)" "0"
@@ -75,8 +75,8 @@ igual "total do curso = 4800 min" "$($P -c "SELECT sum(carga_horaria_minutos)+(S
 igual "12 módulos com 380 min" "$($P -c "SELECT count(*) FROM public.curso_modulos WHERE curso_id='$CURSO' AND NOT transversal AND carga_horaria_minutos=380")" "12"
 igual "transversal neste curso = 120" "$($P -c "SELECT carga_horaria_minutos FROM public.curso_modulos WHERE curso_id='$CURSO' AND transversal")" "120"
 igual "outros cursos e transversal global intactos" "$(impressao_outros)" "$OUTROS0"
-igual "auditoria com o actor admin_ologa" "$($P -c "SELECT count(*)>0 AND bool_and(utilizador_id='$ADMIN' AND contexto_actor='sessao_autenticada') FROM public.registo_auditoria WHERE entidade IN ('licoes','cursos','curso_modulos','modulos')")" "t"
 AUD1=$(conta_aud)
+igual "todos os registos de auditoria novos têm o actor admin_ologa autenticado" "$($P -c "SELECT count(*) FROM public.registo_auditoria WHERE entidade IN ('licoes','cursos','curso_modulos','modulos') AND utilizador_id='$ADMIN' AND contexto_actor='sessao_autenticada'")" "$((AUD1-AUD0))"
 echo "       registos de auditoria criados: $((AUD1-AUD0))"
 
 echo "— idempotência —"
