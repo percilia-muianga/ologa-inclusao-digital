@@ -268,11 +268,8 @@ function corpo(q: QuestaoRedes) {
     if (q.val === undefined) throw new Error(`Gabarito inválido: ${q.cod}`);
     return { conteudo: q.cen ? { cenario: true } : {}, resposta: { valor: q.val } };
   }
-  if (!q.pares || q.pares.length < 2) throw new Error(`Gabarito inválido: ${q.cod}`);
-  return {
-    conteudo: { esquerda: q.pares.map((p) => p.esquerda), direita: q.pares.map((p) => p.direita) },
-    resposta: { pares: q.pares.map((_, i) => [i, i]) },
-  };
+  if (!q.pares || q.pares.length < 3) throw new Error(`Associação incompleta: ${q.cod}`);
+  return { conteudo: { pares: q.pares }, resposta: { pares: q.pares } };
 }
 
 /** Plano de linhas para banco_questoes — função pura, sem escrita. */
