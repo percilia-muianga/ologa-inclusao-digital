@@ -15,6 +15,7 @@ COMO "pg_ctl -D $BASE/data -o \"-p $PORTA -k $BASE -c listen_addresses=''\" -l $
 terminar() { COMO "pg_ctl -D $BASE/data -m immediate stop" >/dev/null 2>&1 || true; }
 trap terminar EXIT
 for _ in $(seq 1 30); do psql -h "$BASE" -p $PORTA -U postgres -c 'select 1' >/dev/null 2>&1 && break; sleep 1; done
+export PGOPTIONS="-c client_min_messages=warning"
 P="psql -h $BASE -p $PORTA -U postgres -d postgres -X -q -v ON_ERROR_STOP=1"
 $P -f "$RAIZ/scripts/teste-integracao/ambiente.sql"
 for f in "$RAIZ"/drizzle/migrations/*.sql; do
@@ -25,11 +26,8 @@ $P -c "GRANT EXECUTE ON FUNCTION public.e_admin_atdi(uuid), public.e_auditor_atd
 $P -f "$RAIZ/scripts/teste-integracao/dados.sql" >/dev/null
 (cd "$RAIZ" && bun "$DIR/gerar.ts" "$BASE")
 $P -f "$BASE/fixtures.sql" >/dev/null
-$P -v p="$(cat "$BASE/payload.json")" <<'SQL' >/dev/null
-CREATE TABLE public._pacote_teste(p jsonb);
-INSERT INTO public._pacote_teste VALUES (:'p'::jsonb);
-GRANT SELECT ON public._pacote_teste TO authenticated;
-SQL
+chmod a+r "$BASE/payload.json"
+$P -c "CREATE TABLE public._pacote_teste(p jsonb); INSERT INTO public._pacote_teste SELECT pg_read_file('$BASE/payload.json')::jsonb; GRANT SELECT ON public._pacote_teste TO authenticated;" >/dev/null
 echo "migrações do repositório aplicadas; aplicar funções POR AUTORIZAR (só nesta base):"
 $P -f "$RAIZ/docs/migracoes-por-autorizar/importacao-redes.sql" >/dev/null
 PGDIR="$BASE" PGPORTA=$PORTA RAIZ="$RAIZ" bash "$DIR/testes.sh"
