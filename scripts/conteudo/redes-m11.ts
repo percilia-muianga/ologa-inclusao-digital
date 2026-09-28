@@ -234,6 +234,72 @@ else
   git show --stat --format='%h %s' HEAD
 fi`.split("\n");
 
+const SCRIPT_RECOLHER = `#!/usr/bin/env python3
+"""recolher.py — amostras do débito de saída de r1-r2 (rede de prática DPE).
+Uso: sudo python3 recolher.py N_AMOSTRAS INTERVALO_S SAIDA.csv     Só lê contadores."""
+import csv, json, statistics, subprocess, sys, time
+
+def bytes_tx():
+    r = subprocess.run(["ip", "-n", "r1", "-j", "-s", "link", "show", "dev", "r1-r2"],
+                       capture_output=True, text=True, check=True, timeout=5)
+    return json.loads(r.stdout)[0]["stats64"]["tx"]["bytes"]
+
+try:
+    n, intervalo, saida = int(sys.argv[1]), float(sys.argv[2]), sys.argv[3]
+    assert n >= 2 and intervalo > 0
+except (IndexError, ValueError, AssertionError):
+    sys.exit("Uso: sudo python3 recolher.py N_AMOSTRAS(>=2) INTERVALO_S SAIDA.csv")
+try:
+    amostras, antes, t0 = [], bytes_tx(), time.monotonic()
+    for i in range(n):
+        time.sleep(intervalo)
+        agora, t1 = bytes_tx(), time.monotonic()
+        mbps = (agora - antes) * 8 / (t1 - t0) / 1e6
+        amostras.append(round(mbps, 2))
+        print(f"amostra {i + 1:>2}: {mbps:5.2f} Mbit/s", flush=True)
+        antes, t0 = agora, t1
+except (subprocess.CalledProcessError, subprocess.TimeoutExpired, KeyError, json.JSONDecodeError) as e:
+    sys.exit(f"ERRO ao ler contadores de r1-r2: {e}")
+try:
+    with open(saida, "w", newline="") as f:
+        csv.writer(f).writerows([["amostra", "mbps"]] + [[i + 1, v] for i, v in enumerate(amostras)])
+except OSError as e:
+    sys.exit(f"ERRO ao escrever {saida}: {e}")
+p95 = statistics.quantiles(amostras, n=20, method="inclusive")[18]
+print(f"média {statistics.mean(amostras):.2f} | percentil 95 {p95:.2f} | máximo {max(amostras):.2f} Mbit/s")`.split("\n");
+
+/** Série mensal FICTÍCIA do percentil 95 da WAN (Mbit/s), meses 1 a 12. */
+const MENSAL_CSV = ["mes,p95_mbps", "1,6.1", "2,6.4", "3,6.8", "4,7.0", "5,7.5", "6,7.9", "7,8.2", "8,8.6", "9,9.1", "10,9.4", "11,9.8", "12,10.3"];
+
+const SCRIPT_PREVER = `#!/usr/bin/env python3
+"""prever.py — tendência linear do percentil 95 mensal e mês em que atinge o limiar.
+Uso: python3 prever.py MENSAL.csv CAPACIDADE_MBPS LIMIAR(0-1)
+Aviso: extrapolação linear; só indica quando rever, não garante o futuro."""
+import csv, statistics, sys
+
+try:
+    ficheiro, cap, limiar = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
+    assert cap > 0 and 0 < limiar <= 1
+except (IndexError, ValueError, AssertionError):
+    sys.exit("Uso: python3 prever.py MENSAL.csv CAPACIDADE_MBPS LIMIAR(0-1)")
+try:
+    with open(ficheiro, newline="") as f:
+        linhas = [(int(r["mes"]), float(r["p95_mbps"])) for r in csv.DictReader(f)]
+except (OSError, KeyError, ValueError) as e:
+    sys.exit(f"ERRO a ler {ficheiro}: {e}")
+if len(linhas) < 6:
+    sys.exit("São precisos pelo menos 6 meses de dados para uma tendência minimamente útil.")
+x, y = zip(*linhas)
+r = statistics.linear_regression(x, y)
+alvo = cap * limiar
+print(f"{len(linhas)} meses; tendência {r.slope:+.2f} Mbit/s por mês; último valor {y[-1]:.1f} Mbit/s")
+if r.slope <= 0:
+    print("Sem crescimento na tendência: rever no próximo ciclo.")
+else:
+    mes = (alvo - r.intercept) / r.slope
+    print(f"Limiar {limiar:.0%} de {cap:g} Mbit/s = {alvo:.1f} Mbit/s; atingido por volta do mês {mes:.1f} "
+          f"(cerca de {mes - x[-1]:.0f} meses depois do último dado)")`.split("\n");
+
 export const LICOES_M11: Record<string, ConteudoLicao> = {
   "r-m11-l1": {
     objectivos: [
@@ -578,5 +644,90 @@ export const LICOES_M11: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["nist800128", "nist80034", "git", "iproute2", "nftables", "debian"],
+  },
+
+  "r-m11-l5": {
+    objectivos: [
+      "Explicar planeamento de capacidade: medir a utilização, resumir com percentis, projectar a tendência e decidir a tempo, tendo em conta prazos de contratação.",
+      "Recolher amostras de débito a partir dos contadores de uma interface e comparar média, percentil 95 e máximo.",
+      "Projectar com regressão linear o mês em que a utilização atinge um limiar justificado, e explicar os limites da projecção.",
+      "Relacionar a capacidade com novos serviços, crescimento de utilizadores e requisitos de continuidade.",
+    ],
+    explicacao: [
+      {
+        titulo: "Medir e resumir sem esconder picos",
+        paragrafos: [
+          "A média de um mês esconde os picos que os utilizadores sentem. O percentil 95 (p95) é o valor abaixo do qual ficam 95 % das amostras: ignora os 5 % mais altos, que podem ser picos breves, mas mostra a carga das horas de maior uso. Muitos operadores facturam pelo p95 de amostras de 5 minutos; a instituição deve saber como o seu contrato calcula. O resultado depende do intervalo das amostras: amostras longas alisam os picos.",
+          "Um limiar de planeamento, por exemplo p95 a 70 % da capacidade, deixa margem para picos, crescimento imprevisto e uma ligação alternativa com menos capacidade em caso de falha. O número justifica-se: acima de cerca de 80 % sustentado as filas e o atraso crescem (módulo 10), e a contratação de mais capacidade demora meses; por isso decide-se antes de chegar lá.",
+        ],
+      },
+      {
+        titulo: "Projectar e decidir",
+        paragrafos: [
+          "Com pelo menos seis a doze meses de p95 mensal, uma regressão linear dá a tendência (Mbit/s por mês) e o mês em que se atinge o limiar. É uma extrapolação: não prevê um novo serviço, a mudança de horário, a entrada de mais funcionários ou uma aplicação que passa para a nuvem. Por isso junta-se à tendência o calendário de projectos conhecidos e repete-se a análise todos os trimestres.",
+          "A decisão conta para trás a partir do mês previsto: tempo de aprovação orçamental, concurso, instalação pelo operador e testes. Se tudo isso demorar oito meses e o limiar for atingido em dez, a decisão é agora. O relatório indica os dados usados, o método, o resultado e as incertezas.",
+        ],
+      },
+    ],
+    caso: "A WAN da DPE (fictícia) tem 20 Mbit/s contratados. O chefe tem de propor no orçamento se aumenta a capacidade. A equipa tem 12 meses de p95 mensal (fictícios) e mede, na rede de prática, como média e p95 diferem num dia com um pico curto. Aprovação e contratação demoram, em conjunto, cerca de 7 meses (valor fictício). Todos os valores são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Medição: contadores de saída da interface r1-r2 (sentido sede → delegação), lidos com ip -j -s link no espaço de nomes r1.",
+        "Carga: iperf3 -R (o srv envia para o pc-del) em três fases: 2 Mbit/s durante 50 s, 8 Mbit/s durante 20 s, 2 Mbit/s durante 50 s.",
+        "Limite: amostras de 5 s numa rede virtual durante 2 minutos servem para comparar resumos, não representam um dia real.",
+      ],
+      passos: [
+        PRE_M11,
+        { accao: "Crie a pasta e grave os dois scripts e a série mensal fictícia (textos completos abaixo).", comandos: ["mkdir -p /tmp/dpe-m11/l5 && cd /tmp/dpe-m11/l5", "cat > recolher.py <<'EOF'", ...SCRIPT_RECOLHER, "EOF", "cat > prever.py <<'EOF'", ...SCRIPT_PREVER, "EOF", "cat > mensal.csv <<'EOF'", ...MENSAL_CSV, "EOF"] },
+        { accao: "Consola D: servidor iperf3 que aceita vários testes (esperar «Server listening»; pára-se com Ctrl+C no fim). Consola R: inicie a recolha de 24 amostras de 5 s. Logo a seguir, consola B: as três fases de carga.", comandos: ["D: sudo ip netns exec srv iperf3 -s -B 10.10.20.53", "R: sudo python3 recolher.py 24 5 amostras.csv", "B: for f in '2M 50' '8M 20' '2M 50'; do set -- $f; sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -R -b $1 -t $2 >/dev/null || echo 'ERRO no iperf3'; done"], saida: ["amostra  1:  2.07 Mbit/s", "…", "amostra 11:  8.31 Mbit/s", "…", "amostra 24:  2.06 Mbit/s", "média 3.12 | percentil 95 8.31 | máximo 8.36 Mbit/s", "(a primeira e a última amostra podem apanhar o início ou o fim das fases; os valores variam)"] },
+        { accao: "Teste do tratamento de erros: argumentos inválidos.", comandos: ["sudo python3 recolher.py 1 5 x.csv; echo \"código=$?\"", "python3 prever.py nao-existe.csv 20 0.7; echo \"código=$?\""], saida: ["Uso: sudo python3 recolher.py N_AMOSTRAS(>=2) INTERVALO_S SAIDA.csv", "código=1", "ERRO a ler nao-existe.csv: [Errno 2] No such file or directory: 'nao-existe.csv'", "código=1"] },
+        { accao: "Projecção com a série mensal fictícia: capacidade 20 Mbit/s, limiar 70 %.", comandos: ["python3 prever.py mensal.csv 20 0.7"], saida: ["12 meses; tendência +0.38 Mbit/s por mês; último valor 10.3 Mbit/s", "Limiar 70% de 20 Mbit/s = 14.0 Mbit/s; atingido por volta do mês 22.0 (cerca de 10 meses depois do último dado)"] },
+        { accao: "Escreva a recomendação para o orçamento: dados, método, resultado, prazo de decisão (10 meses − 7 de contratação), riscos (serviços novos, falha da ligação alternativa) e data da próxima revisão.", comandos: ["nano /tmp/dpe-m11/l5/recomendacao.txt"] },
+      ],
+      sucesso: [
+        "A dupla mostra que a média (≈ 3,1 Mbit/s) esconde o pico que o p95 (≈ 8,3 Mbit/s) revela.",
+        "Os scripts terminam com mensagem clara e código 1 perante argumentos ou ficheiros inválidos.",
+        "A projecção indica o mês ≈ 22 e a dupla calcula que a decisão tem de ser tomada até cerca de 3 meses depois do último dado.",
+        "A recomendação distingue dados, projecção e incertezas, e marca a próxima revisão.",
+      ],
+      reversao: [
+        "Ctrl+C na consola D (servidor iperf3) e na consola R se a recolha não tiver terminado. Não usar pkill/killall. Confirmar: sudo ip netns pids srv não lista iperf3.",
+        "rm -r /tmp/dpe-m11/l5 (scripts, dados fictícios e amostras). Se for a última lição do módulo nesta VM: rm -r /tmp/dpe-m11.",
+      ],
+    },
+    papel: [
+      { tarefa: "Amostras (Mbit/s) de 20 intervalos: dezasseis de 2, e quatro de 9. Calcule a média e diga qual valor representa melhor as horas de maior uso numa ligação de 10 Mbit/s.", esperado: "Média = (16 × 2 + 4 × 9) / 20 = 3,4 Mbit/s. O p95 (9 Mbit/s, pois os 4 valores altos são 20 % das amostras) mostra que nas horas de maior uso a ligação está a 90 %; a média de 34 % dá uma ideia errada." },
+      { tarefa: "Com a tendência de +0,38 Mbit/s por mês e 10,3 Mbit/s no mês 12, estime o p95 aos meses 18 e 24 (use a recta: 5,61 + 0,38 × mês).", esperado: "Mês 18: 5,61 + 0,38 × 18 ≈ 12,5 Mbit/s. Mês 24: ≈ 14,8 Mbit/s, acima do limiar de 14 Mbit/s (70 % de 20)." },
+      { tarefa: "O limiar é atingido cerca de 10 meses após o último dado; aprovação e contratação levam 7 meses. Até quando se tem de decidir? Que riscos podem antecipar a data?", esperado: "Até cerca de 3 meses após o último dado. Riscos: novos serviços (videoconferência, sistemas na nuvem), mais funcionários na delegação, cópias de segurança maiores, ou necessidade de a ligação alternativa aguentar a carga numa falha." },
+      { tarefa: "Um colega diz: «a regressão prova que em 22 meses chegamos a 14 Mbit/s». Corrija.", esperado: "A regressão só extrapola a tendência passada; não prova nada sobre o futuro. Indica quando rever e decidir; a análise repete-se todos os trimestres e junta os projectos conhecidos." },
+    ],
+    formativas: [
+      { pergunta: "Porque se usa o percentil 95 em vez da média para planear capacidade?", opcoes: ["Porque é sempre mais baixo", "Porque mostra a carga das horas de maior uso sem ser dominado por poucos picos muito breves", "Porque o SNMP só dá percentis", "Porque dispensa amostras"], certa: 1, comentario: "A média dilui os períodos de maior uso nas horas vazias; o p95 mostra o nível que a ligação atinge com frequência, ignorando os 5 % mais extremos." },
+      { pergunta: "Qual é o principal limite de uma projecção por regressão linear?", opcoes: ["Só funciona com IPv6", "Assume que o futuro segue a tendência passada e não prevê serviços novos ou mudanças de uso", "Exige 100 anos de dados", "Não usa números"], certa: 1, comentario: "A tendência é um ponto de partida. Junta-se o calendário de projectos e repete-se a análise com dados novos." },
+    ],
+    leituraFacil: [
+      "Planear capacidade é ver se a ligação vai chegar no futuro.",
+      "A média esconde as horas de muito uso.",
+      "O percentil 95 mostra melhor essas horas.",
+      "Uma linha de tendência ajuda a ver quando a ligação vai encher.",
+      "Comprar mais ligação demora meses: decida cedo.",
+      "A previsão não é certa: reveja muitas vezes.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: média, percentil 95 e máximo; intervalo das amostras; limiar de planeamento justificado; regressão linear e limites; decidir contando os prazos de contratação.",
+        "20–70 min: prática em duplas (scripts, recolha com carga em três fases, testes de erro, projecção, recomendação); quem não tiver laboratório faz as contas e a recomendação em papel.",
+        "70–80 min: formativas e correcção comentada; comparar recomendações.",
+      ],
+      errosComuns: [
+        "Planear pela média mensal.",
+        "Apresentar a projecção como certeza.",
+        "Esquecer o tempo de aprovação e contratação.",
+        "Ignorar a capacidade da ligação alternativa em caso de falha.",
+        "Não dizer de onde vêm os dados nem como foram amostrados.",
+      ],
+    },
+    fontes: ["pythonstd", "iproute2", "iperf3", "rfc2863", "nist80034"],
   },
 };
