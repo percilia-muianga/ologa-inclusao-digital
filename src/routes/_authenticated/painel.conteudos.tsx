@@ -35,6 +35,12 @@ const NOMES: Record<string, string> = {
   "banco-inteligencia-artificial":
     "Banco de avaliação de Inteligência Artificial (80 de exame + 10 de diagnóstico, todas inactivas)",
   "tecnologias-governo": "Curso Tecnologias Digitais do Governo (5 lições, ficha e horas: 10 horas)",
+  "banco-seguranca-cibernetica":
+    "Banco de avaliação de Segurança Cibernética Avançada (80 de exame + 10 de diagnóstico, todas inactivas)",
+  "banco-tecnologias-governo":
+    "Banco de avaliação de Tecnologias Digitais do Governo (80 de exame + 10 de diagnóstico, todas inactivas)",
+  "banco-redes":
+    "Banco de avaliação de Administração de Redes (80 de exame + 10 de diagnóstico, todas inactivas)",
   redes: "Curso Administração de Redes e Segurança Cibernética (60 lições, 12 módulos, ficha e horas: 80 horas)",
 };
 

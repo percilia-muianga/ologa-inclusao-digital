@@ -298,7 +298,8 @@ describe("banco SC — o conteúdo não chega ao cliente", () => {
       for (const n of readdirSync(dir)) {
         const p = join(dir, n);
         if (statSync(p).isDirectory()) { ver(p); continue; }
-        if (!/\.(ts|tsx)$/.test(n) || p.includes("__tests__")) continue;
+        // Única excepção: o módulo exclusivo do servidor (sufixo .server) que monta o pacote.
+        if (!/\.(ts|tsx)$/.test(n) || p.includes("__tests__") || p.endsWith("conteudos-preparados.server.ts")) continue;
         if (readFileSync(p, "utf8").includes("seguranca-cibernetica-questoes")) achados.push(p);
       }
     };

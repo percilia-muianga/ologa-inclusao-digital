@@ -282,3 +282,10 @@ Registado a 22 de Setembro de 2026.
 - Ensaio com motor real: 188/200 provas viáveis; 12 falhas fechadas por limite de trabalho — decisão pendente (rever conteúdo de itens ou aceitar).
 - R18 com cobertura fraca no banco (1 item); transversal sem difíceis.
 - Validação pedagógica Ologa/ATDI pendente.
+
+## Bancos privados SC, Governo e Redes — pacotes em «Conteúdos preparados» (28/09/2026)
+
+- Aplicado: nada na base. Código dos três pacotes (servidor apenas) e botões na página, que ficam bloqueados com a mensagem «funções por aprovar» enquanto as funções não existirem.
+- Por autorizar: `docs/migracoes-por-autorizar/bancos-sc-governo-redes.sql` — seis funções `rpc_estado_banco_{sc,tdg,redes}()` e `rpc_importar_banco_{sc,tdg,redes}(jsonb,text)`, réplica da função de IA em uso. Não requer nova política: a escrita usa a regra existente «banco_escrever_gestao».
+- Simulação em base temporária descartável (`scripts/teste-bancos/correr.sh`): 80/80 verificações.
+- Pendentes: autorização do SQL; validação pedagógica Ologa/ATDI dos três bancos; decisão sobre prova e configuração de exame (não configurada).

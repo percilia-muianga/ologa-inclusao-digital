@@ -53,3 +53,24 @@ Módulos com 2 itens: M1, M3, M11 (administração central: endereçamento, enca
 
 ## Pendente
 Validação pedagógica pela Ologa/ATDI; decisão sobre as 12 sementes inviáveis; importação (não autorizada).
+
+## Revisão de 28/09/2026 — fecho das 12 sementes inviáveis
+
+Causa: a dificuldade «difícil» estava quase só em cenários (13/16) e não havia difíceis em V/F e associação, o que tornava o sorteio conjunto muito condicionado. O motor não foi alterado. Reescreveram-se 10 itens (conteúdo, não só rótulo), mantendo 32/32/16 e 32/16/16/16:
+
+| Item | Antes → depois | Justificação pedagógica da mudança de conteúdo |
+|---|---|---|
+| M01-L2-02 | EM média → difícil | Passa de abreviar um endereço a expandir e comparar quatro formas (análise de equivalência, vários passos). |
+| M05-L3-01 | V/F média → difícil | Junta EF, fila limitada e volume excedente: exige raciocinar sobre o limite, não só «QoS não cria banda». |
+| M07-L2-01 | EM média → difícil | De ordenar regras a prever o efeito de um conjunto concreto (resposta cortada antes de «established»). |
+| M08-L4-01 | Assoc. média → difícil | Acções descritas pelo objectivo com ferramentas semelhantes; a palavra-chave deixa de bastar. |
+| M11-L2-01 | EM média → difícil | Dois intervalos, conversão bytes→bits e regra de persistência. |
+| M02-L5-01 | Cenário difícil → média | Retirada a prova de alcance à gestão; fica a comparação directa desenho vs. configuração. |
+| M04-L5-01 | Cenário difícil → média | Uma zona em vez de três classificações cruzadas. |
+| M06-L2-01 | Cenário difícil → média | Aplicar o procedimento a sinais já explícitos (SPF/DMARC falham). |
+| M09-L5-01 | Cenário difícil → média | Retirado o distractor mtr; fica o padrão MTU. |
+| M12-L5-01 | Cenário difícil → média | Retirado o cálculo do indicador; fica a regra «sem reteste positivo reabre». |
+
+Intersecções novas tipo × dificuldade: EM 7/19/6; V/F 12/3/1; associação 13/2/1; cenário 0/8/8.
+Resultado: 200/200 sorteios viáveis com o motor real (sementes 1–200), 20 IDs únicos, quotas exactas, sem diagnóstico. Quase-duplicados (Jaccard ≥ 0,5) verificados também face a Nuvem (v2) e Transformação Digital (v2): nenhum.
+Validação pedagógica Ologa/ATDI continua pendente.
