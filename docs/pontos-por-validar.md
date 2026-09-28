@@ -265,3 +265,14 @@ Registado a 22 de Setembro de 2026.
 - A tabela real tem `activa = true` e `estado_revisao = 'em_uso'` por omissão: qualquer importação futura tem de os fixar explicitamente como `false`/`rascunho` (o plano em memória já o faz).
 - Sem quotas próprias em `quotas-exame.ts`, a produção usaria só equilíbrio de dificuldade para este curso. Acrescentar a proposta 6/6/6/2 é decisão pendente.
 - Pendentes: validação pedagógica Ologa/ATDI; calibração das dificuldades (V/F quase só fácil, cenários sem fáceis); revisão por especialista.
+
+## PV-TDG-BANCO — Banco de avaliação de Tecnologias Digitais do Governo (28/09/2026)
+
+- Escrito em ficheiros privados (`scripts/conteudo/tecnologias-governo-questoes*.ts`): 80 finais + 10 diagnóstico, todos planeados como `activa=false` e `rascunho`. Matriz em `docs/matriz-banco-tecnologias-governo.md`.
+- Não importado (base com 0 questões deste curso), sem configuração de exame, sem quotas de produção, sem migrações ou permissões.
+- Limites: associação sem itens difíceis; difíceis concentrados em cenários; motor sem quota por lição (12/200 provas simuladas omitem uma lição).
+- Pendentes: validação Ologa/ATDI; confirmação por gestores dos sistemas de que nada contraria o funcionamento real; calibração.
+
+## PV-SC-BANCO — revisão dos níveis (28/09/2026)
+
+- Os 14 níveis alterados na primeira simulação foram reavaliados: 6 itens reescritos, 2 rótulos revertidos e 6 mantidos com justificação (ver `docs/matriz-banco-seguranca-cibernetica.md`). Teste do banco: 19/19.
