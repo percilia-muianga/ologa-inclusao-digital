@@ -153,6 +153,61 @@ while True:
     anterior = (valor, agora)
     time.sleep(INTERVALO)`.split("\n");
 
+/** Receptor rsyslog de prática: só UDP 514 em 10.10.20.14, ficheiros por IP de origem. */
+const RSYSLOG_CONF = [
+  'global(workDirectory="/tmp/dpe-m11/l3/trabalho")',
+  'module(load="imudp")',
+  'input(type="imudp" address="10.10.20.14" port="514")',
+  'template(name="PorOrigem" type="string" string="/tmp/dpe-m11/l3/registos/%fromhost-ip%.log")',
+  'template(name="Linha" type="string" string="%timegenerated:::date-rfc3339% %fromhost-ip% %syslogseverity-text% %programname% %msg%\\n")',
+  '*.* action(type="omfile" dynaFile="PorOrigem" template="Linha")',
+];
+
+const SCRIPT_ANALISAR = `#!/usr/bin/env python3
+"""analisar.py — resumo de registos e detecção de falhas de autenticação repetidas.
+Uso: python3 analisar.py FICHEIRO [FICHEIRO ...]
+Formato (modelo «Linha» do rsyslog desta lição): DATA IP_ORIGEM SEVERIDADE PROGRAMA MENSAGEM
+Regra: 5 ou mais «Failed password» da mesma origem em 60 s -> ALERTA."""
+import collections, datetime, re, sys
+
+LIMIAR, JANELA = 5, datetime.timedelta(seconds=60)
+if len(sys.argv) < 2:
+    sys.exit("Uso: python3 analisar.py FICHEIRO [FICHEIRO ...]")
+contagem, falhas = collections.Counter(), collections.defaultdict(list)
+invalidas = lidos = 0
+for nome in sys.argv[1:]:
+    try:
+        f = open(nome, encoding="utf-8", errors="replace")
+    except OSError as e:
+        print(f"ERRO: {e}", file=sys.stderr)
+        continue
+    lidos += 1
+    with f:
+        for linha in f:
+            partes = linha.rstrip("\\n").split(" ", 4)
+            try:
+                quando = datetime.datetime.fromisoformat(partes[0])
+                origem, sev, prog, msg = partes[1:5]
+            except (ValueError, IndexError):
+                invalidas += 1
+                continue
+            contagem[(origem, sev)] += 1
+            m = re.search(r"Failed password .* from (\\S+)", msg)
+            if prog == "sshd" and m:
+                falhas[m.group(1)].append(quando)
+if not lidos:
+    sys.exit("Nenhum ficheiro lido.")
+print("Eventos por origem e severidade:")
+for (origem, sev), n in sorted(contagem.items()):
+    print(f"  {origem:<12} {sev:<8} {n}")
+for ip, tempos in falhas.items():
+    tempos.sort()
+    for i in range(len(tempos) - LIMIAR + 1):
+        if tempos[i + LIMIAR - 1] - tempos[i] <= JANELA:
+            print(f"ALERTA: {LIMIAR}+ falhas de autenticação de {ip} em 60 s (desde {tempos[i]:%H:%M:%S})")
+            break
+print(f"Linhas ignoradas por formato inválido: {invalidas}")`.split("\n");
+
 export const LICOES_M11: Record<string, ConteudoLicao> = {
   "r-m11-l1": {
     objectivos: [
@@ -323,5 +378,92 @@ export const LICOES_M11: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["rfc3411", "rfc2863", "rfc3826", "rfc7860", "netsnmp", "pythonstd", "iperf3"],
+  },
+
+  "r-m11-l3": {
+    objectivos: [
+      "Explicar a estrutura de uma mensagem syslog (RFC 5424: facilidade, severidade, data, origem, programa, mensagem) e porque se centralizam os registos.",
+      "Montar um receptor rsyslog de prática, isolado, que guarda um ficheiro por origem, e enviar-lhe eventos de r1 e r2.",
+      "Analisar registos com um script que resume por origem e severidade e detecta falhas de autenticação repetidas, tratando linhas inválidas.",
+      "Reconhecer limites: relógios dessincronizados, perda de mensagens em UDP, falta de autenticação e cifra no transporte, e retenção.",
+    ],
+    explicacao: [
+      {
+        titulo: "Syslog e centralização",
+        paragrafos: [
+          "Cada mensagem syslog tem facilidade (a origem lógica: kern, auth, daemon, local0…), severidade de 0 (emerg) a 7 (debug), data, nome ou endereço de quem enviou, programa e texto (RFC 5424). Guardar os registos só no próprio equipamento é arriscado: perdem-se se o equipamento avariar e quem o comprometer pode apagá-los. Um receptor central guarda cópias, permite comparar equipamentos na mesma linha temporal e aplicar regras de detecção (NIST SP 800-92).",
+          "Para comparar tempos, todos os relógios têm de estar sincronizados por NTP (RFC 5905; por exemplo com chrony). O receptor pode registar a hora a que recebeu (timegenerated) e a hora indicada pelo emissor (timereported); nesta prática usa-se a hora de recepção, porque todos os espaços de nomes partilham o relógio da VM. O syslog em UDP é simples mas pode perder mensagens sem aviso e não autentica nem cifra; em produção prefere-se TCP com TLS, suportado pelo rsyslog, numa rede de gestão.",
+        ],
+      },
+      {
+        titulo: "Das linhas aos eventos",
+        paragrafos: [
+          "Ninguém lê milhares de linhas. Primeiro resume-se (quantos eventos por origem e severidade) para ver o que mudou; depois aplicam-se regras com critério explícito, por exemplo «5 ou mais falhas de autenticação da mesma origem em 60 s». O número vem da política: poucas falhas seguidas são típicas de engano humano; muitas em pouco tempo sugerem tentativa automática. Qualquer regra tem falsos positivos e falsos negativos; ajusta-se com o histórico e regista-se a justificação.",
+          "A análise trata linhas que não seguem o formato esperado sem parar e conta-as: um aumento de linhas inválidas também é um sinal (formato mudou, fonte nova, mensagem truncada). Registos contêm dados pessoais (utilizadores, endereços): define-se quem os lê e por quanto tempo se guardam.",
+        ],
+      },
+    ],
+    caso: "Na DPE (fictícia), um encaminhador da delegação reiniciou-se de madrugada e ninguém soube porquê: os registos estavam só no equipamento e perderam-se. O chefe aprova um receptor central na rede de gestão e pede uma regra para detectar tentativas repetidas de acesso aos encaminhadores. Todos os eventos são fictícios e gerados na aula.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Receptor: rsyslogd em primeiro plano no srv, num endereço extra 10.10.20.14/24 acrescentado só para esta lição, UDP 514, configuração própria em /tmp/dpe-m11/l3.",
+        "Emissores: r1 (chega ao receptor como 10.10.20.1) e r2 (chega como 10.255.0.2, via rotas do módulo 3), com o comando logger.",
+        "Não se altera o rsyslog do sistema da VM.",
+      ],
+      passos: [
+        PRE_M11,
+        { accao: "Prepare pastas, configuração do receptor e o endereço extra do srv (confirme antes que 10.10.20.14 não está em uso).", comandos: ["sudo ip netns exec srv ping -c 1 -W 1 10.10.20.14 >/dev/null && echo 'EM USO: parar' || echo 'livre'", "mkdir -p /tmp/dpe-m11/l3/registos /tmp/dpe-m11/l3/trabalho && cd /tmp/dpe-m11/l3", "cat > rsyslog.conf <<'EOF'", ...RSYSLOG_CONF, "EOF", "sudo ip -n srv addr add 10.10.20.14/24 dev srv-r1"], saida: ["livre"] },
+        { accao: "Consola F: valide a configuração e inicie o receptor em primeiro plano, com ficheiro de PID próprio.", comandos: ["sudo rsyslogd -N1 -f /tmp/dpe-m11/l3/rsyslog.conf", "F: sudo ip netns exec srv rsyslogd -n -f /tmp/dpe-m11/l3/rsyslog.conf -i /tmp/dpe-m11/l3/rsyslogd.pid"], saida: ["rsyslogd: version 8.2302.0, config validation run (level 1), master config /tmp/dpe-m11/l3/rsyslog.conf", "rsyslogd: End of config validation run. Bye."] },
+        { accao: "Envie eventos fictícios: r2 avisa uma queda de ligação; r1 regista 6 falhas de autenticação da mesma origem em poucos segundos e uma gravação de configuração.", comandos: ["sudo ip netns exec r2 logger -n 10.10.20.14 -P 514 -d --rfc5424 -t kernel -p kern.warning 'r2-r1: link down (simulado)'", "for i in 1 2 3 4 5 6; do sudo ip netns exec r1 logger -n 10.10.20.14 -P 514 -d --rfc5424 -t sshd -p auth.warning \"Failed password for invalid user admin from 10.20.10.10 port 5012$i ssh2\"; sleep 2; done", "sudo ip netns exec r1 logger -n 10.10.20.14 -P 514 -d --rfc5424 -t config -p local0.info 'configuracao gravada por tecnico1 (simulado)'", "ls registos/; tail -n 3 registos/10.10.20.1.log"], saida: ["10.10.20.1.log  10.255.0.2.log", "2026-09-28T12:10:12.401+02:00 10.10.20.1 warning sshd  Failed password for invalid user admin from 10.20.10.10 port 50126 ssh2", "2026-09-28T12:10:13.020+02:00 10.10.20.1 info config  configuracao gravada por tecnico1 (simulado)", "(fuso e horas variam)"] },
+        { accao: "Acrescente uma linha estragada para testar a robustez e grave o script de análise (texto completo abaixo).", comandos: ["echo 'linha sem formato' >> registos/10.10.20.1.log", "cat > analisar.py <<'EOF'", ...SCRIPT_ANALISAR, "EOF"] },
+        { accao: "Analise todos os ficheiros e também um ficheiro inexistente, para ver a mensagem de erro sem parar a análise.", comandos: ["python3 analisar.py registos/*.log registos/nao-existe.log; echo \"código=$?\""], saida: ["ERRO: [Errno 2] No such file or directory: 'registos/nao-existe.log'", "Eventos por origem e severidade:", "  10.10.20.1   info     1", "  10.10.20.1   warning  6", "  10.255.0.2   warning  1", "ALERTA: 5+ falhas de autenticação de 10.20.10.10 em 60 s (desde 12:10:02)", "Linhas ignoradas por formato inválido: 1", "código=0"] },
+        { accao: "Escreva a ficha da regra: critério, justificação, acção esperada (confirmar com o responsável de r1, ver se 10.20.10.10 é um posto conhecido, bloquear se não autorizado), responsável e retenção proposta dos registos.", comandos: ["nano /tmp/dpe-m11/l3/regra-falhas.txt"] },
+      ],
+      sucesso: [
+        "Existem dois ficheiros, um por origem, com as linhas no formato do modelo.",
+        "O script conta 8 eventos válidos, ignora 1 linha inválida, avisa o ficheiro inexistente e emite o alerta das falhas.",
+        "A dupla explica porque a regra usa a origem (10.20.10.10) e não o emissor (10.10.20.1).",
+        "A ficha da regra tem critério, justificação, acção, responsável e retenção.",
+      ],
+      reversao: [
+        "Ctrl+C na consola F (receptor). Não usar pkill/killall. Confirmar: sudo ip netns pids srv não lista rsyslogd.",
+        "sudo ip -n srv addr del 10.10.20.14/24 dev srv-r1",
+        "rm -r /tmp/dpe-m11/l3 (registos fictícios, configuração, script). O rsyslog do sistema da VM não foi tocado.",
+      ],
+    },
+    papel: [
+      { tarefa: "Linhas de exemplo: falhas sshd de 10.20.10.10 às 12:10:02, :04, :06, :08, :10, :12. Com a regra «5 em 60 s», há alerta? E se as falhas fossem às 12:00, 12:02, 12:04, 12:06, 12:08?", esperado: "Primeiro caso: sim, 5 falhas entre 12:10:02 e 12:10:10 (8 s). Segundo caso: não, as 5 falhas espalham-se por 8 minutos; nenhuma janela de 60 s tem 5." },
+      { tarefa: "Resuma por origem e severidade as linhas da saída de exemplo.", esperado: "10.10.20.1: 6 warning (sshd) e 1 info (config). 10.255.0.2: 1 warning (kernel). Mais 1 linha inválida." },
+      { tarefa: "O relógio de r2 está 7 minutos adiantado e o receptor usa a hora do emissor. Que problema surge na investigação da queda?", esperado: "Os eventos de r2 aparecem fora de ordem face aos de r1 e do servidor; conclusões de causa e efeito ficam erradas. Solução: NTP em todos os equipamentos e, na análise, saber que hora se está a usar." },
+      { tarefa: "Porque é perigoso guardar os registos só no próprio encaminhador?", esperado: "Perdem-se com avaria ou reinício (como no caso) e quem comprometer o equipamento pode apagá-los. O receptor central guarda cópias com acesso controlado." },
+    ],
+    formativas: [
+      { pergunta: "Qual é uma limitação do syslog sobre UDP?", opcoes: ["Não tem severidade", "Pode perder mensagens sem aviso e não autentica nem cifra", "Só funciona em IPv6", "Exige SNMPv3"], certa: 1, comentario: "O UDP não confirma a entrega. Em produção usa-se TCP com TLS e uma rede de gestão; o transporte deve constar da política de registos." },
+      { pergunta: "Porque o script conta as linhas inválidas em vez de parar?", opcoes: ["Para esconder erros", "Para continuar a análise e mostrar que algo mudou no formato ou na fonte", "Porque o Python não consegue parar", "Para apagar as linhas"], certa: 1, comentario: "Uma linha estragada não deve impedir a análise das restantes; mas o número de linhas inválidas é informação útil e é mostrado." },
+    ],
+    leituraFacil: [
+      "Os equipamentos escrevem mensagens chamadas registos.",
+      "Guarde os registos num servidor central.",
+      "Todos os relógios têm de ter a mesma hora.",
+      "Um programa pode contar e procurar problemas nos registos.",
+      "Muitas palavras-passe erradas em pouco tempo é um alerta.",
+      "Os registos têm dados pessoais: guarde com cuidado.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: estrutura syslog e severidades; centralização; NTP e horas; UDP vs TCP com TLS; resumos e regras com critério; dados pessoais e retenção.",
+        "20–65 min: prática em duplas (receptor isolado, eventos, linha estragada, análise, ficha da regra); quem não tiver laboratório resolve as tarefas em papel com as linhas de exemplo.",
+        "65–75 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Confundir o emissor do registo (r1) com a origem do ataque (10.20.10.10).",
+        "Ignorar a sincronização dos relógios.",
+        "Pôr o receptor a escutar em todos os endereços ou fora da rede de gestão.",
+        "Esquecer de retirar o endereço extra 10.10.20.14 do srv.",
+        "Guardar registos sem prazo de retenção nem controlo de acesso.",
+      ],
+    },
+    fontes: ["rfc5424", "rfc5905", "nist80092", "rsyslog", "chrony", "pythonstd"],
   },
 };
