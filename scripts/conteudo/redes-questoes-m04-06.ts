@@ -116,7 +116,7 @@ export const EXAME_REDES_M04_06: QuestaoRedes[] = [
     val: false,
     exp: "Falso. A fila prioritária EF é limitada para não esgotar as outras classes: o que excede os 2 Mbit/s é descartado ou atrasado, e isso degrada chamadas. A prioridade só protege a voz enquanto o volume cabe no limite dimensionado; a QoS não cria largura de banda. É preciso dimensionar o limite ao número de chamadas ou controlar a admissão.",
     obj: "Relacionar os requisitos de voz, vídeo e dados com esses indicadores.",
-    r: ["R04"], fonte: "rfc3246",
+    r: ["R04"], fonte: "rfc4594",
   },
   {
     cod: "RED-M05-L4-01", m: 5, l: 4, t: "em", d: "me",

@@ -76,13 +76,13 @@ describe("banco Redes — dimensão e separação", () => {
     for (const e of proprios) expect(alheios.has(e)).toBe(false);
   });
 
-  it("sem quase-duplicados (limiar 0,5), no curso e face a TDG, SC e IA", () => {
+  it("sem quase-duplicados (limiar 0,5), no curso e face a TDG, SC, IA, Nuvem e TD", () => {
     const pares: string[] = [];
     for (let i = 0; i < TODOS.length; i++)
       for (let j = i + 1; j < TODOS.length; j++)
         if (jaccard(TODOS[i]!.e, TODOS[j]!.e) >= 0.5) pares.push(`${TODOS[i]!.cod}~${TODOS[j]!.cod}`);
     for (const q of TODOS)
-      for (const o of [...EXAME_TDG, ...DIAGNOSTICO_TDG, ...EXAME_SC, ...EXAME_IA])
+      for (const o of [...EXAME_TDG, ...DIAGNOSTICO_TDG, ...EXAME_SC, ...DIAGNOSTICO_SC, ...EXAME_IA, ...DIAGNOSTICO_IA, ...EXAME_V2_NUVEM, ...EXAME_TD_V2])
         if (jaccard(q.e, o.e) >= 0.5) pares.push(`${q.cod}~${o.cod}`);
     expect(pares).toEqual([]);
   });
@@ -132,10 +132,10 @@ describe("banco Redes — matriz de cobertura", () => {
 
   it("intersecções registadas na matriz (tipo × dificuldade; módulo × tipo)", () => {
     expect(contar(EXAME_REDES.map((q) => `${tipoDe(q)}/${q.d}`))).toEqual({
-      "escolha_multipla/f": 7, "escolha_multipla/me": 22, "escolha_multipla/di": 3,
-      "verdadeiro_falso/f": 12, "verdadeiro_falso/me": 4,
-      "correspondencia/f": 13, "correspondencia/me": 3,
-      "cenario/me": 3, "cenario/di": 13,
+      "escolha_multipla/f": 7, "escolha_multipla/me": 19, "escolha_multipla/di": 6,
+      "verdadeiro_falso/f": 12, "verdadeiro_falso/me": 3, "verdadeiro_falso/di": 1,
+      "correspondencia/f": 13, "correspondencia/me": 2, "correspondencia/di": 1,
+      "cenario/me": 8, "cenario/di": 8,
     });
   });
 
@@ -228,8 +228,10 @@ describe("banco Redes — validade dos itens", () => {
     expect(((160 + 12 + 8 + 20) * 8 * 50 * 3) / 1000).toBe(240);
     // M10-L4-01: 500×1514×8 / 5e6
     expect((500 * 1514 * 8) / 5e6).toBeCloseTo(1.21, 2);
-    // M11-L2-01: 450e6×8/300 sobre 100 Mbit/s
-    expect((450e6 * 8) / 300 / 1e6).toBe(12);
+    // M11-L2-01: diferenças 3,15e9 e 3,3e9 bytes ×8/300 sobre 100 Mbit/s → 84% e 88%
+    expect([(3.15e9 * 8) / 300 / 1e6, (3.3e9 * 8) / 300 / 1e6]).toEqual([84, 88]);
+    // M05-L3-01: 3 Mbit/s de voz EF num limite de 2 Mbit/s → 1 Mbit/s excede
+    expect(3 - 2).toBe(1);
     // M11-L2-02: abre na 5.ª (3 seguidas > 80), fecha na 8.ª (< 70)
     const am = [85, 78, 82, 84, 83, 75, 72, 69];
     let seg = 0, aberto = -1, fechado = -1;
@@ -238,8 +240,6 @@ describe("banco Redes — validade dos itens", () => {
       else if (fechado < 0 && v < 70) fechado = i + 1;
     });
     expect([aberto, fechado]).toEqual([5, 8]);
-    // M12-L5-01: 6/10
-    expect(6 / 10).toBe(0.6);
   });
 
   it("M12: falta de prova nunca é «não aplicável»", () => {
@@ -250,7 +250,6 @@ describe("banco Redes — validade dos itens", () => {
   });
 });
 
-const FALHAS_OBSERVADAS = 12;
 
 describe("banco Redes — simulação do sorteio (modo de ensaio)", () => {
   const dif = quotasDificuldade(20, PROPOSTA_PROVA_REDES.pct);
@@ -297,9 +296,9 @@ describe("banco Redes — simulação do sorteio (modo de ensaio)", () => {
       expect(contar(sel.map((q) => q.dificuldade))).toEqual({ facil: 8, media: 8, dificil: 4 });
       assinaturas.add([...r.ids].sort().join("|"));
     }
-    // Registo honesto (ver matriz): o motor real, sem alteração, esgota o limite de
-    // trabalho em algumas sementes; falha fechada, nunca prova incompleta.
-    expect(falhas.length).toBe(FALHAS_OBSERVADAS);
+    // Após a revisão de conteúdo de 10 itens (ver matriz), o motor real, sem
+    // alteração, encontra prova em todas as 200 sementes.
+    expect(falhas).toEqual([]);
     expect(assinaturas.size).toBeGreaterThan(180);
     expect(usos.size).toBe(80);
   }, 60_000);
