@@ -5,6 +5,7 @@ import { LICOES_M04_06 } from "./conteudo/redes-m04-06";
 import { LICOES_M07 } from "./conteudo/redes-m07";
 import { LICOES_M08 } from "./conteudo/redes-m08";
 import { LICOES_M09 } from "./conteudo/redes-m09";
+import { LICOES_M10 } from "./conteudo/redes-m10";
 
 export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: string[] } }>) {
   const erros: string[] = [];
@@ -24,7 +25,7 @@ export function verificarGuioes(conteudos: Record<string, { guiao: { conducao: s
   return erros;
 }
 
-export const CONTEUDOS_ESCRITOS = { ...LICOES_M01_03, ...LICOES_M04_06, ...LICOES_M07, ...LICOES_M08, ...LICOES_M09 };
+export const CONTEUDOS_ESCRITOS = { ...LICOES_M01_03, ...LICOES_M04_06, ...LICOES_M07, ...LICOES_M08, ...LICOES_M09, ...LICOES_M10 };
 
 if (import.meta.main) {
   const e = verificarGuioes(CONTEUDOS_ESCRITOS);
