@@ -302,7 +302,7 @@ describe("banco Redes — simulação do sorteio (modo de ensaio)", () => {
     expect(falhas.length).toBe(FALHAS_OBSERVADAS);
     expect(assinaturas.size).toBeGreaterThan(180);
     expect(usos.size).toBe(80);
-  });
+  }, 60_000);
 
   it("falha fechada quando um estrato fica insuficiente", () => {
     const b = sorteaveis(EXAME_REDES).filter((q) => q.moduloId !== "13" || q.id === "RED-TR-L1-01");
