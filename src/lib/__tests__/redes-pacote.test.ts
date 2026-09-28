@@ -78,7 +78,7 @@ describe("pacote", () => {
 describe("SQL por autorizar", () => {
   it("funções INVOKER, sem DEFINER, sem regras nem grants de tabela", () => {
     expect(FUN).not.toMatch(/SECURITY DEFINER/);
-    expect((FUN.match(/SECURITY INVOKER/g) ?? []).length).toBe(2);
+    expect((FUN.match(/plpgsql (STABLE )?SECURITY INVOKER/g) ?? []).length).toBe(2);
     expect(FUN).not.toMatch(/CREATE POLICY/i);
     expect(FUN).not.toMatch(/GRANT (UPDATE|INSERT|DELETE|ALL) ON (TABLE )?public\./i);
     for (const k of ["pg_advisory_xact_lock", "ESTADO_ALTERADO", "CONFLITO_CONTEUDO_EXISTENTE", "IDS_INESPERADOS", "SEM_REGRA_DE_ESCRITA_CURSO", "e_admin_geral_ologa"]) expect(FUN).toContain(k);
