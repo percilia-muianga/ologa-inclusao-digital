@@ -151,9 +151,9 @@ const L3: QuestaoSC[] = [
   },
   {
     cod: "SC-M3L3-03", m: "m3", l: 3, t: "vf", d: "me",
-    e: "Verdadeiro ou falso: a mensagem «cópia concluída com sucesso», repetida todas as semanas pela ferramenta, prova que a instituição consegue recuperar os dados.",
+    e: "Verdadeiro ou falso: um restauro pode considerar-se verificado logo que o programa de restauro termina sem erros, mesmo que ninguém abra nem compare os dados restaurados.",
     val: false,
-    exp: "Falso. A mensagem diz que a cópia foi escrita, não que é restaurável nem utilizável. Só um restauro efectivo, com verificação por resumos e leitura dos dados, o prova.",
+    exp: "Falso. Terminar sem erros diz que o processo correu, não que os dados estão íntegros e utilizáveis. A verificação exige comparar resumos e abrir ou ler os dados restaurados.",
     obj: "Verificar a integridade e utilidade de um restauro. M3 L3.",
   },
   {
@@ -231,12 +231,12 @@ const L5: QuestaoSC[] = [
   },
   {
     cod: "SC-M3L5-02", m: "m3", l: 5, t: "em", d: "me",
-    e: "Um sistema antigo não suporta autenticação multifactor, que a política de segurança da instituição exige. Qual é o caminho correcto?",
+    e: "A política de segurança da instituição exige cifra de disco em todos os computadores. Um computador que controla um equipamento de laboratório, fornecido pelo fabricante, perde o suporte técnico se o disco for cifrado. Qual é o caminho correcto?",
     opts: [
-      "Desactivar a exigência na política, porque não pode ser cumprida por todos os sistemas",
-      "Manter o sistema sem registo, até ser substituído no próximo ciclo orçamental",
+      "Retirar a exigência da política, porque não pode ser cumprida por todos os computadores",
+      "Manter o computador sem registo nenhum, até ser substituído no próximo ciclo orçamental",
       "Pedir uma excepção formal, com medidas compensatórias, responsável, prazo e revisão",
-      "Aplicar a autenticação multifactor apenas aos utilizadores com mais antiguidade",
+      "Cifrar o disco na mesma e negociar depois com o fabricante a reposição do suporte",
     ], ind: 2,
     exp: "A política prevê excepções formais: justificadas, com medidas que compensem o risco, com dono e com prazo de revisão. Alterar a política ou ignorar o caso esvazia a regra.",
     obj: "Escrever uma política com regras obrigatórias e regime de excepções. M3 L5.",
