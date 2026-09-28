@@ -14,7 +14,7 @@
 -- bloqueiam. A escrita em banco_questoes continua decidida pela política RLS já
 -- existente «banco_escrever_gestao» (pode_gerir_programa, que inclui admin_ologa):
 -- não é necessária nenhuma política nova. A auditoria é feita pelo registo de
--- auditoria já existente na tabela, se activo (a verificar antes de aplicar).
+-- auditoria já existente na tabela (gatilho trg_auditar_banco_questoes, confirmado em leitura).
 -- Não toca noutros cursos, em configurações de exame nem activa nada.
 
 CREATE OR REPLACE FUNCTION public.rpc_estado_banco_sc()
