@@ -1,7 +1,7 @@
 /**
  * Banco privado — Segurança Cibernética Avançada — Módulo 1 «Gestão Avançada
  * do Risco Cibernético» (ordem 141). 24 itens de exame final.
- * Matriz: L1–L4 = em 2, vf 1, cor 1, cen 1 (f 2, me 2, di 1); L5 = em 2, vf 1, cen 1 (f 2, me 1, di 1).
+ * Matriz por lição, tipo e dificuldade: docs/matriz-banco-seguranca-cibernetica.md.
  * Casos, instituições e números FICTÍCIOS. Rascunho por validar pela Ologa/ATDI.
  */
 import { FONTE_KEV, FONTE_NIST, FONTE_WSTG, type QuestaoSC } from "./seguranca-cibernetica-questoes-tipos";

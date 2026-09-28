@@ -1,7 +1,7 @@
 /**
  * Banco privado — Segurança Cibernética Avançada — Módulo 2 «Protecção,
  * Detecção e Resposta» (ordem 142). 25 itens de exame final.
- * Matriz: cada uma das 5 lições = em 2, vf 1, cor 1, cen 1 (f 2, me 2, di 1).
+ * Matriz por lição, tipo e dificuldade: docs/matriz-banco-seguranca-cibernetica.md.
  * Casos, instituições e números FICTÍCIOS. Rascunho por validar pela Ologa/ATDI.
  */
 import { FONTE_KEV, FONTE_NIST, FONTE_WSTG, type QuestaoSC } from "./seguranca-cibernetica-questoes-tipos";

@@ -1,9 +1,7 @@
 /**
  * Banco privado — Segurança Cibernética Avançada — Módulo 3 «Continuidade,
  * Incidentes e Conformidade» (ordem 143). 23 itens de exame final.
- * Matriz: L1, L2, L5 = em 2, vf 1, cor 1, cen 1 (f 2, me 2, di 1);
- *         L3 = em 2, vf 1, cor 1, cen 1 (f 2, me 1, di 2);
- *         L4 = cor 1, cen 2 (me 2, di 1).
+ * Matriz por lição, tipo e dificuldade: docs/matriz-banco-seguranca-cibernetica.md.
  * Casos, instituições e números FICTÍCIOS. Rascunho por validar pela Ologa/ATDI.
  */
 import { FONTE_NIST, type QuestaoSC } from "./seguranca-cibernetica-questoes-tipos";
