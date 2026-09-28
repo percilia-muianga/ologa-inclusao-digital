@@ -22,7 +22,7 @@ const L1: QuestaoSC[] = [
     obj: "Preencher as secções de um plano de resposta a incidentes. M3 L1.",
   },
   {
-    cod: "SC-M3L1-02", m: "m3", l: 1, t: "em", d: "me",
+    cod: "SC-M3L1-02", m: "m3", l: 1, t: "em", d: "di",
     e: "Um plano de resposta indica para cada função apenas um nome e um endereço de correio institucional. Que lacuna é mais grave numa madrugada de incidente?",
     opts: [
       "A falta de indicação do cargo de cada pessoa no organigrama da instituição",
@@ -53,7 +53,7 @@ const L1: QuestaoSC[] = [
     obj: "Escrever o procedimento de preservação de evidência. M3 L1.",
   },
   {
-    cod: "SC-M3L1-05", m: "m3", l: 1, t: "em", cen: true, d: "di",
+    cod: "SC-M3L1-05", m: "m3", l: 1, t: "em", cen: true, d: "me",
     e: "Caso fictício. Durante a recolha de evidência num posto do serviço de finanças de Cuamba, a equipa percebe que o caso pode vir a ter consequências disciplinares para um funcionário. O que deve mudar no procedimento técnico?",
     opts: [
       "Nada no procedimento técnico, mas a partir daí o rigor da custódia e da documentação passa a ser decisivo",
@@ -99,7 +99,7 @@ const L2: QuestaoSC[] = [
     obj: "Definir o calendário de actualizações. M3 L2.",
   },
   {
-    cod: "SC-M3L2-04", m: "m3", l: 2, t: "cor", d: "me",
+    cod: "SC-M3L2-04", m: "m3", l: 2, t: "cor", d: "di",
     e: "Associe cada afirmação feita cedo num incidente à razão pela qual não deve ser feita sem apuramento.",
     pares: [
       { esquerda: "«Os dados não foram acedidos»", direita: "A análise dos registos ainda não terminou" },
@@ -111,7 +111,7 @@ const L2: QuestaoSC[] = [
     obj: "Identificar afirmações não apuradas e reescrevê-las. M3 L2.",
   },
   {
-    cod: "SC-M3L2-05", m: "m3", l: 2, t: "em", cen: true, d: "di",
+    cod: "SC-M3L2-05", m: "m3", l: 2, t: "em", cen: true, d: "me",
     e: "Caso fictício. O serviço de emissão de licenças de Montepuez sofreu um incidente às 07h40. Às 10h00, a equipa sabe que o sistema foi isolado e que há actividade anormal numa conta de administração; ainda não sabe se houve acesso a dados pessoais. Qual das frases pode ser dita ao público às 10h00?",
     opts: [
       "«Os dados dos cidadãos estão protegidos e não foram acedidos.»",

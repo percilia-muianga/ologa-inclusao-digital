@@ -54,7 +54,7 @@ const L1: QuestaoSC[] = [
     fonte: FONTE_WSTG,
   },
   {
-    cod: "SC-M2L1-05", m: "m2", l: 1, t: "em", cen: true, d: "di",
+    cod: "SC-M2L1-05", m: "m2", l: 1, t: "em", cen: true, d: "me",
     e: "Caso fictício. Num teste autorizado à aplicação de licenciamento de Namaacha, a conta de perfil «balcão» acede ao endereço de aprovação reservado ao perfil «chefia» e a operação é concluída com sucesso. A empresa responde que vai retirar o item «Aprovar» do menu do perfil «balcão». Como deve o achado ser registado?",
     opts: [
       "Como resolvido, porque o perfil «balcão» deixa de ter caminho para a operação",
@@ -82,7 +82,7 @@ const L2: QuestaoSC[] = [
     obj: "Exigir inventário de componentes em contratos e na cadeia de entrega. M2 L2.",
   },
   {
-    cod: "SC-M2L2-02", m: "m2", l: 2, t: "em", d: "me",
+    cod: "SC-M2L2-02", m: "m2", l: 2, t: "em", d: "di",
     e: "Uma análise automática de dependências não encontrou falhas graves. Que conclusão é legítima?",
     opts: [
       "Que a aplicação não tem falhas graves e pode entrar em produção sem outras verificações",
@@ -173,7 +173,7 @@ const L3: QuestaoSC[] = [
     fonte: FONTE_NIST,
   },
   {
-    cod: "SC-M2L3-05", m: "m2", l: 3, t: "em", cen: true, d: "di",
+    cod: "SC-M2L3-05", m: "m2", l: 3, t: "em", cen: true, d: "me",
     e: "Caso fictício. Numa semana de actividade considerada normal, uma regra nova de correlação gerou 180 alertas no serviço de Nampula. A equipa de segurança tem 2 pessoas, que conseguem analisar cerca de 10 alertas por dia útil. Qual é a decisão correcta?",
     opts: [
       "Manter a regra e acumular os alertas para revisão mensal, quando houver tempo",
@@ -200,7 +200,7 @@ const L4: QuestaoSC[] = [
     obj: "Executar a recolha ordenada de evidência volátil e não volátil. M2 L4.",
   },
   {
-    cod: "SC-M2L4-02", m: "m2", l: 4, t: "em", d: "me",
+    cod: "SC-M2L4-02", m: "m2", l: 4, t: "em", d: "di",
     e: "Porque é que um endereço de rede associado a um ataque é um indicador menos durável do que o resumo criptográfico de um ficheiro encontrado?",
     opts: [
       "Porque o endereço é mais difícil de registar nos sistemas de detecção da instituição",
@@ -231,7 +231,7 @@ const L4: QuestaoSC[] = [
     obj: "Distinguir famílias de software malicioso pelo efeito e propagação. M2 L4.",
   },
   {
-    cod: "SC-M2L4-05", m: "m2", l: 4, t: "em", cen: true, d: "di",
+    cod: "SC-M2L4-05", m: "m2", l: 4, t: "em", cen: true, d: "me",
     e: "Caso fictício. Ao detectar actividade estranha no servidor de base de dados de Mueda, a equipa desliga-o imediatamente da corrente «para parar o ataque». Que consequência principal tem esta decisão para a análise posterior?",
     opts: [
       "Nenhuma, desde que o disco seja copiado logo a seguir com uma ferramenta adequada",
@@ -278,7 +278,7 @@ const L5: QuestaoSC[] = [
     obj: "Escrever o registo cronológico de decisões do incidente. M2 L5.",
   },
   {
-    cod: "SC-M2L5-04", m: "m2", l: 5, t: "cor", d: "me",
+    cod: "SC-M2L5-04", m: "m2", l: 5, t: "cor", d: "di",
     e: "Associe cada momento do ciclo de resposta a incidentes à acção que lhe corresponde.",
     pares: [
       { esquerda: "Preparar", direita: "Ter plano, contactos e cópias antes de haver incidente" },

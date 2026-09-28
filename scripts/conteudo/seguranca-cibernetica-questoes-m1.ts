@@ -36,7 +36,7 @@ const L1: QuestaoSC[] = [
     fonte: FONTE_NIST,
   },
   {
-    cod: "SC-M1L1-04", m: "m1", l: 1, t: "cor", d: "me",
+    cod: "SC-M1L1-04", m: "m1", l: 1, t: "cor", d: "di",
     e: "Associe cada situação da instituição fictícia à propriedade de segurança que é principalmente afectada.",
     pares: [
       { esquerda: "Lista de beneficiários enviada por engano para um endereço externo", direita: "Confidencialidade" },
@@ -103,7 +103,7 @@ const L2: QuestaoSC[] = [
     obj: "Redigir regras de compromisso com âmbito, janela, proibições e paragem. M1 L2.",
   },
   {
-    cod: "SC-M1L2-05", m: "m1", l: 2, t: "em", cen: true, d: "di",
+    cod: "SC-M1L2-05", m: "m1", l: 2, t: "em", cen: true, d: "me",
     e: "Caso fictício. A minuta de autorização de um teste ao portal de licenças de Ribáuè tem: alvo «portal-licencas.exemplo.mz e outros sistemas que se revelem relevantes»; janela «a combinar»; assinatura do técnico que vai testar; contacto de emergência em branco. Qual é a apreciação correcta?",
     opts: [
       "Serve, desde que o técnico registe as acções num relatório entregue no fim do teste",
@@ -161,7 +161,7 @@ const L3: QuestaoSC[] = [
     obj: "Executar e reverter o endurecimento em ambiente isolado. M1 L3.",
   },
   {
-    cod: "SC-M1L3-05", m: "m1", l: 3, t: "vf", cen: true, d: "di",
+    cod: "SC-M1L3-05", m: "m1", l: 3, t: "vf", cen: true, d: "me",
     e: "Caso fictício. Numa instituição de Mocuba há três segmentos: postos de trabalho, servidores de aplicação e servidor de base de dados. A política proposta permite aos postos o acesso à aplicação na porta 443, permite à aplicação o acesso à base de dados na porta 5432, permite aos postos o acesso directo à base de dados na porta 5432 «para relatórios» e nega tudo o resto. Verdadeiro ou falso: esta política cumpre o princípio de que os postos falam com a aplicação e não com a base de dados.",
     val: false,
     exp: "Falso. A terceira regra abre o acesso directo dos postos à base de dados, o que contraria o princípio estudado. Os relatórios devem passar pela aplicação ou por um serviço próprio, não por acesso directo dos postos.",
@@ -183,7 +183,7 @@ const L4: QuestaoSC[] = [
     obj: "Reatribuir acessos segundo privilégio mínimo e separação de contas. M1 L4.",
   },
   {
-    cod: "SC-M1L4-02", m: "m1", l: 4, t: "em", d: "me",
+    cod: "SC-M1L4-02", m: "m1", l: 4, t: "em", d: "di",
     e: "Um ficheiro de instalação foi descarregado e o seu resumo criptográfico coincide com o resumo publicado na mesma página de onde foi descarregado. O que se pode concluir?",
     opts: [
       "Que o ficheiro está livre de software malicioso e pode ser instalado sem mais análise",
