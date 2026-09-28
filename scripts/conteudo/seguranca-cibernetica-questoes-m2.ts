@@ -83,14 +83,14 @@ const L2: QuestaoSC[] = [
   },
   {
     cod: "SC-M2L2-02", m: "m2", l: 2, t: "em", d: "di",
-    e: "Uma análise automática de dependências não encontrou falhas graves. Que conclusão é legítima?",
+    e: "No circuito de publicação de uma aplicação: a análise de dependências não encontrou falhas graves, a análise estática do código não deu alertas altos e todos os testes automáticos passaram. Qual destes riscos continua sem nenhuma verificação que o cubra?",
     opts: [
-      "Que a aplicação não tem falhas graves e pode entrar em produção sem outras verificações",
-      "Que as dependências conhecidas não têm falhas graves registadas nas bases consultadas",
-      "Que o código escrito pela equipa está livre de falhas de controlo de acesso",
-      "Que a configuração do servidor está correcta e endurecida",
+      "Uma biblioteca conhecida com falha grave publicada nas bases de vulnerabilidades consultadas",
+      "Um formando do perfil «balcão» consultar processos de outro serviço mudando o número no endereço",
+      "Uma função do código próprio que concatena texto do utilizador numa consulta à base de dados",
+      "Uma alteração de código que quebra o cálculo de um valor já coberto pelos testes automáticos",
     ], ind: 1,
-    exp: "Cada verificação tem pontos cegos. A análise de dependências só fala de componentes conhecidos e de falhas já registadas; não cobre o código próprio, a configuração nem a lógica de autorização.",
+    exp: "Cada verificação tem pontos cegos. A biblioteca registada é o que a análise de dependências apanha; a concatenação numa consulta é padrão típico da análise estática; a quebra de um cálculo testado é apanhada pelos testes. A falha de autorização na lógica do negócio não é vista por nenhuma das três e exige teste dirigido.",
     obj: "Situar o que cada verificação automática detecta e não detecta. M2 L2.",
   },
   {
@@ -174,7 +174,7 @@ const L3: QuestaoSC[] = [
   },
   {
     cod: "SC-M2L3-05", m: "m2", l: 3, t: "em", cen: true, d: "me",
-    e: "Caso fictício. Numa semana de actividade considerada normal, uma regra nova de correlação gerou 180 alertas no serviço de Nampula. A equipa de segurança tem 2 pessoas, que conseguem analisar cerca de 10 alertas por dia útil. Qual é a decisão correcta?",
+    e: "Caso fictício. Numa semana de actividade considerada normal, uma regra nova de correlação gerou 180 alertas no serviço de Nampula. A equipa de segurança tem 2 pessoas, que conseguem analisar, em conjunto, cerca de 10 alertas por dia útil. Qual é a decisão correcta?",
     opts: [
       "Manter a regra e acumular os alertas para revisão mensal, quando houver tempo",
       "Desligar definitivamente a regra, por gerar mais alertas do que a equipa consegue tratar",
@@ -201,14 +201,14 @@ const L4: QuestaoSC[] = [
   },
   {
     cod: "SC-M2L4-02", m: "m2", l: 4, t: "em", d: "di",
-    e: "Porque é que um endereço de rede associado a um ataque é um indicador menos durável do que o resumo criptográfico de um ficheiro encontrado?",
+    e: "Depois de um incidente, o atacante volta a tentar com outro endereço de rede, outro domínio e uma versão recompilada do mesmo programa. Qual das detecções preparadas na primeira análise tem mais probabilidade de continuar a funcionar?",
     opts: [
-      "Porque o endereço é mais difícil de registar e de pesquisar nos sistemas de detecção da instituição",
-      "Porque quem ataca muda de endereço com facilidade, enquanto o resumo muda só se o ficheiro mudar",
-      "Porque o resumo identifica a pessoa responsável pelo ataque de forma inequívoca",
-      "Porque os endereços não podem ser guardados por motivos de protecção de dados",
+      "O bloqueio do endereço de rede de onde partiram as primeiras ligações do ataque",
+      "O alerta para o processo do servidor web que lança um interpretador de comandos",
+      "A procura do resumo criptográfico do ficheiro encontrado na primeira análise",
+      "A lista de bloqueio com o nome de domínio usado para controlar o programa",
     ], ind: 1,
-    exp: "Endereços são descartáveis e trocam-se em minutos. O resumo é determinado pelo conteúdo do ficheiro: só muda se o ficheiro for alterado. Nenhum dos dois identifica uma pessoa.",
+    exp: "Endereço e domínio mudaram; a recompilação muda o resumo, porque basta um bit diferente. A regra de comportamento descreve o que o atacante precisa de fazer, não a ferramenta desta vez, e por isso é a que resiste às três mudanças.",
     obj: "Classificar indicadores de compromisso por durabilidade. M2 L4.",
   },
   {
@@ -279,14 +279,14 @@ const L5: QuestaoSC[] = [
   },
   {
     cod: "SC-M2L5-04", m: "m2", l: 5, t: "cor", d: "di",
-    e: "Associe cada momento do ciclo de resposta a incidentes à acção que lhe corresponde.",
+    e: "Associe cada acção, tomada durante um incidente, ao momento do ciclo de resposta a que pertence. As acções estão próximas umas das outras; decida pelo objectivo de cada uma.",
     pares: [
-      { esquerda: "Preparar", direita: "Ter plano, contactos e cópias antes de haver incidente" },
-      { esquerda: "Conter", direita: "Travar a propagação sem destruir evidência" },
-      { esquerda: "Erradicar", direita: "Remover acessos do atacante e fechar a via de entrada" },
-      { esquerda: "Aprender", direita: "Rever o sucedido e corrigir plano e detecções" },
+      { esquerda: "Retirar o posto da rede, mantendo-o ligado à corrente", direita: "Conter" },
+      { esquerda: "Eliminar a tarefa agendada criada pelo atacante e trocar as credenciais expostas", direita: "Erradicar" },
+      { esquerda: "Repor o serviço a partir de cópia anterior ao incidente, com vigilância reforçada", direita: "Recuperar" },
+      { esquerda: "Acrescentar uma regra de detecção para a técnica observada no incidente", direita: "Aprender" },
     ],
-    exp: "Dos seis momentos, preparar é o único que se faz antes do incidente; aprender é o que impede a repetição.",
+    exp: "Conter trava a propagação sem destruir evidência; erradicar retira a presença do atacante e fecha a entrada; recuperar repõe o serviço com critério; aprender corrige detecções e plano para que não se repita.",
     obj: "Sequenciar os momentos da resposta a incidentes. M2 L5.",
     fonte: FONTE_NIST,
   },

@@ -21,14 +21,14 @@ const L1: QuestaoSC[] = [
   },
   {
     cod: "SC-M3L1-02", m: "m3", l: 1, t: "em", d: "di",
-    e: "Um plano de resposta indica para cada função apenas um nome e um endereço de correio institucional. Que lacuna é mais grave numa madrugada de incidente?",
+    e: "Um plano de resposta indica para cada função um nome, um endereço de correio institucional e o telefone fixo do gabinete. Que lacuna é mais grave numa madrugada de incidente em que o correio está entre os sistemas afectados?",
     opts: [
-      "A falta de indicação do cargo de cada pessoa no organigrama da instituição",
-      "A falta de uma fotografia actualizada de cada pessoa para identificação à entrada da sala técnica",
+      "A falta da lista dos sistemas críticos atribuídos a cada função da equipa",
       "A falta de substituto e de contacto alternativo que não dependa dos sistemas afectados",
-      "A falta de indicação da data de nascimento de cada pessoa responsável",
-    ], ind: 2,
-    exp: "Um nome sozinho falha nas férias ou na doença, e o correio pode estar entre os sistemas afectados. Cada função precisa de titular, substituto e contacto por outra via, em papel.",
+      "A falta de indicação do cargo de cada pessoa no organigrama da instituição",
+      "A falta de um modelo de relatório final a preencher depois do incidente",
+    ], ind: 1,
+    exp: "De madrugada o telefone do gabinete não atende e o correio está afectado: ninguém é alcançado. A lista de sistemas e o modelo de relatório são lacunas reais, mas menos urgentes; sem substituto e sem contacto por outra via, o plano falha logo no primeiro passo.",
     obj: "Identificar lacunas que tornariam um plano inútil. M3 L1.",
   },
   {
@@ -51,7 +51,7 @@ const L1: QuestaoSC[] = [
     obj: "Escrever o procedimento de preservação de evidência. M3 L1.",
   },
   {
-    cod: "SC-M3L1-05", m: "m3", l: 1, t: "em", cen: true, d: "me",
+    cod: "SC-M3L1-05", m: "m3", l: 1, t: "em", cen: true, d: "di",
     e: "Caso fictício. Durante a recolha de evidência num posto do serviço de finanças de Cuamba, a equipa percebe que o caso pode vir a ter consequências disciplinares para um funcionário. O que deve mudar no procedimento técnico?",
     opts: [
       "Nada no procedimento técnico, mas a partir daí o rigor da custódia e da documentação passa a ser decisivo",
@@ -97,7 +97,7 @@ const L2: QuestaoSC[] = [
     obj: "Definir o calendário de actualizações. M3 L2.",
   },
   {
-    cod: "SC-M3L2-04", m: "m3", l: 2, t: "cor", d: "di",
+    cod: "SC-M3L2-04", m: "m3", l: 2, t: "cor", d: "me",
     e: "Associe cada afirmação feita cedo num incidente à razão pela qual não deve ser feita sem apuramento.",
     pares: [
       { esquerda: "«Os dados não foram acedidos»", direita: "A análise dos registos ainda não terminou" },

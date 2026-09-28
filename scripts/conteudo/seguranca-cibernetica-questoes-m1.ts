@@ -37,14 +37,14 @@ const L1: QuestaoSC[] = [
   },
   {
     cod: "SC-M1L1-04", m: "m1", l: 1, t: "cor", d: "di",
-    e: "Associe cada situação da instituição fictícia à propriedade de segurança que é principalmente afectada.",
+    e: "Associe cada situação da instituição fictícia à propriedade de segurança que é afectada em primeiro lugar. Atenção: em algumas situações há mais do que uma consequência possível; escolha a dominante no momento descrito.",
     pares: [
-      { esquerda: "Lista de beneficiários enviada por engano para um endereço externo", direita: "Confidencialidade" },
-      { esquerda: "Montante de um pagamento alterado na base sem registo de quem o fez", direita: "Integridade" },
-      { esquerda: "Portal de marcações inacessível durante um dia de atendimento", direita: "Disponibilidade" },
-      { esquerda: "Operação feita com conta partilhada, sem se saber quem a executou", direita: "Responsabilização" },
+      { esquerda: "Cópia de segurança completa levada para o disco pessoal de um técnico, sem alteração dos dados", direita: "Confidencialidade" },
+      { esquerda: "Relatório oficial produzido a partir de uma tabela em que um programa duplicou metade dos registos", direita: "Integridade" },
+      { esquerda: "Ficheiros do arquivo cifrados por um programa malicioso, sem indício de terem sido copiados", direita: "Disponibilidade" },
+      { esquerda: "Registo de auditoria apagado por uma conta de administração partilhada por três técnicos", direita: "Responsabilização" },
     ],
-    exp: "Cada situação liga-se à consequência dominante: divulgação, alteração, indisponibilidade e impossibilidade de atribuir uma acção a uma pessoa.",
+    exp: "Em cada caso é preciso separar a consequência dominante das secundárias: a cópia levada expõe dados sem os alterar; o relatório está disponível mas errado; os ficheiros cifrados, sem indício de cópia, ficam indisponíveis; o registo apagado por conta partilhada impede atribuir a acção a uma pessoa.",
     obj: "Relacionar consequências concretas com propriedades de segurança. M1 L1.",
   },
   {
