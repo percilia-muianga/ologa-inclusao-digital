@@ -214,4 +214,92 @@ export const LICOES_M10: Record<string, ConteudoLicao> = {
     },
     fontes: ["rfc2474", "rfc2475", "rfc4594", "rfc3246", "tcqdisc", "nftables", "iperf3", "wireshark"],
   },
+
+  "r-m10-l3": {
+    objectivos: [
+      "Explicar porque voz e vídeo em tempo real são sensíveis a atraso unilateral, jitter e perda, e o papel do RTP e do tampão de jitter.",
+      "Calcular o débito de uma chamada G.711 com 20 ms de pacote, ao nível IP e ao nível Ethernet, e o total para várias chamadas.",
+      "Montar um orçamento de atraso unilateral e compará-lo com a referência da Recomendação ITU-T G.114, sabendo que é uma referência de planeamento e não uma garantia.",
+      "Simular voz com iperf3 UDP e observar o efeito de jitter e perda, reconhecendo os limites da simulação.",
+    ],
+    explicacao: [
+      {
+        titulo: "Tempo real: porque não basta ter débito",
+        paragrafos: [
+          "Numa chamada, a voz é cortada em pedaços de poucos milissegundos, codificada e enviada em pacotes RTP sobre UDP (RFC 3550). Um pacote que chega tarde demais para ser tocado conta como perdido; não vale a pena retransmiti-lo. Por isso, voz e vídeo usam UDP e são muito mais sensíveis a atraso, jitter e perda do que uma transferência de ficheiros.",
+          "O receptor guarda alguns pacotes num tampão de jitter antes de tocar, para compensar chegadas irregulares. Um tampão maior tolera mais jitter, mas acrescenta atraso. A Recomendação ITU-T G.114 indica, para planeamento, que um atraso unilateral de boca a ouvido até cerca de 150 ms é aceitável para a maioria das conversas e que acima de 400 ms não deve ser usado em planeamento geral. É uma referência de planeamento; a qualidade percebida depende também do codec, da perda e do eco.",
+        ],
+      },
+      {
+        titulo: "Contas de uma chamada",
+        paragrafos: [
+          "O codec G.711 (ITU-T) produz 64 kbit/s de voz. Com pacotes de 20 ms há 50 pacotes por segundo, cada um com 160 bytes de voz. Somam-se cabeçalhos RTP (12 bytes), UDP (8) e IPv4 (20): 200 bytes por pacote, ou seja 200 × 8 × 50 = 80 kbit/s ao nível IP, em cada sentido. Em Ethernet somam-se 18 bytes de cabeçalho e verificação: 218 × 8 × 50 = 87,2 kbit/s. Uma VPN ou IPv6 acrescentam mais cabeçalhos; compressão de cabeçalhos ou outros codecs reduzem. As contas servem para planear, e confirmam-se medindo.",
+          "O vídeo não tem débito fixo: depende do codec, da resolução, do movimento na imagem e da adaptação feita pela aplicação. Os números de planeamento tiram-se da documentação da plataforma usada e de medições, nunca de uma tabela genérica. O orçamento de atraso unilateral soma: codificação e empacotamento (por exemplo 20 ms), rede num sentido, tampão de jitter e descodificação.",
+        ],
+      },
+    ],
+    caso: "A DPE (fictícia) quer 8 chamadas de voz simultâneas entre a delegação e a sede e uma videoconferência semanal. A WAN simulada tem 40 ms num sentido. O técnico tem de dizer quanto débito reservar para a voz, se o atraso cabe no orçamento e o que acontece com jitter e perda. Todos os valores são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "A ligação r1–r2 representa a WAN; atraso, jitter e perda simulados com tc netem na saída r2-r1 (delegação → sede).",
+        "Voz simulada: iperf3 UDP com datagramas de 172 bytes (160 de voz + 12 de RTP simulados) a 68,8 kbit/s de dados, o que dá 50 pacotes por segundo. Não é RTP verdadeiro: o iperf3 mede jitter e perda como o RTP, mas não há codec nem tampão.",
+        "Limite da simulação: com jitter, o netem pode reordenar pacotes; numa ligação real a reordenação pode ser menor ou maior.",
+      ],
+      passos: [
+        PRE_M10,
+        { accao: "Cenário 1 — atraso fixo de 40 ms num sentido. Confirme com ping (a ida e volta fica perto de 40 ms, porque o regresso não tem atraso simulado).", comandos: ["sudo ip netns exec r2 tc qdisc add dev r2-r1 root netem delay 40ms", "sudo ip netns exec pc-del ping -c 10 -i 0.2 10.10.20.53 | tail -1"], saida: ["rtt min/avg/max/mdev = 40.1/40.2/40.4/0.1 ms"] },
+        { accao: "Consola C: servidor iperf3 (esperar «Server listening on 5201»). Consola A: voz simulada durante 20 s.", comandos: ["C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -u -b 68.8K -l 172 -t 20 | tail -2"], saida: ["[  5] 0.00-20.04 sec  168 KBytes  68.7 Kbits/sec  0.030 ms  0/1000 (0%)  receiver", "(1000 datagramas em 20 s = 50 por segundo)"] },
+        { accao: "Cenário 2 — acrescente jitter: 40 ms ± 15 ms. Repita o teste (reinicie o servidor na consola C).", comandos: ["sudo ip netns exec r2 tc qdisc change dev r2-r1 root netem delay 40ms 15ms", "C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -u -b 68.8K -l 172 -t 20 | tail -2"], saida: ["[  5] 0.00-20.05 sec  168 KBytes  68.6 Kbits/sec  9.84 ms  0/1000 (0%)  receiver", "(podem surgir avisos de pacotes fora de ordem: efeito do netem com jitter)"] },
+        { accao: "Cenário 3 — jitter e 2 % de perda. Repita o teste.", comandos: ["sudo ip netns exec r2 tc qdisc change dev r2-r1 root netem delay 40ms 15ms loss 2%", "C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -u -b 68.8K -l 172 -t 20 | tail -2"], saida: ["[  5] 0.00-20.05 sec  165 KBytes  67.3 Kbits/sec  10.1 ms  21/1000 (2.1%)  receiver"] },
+        { accao: "Confirme na captura o tamanho dos pacotes de voz simulada (consola E, esperar «Capturing on»; repetir o teste de 5 s). O comprimento IP deve ser 200 bytes (172 + 8 UDP + 20 IP).", comandos: ["E: sudo ip netns exec r1 tshark -i r1-r2 -c 3 -f 'udp port 5201' -T fields -e ip.len -e frame.len", "C: sudo ip netns exec srv iperf3 -s -1 -B 10.10.20.53", "A: sudo ip netns exec pc-del iperf3 -c 10.10.20.53 -u -b 68.8K -l 172 -t 5"], saida: ["200\t214", "200\t214", "200\t214", "(frame.len = 214: a captura não inclui os 4 bytes de verificação Ethernet; somados dão os 218 usados nas contas)"] },
+        { accao: "Preencha o orçamento de atraso unilateral para os cenários 1 e 2 com: empacotamento 20 ms, rede (40 ms), tampão de jitter (cenário 1: 20 ms; cenário 2: 60 ms, cerca de 4 vezes o jitter simulado de ±15 ms), descodificação 5 ms (valor fictício de exemplo).", comandos: ["nano /tmp/dpe-m10-l3-orcamento.txt"] },
+      ],
+      sucesso: [
+        "A dupla tem uma tabela cenário | jitter | perda | orçamento de atraso unilateral, com a indicação de que são valores simulados.",
+        "O formando calcula 87,2 kbit/s por chamada G.711/20 ms em Ethernet e o total para 8 chamadas (697,6 kbit/s por sentido).",
+        "O formando explica porque um tampão de jitter maior evita cortes mas aumenta o atraso.",
+        "O formando diz que o valor da G.114 é referência de planeamento, não promessa de qualidade.",
+      ],
+      reversao: [
+        "sudo ip netns exec r2 tc qdisc del dev r2-r1 root",
+        "Ctrl+C nas consolas C e E se algum processo ainda estiver à espera (não usar pkill/killall).",
+        "rm /tmp/dpe-m10-l3-orcamento.txt (depois de guardar a tabela, se necessário).",
+        "Verificar: tc qdisc show dev r2-r1 mostra só «qdisc noqueue»; ip netns pids srv e ip netns pids r1 não listam iperf3 nem tshark.",
+      ],
+    },
+    papel: [
+      { tarefa: "Calcule o débito de uma chamada G.711 com pacotes de 20 ms: ao nível IP e em Ethernet. Depois, para 8 chamadas.", esperado: "Por pacote: 160 + 12 + 8 + 20 = 200 bytes; 50 pacotes/s → 80 kbit/s ao nível IP. Ethernet: 218 bytes → 87,2 kbit/s. 8 chamadas: 640 kbit/s (IP) ou 697,6 kbit/s (Ethernet) em cada sentido, sem contar VPN." },
+      { tarefa: "Orçamento de atraso unilateral: cenário 1 (20 + 40 + 20 + 5) e cenário 2 (20 + 40 + 60 + 5). Cabem na referência de 150 ms da G.114?", esperado: "Cenário 1: 85 ms. Cenário 2: 125 ms. Ambos abaixo de 150 ms, mas o cenário 2 tem menos margem. É referência de planeamento; a perda de 2 % do cenário 3 prejudica a qualidade mesmo com atraso aceitável." },
+      { tarefa: "Com as saídas de exemplo, preencha: cenário | jitter | perda.", esperado: "1 (40 ms fixo): 0,030 ms | 0 %. 2 (±15 ms): 9,84 ms | 0 %. 3 (±15 ms e 2 %): 10,1 ms | 2,1 %." },
+      { tarefa: "Um colega propõe reservar 64 kbit/s por chamada «porque o G.711 é 64 kbit/s». O que falta?", esperado: "Os cabeçalhos: 64 kbit/s é só a voz. Ao nível IP são 80 kbit/s e em Ethernet 87,2 kbit/s; numa VPN ainda mais. Reservar 64 kbit/s deixaria as chamadas a perder pacotes." },
+    ],
+    formativas: [
+      { pergunta: "Porque não se retransmitem pacotes de voz perdidos numa chamada?", opcoes: ["Porque o UDP proíbe", "Porque o pacote retransmitido chegaria tarde demais para ser tocado", "Porque a voz é cifrada", "Porque o DSCP EF impede"], certa: 1, comentario: "Em tempo real, um pacote atrasado é inútil. A aplicação prefere esconder a falta do que esperar por uma retransmissão." },
+      { pergunta: "O que acontece ao aumentar o tampão de jitter do telefone?", opcoes: ["Menos cortes por chegadas irregulares, mas mais atraso de boca a ouvido", "Mais débito disponível", "Menos perda na rede", "Nada"], certa: 0, comentario: "O tampão espera pelos pacotes atrasados, o que evita cortes, mas cada milissegundo de espera soma-se ao atraso unilateral. A perda na rede continua igual." },
+    ],
+    leituraFacil: [
+      "A voz e o vídeo precisam de chegar a tempo.",
+      "Um pacote de voz atrasado já não serve.",
+      "Uma chamada usa mais do que 64 kbit/s por causa dos cabeçalhos.",
+      "O telefone guarda alguns pacotes para evitar cortes, mas isso atrasa.",
+      "Há uma referência para o atraso: cerca de 150 ms num sentido.",
+      "A simulação ajuda a comparar, mas não é uma ligação real.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: RTP sobre UDP; atraso unilateral, jitter e perda; tampão de jitter; referência G.114; contas do G.711; vídeo sem débito fixo.",
+        "20–65 min: prática em duplas (três cenários netem, captura do tamanho, orçamento); quem não tiver laboratório faz as contas e as tabelas em papel.",
+        "65–75 min: formativas e correcção comentada; discutir o caso das 8 chamadas.",
+      ],
+      errosComuns: [
+        "Reservar só 64 kbit/s por chamada G.711.",
+        "Usar o RTT do ping como atraso unilateral sem dizer que é aproximação.",
+        "Apresentar o valor da G.114 como garantia de boa qualidade.",
+        "Dar números fixos de débito para vídeo sem consultar a plataforma nem medir.",
+        "Confundir o iperf3 UDP com uma chamada real (não há codec nem tampão).",
+      ],
+    },
+    fontes: ["rfc3550", "itug114", "itug711", "rfc7679", "rfc3393", "rfc768", "iperf3", "tcqdisc", "wireshark"],
+  },
 };
