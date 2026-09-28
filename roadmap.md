@@ -163,7 +163,8 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 ## 28/09/2026 — Curso de Administração de Redes (80 h)
 - [x] Revisão m01–m06: guiões vs duração (verificador `scripts/verificar-guioes-redes.ts`), filtro tshark com ACK final, capturas em segunda consola sem pkill genérico, `vlan and icmp` no tronco, absolutos técnicos qualificados com fontes
 - [x] Módulos 7 e 8 escritos (10 lições)
-- [ ] Módulos 9–12 (20 lições)
+- [x] Módulo 9 escrito (5 lições; 45/60)
+- [ ] Módulos 10–12 (15 lições)
 - [ ] Agregador, pacote server-only, importador/UI, SQL de políticas por aprovar (não aplicar)
 - [ ] Matriz TdR, docs internos (contradição 120/80 h), testes, tipos/build, privacidade
 - [ ] Laboratórios: nenhum executado (ambiente sem permissão para espaços de nomes de rede)
