@@ -276,3 +276,9 @@ Registado a 22 de Setembro de 2026.
 ## PV-SC-BANCO — revisão dos níveis (28/09/2026)
 
 - Os 14 níveis alterados na primeira simulação foram reavaliados: 6 itens reescritos, 2 rótulos revertidos e 6 mantidos com justificação (ver `docs/matriz-banco-seguranca-cibernetica.md`). Teste do banco: 19/19.
+
+## Banco privado de Redes (28-09-2026)
+- Preparado: 80 finais + 10 diagnóstico, rascunho/inactivo, não importado (docs/matriz-banco-redes.md).
+- Ensaio com motor real: 188/200 provas viáveis; 12 falhas fechadas por limite de trabalho — decisão pendente (rever conteúdo de itens ou aceitar).
+- R18 com cobertura fraca no banco (1 item); transversal sem difíceis.
+- Validação pedagógica Ologa/ATDI pendente.
