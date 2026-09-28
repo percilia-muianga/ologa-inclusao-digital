@@ -208,6 +208,32 @@ for ip, tempos in falhas.items():
             break
 print(f"Linhas ignoradas por formato inválido: {invalidas}")`.split("\n");
 
+const SCRIPT_EXPORTAR = `#!/bin/sh
+# exportar.sh — exporta o estado de r1 e r2 para texto e regista no git (rede de prática DPE).
+# Uso: sudo sh /tmp/dpe-m11/l4/exportar.sh      Só lê os equipamentos; nunca os altera.
+set -eu
+DEST=/tmp/dpe-m11/l4/configs
+[ "$(id -u)" = 0 ] || { echo "ERRO: executar com sudo." >&2; exit 1; }
+[ -d "$DEST/.git" ] || { echo "ERRO: repositório $DEST não existe (ver passo 2)." >&2; exit 1; }
+for n in r1 r2; do
+  ip netns list | awk '{print $1}' | grep -qx "$n" || { echo "ERRO: espaço de nomes $n não existe." >&2; exit 1; }
+  mkdir -p "$DEST/$n"
+  # o sufixo @ifN muda sempre que a rede é recriada; retira-se para não gerar falsas diferenças
+  ip -n "$n" -br addr show | sed 's/@[^ ]*//' > "$DEST/$n/enderecos.txt"
+  ip -n "$n" route show > "$DEST/$n/rotas.txt"
+  ip netns exec "$n" nft list ruleset > "$DEST/$n/nftables.txt"
+  ip netns exec "$n" tc qdisc show > "$DEST/$n/filas.txt"
+done
+cd "$DEST"
+git add -A
+if git diff --cached --quiet; then
+  echo "Sem alterações desde a última exportação."
+else
+  git commit -qm "Exportação $(date '+%F %T') por \${SUDO_USER:-root}"
+  echo "Alterações registadas:"
+  git show --stat --format='%h %s' HEAD
+fi`.split("\n");
+
 export const LICOES_M11: Record<string, ConteudoLicao> = {
   "r-m11-l1": {
     objectivos: [
@@ -465,5 +491,92 @@ export const LICOES_M11: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["rfc5424", "rfc5905", "nist80092", "rsyslog", "chrony", "pythonstd"],
+  },
+
+  "r-m11-l4": {
+    objectivos: [
+      "Explicar gestão de configurações: linha de base aprovada, controlo de alterações, detecção de desvios e registo de quem mudou o quê e quando.",
+      "Exportar automaticamente o estado de r1 e r2 para ficheiros de texto versionados em git, com um script de shell com tratamento de erros.",
+      "Detectar uma alteração não autorizada pela diferença no git e repor a linha de base, verificando depois.",
+      "Fazer uma cópia de segurança com soma de verificação, testar a reposição e explicar a regra 3-2-1 e porque segredos não entram no repositório.",
+    ],
+    explicacao: [
+      {
+        titulo: "Linha de base, alterações e desvios",
+        paragrafos: [
+          "A linha de base é a configuração aprovada de cada equipamento. Qualquer mudança passa por um pedido: o quê, porquê, risco, plano de reversão, aprovação, execução e verificação. Um desvio é uma diferença entre o equipamento e a linha de base que não tem pedido aprovado — pode ser um erro, um remendo esquecido ou um ataque. O NIST SP 800-128 descreve este ciclo.",
+          "Exportar as configurações para texto e guardá-las num sistema de controlo de versões (git) dá histórico completo: cada exportação é um registo com data e autor, e 'git diff' mostra linha a linha o que mudou. Em equipamentos reais exporta-se a configuração do fabricante (por SSH, API ou ficheiro); nesta prática exportam-se endereços, rotas, regras nftables e filas.",
+        ],
+      },
+      {
+        titulo: "Cópias de segurança que se conseguem repor",
+        paragrafos: [
+          "Uma cópia só vale se a reposição tiver sido testada. A regra 3-2-1 é uma prática corrente: 3 cópias, em 2 suportes diferentes, 1 fora do local. Uma soma de verificação (SHA-256) guardada com a cópia permite confirmar que o ficheiro não se estragou nem foi alterado. Os planos de contingência (NIST SP 800-34) definem o que se copia, com que frequência e em quanto tempo se tem de repor.",
+          "Configurações exportadas podem conter segredos (chaves, cadeias SNMP, palavras-passe). Esses segredos não entram no repositório: ficam num cofre, e o repositório tem regras de exclusão (.gitignore) e revisão antes de cada envio. O próprio repositório e as cópias têm acesso restrito, porque descrevem toda a rede.",
+        ],
+      },
+    ],
+    caso: "Na DPE (fictícia), numa sexta-feira a delegação deixou de chegar a um serviço e ninguém sabia o que tinha mudado. Descobriu-se depois uma rota acrescentada «para testar» e esquecida. O chefe aprova: exportação diária das configurações para git, verificação de desvios e cópia semanal com reposição testada. Todos os dados são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Repositório: /tmp/dpe-m11/l4/configs (git, só na VM). Cópias: /tmp/dpe-m11/l4/copias. Teste de reposição: /tmp/dpe-m11/l4/reposicao.",
+        "A alteração não autorizada é uma rota fictícia 10.99.0.0/24 no r1, acrescentada pelo formador e retirada na própria lição.",
+      ],
+      passos: [
+        PRE_M11,
+        { accao: "Crie o repositório com identidade local (só para este repositório), a exclusão de segredos e o script de exportação (texto completo abaixo).", comandos: ["sudo mkdir -p /tmp/dpe-m11/l4/configs /tmp/dpe-m11/l4/copias && cd /tmp/dpe-m11/l4", "sudo git -C configs init -q && sudo git -C configs config user.name 'Tecnico Pratica' && sudo git -C configs config user.email 'ti@dpe.example'", "printf '*.segredo\\n*.key\\n' | sudo tee configs/.gitignore >/dev/null", "sudo tee exportar.sh >/dev/null <<'EOF'", ...SCRIPT_EXPORTAR, "EOF"] },
+        { accao: "Primeira exportação: é a linha de base aprovada.", comandos: ["sudo sh exportar.sh", "sudo git -C configs log --oneline"], saida: ["Alterações registadas:", "3f2a1c0 Exportação 2026-09-28 12:20:05 por formando", " .gitignore         | 2 ++", " r1/enderecos.txt   | 5 +++++", " r1/rotas.txt       | 5 +++++", " …", " 9 files changed, …", "3f2a1c0 Exportação 2026-09-28 12:20:05 por formando"] },
+        { accao: "Repita sem mudanças: o script não cria registos vazios.", comandos: ["sudo sh exportar.sh"], saida: ["Sem alterações desde a última exportação."] },
+        { accao: "Formador (sem avisar): acrescenta uma rota não autorizada. Formandos: exportem e vejam a diferença.", comandos: ["Formador: sudo ip -n r1 route add 10.99.0.0/24 via 10.255.0.2", "sudo sh exportar.sh", "sudo git -C configs diff HEAD~1 -- r1/rotas.txt"], saida: ["Alterações registadas:", "8b7e9d2 Exportação 2026-09-28 12:24:40 por formando", " r1/rotas.txt | 1 +", "+10.99.0.0/24 via 10.255.0.2 dev r1-r2"] },
+        { accao: "Sem pedido aprovado para esta rota: reponha a linha de base (retirar a rota), exporte e confirme que o estado volta a ser igual à linha de base.", comandos: ["sudo ip -n r1 route del 10.99.0.0/24 via 10.255.0.2", "sudo sh exportar.sh", "sudo git -C configs diff $(sudo git -C configs rev-list --max-parents=0 HEAD) HEAD -- r1/ r2/ && echo 'igual à linha de base'"], saida: ["Alterações registadas:", "c41d5aa Exportação 2026-09-28 12:26:02 por formando", " r1/rotas.txt | 1 -", "igual à linha de base"] },
+        { accao: "Teste do tratamento de erros: sem sudo o script recusa; com o repositório em falta também.", comandos: ["sh exportar.sh; echo \"código=$?\""], saida: ["ERRO: executar com sudo.", "código=1"] },
+        { accao: "Cópia de segurança com soma SHA-256 e teste de reposição numa pasta separada.", comandos: ["cd /tmp/dpe-m11/l4 && sudo tar -czf copias/configs-$(date +%F).tar.gz -C /tmp/dpe-m11/l4 configs", "cd copias && sudo sh -c 'sha256sum configs-*.tar.gz > SHA256SUMS' && sha256sum -c SHA256SUMS", "sudo mkdir -p ../reposicao && sudo tar -xzf configs-*.tar.gz -C ../reposicao", "sudo diff -r ../configs ../reposicao/configs && echo 'reposição idêntica'", "sudo git -C ../reposicao/configs log --oneline | wc -l"], saida: ["configs-2026-09-28.tar.gz: OK", "reposição idêntica", "3"] },
+      ],
+      sucesso: [
+        "O histórico git tem a linha de base, o desvio e a reposição, cada um com data e autor.",
+        "A diferença mostra exactamente a rota 10.99.0.0/24; depois da reposição, r1 e r2 estão iguais à linha de base.",
+        "O script recusa correr sem sudo e não cria registos quando nada mudou.",
+        "A soma SHA-256 confere e a reposição é idêntica, com o histórico completo.",
+        "A dupla explica a regra 3-2-1 e onde ficariam as outras duas cópias numa instituição real.",
+      ],
+      reversao: [
+        "Confirmar que a rota de teste não ficou: sudo ip -n r1 route show 10.99.0.0/24 não deve mostrar nada (se mostrar: sudo ip -n r1 route del 10.99.0.0/24 via 10.255.0.2).",
+        "Guardar o que for preciso fora da VM e depois: sudo rm -r /tmp/dpe-m11/l4 (repositório, cópias e reposição, todos só da lição).",
+      ],
+    },
+    papel: [
+      { tarefa: "Interprete esta diferença do git em r1/rotas.txt: «+10.99.0.0/24 via 10.255.0.2 dev r1-r2» e «-10.20.10.0/24 via 10.255.0.2 dev r1-r2». Que impacto tem e o que faz?", esperado: "Foi acrescentada uma rota para 10.99.0.0/24 e retirada a rota para a delegação 10.20.10.0/24: a sede deixou de chegar à delegação. Verificar se há pedido aprovado; se não, repor a linha de base (repor a rota da delegação, retirar a nova), exportar e confirmar." },
+      { tarefa: "Escreva um pedido de alteração para acrescentar legitimamente uma rota nova no r1.", esperado: "O quê: rota X via Y em r1. Porquê: serviço/pedido. Risco: afectar o encaminhamento existente. Janela: data e hora. Reversão: comando para retirar a rota. Verificação: ping/traceroute e exportação para git. Aprovação: responsável de TI. Executor: nome." },
+      { tarefa: "A cópia semanal existe há um ano, mas nunca foi reposta. O que falta e porquê?", esperado: "Falta testar a reposição (e verificar a soma): sem isso não se sabe se a cópia está completa, legível ou se o procedimento funciona dentro do tempo exigido." },
+      { tarefa: "Um colega quer guardar no repositório o ficheiro com a palavra-passe SNMPv3 «para ter tudo junto». Responda.", esperado: "Não: o histórico git guarda para sempre qualquer segredo que lá entre, e o repositório é partilhado. Segredos no cofre; o repositório tem .gitignore para *.segredo/*.key e revisão antes de cada registo." },
+    ],
+    formativas: [
+      { pergunta: "O que é um desvio de configuração?", opcoes: ["Uma rota com métrica alta", "Uma diferença entre o estado do equipamento e a linha de base que não tem alteração aprovada", "Uma cópia de segurança antiga", "Um erro de sintaxe no git"], certa: 1, comentario: "O desvio pode ser um esquecimento, um erro ou um ataque; detecta-se comparando o estado exportado com a linha de base e trata-se com repor ou aprovar." },
+      { pergunta: "Porque se calcula e guarda uma soma SHA-256 com cada cópia?", opcoes: ["Para cifrar a cópia", "Para confirmar mais tarde que o ficheiro está íntegro, sem corrupção nem alteração", "Para comprimir mais", "Para dispensar o teste de reposição"], certa: 1, comentario: "A soma confirma a integridade; não cifra nem substitui o teste de reposição. Para detectar alteração maliciosa, a soma deve ser guardada separadamente da cópia." },
+    ],
+    leituraFacil: [
+      "Guarde a configuração aprovada de cada equipamento.",
+      "Um programa exporta a configuração todos os dias.",
+      "O git mostra o que mudou, quando e quem.",
+      "Uma mudança sem autorização volta atrás.",
+      "Uma cópia só serve se já a experimentou repor.",
+      "Palavras-passe não entram no git.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: linha de base, pedido de alteração, desvios; exportação para git; cópias, 3-2-1, somas e teste de reposição; segredos fora do repositório.",
+        "20–70 min: prática em duplas (repositório, linha de base, desvio, reposição, teste de erro, cópia e reposição); quem não tiver laboratório interpreta as diferenças e escreve o pedido de alteração em papel.",
+        "70–80 min: formativas e correcção comentada.",
+      ],
+      errosComuns: [
+        "Configurar a identidade git para todo o sistema em vez de só no repositório da prática.",
+        "Guardar segredos no repositório.",
+        "Nunca testar a reposição das cópias.",
+        "Guardar a soma SHA-256 no mesmo sítio e sem protecção, e confiar nela contra alteração maliciosa.",
+        "Deixar a rota de teste 10.99.0.0/24 no r1.",
+      ],
+    },
+    fontes: ["nist800128", "nist80034", "git", "iproute2", "nftables", "debian"],
   },
 };
