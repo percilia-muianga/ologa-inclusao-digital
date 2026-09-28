@@ -265,12 +265,12 @@ const L5: QuestaoSC[] = [
     cod: "SC-M3L5-05", m: "m3", l: 5, t: "em", cen: true, d: "di",
     e: "Caso fictício. A direcção de uma instituição de Tete quer um indicador de gestão de vulnerabilidades. Os dados disponíveis são: data de detecção e data de correcção de cada vulnerabilidade crítica; não há registo de horas de trabalho da equipa. No último trimestre houve 8 vulnerabilidades críticas, 6 corrigidas em menos de 15 dias e 2 corrigidas em 40 dias. Qual é o indicador calculável com estes dados e o seu valor?",
     opts: [
-      "Custo médio por vulnerabilidade corrigida: não calculável com os dados disponíveis",
+      "Horas médias da equipa por vulnerabilidade corrigida: 12 horas por correcção",
       "Percentagem de críticas corrigidas em menos de 15 dias: 75 %",
-      "Horas médias de trabalho por correcção: 20 horas por vulnerabilidade",
+      "Custo médio por vulnerabilidade corrigida: 20 000 meticais por correcção",
       "Percentagem de críticas corrigidas em menos de 15 dias: 60 %",
     ], ind: 1,
-    exp: "Com datas de detecção e correcção calcula-se a percentagem corrigida dentro do prazo: 6 em 8 = 75 %. Custos e horas exigem dados que a instituição não tem.",
+    exp: "Com datas de detecção e correcção calcula-se a percentagem corrigida dentro do prazo: 6 em 8 = 75 %. As alternativas com horas e custos usam dados que a instituição não regista, pelo que não são calculáveis; a de 60 % tem a conta errada.",
     obj: "Definir indicadores mensuráveis com os dados que existem. M3 L5.",
   },
 ];
