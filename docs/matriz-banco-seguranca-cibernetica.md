@@ -45,8 +45,8 @@ privado, não importado, não activado.** O banco vive em
 | M2 L3 | Monitorização, registos e SIEM | 5 | 2 | 1 | 1 | 1 | 2 | 3 | 0 |
 | M2 L4 | Malware, ameaças avançadas e forense básica | 5 | 2 | 1 | 1 | 1 | 2 | 2 | 1 |
 | M2 L5 | Resposta a incidentes | 5 | 2 | 1 | 1 | 1 | 2 | 1 | 2 |
-| M3 L1 | Plano de resposta e cadeia de custódia | 5 | 2 | 1 | 1 | 1 | 2 | 2 | 1 |
-| M3 L2 | Comunicação inclusiva e acessível | 5 | 2 | 1 | 1 | 1 | 2 | 2 | 1 |
+| M3 L1 | Plano de resposta e cadeia de custódia | 5 | 2 | 1 | 1 | 1 | 2 | 1 | 2 |
+| M3 L2 | Comunicação inclusiva e acessível | 5 | 2 | 1 | 1 | 1 | 2 | 3 | 0 |
 | M3 L3 | Continuidade, cópias e restauro verificado | 5 | 2 | 1 | 1 | 1 | 2 | 1 | 2 |
 | M3 L4 | Laboratório integrado | 3 | 0 | 0 | 1 | 2 | 0 | 2 | 1 |
 | M3 L5 | Normas, políticas e melhoria contínua | 5 | 2 | 1 | 1 | 1 | 2 | 2 | 1 |
@@ -61,8 +61,8 @@ L4, L5; M3 L3, L5 — 6 escolha múltipla, 4 V/F; 5 fáceis, 5 médias.
 |---|---|---|---|
 | Escolha múltipla | 17 | 11 | 4 |
 | Verdadeiro/falso | 15 | 1 | 0 |
-| Associação | 0 | 12 | 4 |
-| Cenário | 0 | 8 | 8 |
+| Associação | 0 | 13 | 3 |
+| Cenário | 0 | 7 | 9 |
 
 ## Limites conhecidos (por validar)
 
@@ -72,3 +72,31 @@ L4, L5; M3 L3, L5 — 6 escolha múltipla, 4 V/F; 5 fáceis, 5 médias.
 - Sobreposição semântica verificada por medida de palavras comuns (limiar 0,5)
   e por leitura; não substitui revisão por especialistas.
 - Validação pedagógica Ologa/ATDI pendente; nenhum item está aprovado.
+
+## Revisão dos 14 níveis alterados durante a primeira simulação (28/09/2026)
+
+Critério: fácil = recordar/reconhecer, um passo; média = aplicar a um caso dado,
+um passo de decisão; difícil = analisar várias condições, alternativas todas
+plausíveis ou separar o que se prova do que não se prova. As alterações
+iniciais foram feitas para desbloquear o sorteio; cada uma foi reavaliada.
+
+| Item | Mudança inicial | Decisão após revisão | Justificação |
+|---|---|---|---|
+| M1 L2-05 | difícil → média | mantida média | Aplicação num passo: a alternativa correcta enumera os defeitos visíveis na minuta. |
+| M1 L3-05 | difícil → média | mantida média | Aplicação num passo: detectar uma regra que contraria a segmentação. |
+| M2 L1-05 | difícil → média | mantida média | Aplica um princípio (interface ≠ verificação no servidor). |
+| M2 L3-05 | difícil → média | mantida média; enunciado clarificado («em conjunto») | Uma conta simples e uma decisão; o enunciado era ambíguo sobre a capacidade. |
+| M2 L4-05 | difícil → média | mantida média | Aplica a ordem de volatilidade a uma decisão dada. |
+| M3 L2-05 | difícil → média | mantida média | Escolher a frase sem afirmações não apuradas; um passo. |
+| M3 L1-05 | difícil → média | **revertida para difícil** | A resposta contraria a intuição e exige julgar o que muda e o que não muda; é análise. |
+| M1 L1-04 | média → difícil | **conteúdo reescrito** | A versão era classificação directa (recordação). Nova versão com situações de consequências múltiplas, em que é preciso escolher a dominante. |
+| M1 L4-02 | média → difícil | mantida difícil | Exige raciocinar sobre a cadeia de confiança (página + resumo trocados em conjunto); equívoco frequente. |
+| M2 L2-02 | média → difícil | **conteúdo reescrito** | A versão era um limite de uma ferramenta. Nova versão combina três verificações e pede o ponto cego comum. |
+| M2 L4-02 | média → difícil | **conteúdo reescrito** | A versão era recordação. Nova versão: o atacante muda endereço, domínio e recompila; decidir que detecção resiste às três mudanças. |
+| M2 L5-04 | média → difícil | **conteúdo reescrito** | A versão associava nomes de fases a definições. Nova versão usa acções próximas (isolar, erradicar, recuperar, aprender), a distinguir pelo objectivo. |
+| M3 L1-02 | média → difícil | **conteúdo reescrito** | Distractores eram implausíveis (fotografia, data de nascimento). Novos distractores são lacunas reais, mas menos urgentes: exige priorizar. |
+| M3 L2-04 | média → difícil | **revertida para média** | Associação directa de afirmações a razões; não é análise. |
+
+Resultado: marginais inalterados (32/32/16) porque uma reversão compensa a
+outra; intersecções actualizadas acima. Teste do banco repetido: 19/19; 200
+provas viáveis sem alterar outros rótulos.
