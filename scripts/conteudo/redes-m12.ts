@@ -15,6 +15,7 @@
  * de nomes. Todas as credenciais e chaves são fictícias e criadas na aula.
  * Nenhuma lição altera ou reinicia serviços do sistema da VM.
  */
+import type { ResultadoTdr } from "../../src/lib/plano-redes";
 import { TOPOLOGIA_BASE, type ConteudoLicao } from "./redes-base";
 
 /** Pré-verificação e declaração de âmbito, comum às cinco lições. */
@@ -116,6 +117,81 @@ const LISTA_AUDITORIA = [
   "A11,Cópia de segurança com integridade e reposição testada,NIST SP 800-34,soma verificada e reposição,saída da verificação e da reposição,,",
   "A12,Inventário actualizado e sem credenciais,NIST SP 800-128,comparar inventário com recolha,CSV e lista de diferenças,,",
 ];
+
+/** Registo de acções de melhoria (FICTÍCIO), resultante da auditoria da lição 4. */
+const REGISTO_ACCOES = [
+  "id,origem,accao,prioridade,responsavel,prazo,estado,data_fecho,reteste",
+  "M01,A04,Frase de acesso nas chaves administrativas,alta,Equipa de redes,2026-10-12,fechada,2026-10-09,ok",
+  "M02,A11,Cópia semanal das configurações com reposição testada,media,Equipa de redes,2026-10-28,aberta,,",
+  "M03,A07,Receptor central de registos em produção,media,Equipa de sistemas,2026-11-15,aberta,,",
+  "M04,L3-2323,Retirar serviço de gestão antigo sem cifra,alta,Equipa de redes,2026-10-05,aberta,,",
+  "M05,A09,Alerta de utilização da WAN com responsável,baixa,Equipa de redes,2026-11-30,fechada,2026-10-20,falhou",
+];
+
+const SCRIPT_INDICADORES = `#!/usr/bin/env python3
+"""indicadores.py — indicadores do registo de acções de melhoria (exercício DPE, fictício).
+Uso: python3 indicadores.py REGISTO.csv DATA_DE_REFERENCIA(AAAA-MM-DD)
+Uma acção só conta como concluída se estiver fechada E com reteste 'ok'."""
+import csv, datetime, sys
+
+try:
+    ficheiro, hoje = sys.argv[1], datetime.date.fromisoformat(sys.argv[2])
+except (IndexError, ValueError):
+    sys.exit("Uso: python3 indicadores.py REGISTO.csv AAAA-MM-DD")
+try:
+    with open(ficheiro, newline="", encoding="utf-8") as f:
+        accoes = list(csv.DictReader(f))
+    for a in accoes:
+        a["prazo_d"] = datetime.date.fromisoformat(a["prazo"])
+except (OSError, KeyError, ValueError) as e:
+    sys.exit(f"ERRO a ler {ficheiro}: {e}")
+if not accoes:
+    sys.exit("Registo vazio.")
+concluidas = [a for a in accoes if a["estado"] == "fechada" and a["reteste"] == "ok"]
+reabrir = [a for a in accoes if a["estado"] == "fechada" and a["reteste"] != "ok"]
+atrasadas = [a for a in accoes if a not in concluidas and a["prazo_d"] < hoje]
+print(f"Acções: {len(accoes)} | concluídas com reteste ok: {len(concluidas)} ({len(concluidas) / len(accoes):.0%})")
+for a in reabrir:
+    print(f"REABRIR: {a['id']} fechada mas reteste '{a['reteste'] or 'em falta'}'")
+for a in sorted(atrasadas, key=lambda a: a["prazo_d"]):
+    print(f"ATRASADA: {a['id']} ({a['prioridade']}) prazo {a['prazo']} — {a['accao']}")`.split("\n");
+
+/**
+ * Actividade integrada do curso e critérios de avaliação do relatório,
+ * cada um rastreável a resultados R01–R18 dos TdR (secção 6.5).
+ * Critério atingido = evidência indicada presente e correcta; parcial = presente com falhas;
+ * não atingido = ausente. Proposta pedagógica interna, a validar pela Ologa/ATDI.
+ */
+export const ACTIVIDADE_INTEGRADA: {
+  enunciado: string[];
+  criterios: { id: string; criterio: string; evidencia: string; resultados: ResultadoTdr[] }[];
+} = {
+  enunciado: [
+    "Em equipas de três, na rede de prática isolada (nunca em redes reais), a DPE fictícia pede: (1) desenho e documentação da rede sede–delegação; (2) serviços e acessos configurados segundo uma política escrita; (3) monitorização, registos e cópias de configuração; (4) teste autorizado e auditoria com 12 controlos; (5) plano de melhoria com indicadores; (6) apresentação de 10 minutos a colegas, como formador replicador.",
+    "Entrega: relatório único (máximo 12 páginas mais anexos de evidência), com as secções dos critérios C01 a C18. Cada afirmação técnica aponta um anexo de evidência (saída de comando, ficheiro, captura) ou é marcada como hipótese.",
+    "Regras: autorização de teste assinada antes de qualquer varrimento; nenhuma credencial real; limitações declaradas; o que não foi executado é dito como não executado.",
+  ],
+  criterios: [
+    { id: "C01", criterio: "Desenho da rede com endereçamento coerente e justificação da dimensão", evidencia: "Diagrama lógico e plano de endereçamento", resultados: ["R01"] },
+    { id: "C02", criterio: "Configuração de encaminhadores e firewall conforme a política", evidencia: "Ficheiros de configuração e testes positivo/negativo", resultados: ["R02"] },
+    { id: "C03", criterio: "Serviços de rede (DHCP, DNS, VPN, NAT, VLAN, autenticação) configurados e testados, os que o âmbito incluir", evidencia: "Saídas de teste de cada serviço", resultados: ["R03"] },
+    { id: "C04", criterio: "Diagnóstico de uma falha de desempenho ou disponibilidade com método e verificação", evidencia: "Registo de medições antes/depois", resultados: ["R04"] },
+    { id: "C05", criterio: "Decisões de segurança desde a concepção justificadas (segmentação, serviços mínimos)", evidencia: "Secção de justificação no relatório", resultados: ["R05"] },
+    { id: "C06", criterio: "Achados classificados (indício/confirmado/falso positivo) e mitigação com reteste", evidencia: "Tabela de achados e evidência de reteste", resultados: ["R06"] },
+    { id: "C07", criterio: "ACL e segmentação com evidência de bloqueio (contadores ou captura); IDS/IPS se incluído no âmbito", evidencia: "Contadores das regras, captura ou alerta", resultados: ["R07"] },
+    { id: "C08", criterio: "Política e controlos referidos a normas e boas práticas identificadas", evidencia: "Lista de verificação com coluna de fonte", resultados: ["R08"] },
+    { id: "C09", criterio: "Monitorização com alerta justificado e análise de tráfego ou registos", evidencia: "Ficha do alerta e resultado da análise", resultados: ["R09"] },
+    { id: "C10", criterio: "Teste autorizado e auditoria com resultados rastreáveis a evidências", evidencia: "Autorização assinada, lista de auditoria preenchida", resultados: ["R10"] },
+    { id: "C11", criterio: "Tratamento de um incidente simulado: contenção, análise, recuperação e relatório", evidencia: "Cronologia e relatório de incidente", resultados: ["R11"] },
+    { id: "C12", criterio: "Protecção de identidades e dados: autenticação forte, segredos fora dos documentos, cifra do canal", evidencia: "Configuração e teste de recusa; verificação de ausência de segredos", resultados: ["R12"] },
+    { id: "C13", criterio: "Ligação LAN–WAN (e WLAN/virtualização/nuvem, se incluídas) descrita e medida", evidencia: "Medições da WAN simulada e descrição", resultados: ["R13"] },
+    { id: "C14", criterio: "Pelo menos um script próprio com tratamento de erros, usado no trabalho", evidencia: "Código do script e saída de erro controlado", resultados: ["R14"] },
+    { id: "C15", criterio: "Documentação: diagrama, pelo menos um procedimento (SOP) e plano de contingência", evidencia: "Anexos de documentação", resultados: ["R15"] },
+    { id: "C16", criterio: "Trabalho em equipa, divisão de papéis, ética e confidencialidade respeitadas", evidencia: "Registo de papéis; autorização e tratamento das evidências", resultados: ["R16"] },
+    { id: "C17", criterio: "Continuidade: inventário, cópias com reposição testada e prioridades de recuperação", evidencia: "Inventário, verificação de integridade e reposição", resultados: ["R17"] },
+    { id: "C18", criterio: "Apresentação como formador replicador: explicação clara, demonstração ou alternativa em papel, resposta a perguntas", evidencia: "Guião da apresentação e avaliação dos pares", resultados: ["R18"] },
+  ],
+};
 
 export const LICOES_M12: Record<string, ConteudoLicao> = {
   "r-m12-l1": {
@@ -484,5 +560,92 @@ export const LICOES_M12: Record<string, ConteudoLicao> = {
       ],
     },
     fontes: ["nist80053a", "isoiec27001", "nist80041", "nist80092", "nist800128", "nist80034", "rfc5905", "nmap", "nftables"],
+  },
+
+  "r-m12-l5": {
+    objectivos: [
+      "Aplicar o ciclo de melhoria contínua (planear, executar, verificar, agir) à segurança da rede, a partir dos achados de testes e auditorias.",
+      "Manter um registo de acções com origem, prioridade, responsável, prazo, estado e reteste, e calcular indicadores com um script que trata erros.",
+      "Distinguir acção fechada de acção eficaz: sem reteste positivo, a acção reabre.",
+      "Preparar a actividade integrada do curso e a apresentação como formador replicador, com critérios de avaliação rastreáveis aos resultados R01–R18.",
+    ],
+    explicacao: [
+      {
+        titulo: "Planear, executar, verificar, agir",
+        paragrafos: [
+          "Segurança não é um estado que se atinge; é um ciclo. Planeia-se (riscos, prioridades, acções), executa-se, verifica-se (monitorização, testes, auditorias) e age-se sobre o que a verificação mostrou. A ISO/IEC 27001 exige este ciclo num sistema de gestão da segurança da informação, e o NIST SP 800-137 descreve a monitorização contínua que o alimenta.",
+          "Cada achado vira uma acção com origem rastreável (o controlo ou teste de onde veio), prioridade justificada (exposição e impacto), responsável com nome, prazo e critério de fecho. Uma acção só está concluída quando o reteste confirma que o problema desapareceu; «fechada» sem reteste positivo é apenas papel.",
+        ],
+      },
+      {
+        titulo: "Indicadores e transmissão do conhecimento",
+        paragrafos: [
+          "Poucos indicadores, bem definidos, dizem se o ciclo funciona: percentagem de acções concluídas com reteste positivo, acções atrasadas por prioridade, tempo médio até à correcção de achados altos. Cada indicador tem fórmula, fonte de dados e frequência; um indicador que não leva a nenhuma decisão não vale a pena medir. Os números servem para decidir, não para enfeitar relatórios: um indicador verde com reteste em falta esconde risco.",
+          "O formador replicador leva o conhecimento a outras equipas. Uma boa sessão tem objectivo claro, demonstração segura (em rede de prática, nunca em produção), alternativa sem computador, verificação da aprendizagem e materiais acessíveis. A actividade integrada deste curso avalia cada resultado R01–R18 com um critério e a evidência correspondente.",
+        ],
+      },
+    ],
+    caso: "Depois da auditoria interna (lição 4), a DPE (fictícia) tem cinco acções de melhoria. O chefe quer saber, a 15 de Outubro de 2026, quantas estão realmente concluídas, quais estão atrasadas e o que apresentar à direcção. Depois, cada equipa prepara a actividade integrada do curso e uma sessão de 10 minutos para colegas de outra delegação. Todos os dados são fictícios.",
+    pratica: {
+      topologia: [
+        ...TOPOLOGIA_BASE,
+        "Esta lição trabalha sobretudo com ficheiros: registo de acções fictício e script de indicadores em /tmp/dpe-m12/l5.",
+        "Reteste técnico: repete-se, dentro dos espaços de nomes, uma verificação das lições anteriores para fechar uma acção com evidência.",
+      ],
+      passos: [
+        PRE_M12,
+        { accao: "Prepare a pasta, o registo de acções fictício e o script de indicadores (textos completos abaixo).", comandos: ["mkdir -p /tmp/dpe-m12/l5 && cd /tmp/dpe-m12/l5", "cat > registo-accoes.csv <<'EOF'", ...REGISTO_ACCOES, "EOF", "cat > indicadores.py <<'EOF'", ...SCRIPT_INDICADORES, "EOF"] },
+        { accao: "Calcule os indicadores na data de referência do caso.", comandos: ["python3 indicadores.py registo-accoes.csv 2026-10-15; echo \"código=$?\""], saida: ["Acções: 5 | concluídas com reteste ok: 1 (20%)", "REABRIR: M05 fechada mas reteste 'falhou'", "ATRASADA: M04 (alta) prazo 2026-10-05 — Retirar serviço de gestão antigo sem cifra", "ATRASADA: M05 (baixa) prazo 2026-11-30 …  (não aparece: o prazo ainda não passou)", "código=0"] },
+        { accao: "Teste o tratamento de erros: data inválida e ficheiro inexistente.", comandos: ["python3 indicadores.py registo-accoes.csv 15-10-2026; echo \"código=$?\"", "python3 indicadores.py nao-existe.csv 2026-10-15; echo \"código=$?\""], saida: ["Uso: python3 indicadores.py REGISTO.csv AAAA-MM-DD", "código=1", "ERRO a ler nao-existe.csv: [Errno 2] No such file or directory: 'nao-existe.csv'", "código=1"] },
+        { accao: "Reteste técnico da acção M04 na rede de prática: inicie o serviço antigo como na lição 3, aplique a correcção (bloqueio no r1) e confirme com o mesmo comando da lição 3. Registe a evidência e só então feche a acção.", comandos: ["C: sudo ip netns exec srv python3 -c \"import socketserver;socketserver.TCPServer.allow_reuse_address=True;socketserver.TCPServer(('10.10.20.53',2323),socketserver.BaseRequestHandler).serve_forever()\"", "sudo ip netns exec pc-adm nmap -Pn -p 2323 10.10.20.53 | grep 2323", "sudo ip netns exec r1 nft add table inet m12melhoria", "sudo ip netns exec r1 nft add chain inet m12melhoria fwd '{ type filter hook forward priority -10; policy accept; }'", "sudo ip netns exec r1 nft add rule inet m12melhoria fwd ip daddr 10.10.20.53 tcp dport 2323 counter drop comment \\\"M04\\\"", "sudo ip netns exec pc-adm nmap -Pn -p 2323 10.10.20.53 | tee reteste-M04.txt | grep 2323"], saida: ["2323/tcp open  3d-nfsd", "2323/tcp filtered 3d-nfsd"] },
+        { accao: "Actualize M04 no registo (estado fechada, data, reteste ok, evidência reteste-M04.txt) e volte a calcular. Nota: o bloqueio é a medida provisória; a acção definitiva (retirar o serviço) continua a exigir alteração aprovada.", comandos: ["sed -i 's/^M04,\\(.*\\),aberta,,$/M04,\\1,fechada,2026-10-15,ok/' registo-accoes.csv && grep ^M04 registo-accoes.csv", "python3 indicadores.py registo-accoes.csv 2026-10-15"], saida: ["M04,L3-2323,Retirar serviço de gestão antigo sem cifra,alta,Equipa de redes,2026-10-05,fechada,2026-10-15,ok", "Acções: 5 | concluídas com reteste ok: 2 (40%)", "REABRIR: M05 fechada mas reteste 'falhou'"] },
+        { accao: "Actividade integrada: leia o enunciado e os critérios C01–C18 (rastreáveis a R01–R18), distribua os papéis na equipa e escreva o índice do relatório e o guião da apresentação de 10 minutos.", comandos: ["nano /tmp/dpe-m12/l5/indice-relatorio.txt", "nano /tmp/dpe-m12/l5/guiao-apresentacao.txt"] },
+      ],
+      sucesso: [
+        "O indicador inicial é 1 de 5 (20 %) e passa a 2 de 5 (40 %) só depois do reteste com evidência.",
+        "A dupla explica porque M05 reabre apesar de estar «fechada».",
+        "O script termina com mensagem clara e código 1 perante data ou ficheiro inválidos.",
+        "O índice do relatório cobre C01 a C18, cada secção com a evidência prevista, e o guião da apresentação tem objectivo, demonstração segura, alternativa em papel e verificação.",
+      ],
+      reversao: [
+        "sudo ip netns exec r1 nft delete table inet m12melhoria",
+        "Ctrl+C na consola C (serviço de exercício). Não usar pkill/killall. Confirmar: sudo ip netns pids srv não lista python3.",
+        "Se ainda existirem as tabelas das lições 1 e 2, removê-las com as reversões dessas lições (m12acessos, m12equip) e repor os valores sysctl guardados.",
+        "Guardar o índice e o guião fora da VM e depois rm -r /tmp/dpe-m12 (todas as pastas do módulo). A forma segura de repor tudo continua a ser descartar a VM.",
+      ],
+    },
+    papel: [
+      { tarefa: "Com o registo fictício, calcule à mão os indicadores a 15-10-2026: acções concluídas com reteste ok, acções a reabrir, acções atrasadas.", esperado: "Concluídas com reteste ok: 1 (M01) = 20 %. A reabrir: M05 (fechada, reteste falhou). Atrasadas: M04 (prazo 05-10, aberta). M02, M03 e M05 têm prazo futuro; M05 reabre mas não está atrasada." },
+      { tarefa: "Defina um indicador útil para a direcção, com fórmula, fonte, frequência e decisão que suporta.", esperado: "Exemplo: «percentagem de acções de prioridade alta concluídas com reteste ok dentro do prazo» = altas concluídas no prazo / altas com prazo vencido; fonte: registo de acções; mensal; decisão: reforçar recursos ou rever prioridades se ficar abaixo de 80 %." },
+      { tarefa: "Para os critérios C07, C12 e C18 da actividade integrada, diga que evidência entregaria.", esperado: "C07: contadores das regras nftables antes/depois de um teste negativo, ou captura que mostra o descarte. C12: configuração SSH só com chave e a mensagem «Permission denied (publickey)»; verificação de que os documentos não contêm segredos. C18: guião da sessão de 10 minutos e grelha de avaliação dos pares preenchida." },
+      { tarefa: "Escreva o guião de uma sessão de 10 minutos para colegas sobre «testes autorizados», incluindo a alternativa sem computador.", esperado: "0–2 min objectivo e regra da autorização; 2–6 min demonstração na rede de prática (ou leitura das saídas de exemplo impressas) de uma porta aberta e da sua confirmação; 6–8 min exercício: classificar três achados; 8–10 min pergunta de verificação e resumo. Materiais em letra grande; comandos lidos em voz alta." },
+    ],
+    formativas: [
+      { pergunta: "Uma acção de melhoria está marcada «fechada», mas o reteste falhou. Como se conta no indicador?", opcoes: ["Como concluída", "Como não concluída, e a acção reabre", "Como não aplicável", "Retira-se do registo"], certa: 1, comentario: "O que interessa é o problema ter desaparecido. Sem reteste positivo, fechar é só mudar o estado no papel; o indicador tem de o mostrar." },
+      { pergunta: "Para que serve ligar cada critério da actividade integrada a um resultado R01–R18?", opcoes: ["Para aumentar o número de páginas", "Para demonstrar, com evidência, que cada resultado de aprendizagem dos TdR foi avaliado", "Para dispensar a apresentação", "Para substituir a auditoria"], certa: 1, comentario: "A rastreabilidade mostra que nenhum resultado ficou por avaliar e que cada avaliação assenta numa evidência concreta." },
+    ],
+    leituraFacil: [
+      "A segurança melhora num ciclo que nunca acaba.",
+      "Cada problema encontrado vira uma tarefa com responsável e prazo.",
+      "Uma tarefa só acaba quando se confirma que resolveu.",
+      "Poucos números bem escolhidos mostram se está a melhorar.",
+      "No fim do curso, a equipa faz um trabalho completo e apresenta-o.",
+      "Ensine os colegas com uma rede de prática, nunca com a rede real.",
+    ],
+    guiao: {
+      conducao: [
+        "0–20 min: ciclo planear-executar-verificar-agir; registo de acções; fechado vs eficaz; indicadores com fórmula e decisão; formador replicador; actividade integrada e critérios C01–C18.",
+        "20–70 min: prática em equipas (registo, indicadores, testes de erro, reteste de M04 com evidência, actualização do registo, índice do relatório e guião da apresentação); quem não tiver laboratório calcula os indicadores e escreve o guião em papel.",
+        "70–80 min: formativas, correcção comentada e distribuição dos papéis para a actividade integrada.",
+      ],
+      errosComuns: [
+        "Contar como concluída uma acção fechada sem reteste.",
+        "Indicadores sem fórmula, sem fonte ou sem decisão associada.",
+        "Tratar uma medida provisória (bloqueio) como correcção definitiva.",
+        "Relatório final com afirmações sem evidência ou sem limitações.",
+        "Demonstrações para colegas feitas em redes reais.",
+      ],
+    },
+    fontes: ["isoiec27001", "nist800137", "nist80053a", "nist800115", "nftables", "nmap", "pythonstd"],
   },
 };
