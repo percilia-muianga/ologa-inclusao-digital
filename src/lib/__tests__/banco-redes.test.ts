@@ -83,7 +83,7 @@ describe("banco Redes — dimensão e separação", () => {
         if (jaccard(TODOS[i]!.e, TODOS[j]!.e) >= 0.5) pares.push(`${TODOS[i]!.cod}~${TODOS[j]!.cod}`);
     for (const q of TODOS)
       for (const o of [...EXAME_TDG, ...DIAGNOSTICO_TDG, ...EXAME_SC, ...DIAGNOSTICO_SC, ...EXAME_IA, ...DIAGNOSTICO_IA, ...EXAME_V2_NUVEM, ...EXAME_TD_V2])
-        if (jaccard(q.e, o.e) >= 0.5) pares.push(`${q.cod}~${o.cod}`);
+        if (jaccard(q.e, o.e) >= 0.5) pares.push(`${q.cod}~${(o as { cod?: string; id?: string }).cod ?? (o as { id?: string }).id}`);
     expect(pares).toEqual([]);
   });
 
