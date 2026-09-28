@@ -253,3 +253,5 @@ Registado a 22 de Setembro de 2026.
 - Simulação completa em base temporária descartável (`scripts/teste-redes/correr.sh`): 38/38.
 - Dados actuais na base (antes de importar): módulos com 590 min cada e avaliação 0 — a importação corrige para 380/120.
 - Mantêm-se: TdR original completo não disponível na ferramenta (R01–R18 são resumo interno); contradição 120 h (sec. 6.5) vs. 80 h (sec. 14); inclusão do transversal e da avaliação nas 80 h é proposta interna; laboratórios em VM não executados; validação pedagógica Ologa/ATDI pendente; exames não activados; nada publicado.
+
+- Privacidade do pacote Redes: verificada apenas por análise estática dos imports (conteúdo só em *.server.ts). Não existe versão compilada local; a procura de marcadores das 60 lições nos ficheiros enviados ao navegador NÃO foi feita e fica por executar.
