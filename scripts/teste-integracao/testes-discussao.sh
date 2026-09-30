@@ -26,7 +26,7 @@ SQL
 }
 recusa() { grep -Eqi "violates row-level|DISCUSSAO_|permission denied|ERROR" <<<"$1" && echo recusado || echo aceite; }
 
-$P <<SQL >/dev/null
+$P <<SQL
 INSERT INTO auth.users(id,email) VALUES ('$FA','fa@t.local'),('$FB','fb@t.local'),('$FX','fx@t.local'),('$PA','pa@t.local'),('$PB','pb@t.local');
 INSERT INTO public.perfis(id,nome,email) VALUES ('$FA','Formando A','fa@t.local'),('$FB','Formando B','fb@t.local'),('$FX','Formando X','fx@t.local'),('$PA','Formador A','pa@t.local'),('$PB','Formador B','pb@t.local');
 INSERT INTO public.utilizador_papeis(utilizador_id,papel) VALUES ('$PA','formador'),('$PB','formador');
@@ -39,7 +39,6 @@ INSERT INTO public.turma_inscricoes(turma_id,perfil_id,nome,email,estado) VALUES
 SQL
 
 echo "— acesso por turma —"
-echo "DBG: $(como $FA "INSERT INTO public.discussao_topicos(turma_id,autor_id,titulo,mensagem) VALUES ('$TA','$FA','Dbg','Mensagem dbg');")"; $P -c "select count(*) from public.turmas; select count(*) from public.turma_inscricoes where turma_id='$TA'" 2>&1
 verifica "formando A cria dúvida na sua turma" "$(recusa "$(como $FA "INSERT INTO public.discussao_topicos(turma_id,autor_id,titulo,mensagem) VALUES ('$TA','$FA','Dúvida sobre sub-redes','Como calcular a máscara /26?');")")" "aceite"
 T1=$($P -c "SELECT id FROM public.discussao_topicos WHERE turma_id='$TA' LIMIT 1;")
 verifica "nome do autor vem da base, não do pedido" "$(recusa "$(como $FA "INSERT INTO public.discussao_topicos(turma_id,autor_id,autor_nome,titulo,mensagem) VALUES ('$TA','$FA','Formador A','Outra dúvida','Mensagem de teste');")")/$($P -c "SELECT count(*) FROM public.discussao_topicos WHERE autor_nome='Formador A';")" "aceite/0"
