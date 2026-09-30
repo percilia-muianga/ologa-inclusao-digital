@@ -20,7 +20,7 @@ export function ErroPermissao({ erro }: { erro?: unknown }) {
   const semSessao = recusaSessao && email === null;
 
   if (email === undefined) {
-    return <PlataformaPagina titulo="A verificar a sessão…" introducao="Um momento." />;
+    return <PlataformaPagina titulo="A verificar a sessão…" introducao="Um momento."><span /></PlataformaPagina>;
   }
 
   if (semSessao || (recusaSessao && !email)) {
