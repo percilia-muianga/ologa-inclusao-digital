@@ -55,7 +55,7 @@ verificar "Administrador Geral continua a ver tudo" "$(como $AD "SELECT count(*)
 echo "7. Registo das alterações"
 verificar "3 inserções registadas com actor" "$(como $AD "SET ROLE postgres; SELECT count(*) FROM public.registo_auditoria WHERE entidade='licao_materiais' AND accao='insert' AND utilizador_id='$AD';")" "3"
 verificar "actualizações registadas (disponibilizar 3 + substituir + ordenar 2 + retirar)" "$(como $AD "SET ROLE postgres; SELECT count(*) FROM public.registo_auditoria WHERE entidade='licao_materiais' AND accao='update';")" "7"
-verificar "substituição regista o campo do ficheiro" "$(como $AD "SET ROLE postgres; SELECT count(*) FROM public.registo_auditoria WHERE registo_id='$M1' AND 'ficheiro_path' = ANY(campos_sensiveis_alterados);")" "1"
+verificar "substituição regista o campo do ficheiro" "$(como $AD "SET ROLE postgres; SELECT count(*) FROM public.registo_auditoria WHERE registo_id='$M1' AND accao='update' AND 'ficheiro_path' = ANY(campos_sensiveis_alterados);")" "1"
 verificar "nenhuma alteração registada em nome do formando" "$(como $AD "SET ROLE postgres; SELECT count(*) FROM public.registo_auditoria WHERE utilizador_id='$FO';")" "0"
 
 echo; [ $falhas -eq 0 ] && echo "RESULTADO: todos os testes passaram" || { echo "RESULTADO: $falhas falha(s)"; exit 1; }
