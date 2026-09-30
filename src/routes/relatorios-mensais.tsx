@@ -1,3 +1,4 @@
+import { exigirSessao } from "@/lib/exigir-sessao";
 import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { listarRelatoriosMensais, criarRelatorioMensal } from "@/lib/relatorios.
 
 export const Route = createFileRoute("/relatorios-mensais")({
   ssr: false,
+  beforeLoad: exigirSessao,
   errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarRelatoriosMensais(),
   head: () => ({

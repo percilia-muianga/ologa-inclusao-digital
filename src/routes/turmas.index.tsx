@@ -1,3 +1,4 @@
+import { exigirSessao } from "@/lib/exigir-sessao";
 import { ErroPermissao } from "@/components/erro-permissao";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -7,6 +8,7 @@ import { PROVINCIAS } from "@/lib/inscricao-schema";
 
 export const Route = createFileRoute("/turmas/")({
   ssr: false,
+  beforeLoad: exigirSessao,
   errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarTurmas(),
   head: () => ({
