@@ -9,6 +9,9 @@ import { PlataformaFooter } from "@/components/plataforma-footer";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
 
 export const Route = createFileRoute("/entrar")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
+    redirect: destinoSeguro(s.redirect),
+  }),
   head: () => ({
     meta: [
       { title: "Entrar — Plataforma Nacional de Capacitação Digital" },
