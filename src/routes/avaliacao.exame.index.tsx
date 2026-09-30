@@ -1,54 +1,44 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import {
-  estadoAvaliacaoFormando,
-  iniciarExame,
-  referenciasBanco,
-} from "@/lib/avaliacao.functions";
-import { formacaoStore } from "@/lib/formacao-store";
+import { useState } from "react";
+import { z } from "zod";
+import { estadoAvaliacaoFormando, iniciarExame } from "@/lib/avaliacao.functions";
 import { PlataformaPagina } from "@/components/plataforma-pagina";
+import { SeletorMatricula } from "@/components/seletor-matricula";
 
 export const Route = createFileRoute("/avaliacao/exame/")({
+  validateSearch: (s: Record<string, unknown>) =>
+    z.object({ inscricao: z.string().uuid().optional().catch(undefined) }).parse(s),
   component: IniciarExamePage,
 });
 
-const campo = "min-h-11 w-full rounded-md border border-line bg-white px-3 text-base text-navy";
-
-const ERROS: Record<string, string> = {
-  TOKEN_INVALIDO:
-    "Não encontrámos nenhum formando com esse código pessoal. Confirme o código que recebeu ao concluir um módulo.",
+export const ERROS_EXAME: Record<string, string> = {
+  MATRICULA_INVALIDA: "Esta turma não está associada à sua conta.",
+  INSCRICAO_INACTIVA: "A sua inscrição nesta turma não está activa.",
+  EXAME_NAO_CONFIGURADO:
+    "O exame final deste curso ainda não está disponível. Será avisado(a) pela equipa de formação.",
   BANCO_INSUFICIENTE:
-    "Este curso ainda não tem questões activas suficientes para gerar o exame. Os exames ficam disponíveis após a activação das questões e da configuração necessária. Para mais informações, fale com a coordenação da sua turma.",
-  TENTATIVAS_ESGOTADAS:
-    "Já utilizou as duas tentativas permitidas para este curso.",
+    "O exame final deste curso ainda não está disponível. Os exames ficam disponíveis após a activação das questões e da configuração necessária.",
+  TENTATIVAS_ESGOTADAS: "Já utilizou todas as tentativas permitidas nesta turma.",
   PRAZO_EXPIRADO:
     "O prazo para fazer o exame terminou. Conta-se em dias de calendário a partir do fim da formação da sua turma. Fale com a coordenação.",
 };
 
 function IniciarExamePage() {
   const navigate = useNavigate();
-  const carregarRefs = useServerFn(referenciasBanco);
+  const { inscricao } = Route.useSearch();
   const carregarEstado = useServerFn(estadoAvaliacaoFormando);
   const iniciar = useServerFn(iniciarExame);
 
-  const [token, setToken] = useState("");
-  const [cursoId, setCursoId] = useState("");
+  const [inscricaoId, setInscricaoId] = useState(inscricao ?? "");
   const [erro, setErro] = useState<string | null>(null);
   const [aIniciar, setAIniciar] = useState(false);
 
-  useEffect(() => {
-    const guardado = formacaoStore.token();
-    if (guardado) setToken(guardado);
-  }, []);
-
-  const refs = useQuery({ queryKey: ["refs-banco"], queryFn: () => carregarRefs() });
-
   const estado = useQuery({
-    queryKey: ["estado-avaliacao", token, cursoId],
-    enabled: token.length > 20 && cursoId.length > 0,
-    queryFn: () => carregarEstado({ data: { token, cursoId } }),
+    queryKey: ["estado-avaliacao", inscricaoId],
+    enabled: inscricaoId.length > 0,
+    queryFn: () => carregarEstado({ data: { inscricaoId } }),
     retry: false,
   });
 
@@ -56,11 +46,11 @@ function IniciarExamePage() {
     setErro(null);
     setAIniciar(true);
     try {
-      const r = await iniciar({ data: { token: token.trim(), cursoId } });
+      const r = await iniciar({ data: { inscricaoId } });
       await navigate({ to: "/avaliacao/exame/$tentativa", params: { tentativa: r.tentativaId } });
     } catch (e) {
       const msg = (e as Error).message;
-      setErro(ERROS[msg] ?? `Não foi possível iniciar o exame: ${msg}`);
+      setErro(ERROS_EXAME[msg] ?? "Não foi possível iniciar o exame. Tente de novo mais tarde.");
     } finally {
       setAIniciar(false);
     }
@@ -78,58 +68,19 @@ function IniciarExamePage() {
           void comecar();
         }}
       >
-        <div>
-          <label className="block text-sm font-semibold text-navy-2" htmlFor="token">
-            O seu código pessoal de formando
-          </label>
-          <input
-            id="token"
-            className={campo}
-            value={token}
-            onChange={(e) => setToken(e.target.value.trim())}
-            autoComplete="off"
-            spellCheck={false}
-            required
-          />
-          <p className="mt-1 text-sm text-navy-2">
-            É o código que recebeu quando concluiu um módulo nesta plataforma.
-          </p>
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-navy-2" htmlFor="curso">
-            Curso a avaliar
-          </label>
-          <select
-            id="curso"
-            className={campo}
-            value={cursoId}
-            onChange={(e) => setCursoId(e.target.value)}
-            required
-          >
-            <option value="">Escolha o curso</option>
-            {(refs.data?.cursos ?? []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.titulo}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SeletorMatricula valor={inscricaoId} aoMudar={setInscricaoId} />
 
         <div role="status" aria-live="polite" className="grid gap-2 text-base text-navy">
-          {estado.isError ? (
-            <p>
-              Não conseguimos confirmar o seu código pessoal. Verifique-o e tente novamente.
-            </p>
-          ) : null}
+          {estado.isError ? <p>Não conseguimos confirmar esta turma na sua conta.</p> : null}
           {estado.data ? (
             <>
               <p>
-                Tentativas já utilizadas: {estado.data.tentativas.length} de{" "}
+                Tentativas já utilizadas nesta turma: {estado.data.tentativas.length} de{" "}
                 {estado.data.tentativasMax}.
               </p>
               <p>
                 {estado.data.diasRestantes === null
-                  ? "Ainda não há data de fim da formação registada, por isso o prazo de 30 dias ainda não começou a contar."
+                  ? `Ainda não há data de fim da formação registada, por isso o prazo de ${estado.data.prazoDias} dias ainda não começou a contar.`
                   : estado.data.diasRestantes >= 0
                     ? `Faltam ${estado.data.diasRestantes} dias para terminar o prazo de ${estado.data.prazoDias} dias após o fim da formação.`
                     : `O prazo de ${estado.data.prazoDias} dias após o fim da formação já terminou.`}
@@ -142,7 +93,7 @@ function IniciarExamePage() {
 
         <button
           type="submit"
-          disabled={aIniciar || !cursoId || token.length < 10}
+          disabled={aIniciar || !inscricaoId}
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground disabled:opacity-60"
         >
           {aIniciar ? "A preparar o exame…" : "Iniciar exame"}
