@@ -60,7 +60,7 @@ function TurmaPage() {
     );
   }
 
-  const { turma, curso, sessoes, inscritos, cargaHorariaCurso } = dados;
+  const { turma, curso, sessoes, inscritos, listaInscritos, cargaHorariaCurso } = dados;
 
   return (
     <PlataformaPagina titulo={turma.designacao}>
@@ -211,6 +211,44 @@ function TurmaPage() {
         inscritos={inscritos}
         limite={turma.limite_formandos}
       />
+
+      <section aria-labelledby="lista-inscritos" className="mt-10 rounded-lg border border-line bg-white p-5">
+        <h2 id="lista-inscritos" className="text-xl font-bold text-navy">
+          Formandos inscritos ({inscritos} de {turma.limite_formandos})
+        </h2>
+        {listaInscritos.length === 0 ? (
+          <p className="mt-2 text-base text-navy-2">
+            Ainda não há formandos inscritos. Partilhe o código {turma.codigo_inscricao} ou inscreva
+            os formandos no formulário acima.
+          </p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-left text-base">
+              <caption className="sr-only">Lista de formandos inscritos nesta turma</caption>
+              <thead>
+                <tr className="border-b border-line">
+                  <th scope="col" className="py-2 pr-4">N.º</th>
+                  <th scope="col" className="py-2 pr-4">Nome</th>
+                  <th scope="col" className="py-2 pr-4">Email</th>
+                  <th scope="col" className="py-2 pr-4">Estado</th>
+                  <th scope="col" className="py-2">Inscrito em</th>
+                </tr>
+              </thead>
+              <tbody>
+                {listaInscritos.map((i, n) => (
+                  <tr key={i.id} className="border-b border-line">
+                    <td className="py-2 pr-4">{n + 1}</td>
+                    <td className="py-2 pr-4">{i.nome}</td>
+                    <td className="py-2 pr-4">{i.email ?? "—"}</td>
+                    <td className="py-2 pr-4">{i.estado}</td>
+                    <td className="py-2">{new Date(i.criado_em).toLocaleDateString("pt-MZ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <p className="mt-8 text-sm">
         <Link to="/turmas" className="font-semibold text-navy underline">

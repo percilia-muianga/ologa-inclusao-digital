@@ -924,3 +924,17 @@ Verificação: 21 testes em `src/lib/__tests__/banco-inteligencia-artificial.tes
 com denominadores, 200 sorteios simulados com cobertura exacta e sem
 duplicados, falha fechada quando o banco é insuficiente, ausência do banco nos
 artefactos do cliente e verificação do plano de integração).
+
+
+## Actualização 30/09/2026 — Turmas, sessões e inscrições
+
+| Requisito | Estado | Evidência | Por concluir |
+|---|---|---|---|
+| Criar/editar turma com curso, formadores, local e datas | Implementado e verificado | Ecrãs /turmas/nova, /turmas/editar; teste isolado 41/41 | Gravação pelo ecrã só em ambiente isolado |
+| Cronograma de sessões vs carga horária | Implementado e verificado | Soma 600 min = 10 h no teste isolado; aviso no ecrã | — |
+| Código de inscrição legível | Implementado e verificado | Formato sem O/0/I/L/1 confirmado | — |
+| Limite de 30 formandos | Implementado (servidor) | Valor por omissão 30 confirmado | Regra na base contra inscrições simultâneas |
+| Consultar inscritos | Implementado | Lista na ficha da turma | Auto-inscrição por código |
+| Registo de actividade | Verificado | Auditoria das três tabelas com o actor | — |
+
+Bancos SC, Governo e Redes: importados (90 cada, rascunho, inactivos) — retirados das pendências.
