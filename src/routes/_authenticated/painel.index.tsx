@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef } from "react";
 import { usePapelActivo } from "@/hooks/use-sessao";
-import { PAPEIS } from "@/lib/papeis";
+import { PAPEIS, PERFIL_ADMIN_GERAL, NOME_ADMIN_GERAL } from "@/lib/papeis";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
@@ -57,23 +57,42 @@ const ATALHOS_AUDITOR: Atalho[] = [
   },
 ];
 
+/**
+ * Administrador Geral Ologa: atalhos para as áreas já construídas. Apenas
+ * apresentação — cada área e função de servidor continua a validar o acesso.
+ */
+const ATALHOS_ADMIN_GERAL: Atalho[] = [
+  ...ATALHOS_ADMIN,
+  { to: "/painel/conteudos", titulo: "Conteúdos preparados", texto: "Estado e importação dos pacotes de lições e bancos de avaliação, sempre em rascunho e inactivos." },
+  { to: "/cursos", titulo: "Cursos", texto: "Os seis cursos, módulos, lições e estado de cada conteúdo." },
+  { to: "/turmas", titulo: "Turmas e cronogramas", texto: "Criar e editar turmas, sessões e inscrições por código." },
+  { to: "/presencas", titulo: "Presenças", texto: "Marcação por sessão, também sem ligação, e folha imprimível." },
+  { to: "/avaliacao/banco", titulo: "Banco de questões", texto: "Consulta e revisão das questões por curso e módulo. Nenhum exame é activado aqui." },
+  { to: "/workshops", titulo: "Workshops", texto: "Workshops provinciais e distritais e registo de participantes." },
+  { to: "/painel-nacional", titulo: "Painel Nacional", texto: "Indicadores de desempenho, satisfação, eficácia e workshops, com exportação." },
+  { to: "/relatorios-mensais", titulo: "Relatórios mensais", texto: "Incidentes, reclamações, medidas correctivas e acessibilidade." },
+  { to: "/certificados", titulo: "Certificados", texto: "Certificados emitidos e verificação pública." },
+];
+
 function PainelInicio() {
   const { papelActivo } = usePapelActivo();
   const ref = useRef<HTMLDivElement | null>(null);
   const definicao = PAPEIS.find((p) => p.valor === papelActivo);
 
   const atalhos =
-    papelActivo === "admin_atdi"
-      ? ATALHOS_ADMIN
-      : papelActivo === "auditor_atdi"
-        ? ATALHOS_AUDITOR
-        : [];
+    papelActivo === PERFIL_ADMIN_GERAL
+      ? ATALHOS_ADMIN_GERAL
+      : papelActivo === "admin_atdi"
+        ? ATALHOS_ADMIN
+        : papelActivo === "auditor_atdi"
+          ? ATALHOS_AUDITOR
+          : [];
 
   return (
     <div ref={ref}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-extrabold text-navy">
-          {definicao ? definicao.nome : "Área reservada"}
+          {definicao ? definicao.nome : papelActivo === PERFIL_ADMIN_GERAL ? NOME_ADMIN_GERAL : "Área reservada"}
         </h1>
         <ListenButton getFalas={() => extrairFalasDeElemento(ref.current)} />
       </div>
