@@ -169,3 +169,12 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [ ] Matriz TdR, docs internos (contradição 120/80 h), testes, tipos/build, privacidade
 - [ ] Laboratórios: nenhum executado (ambiente sem permissão para espaços de nomes de rede)
 - [x] Lei n.º 10/2024 corrigida (deficiência, não dados); limpeza do lab com pré-verificação e PIDs por espaço de nomes
+
+## 30/09/2026 — Comparação com os TdR (Concurso 78) e edição de lições
+- [x] Painel da Administradora Geral com atalhos para as áreas existentes
+- [x] Ecrã «Editar lições» (/painel/licoes): título, duração, estado, conteúdo e guião; conflito recusado; auditoria pelo gatilho existente; sem novas permissões
+- [ ] Relatório de participação por formando (nome + registo de conclusão de aulas), exportável CSV/XLS (TdR 9.1)
+- [ ] Painel Nacional por género (TdR 9.1)
+- [ ] Configuração de exame por curso (ecrã), mantendo exames inactivos
+- [ ] Materiais multimédia (PDF, apresentações, vídeo) por lição; fórum/FAQ/suporte (TdR 9.1)
+- [ ] Ensaio técnico do percurso completo com dados de demonstração
