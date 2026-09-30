@@ -210,8 +210,21 @@ Verificado:
 - [x] Navegador: /turmas e /turmas/nova abrem com sessão de Administradora Geral
 Por concluir:
 - [ ] Gravação pelos ecrãs no navegador: exige ambiente isolado com contas próprias (não usada a base partilhada)
-- [ ] Limite de 30 só na função de servidor; sem regra na base contra inscrições simultâneas
-- [ ] Auto-inscrição do formando pelo código (próxima funcionalidade)
+- [x] Limite de 30 contra inscrições simultâneas — concluído em 30/09 (ver secção seguinte)
+- [x] Auto-inscrição do formando pelo código — concluída em 30/09 (ver secção seguinte)
+
+## 30/09/2026 — Inscrição por código e vagas atómicas
+Implementado:
+- [x] Base (migração 0033): verificação de vaga e inscrição numa só operação, com a turma bloqueada; abrange formando, gestão, reactivação e mudança de turma
+- [x] Sem duplicados: uma inscrição por conta e por email em cada turma
+- [x] Funções de consulta e inscrição por código: identidade só da sessão, sem dados de outros formandos
+- [x] Ecrã «As minhas turmas»: código → confirmar turma → inscrito → «Continuar para as lições»; mensagens para código inválido, inscrições fechadas, turma cheia e já inscrito
+- [x] Gestão: mensagem clara quando a base recusa por turma cheia ou duplicado
+Verificado (base efémera, scripts/teste-integracao):
+- [x] 41/41 anteriores + 21/21 novos: duas inscrições simultâneas para a última vaga (uma entra, outra «turma cheia»); corrida gestão × reactivação; repetição; sem sessão; anónimo; em nome de outra pessoa; auditoria com o próprio formando
+- [x] Tipos sem erros; testes automáticos da navegação actualizados
+Por concluir:
+- [ ] Ensaio no navegador em ambiente separado (scripts/teste-navegador): depende de criar um rascunho ou remix com backend próprio
 
 ## Pendências actuais
 - [ ] FAQ: revisão e publicação; plano de entrega: 7 decisões com Ologa/ATDI

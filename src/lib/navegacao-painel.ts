@@ -12,6 +12,7 @@ export type LigacaoPainel = { to: string; rotulo: string };
 /** Ligações comuns a qualquer conta com área reservada. */
 const COMUNS: LigacaoPainel[] = [
   { to: "/painel", rotulo: "Início" },
+  { to: "/painel/minhas-turmas", rotulo: "As minhas turmas" },
   { to: "/formacao", rotulo: "Cursos" },
   { to: "/", rotulo: "Site" },
 ];

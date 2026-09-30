@@ -2313,6 +2313,7 @@ export type Database = {
         Args: { _hash_estado: string; _payload: Json }
         Returns: Json
       }
+      rpc_inscrever_por_codigo: { Args: { _codigo: string }; Returns: Json }
       rpc_progresso_certificacao: {
         Args: {
           _actor: string
@@ -2324,6 +2325,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      rpc_turma_por_codigo: { Args: { _codigo: string }; Returns: Json }
       tem_papel: {
         Args: {
           _papel: Database["public"]["Enums"]["papel_sistema"]

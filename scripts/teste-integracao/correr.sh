@@ -43,6 +43,9 @@ done
 # projecto (authenticated e service_role), para o teste reflectir a realidade.
 $P -c "GRANT EXECUTE ON FUNCTION public.e_admin_atdi(uuid), public.e_auditor_atdi(uuid), public.tem_papel(uuid, public.papel_sistema), public.is_admin(uuid) TO authenticated, service_role;"
 
+[ -n "${EXTRA_SQL:-}" ] && { echo "aplicar (extra): $EXTRA_SQL"; $P -f "$EXTRA_SQL"; }
 $P -f "$DIR/dados.sql"
 echo
 PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes.sh"
+echo
+PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes-inscricao.sh"

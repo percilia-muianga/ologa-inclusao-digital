@@ -938,3 +938,18 @@ artefactos do cliente e verificação do plano de integração).
 | Registo de actividade | Verificado | Auditoria das três tabelas com o actor | — |
 
 Bancos SC, Governo e Redes: importados (90 cada, rascunho, inactivos) — retirados das pendências.
+
+
+## Actualização 30/09/2026 — Inscrição por código e vagas atómicas
+
+| Requisito | Estado | Evidência | Por concluir |
+|---|---|---|---|
+| Limite de 30 perante pedidos simultâneos | Implementado e verificado | Migração 0033 (turma bloqueada na escrita); corrida pela última vaga: 1 entra, 1 recusada; total 30 | — |
+| Limite na gestão e reactivação | Implementado e verificado | Corrida gestão × reactivação: só uma ocupa a vaga | — |
+| Auto-inscrição do formando por código | Implementado e verificado na base | Identidade da sessão; código inválido, fechada, cheia, já inscrito; repetição sem duplicar | Ensaio no navegador em ambiente separado |
+| Sem inscrições duplicadas | Implementado e verificado | Índices únicos por conta e por email | — |
+| Privacidade dos outros formandos | Verificado | Formando não lê inscrições alheias; consulta devolve só dados da turma e vagas | — |
+| «As minhas turmas» e acesso às lições | Implementado | Ecrã /painel/minhas-turmas com ligação ao curso | Ver no navegador com inscrição real (ambiente separado) |
+| Registo de actividade | Verificado | Auditoria da inscrição com o próprio formando como actor | — |
+
+Questões e exames: sem alterações, continuam inactivos. Linhas «Auto-inscrição» e «Limite na base» da actualização anterior ficam concluídas.

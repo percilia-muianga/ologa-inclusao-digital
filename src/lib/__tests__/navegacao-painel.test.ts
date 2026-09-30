@@ -21,7 +21,7 @@ describe("navegação da área reservada", () => {
   it("conta sem papel de gestão não vê nenhuma área de administração", () => {
     const vista = papeisDeVista([], false);
     const ligacoes = ligacoesDoPainel(vista[0] ?? null).map((l) => l.to);
-    expect(ligacoes).toEqual(["/painel", "/formacao", "/"]);
+    expect(ligacoes).toEqual(["/painel", "/painel/minhas-turmas", "/formacao", "/"]);
   });
 
   it("o formando também não vê áreas de administração", () => {

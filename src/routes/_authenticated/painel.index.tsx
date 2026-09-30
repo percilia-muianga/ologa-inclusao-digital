@@ -122,6 +122,13 @@ function PainelInicio() {
             actividade e a verificação de permissões.
           </p>
           <p className="mt-3 text-base text-navy-2">
+            Recebeu um código de turma?{" "}
+            <Link to="/painel/minhas-turmas" className="font-semibold underline">
+              Inscreva-se em «As minhas turmas»
+            </Link>
+            .
+          </p>
+          <p className="mt-3 text-base text-navy-2">
             Os módulos de literacia digital continuam abertos a todas as pessoas, com ou sem conta:{" "}
             <Link to="/formacao" className="font-semibold underline">
               ver os cursos
