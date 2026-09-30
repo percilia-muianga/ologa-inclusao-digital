@@ -500,6 +500,10 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
         pctFacil: z.number().int().min(0).max(100),
         pctMedia: z.number().int().min(0).max(100),
         pctDificil: z.number().int().min(0).max(100),
+        notaMinimaPct: z.number().int().min(0).max(100).optional(),
+        assiduidadeMinimaPct: z.number().int().min(0).max(100).optional(),
+        prazoDias: z.number().int().min(1).max(365).optional(),
+        tentativasMax: z.number().int().min(1).max(10).optional(),
       })
       .parse(i),
   )
@@ -508,6 +512,8 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
     if (data.pctFacil + data.pctMedia + data.pctDificil !== 100)
       throw new Error("PERCENTAGENS_NAO_SOMAM_100");
     const s = clienteDeEscritaGestao(context as unknown as ContextoAutenticado);
+    // Guardar a configuração nunca activa questões nem abre o exame: o exame
+    // só funciona quando houver questões activas suficientes no banco.
     const { error } = await s.from("exame_configuracoes").upsert(
       {
         curso_id: data.cursoId,
@@ -516,6 +522,10 @@ export const guardarConfiguracaoExame = createServerFn({ method: "POST" })
         pct_facil: data.pctFacil,
         pct_media: data.pctMedia,
         pct_dificil: data.pctDificil,
+        ...(data.notaMinimaPct !== undefined ? { nota_minima_pct: data.notaMinimaPct } : {}),
+        ...(data.assiduidadeMinimaPct !== undefined ? { assiduidade_minima_pct: data.assiduidadeMinimaPct } : {}),
+        ...(data.prazoDias !== undefined ? { prazo_dias: data.prazoDias } : {}),
+        ...(data.tentativasMax !== undefined ? { tentativas_max: data.tentativasMax } : {}),
         actualizado_em: new Date().toISOString(),
       },
       { onConflict: "curso_id" },
