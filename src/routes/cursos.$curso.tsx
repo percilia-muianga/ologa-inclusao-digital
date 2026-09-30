@@ -56,43 +56,21 @@ function CursoPage() {
         <section aria-labelledby="estado-conteudo" className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-5">
           <h2 id="estado-conteudo" className="text-lg font-bold text-navy">Estado do conteúdo</h2>
           <p className="mt-2 text-navy-2">
-            <strong>Proposta pedagógica — por validar pela Ologa/ATDI.</strong> O conteúdo
-            das lições é um rascunho preparado pela equipa. Estar disponível nesta página
-            não significa estar aprovado. Todos os casos apresentados são fictícios e
-            servem apenas de exercício.
+            <strong>Conteúdo em revisão pedagógica.</strong> Os casos apresentados são
+            fictícios e servem apenas de exercício.
           </p>
-          {totalPorFornecer > 0 ? (
-            <p className="mt-2 text-navy-2">
-              <strong>{totalPorFornecer} lições por fornecer neste curso.</strong> Os
-              títulos organizam o plano de produção; o conteúdo temático será fornecido
-              pela equipa Ologa.
-            </p>
-          ) : (
-            <p className="mt-2 text-navy-2">
-              <strong>Todas as lições deste curso já têm conteúdo escrito.</strong> O
-              conteúdo está em rascunho, por validar. Não existe aprovação da Ologa, da
-              ATDI nem revisão de acessibilidade por terceiros.
-            </p>
-          )}
-          {curso.carga_horaria_nota ? (
-            <p className="mt-2 text-navy-2">
-              <strong>Carga horária por confirmar.</strong> {curso.carga_horaria_nota}
-            </p>
-          ) : null}
           <p className="mt-2 text-navy-2">
-            Carga fixada nos Termos de Referência para o curso: {curso.carga_horaria} horas.
-            Soma da distribuição proposta: {horasCurriculo} horas ={" "}
+            Carga horária do curso: {curso.carga_horaria} horas. Distribuição actual:{" "}
             {horas(minutosTematicos)} horas de módulos temáticos +{" "}
-            {horas(minutosTransversal)} horas do módulo transversal, contado uma única vez, +{" "}
-            {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame, fora dos módulos.{" "}
+            {horas(minutosTransversal)} horas do módulo transversal +{" "}
+            {horas(minutosAvaliacao)} horas de diagnóstico, revisão e exame
             {horasCurriculo === curso.carga_horaria
-              ? "As duas somas coincidem."
-              : "As duas somas não coincidem: a divergência está assinalada para revisão pedagógica."}{" "}
-            A distribuição por módulos e lições é proposta pedagógica por validar.
+              ? "."
+              : ` = ${horasCurriculo} horas. A distribuição horária está em revisão.`}
           </p>
           <p className="mt-2 text-navy-2">
-            Planeado: {totalLicoes} lições. Com conteúdo escrito, em rascunho por validar:{" "}
-            {totalLicoes - totalPorFornecer}. Por fornecer: {totalPorFornecer}.
+            Lições: {totalLicoes}. Com conteúdo disponível: {totalLicoes - totalPorFornecer}.
+            {totalPorFornecer > 0 ? ` Em preparação: ${totalPorFornecer}.` : ""}
           </p>
         </section>
       ) : (
@@ -131,7 +109,7 @@ function CursoPage() {
           {campos.map(([rotulo, valor]) => (
             <div key={rotulo} className="rounded-lg border border-line bg-page p-4">
               <dt className="font-bold text-navy">{rotulo}</dt>
-              <dd className="mt-2 text-sm text-navy-2">{valor || "Conteúdo por fornecer pela equipa Ologa."}</dd>
+              <dd className="mt-2 text-sm text-navy-2">{valor || "Informação em preparação."}</dd>
             </div>
           ))}
           <div className="rounded-lg border border-line bg-page p-4">
@@ -148,10 +126,10 @@ function CursoPage() {
               <span className="rounded-full bg-page px-3 py-1 text-sm font-bold text-navy">
                 {modulo.porFornecer > 0
                   ? propostaPorValidar
-                    ? `${modulo.porFornecer} lições por fornecer`
+                    ? `${modulo.porFornecer} lições em preparação`
                     : "Em preparação"
                   : modulo.licoes.some((l) => l.proposta_por_validar)
-                    ? "Conteúdo escrito, em rascunho por validar"
+                    ? "Conteúdo em revisão"
                     : "Conteúdo disponível"}
               </span>
             </div>
@@ -160,12 +138,11 @@ function CursoPage() {
                 <li key={licao.id} className="rounded-md border border-line p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <h3 className="font-bold text-navy">{licao.ordem}. {licao.titulo}</h3>
-                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : propostaPorValidar ? "Conteúdo por fornecer" : "Em preparação"}</span>
+                    <span className={`rounded px-2 py-1 text-xs font-bold ${licao.estado_conteudo === "disponivel" ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-900"}`}>{licao.estado_conteudo === "disponivel" ? "Conteúdo disponível" : "Em preparação"}</span>
                   </div>
                   <p className="mt-1 text-sm text-navy-2">
                     {licao.duracao ?? "Duração por definir"}
-                    {licao.proposta_por_validar ? " · Proposta pedagógica por validar" : ""}
-                  </p>
+                                      </p>
                   {licao.estado_conteudo === "disponivel" && licao.conteudo_elearning ? (
                     <>
                       <Link
@@ -185,9 +162,7 @@ function CursoPage() {
                     </>
                   ) : (
                     <p className="mt-2 text-sm text-navy-2">
-                      {propostaPorValidar
-                        ? "Título definido; conteúdo temático ainda por escrever."
-                        : "Lição em preparação."}
+                      "Lição em preparação."
                     </p>
                   )}
                 </li>

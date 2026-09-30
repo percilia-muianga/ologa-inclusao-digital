@@ -20,7 +20,7 @@ const ERROS: Record<string, string> = {
   TOKEN_INVALIDO:
     "Não encontrámos nenhum formando com esse código pessoal. Confirme o código que recebeu ao concluir um módulo.",
   BANCO_INSUFICIENTE:
-    "Este curso ainda não tem questões activas suficientes para gerar o exame: o Termo de Referência exige um banco com pelo menos o triplo das questões usadas em cada exame. Fale com a coordenação.",
+    "Este curso ainda não tem questões activas suficientes para gerar o exame. Os exames ficam disponíveis após a activação das questões e da configuração necessária. Para mais informações, fale com a coordenação da sua turma.",
   TENTATIVAS_ESGOTADAS:
     "Já utilizou as duas tentativas permitidas para este curso.",
   PRAZO_EXPIRADO:

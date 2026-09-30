@@ -318,7 +318,7 @@ export function FormularioTurma({
             onChange={(e) => setComputadores(e.target.value)}
           />
           <p className="mt-1 text-sm text-navy-2">
-            O Termo de Referência admite no máximo dois formandos por computador.
+            O máximo admitido é de dois formandos por computador.
           </p>
         </div>
 
@@ -342,7 +342,7 @@ export function FormularioTurma({
       </div>
 
       <p className="mt-5 rounded-md border border-line bg-page p-4 text-base text-navy-2">
-        A turma fica limitada a trinta formandos, conforme o Termo de Referência. O código de
+        A turma fica limitada a trinta formandos, conforme as regras do programa. O código de
         inscrição é gerado automaticamente ao gravar, em dois grupos de quatro caracteres sem
         letras nem números ambíguos.
       </p>
