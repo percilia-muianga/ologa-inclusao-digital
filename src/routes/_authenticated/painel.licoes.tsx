@@ -10,6 +10,7 @@ import {
   type CamposLicao,
   type LicaoEditavel,
 } from "@/lib/edicao-licoes.functions";
+import { MateriaisLicao } from "@/components/MateriaisLicao";
 
 export const Route = createFileRoute("/_authenticated/painel/licoes")({
   head: () => ({
@@ -151,7 +152,12 @@ function EditarLicoes() {
             </ul>
           </nav>
         ) : null}
-        {licao ? <FormularioLicao key={licao.id} licao={licao} cursoId={cursoId} /> : null}
+        {licao ? (
+          <div>
+            <FormularioLicao key={licao.id} licao={licao} cursoId={cursoId} />
+            <MateriaisLicao key={`mat-${licao.id}`} licaoId={licao.id} />
+          </div>
+        ) : null}
       </div>
     </div>
   );
