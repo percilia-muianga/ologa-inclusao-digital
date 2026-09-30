@@ -3,7 +3,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { guardarResposta, obterTentativa, submeterExame } from "@/lib/avaliacao.functions";
-import { formacaoStore } from "@/lib/formacao-store";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 
 export const Route = createFileRoute("/avaliacao/exame/$tentativa")({
@@ -26,23 +25,20 @@ function ExamePage() {
   const gravar = useServerFn(guardarResposta);
   const submeter = useServerFn(submeterExame);
 
-  const [token, setToken] = useState<string | null>(null);
   const [agora, setAgora] = useState(() => Date.now());
   const [estadoGravacao, setEstadoGravacao] = useState("");
   const [aSubmeter, setASubmeter] = useState(false);
   const [respostas, setRespostas] = useState<Record<string, unknown>>({});
 
-  useEffect(() => setToken(formacaoStore.token()), []);
   useEffect(() => {
     const t = setInterval(() => setAgora(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
 
   const dados = useQuery({
-    queryKey: ["tentativa", tentativaId, token],
-    enabled: !!token,
+    queryKey: ["tentativa", tentativaId],
     retry: false,
-    queryFn: () => carregar({ data: { token: token!, tentativaId } }),
+    queryFn: () => carregar({ data: { tentativaId } }),
   });
 
   useEffect(() => {
@@ -51,25 +47,6 @@ function ExamePage() {
     for (const q of dados.data.questoes) if (q.respostaDada) iniciais[q.id] = q.respostaDada;
     setRespostas(iniciais);
   }, [dados.data]);
-
-  if (!token) {
-    return (
-      <PlataformaPagina titulo="Exame final">
-        <EstadoVazio
-          titulo="Não encontrámos o seu código pessoal neste aparelho"
-          descricao="Volte a abrir o exame a partir do ecrã de início, onde pode escrever o seu código pessoal de formando."
-          accao={
-            <Link
-              to="/avaliacao/exame"
-              className="inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground"
-            >
-              Ir para o início do exame
-            </Link>
-          }
-        />
-      </PlataformaPagina>
-    );
-  }
 
   if (dados.isLoading) {
     return (
@@ -86,7 +63,7 @@ function ExamePage() {
       <PlataformaPagina titulo="Exame final">
         <EstadoVazio
           titulo="Não conseguimos abrir este exame"
-          descricao="Este exame não existe ou não pertence ao seu código pessoal. Volte ao início do exame e tente novamente."
+          descricao="Este exame não existe ou não pertence à sua conta. Volte ao início do exame e tente novamente."
         />
       </PlataformaPagina>
     );
@@ -101,7 +78,7 @@ function ExamePage() {
     setRespostas((r) => ({ ...r, [questaoId]: resposta }));
     setEstadoGravacao("A gravar a resposta…");
     try {
-      await gravar({ data: { token: token!, tentativaId, questaoId, resposta } });
+      await gravar({ data: { tentativaId, questaoId, resposta } });
       setEstadoGravacao("Resposta gravada.");
     } catch {
       setEstadoGravacao("Não foi possível gravar agora. A resposta fica no ecrã; tente de novo.");
@@ -111,7 +88,7 @@ function ExamePage() {
   async function terminar() {
     setASubmeter(true);
     try {
-      await submeter({ data: { token: token!, tentativaId } });
+      await submeter({ data: { tentativaId } });
       await qc.invalidateQueries({ queryKey: ["tentativa", tentativaId] });
     } finally {
       setASubmeter(false);
