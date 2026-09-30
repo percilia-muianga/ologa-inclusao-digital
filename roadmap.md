@@ -189,4 +189,8 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [x] Estado configuração exames (guardada/padrão) e «Mínimo exigido»
 - [x] Downloads participação verificados no navegador
 - [x] Gestão de materiais por lição (anexar, substituir, ordenar, disponibilizar, pré-visualizar, avisos)
-- [ ] Mostrar materiais disponíveis aos formandos na página da lição
+- [x] Materiais disponíveis na página da lição (ordem, abrir/descarregar, vídeo com legendas); ensaio isolado 25/25
+- [x] FAQ (pública, gerida pela Administradora Geral) e pedidos de suporte com resposta; ensaio isolado 15/15
+- [ ] FAQ: textos das perguntas e respostas a fornecer pela Ologa (nenhum inventado)
+- [ ] Plano de entrega, suporte e transferência (TdR sec. 17): por acordar com Ologa/ATDI
+- [ ] Ensaio de carregamento real de ficheiros no armazenamento: sem ambiente isolado de armazenamento

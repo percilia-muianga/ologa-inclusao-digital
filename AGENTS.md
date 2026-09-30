@@ -11,3 +11,4 @@
 - Pacotes de conteúdos preparados: cada curso tem par rpc_estado_*/rpc_importar_* SECURITY INVOKER + payload em conteudos-preparados.server.ts; porque as políticas RLS devem decidir e o conteúdo não entra no navegador.
 - Gravação de lições passa por rpc_guardar_licao (SECURITY INVOKER, linha bloqueada); porque a comparação e a actualização têm de ser atómicas sem alargar permissões.
 - Materiais das lições: tabela licao_materiais + armazenamento privado materiais-licoes; escrita só admin (is_admin), leitura por formandos só de materiais disponíveis; porque o controlo fica nas regras de acesso e cada alteração é auditada.
+- FAQ e suporte: faq_perguntas (leitura pública só publicadas, escrita admin) e pedidos_suporte (cada pessoa vê os seus, admin responde); ensaios em scripts/teste-materiais e scripts/teste-ajuda com base efémera; porque a base é partilhada entre pré-visualização e publicado.
