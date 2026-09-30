@@ -64,6 +64,7 @@ const ATALHOS_AUDITOR: Atalho[] = [
 const ATALHOS_ADMIN_GERAL: Atalho[] = [
   ...ATALHOS_ADMIN,
   { to: "/painel/conteudos", titulo: "Conteúdos preparados", texto: "Estado e importação dos pacotes de lições e bancos de avaliação, sempre em rascunho e inactivos." },
+  { to: "/painel/licoes", titulo: "Editar cursos e lições", texto: "Actualizar texto, guião, duração e estado de cada lição, com registo de actividade e protecção contra sobrescrita." },
   { to: "/cursos", titulo: "Cursos", texto: "Os seis cursos, módulos, lições e estado de cada conteúdo." },
   { to: "/turmas", titulo: "Turmas e cronogramas", texto: "Criar e editar turmas, sessões e inscrições por código." },
   { to: "/presencas", titulo: "Presenças", texto: "Marcação por sessão, também sem ligação, e folha imprimível." },
