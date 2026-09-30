@@ -97,7 +97,38 @@ export const referenciasBanco = createServerFn({ method: "GET" })
   };
 });
 
-export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () => {
+/**
+ * Disponibilidade da avaliação para qualquer pessoa: só título do curso e se
+ * o exame pode ser gerado. Não devolve contagens, estados nem respostas.
+ */
+export const disponibilidadeAvaliacao = createServerFn({ method: "GET" }).handler(async () => {
+  const s = await admin();
+  const [cursosRes, questoesRes, configRes] = await Promise.all([
+    s.from("cursos").select("id,titulo,ordem").order("ordem"),
+    s
+      .from("banco_questoes")
+      .select("curso_id")
+      .eq("instrumento", "exame_final")
+      .eq("activa", true)
+      .neq("estado_revisao", "retirada"),
+    s.from("exame_configuracoes").select("curso_id,numero_questoes"),
+  ]);
+  if (cursosRes.error) throw cursosRes.error;
+  if (questoesRes.error) throw questoesRes.error;
+  if (configRes.error) throw configRes.error;
+  return (cursosRes.data ?? []).map((c) => {
+    const cfg = (configRes.data ?? []).find((x) => x.curso_id === c.id);
+    const necessarias = cfg?.numero_questoes ?? CONFIG_PADRAO.numero_questoes;
+    const activas = (questoesRes.data ?? []).filter((q) => q.curso_id === c.id).length;
+    return { id: c.id, titulo: c.titulo, disponivel: !!cfg && activas >= necessarias * 3 };
+  });
+});
+
+/** Estado do banco por curso. Só perfis autorizados a ler o banco. */
+export const panoramaBanco = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+  await exigirGestaoBanco(context as unknown as ContextoAutenticado, "ler");
   const s = await admin();
   const [cursosRes, questoesRes, configRes, relacoesRes, modulosRes] = await Promise.all([
     s.from("cursos").select("id,slug,titulo,ordem").order("ordem"),
