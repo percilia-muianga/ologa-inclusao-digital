@@ -62,13 +62,11 @@ IF1=$(insc $F1 $T1); IG1=$(insc $G1 $T1); IG2=$(insc $G2 $T1); IF1B=$(insc $F1 $
 
 echo "— condições de acesso ao exame —"
 verifica "sem configuração do exame, não abre (exames inactivos)" "$(criar $F1 $IF1 | erro)" "EXAME_NAO_CONFIGURADO"
-$P <<SQL >/dev/null
-INSERT INTO public.exame_configuracoes(curso_id, numero_questoes, tentativas_max, prazo_dias) VALUES ('$C', 2, 2, 30);
+como "$COORD" "INSERT INTO public.exame_configuracoes(curso_id, numero_questoes, tentativas_max, prazo_dias) VALUES ('$C', 2, 2, 30);
 INSERT INTO public.banco_questoes(curso_id,tipologia,dificuldade,enunciado,instrumento,estado_revisao,activa)
-  SELECT '$C','verdadeiro_falso','facil','EXM '||g,'exame_final','em_uso',true FROM generate_series(1,5) g;
-SQL
+  SELECT '$C','verdadeiro_falso','facil','EXM '||g,'exame_final','em_uso',true FROM generate_series(1,5) g;" >/dev/null
 verifica "banco abaixo do triplo recusa" "$(criar $F1 $IF1 | erro)" "BANCO_INSUFICIENTE"
-$P -c "INSERT INTO public.banco_questoes(curso_id,tipologia,dificuldade,enunciado,instrumento,estado_revisao,activa) VALUES ('$C','verdadeiro_falso','facil','EXM 6','exame_final','em_uso',true);" >/dev/null
+como "$COORD" "INSERT INTO public.banco_questoes(curso_id,tipologia,dificuldade,enunciado,instrumento,estado_revisao,activa) VALUES ('$C','verdadeiro_falso','facil','EXM 6','exame_final','em_uso',true);" >/dev/null
 verifica "pessoa autenticada não chama a operação directamente" \
   "$(como "$F1" "SELECT public.rpc_exame_tentativa_criar_matricula('$F1','$IF1', now(), 2, '[]');" | grep -c 'permission denied')" "1"
 verifica "anónimo não chama a operação" \
@@ -96,7 +94,7 @@ verifica "submeter tentativa alheia é recusado" "$(submeter $F1 $TG 100 | erro)
 verifica "formando não lê tentativas de outra pessoa" \
   "$(como "$G1" "SELECT count(*) FROM public.exame_tentativas WHERE formando_id=(SELECT id FROM public.formandos WHERE perfil_id='$F1');")" "0"
 
-$P -c "UPDATE public.turmas SET data_fim='2020-01-01' WHERE id='$T2';" >/dev/null
+como "$COORD" "UPDATE public.turmas SET data_fim='2020-01-01' WHERE id='$T2';" >/dev/null
 verifica "prazo após o fim da turma expirado" "$(criar $G3 $IG3 | erro)" "PRAZO_EXPIRADO"
 
 echo "— certificado —"
