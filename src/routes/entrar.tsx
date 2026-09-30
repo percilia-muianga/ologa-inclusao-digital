@@ -81,12 +81,15 @@ function EntrarPage() {
       <PlataformaHeader />
       <main id="conteudo" ref={ref} className="wrap max-w-md py-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl font-extrabold text-navy">Iniciar sessão</h1>
+          <h1 className="text-3xl font-extrabold text-navy">
+            {regresso ? "Inicie sessão para continuar" : "Iniciar sessão"}
+          </h1>
           <ListenButton getFalas={() => extrairFalasDeElemento(ref.current)} />
         </div>
         <p className="mt-2 text-base text-navy-2">
-          Área reservada da plataforma. Os módulos de literacia digital continuam abertos a
-          todas as pessoas, sem conta.
+          {regresso
+            ? "Para aceder a esta área, inicie sessão com a sua conta. Depois de entrar, volta automaticamente à página que pretendia abrir."
+            : "Área reservada da plataforma. Os módulos de literacia digital continuam abertos a todas as pessoas, sem conta."}
         </p>
 
         <form
