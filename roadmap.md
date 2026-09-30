@@ -301,3 +301,9 @@ Visto no navegador (conta da Administradora Geral, só leitura)
 Pendente
 - [ ] Publicar dúvidas/respostas pelo ecrã com turmas reais — fase de verificação interna Ologa (sem dados fictícios na base partilhada)
 - [ ] Migração 0036 ficou vazia (apenas comentário, aplicada por engano); a 0037 contém o esquema
+
+## 2026-09-30 — Acesso da Administradora Geral
+- Causa: em /turmas a pré-visualização não tinha sessão iniciada nesse endereço (cada endereço guarda a sua sessão); o servidor recusava e a página mostrava «É preciso entrar» sem regresso. Contas percilia@ologa.com e perciliamuianga@gmail.com confirmadas como admin_ologa (acesso de gestão sem papel de formando/formador).
+- Correcção: mensagem «Inicie sessão para continuar» com botão «Iniciar sessão», distinção sessão/permissão com identificação da conta, regresso à página pretendida após entrar (só caminhos internos).
+- Visto no navegador (local, com sessão): turmas, presenças, workshops, painel, utilizadores, permissões, lições, participação, exames, discussão, ajuda, auditoria, Painel Nacional, relatórios mensais, avaliação, certificados, instituições — sem recusas. Sem sessão: nova mensagem e regresso a /turmas.
+- Pendente: verificação no domínio ologainclusaodigital.com após publicação; pré-visualização administrativa dos ecrãs exclusivos do formando.

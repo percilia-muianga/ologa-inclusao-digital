@@ -4,11 +4,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { garantirPerfil } from "@/lib/conta.functions";
 import { destinoAposEntrada } from "@/lib/navegacao-painel";
+import { destinoSeguro } from "@/lib/destino-seguro";
 import { PlataformaHeader } from "@/components/plataforma-header";
 import { PlataformaFooter } from "@/components/plataforma-footer";
 import { ListenButton, extrairFalasDeElemento } from "@/components/listen-button";
 
 export const Route = createFileRoute("/entrar")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
+    redirect: destinoSeguro(s.redirect),
+  }),
   head: () => ({
     meta: [
       { title: "Entrar — Plataforma Nacional de Capacitação Digital" },
@@ -31,6 +35,7 @@ export const Route = createFileRoute("/entrar")({
 
 function EntrarPage() {
   const navigate = useNavigate();
+  const { redirect: regresso } = Route.useSearch();
   const ref = useRef<HTMLElement | null>(null);
   const emailId = useId();
   const passId = useId();
@@ -63,7 +68,9 @@ function EntrarPage() {
     // Destino interno fixo: a área reservada decide o que mostrar conforme o
     // perfil e os papéis lidos no servidor. Não se segue nenhum endereço vindo
     // do navegador, por isso não há ciclos nem reencaminhamento para fora.
-    navigate({ to: destinoAposEntrada() });
+    // Regresso apenas a caminhos internos validados (destinoSeguro).
+    if (regresso) navigate({ href: regresso });
+    else navigate({ to: destinoAposEntrada() });
   }
 
   return (
@@ -74,7 +81,7 @@ function EntrarPage() {
       <PlataformaHeader />
       <main id="conteudo" ref={ref} className="wrap max-w-md py-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl font-extrabold text-navy">Entrar</h1>
+          <h1 className="text-3xl font-extrabold text-navy">Iniciar sessão</h1>
           <ListenButton getFalas={() => extrairFalasDeElemento(ref.current)} />
         </div>
         <p className="mt-2 text-base text-navy-2">
