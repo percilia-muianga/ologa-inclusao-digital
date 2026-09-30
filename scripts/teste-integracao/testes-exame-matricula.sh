@@ -74,10 +74,10 @@ verifica "anónimo não chama a operação" \
 verifica "outra conta não abre exame na inscrição alheia" "$(criar $G1 $IF1 | erro)" "VINCULO_NAO_VERIFICADO"
 
 R=$(criar $F1 $IF1); TA=${R%%/*}
-verifica "titular abre a 1.ª tentativa" "${R##*/}" "f"
+verifica "titular abre a 1.ª tentativa" "${R##*/}" "false"
 verifica "tentativa ligada à inscrição, turma e curso" \
   "$($P -c "SELECT inscricao_id='$IF1' AND turma_id='$T1' AND curso_id='$C' AND numero=1 FROM public.exame_tentativas WHERE id='$TA';")" "t"
-verifica "repetir o pedido retoma a mesma tentativa" "$(criar $F1 $IF1)" "$TA/t"
+verifica "repetir o pedido retoma a mesma tentativa" "$(criar $F1 $IF1)" "$TA/true"
 submeter $F1 $TA 50 >/dev/null
 R=$(criar $F1 $IF1); TB=${R%%/*}
 verifica "2.ª tentativa com número 2" "$($P -c "SELECT numero FROM public.exame_tentativas WHERE id='$TB';")" "2"
@@ -101,11 +101,11 @@ echo "— certificado —"
 verifica "sem exame submetido não emite" "$(emitir $G2 $IG2 CODG2 95 | erro)" "SEM_EXAME_SUBMETIDO"
 verifica "assiduidade abaixo do mínimo não emite" "$(emitir $F1 $IF1 CODF1 70 | erro)" "ASSIDUIDADE_INSUFICIENTE"
 verifica "outra conta não emite pela inscrição alheia" "$(emitir $G1 $IF1 CODX 95 | erro)" "VINCULO_NAO_VERIFICADO"
-verifica "titular emite com melhor nota da própria inscrição" "$(emitir $F1 $IF1 CODF1 90)" "CODF1/f"
+verifica "titular emite com melhor nota da própria inscrição" "$(emitir $F1 $IF1 CODF1 90)" "CODF1/false"
 verifica "certificado guarda inscrição, turma e nota 80" \
   "$($P -c "SELECT inscricao_id='$IF1' AND turma_id='$T1' AND nota_final_pct=80 AND tentativa_id='$TB' FROM public.certificados_curso WHERE codigo_verificacao='CODF1';")" "t"
-verifica "repetir devolve o mesmo certificado" "$(emitir $F1 $IF1 CODF1B 90)" "CODF1/t"
-verifica "pela outra turma do mesmo curso também não duplica" "$(emitir $F1 $IF1B CODF1C 90)" "CODF1/t"
+verifica "repetir devolve o mesmo certificado" "$(emitir $F1 $IF1 CODF1B 90)" "CODF1/true"
+verifica "pela outra turma do mesmo curso também não duplica" "$(emitir $F1 $IF1B CODF1C 90)" "CODF1/true"
 
 submeter $G1 $TG 50 >/dev/null
 verifica "nota abaixo do mínimo não emite" "$(emitir $G1 $IG1 CODG1 95 | erro)" "NOTA_INSUFICIENTE"
