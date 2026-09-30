@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { listarModulos } from "@/lib/formacao.functions";
 import { formacaoStore } from "@/lib/formacao-store";
@@ -29,7 +29,10 @@ const FILTROS: { valor: Filtro; etiqueta: string }[] = [
 ];
 
 export function CatalogoCursos() {
-  const { data: modulos = [], isLoading } = useQuery(modulosCatalogoQuery);
+  // Suspensão em vez de «a carregar»: na primeira montagem no navegador, o
+  // React espera pelos dados e mantém o HTML do servidor, sem divergência.
+  const { data: modulos } = useSuspenseQuery(modulosCatalogoQuery);
+  const isLoading = false;
   const navigate = useNavigate();
 
   const [filtro, setFiltro] = useState<Filtro>("todos");
