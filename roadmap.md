@@ -11,6 +11,11 @@ Concluído
 - [x] Relatório de participação (CSV/XLS), vista por género, configuração de exames (inactivos)
 - [x] Materiais por lição, FAQ e pedidos de suporte
 - [x] Discussão pedagógica por turma (dúvidas, respostas do formador, acompanhamento, moderação, auditoria) — ver secção própria no fim
+- [x] Acesso da Administradora Geral (correcção 30/09):
+  - Implementado: «Pré-visualizar como formando» (/painel/pre-visualizar, só admin_ologa, apenas leituras: ficha, lições, materiais disponíveis, percurso inicial identificado como exemplo, regras do exame e do certificado; não grava nada nem mostra questões). Páginas de gestão (turmas, presenças, workshops, relatórios mensais) verificam a sessão no navegador antes de pedir dados e seguem para /entrar com regresso; a entrada mostra «Inicie sessão para continuar».
+  - Base: as duas contas (percilia@ologa.com e perciliamuianga@gmail.com) têm papel admin_ologa e nenhum papel adicional — permissões equivalentes.
+  - Visto no navegador (pré-visualização, conta perciliamuianga@gmail.com): sem sessão, /turmas, /presencas, /workshops e /painel/exames seguem para /entrar?redirect=… sem erros «No authorization header provided»; sessão expirada em /turmas e /painel/licoes segue para a entrada, sem erros nem ciclos; pré-visualização de curso e lição aberta.
+  - Não verificado: submissão real do formulário de entrada (palavra-passe não usada nos testes) e o regresso subsequente; conta percilia@ologa.com no navegador; domínio próprio (após publicação).
 Pendente
 - [ ] Validação pedagógica e activação dos bancos/exames (Ologa/ATDI)
 - [ ] FAQ: revisão e publicação; plano de entrega: 7 decisões com Ologa/ATDI
