@@ -197,6 +197,31 @@ espera_recusa "se a auditoria falhar, o certificado não fica gravado" \
   "$(como postgres "" "ALTER TABLE public.registo_auditoria ADD CONSTRAINT falha_forcada2 CHECK (false) NOT VALID;
   SET LOCAL ROLE service_role; SELECT public.rpc_certificado_modulo_emitir('$FORMANDO','$FORM_VINC','$MODULO','AAA7');")"
 
+echo "— percurso de turma: criar, sessões, código, inscritos, auditoria —"
+PERCURSO="INSERT INTO public.turmas(id, curso_id, designacao, provincia, distrito, modalidade, formador_principal_nome, formadores_auxiliares, data_inicio, data_fim, local_formacao)
+  VALUES ('00000000-0000-0000-0000-0000000007a1','00000000-0000-0000-0000-00000000c001','Turma ensaio','Maputo Cidade','KaMpfumo','presencial','Formador A',ARRAY['Aux B'],'2026-10-01','2026-10-05','Sala 1');
+  INSERT INTO public.turma_sessoes(turma_id, ordem, data, hora_inicio, hora_fim, tema, modalidade)
+  VALUES ('00000000-0000-0000-0000-0000000007a1',1,'2026-10-01','08:00','13:00','S1','presencial'),
+         ('00000000-0000-0000-0000-0000000007a1',2,'2026-10-02','08:00','13:00','S2','presencial');
+  INSERT INTO public.turma_inscricoes(turma_id, nome) VALUES ('00000000-0000-0000-0000-0000000007a1','Formando X');
+  DO \$\$ DECLARE c text; m int; n int; a int; BEGIN
+    SELECT codigo_inscricao INTO c FROM public.turmas WHERE id='00000000-0000-0000-0000-0000000007a1';
+    IF c !~ '^[A-HJKMNP-Z2-9]{4}-?[A-HJKMNP-Z2-9]{4}\$' THEN RAISE EXCEPTION 'codigo invalido %', c; END IF;
+    SELECT sum(extract(epoch from hora_fim-hora_inicio)/60) INTO m FROM public.turma_sessoes WHERE turma_id='00000000-0000-0000-0000-0000000007a1';
+    IF m <> 600 THEN RAISE EXCEPTION 'soma % != 600 (10 h)', m; END IF;
+    SELECT count(*) INTO n FROM public.turma_inscricoes WHERE turma_id='00000000-0000-0000-0000-0000000007a1';
+    IF n <> 1 THEN RAISE EXCEPTION 'inscritos %', n; END IF;
+    SELECT count(*) INTO a FROM public.registo_auditoria WHERE entidade IN ('turmas','turma_sessoes','turma_inscricoes');
+    IF a < 4 THEN RAISE EXCEPTION 'auditoria %', a; END IF;
+    IF (SELECT limite_formandos FROM public.turmas WHERE id='00000000-0000-0000-0000-0000000007a1') <> 30 THEN RAISE EXCEPTION 'limite'; END IF;
+  END \$\$;"
+espera_ok "coordenador cria turma, sessões (10 h), código legível, inscrito, limite 30 e auditoria" \
+  "$(como authenticated "$COORD" "$PERCURSO")"
+espera_recusa "formando não cria turmas" \
+  "$(como authenticated "$FORMANDO" "INSERT INTO public.turmas(curso_id, designacao, provincia, distrito, modalidade) VALUES ('00000000-0000-0000-0000-00000000c001','X','Maputo','KaMpfumo','presencial');")"
+espera_recusa "anónimo não lê inscritos" \
+  "$(como anon "" "SELECT count(*) FROM public.turma_inscricoes;")"
+
 echo
 echo "passaram: $OK   falharam: $MAU"
 [ "$MAU" -eq 0 ] || exit 1
