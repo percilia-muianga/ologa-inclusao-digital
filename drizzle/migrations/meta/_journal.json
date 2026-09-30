@@ -218,6 +218,13 @@
       "when": 1790745014415,
       "tag": "0030_guardar_licao_atomico",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1790748550713,
+      "tag": "0031_materiais_licoes",
+      "breakpoints": true
     }
   ]
 }
