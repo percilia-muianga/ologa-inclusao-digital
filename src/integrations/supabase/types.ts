@@ -509,6 +509,124 @@ export type Database = {
           },
         ]
       }
+      discussao_respostas: {
+        Row: {
+          autor_id: string
+          autor_nome: string
+          criado_em: string
+          id: string
+          mensagem: string
+          moderacao_motivo: string | null
+          oculto: boolean
+          papel_autor: string
+          topico_id: string
+          turma_id: string
+        }
+        Insert: {
+          autor_id?: string
+          autor_nome?: string
+          criado_em?: string
+          id?: string
+          mensagem: string
+          moderacao_motivo?: string | null
+          oculto?: boolean
+          papel_autor?: string
+          topico_id: string
+          turma_id: string
+        }
+        Update: {
+          autor_id?: string
+          autor_nome?: string
+          criado_em?: string
+          id?: string
+          mensagem?: string
+          moderacao_motivo?: string | null
+          oculto?: boolean
+          papel_autor?: string
+          topico_id?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussao_respostas_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussao_respostas_topico_id_fkey"
+            columns: ["topico_id"]
+            isOneToOne: false
+            referencedRelation: "discussao_topicos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussao_respostas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discussao_topicos: {
+        Row: {
+          actualizado_em: string
+          autor_id: string
+          autor_nome: string
+          criado_em: string
+          estado: string
+          id: string
+          mensagem: string
+          moderacao_motivo: string | null
+          oculto: boolean
+          titulo: string
+          turma_id: string
+        }
+        Insert: {
+          actualizado_em?: string
+          autor_id?: string
+          autor_nome?: string
+          criado_em?: string
+          estado?: string
+          id?: string
+          mensagem: string
+          moderacao_motivo?: string | null
+          oculto?: boolean
+          titulo: string
+          turma_id: string
+        }
+        Update: {
+          actualizado_em?: string
+          autor_id?: string
+          autor_nome?: string
+          criado_em?: string
+          estado?: string
+          id?: string
+          mensagem?: string
+          moderacao_motivo?: string | null
+          oculto?: boolean
+          titulo?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussao_topicos_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussao_topicos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       distritos_tdr: {
         Row: {
           id: string
@@ -2198,6 +2316,10 @@ export type Database = {
         Args: { _actor: string; _formando_id: string }
         Returns: boolean
       }
+      discussao_papel: {
+        Args: { _turma: string; _uid: string }
+        Returns: string
+      }
       e_admin_atdi: { Args: { _uid: string }; Returns: boolean }
       e_admin_geral_ologa: { Args: { _uid: string }; Returns: boolean }
       e_auditor_atdi: { Args: { _uid: string }; Returns: boolean }
@@ -2304,6 +2426,7 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_discussao_turmas: { Args: never; Returns: Json }
       rpc_estado_banco_ia: { Args: never; Returns: Json }
       rpc_estado_banco_redes: { Args: never; Returns: Json }
       rpc_estado_banco_sc: { Args: never; Returns: Json }

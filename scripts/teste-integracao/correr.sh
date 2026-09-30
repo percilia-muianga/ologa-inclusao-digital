@@ -51,3 +51,6 @@ echo
 PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes-inscricao.sh"
 echo
 PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes-exame-matricula.sh"
+
+echo
+PGDIR="$BASE" PGPORTA=$PORTA bash "$DIR/testes-discussao.sh"

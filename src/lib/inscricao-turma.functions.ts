@@ -79,6 +79,7 @@ export const inscreverPorCodigo = createServerFn({ method: "POST" })
 
 export type MinhaTurma = {
   inscricaoId: string;
+  turmaId: string;
   estado: string;
   inscritoEm: string;
   turmaDesignacao: string;
@@ -98,13 +99,14 @@ export const listarMinhasTurmas = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("turma_inscricoes")
       .select(
-        "id, estado, criado_em, turmas(designacao, estado, provincia, distrito, data_inicio, data_fim, cursos(titulo, slug))",
+        "id, turma_id, estado, criado_em, turmas(designacao, estado, provincia, distrito, data_inicio, data_fim, cursos(titulo, slug))",
       )
       .eq("perfil_id", context.userId)
       .order("criado_em", { ascending: false });
     if (error) throw new Error("Não foi possível ler as suas turmas.");
     type Linha = {
       id: string;
+      turma_id: string;
       estado: string;
       criado_em: string;
       turmas: {
@@ -121,6 +123,7 @@ export const listarMinhasTurmas = createServerFn({ method: "GET" })
       .filter((l) => l.turmas)
       .map((l) => ({
         inscricaoId: l.id,
+        turmaId: l.turma_id,
         estado: l.estado,
         inscritoEm: l.criado_em,
         turmaDesignacao: l.turmas!.designacao,

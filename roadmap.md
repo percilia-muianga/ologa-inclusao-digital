@@ -1,5 +1,25 @@
 # Roteiro — plataforma nacional primeiro, acessos no fim
 
+## Estado actual (30/09/2026) — lista única
+Concluído
+- [x] Cursos, módulos e lições; edição de lições com protecção contra sobrescrita e auditoria
+- [x] Fichas dos seis cursos sem notas internas (versões anteriores guardadas)
+- [x] Turmas, sessões, inscrição por código com vagas atómicas (limite 30)
+- [x] Presenças, assiduidade, «O meu percurso»
+- [x] Exame final e certificado ligados à inscrição da conta (tentativas, prazo, certificado único)
+- [x] Bancos SC, Governo e Redes importados (90 cada, rascunho e inactivos)
+- [x] Relatório de participação (CSV/XLS), vista por género, configuração de exames (inactivos)
+- [x] Materiais por lição, FAQ e pedidos de suporte
+- [x] Discussão pedagógica por turma (dúvidas, respostas do formador, acompanhamento, moderação, auditoria) — ver secção própria no fim
+Pendente
+- [ ] Validação pedagógica e activação dos bancos/exames (Ologa/ATDI)
+- [ ] FAQ: revisão e publicação; plano de entrega: 7 decisões com Ologa/ATDI
+- [ ] Monitorização automática de disponibilidade (99,5 %)
+- [ ] Ensaio real de materiais e percurso completo no navegador com turmas reais — fase de verificação interna Ologa
+- [ ] Formadores auxiliares: hoje são nomes sem conta; só o formador principal responde na discussão
+
+## Histórico
+
 Decisão da cliente: construir a plataforma inteira, visível e navegável, e só no fim aplicar os acessos. O que já existe de autenticação, papéis e registo de auditoria fica intacto e a funcionar.
 
 ## Condições permanentes desta entrega
@@ -241,7 +261,7 @@ Por concluir:
 ## Revisão de textos visíveis (30/09/2026)
 - [x] Avaliação: vista de gestão (estado do banco, mínimo exigido, arquivadas) só para perfis autorizados; formandos vêem só disponibilidade e orientações. Resumo do banco passou a exigir sessão e permissão no servidor.
 - [x] Curso, turmas, exame, Painel Nacional: referências a TdR/equipa/validação retiradas; notas em docs/notas-internas-retiradas-da-interface.md.
-- [ ] Fichas dos seis cursos na base ainda contêm notas internas — aguarda autorização para editar dados.
+- [x] Fichas dos seis cursos na base ainda contêm notas internas — aguarda autorização para editar dados. — concluído (fichas limpas; exame/certificado por inscrição; GitHub confirmado no commit eb787061)
 
 ## 30/09/2026 — Continuidade do percurso do formando
 - [x] «O meu percurso» em «As minhas turmas»: lições concluídas na matrícula, presenças e assiduidade (taxa do curso), estado do exame, tentativas, melhor nota, certificado e próximo passo com ligação
@@ -249,8 +269,8 @@ Por concluir:
 - [x] Exame indicado como «ainda não disponível» enquanto não houver configuração guardada e banco activo com o triplo exigido (questões e exames continuam inactivos)
 - [x] Testes da regra do próximo passo (8)
 - [ ] Verificação no navegador com turma e presenças reais — fase de verificação interna da Ologa
-- [ ] Revisão de textos: fichas dos seis cursos na base aguardam autorização
-- [ ] Próxima: ligar o exame/certificado do curso à matrícula (hoje identificado pelo token pessoal e nome, não pela inscrição)
+- [x] Revisão de textos: fichas dos seis cursos na base aguardam autorização — concluído (fichas limpas; exame/certificado por inscrição; GitHub confirmado no commit eb787061)
+- [x] Próxima: ligar o exame/certificado do curso à matrícula (hoje identificado pelo token pessoal e nome, não pela inscrição) — concluído (fichas limpas; exame/certificado por inscrição; GitHub confirmado no commit eb787061)
 
 ## Ronda de 30/09 — exame e certificado por inscrição; fichas dos cursos
 Implementado
@@ -266,4 +286,18 @@ Visto no navegador
 - [x] Certificados sem sessão e Exame final / As minhas turmas com sessão (conta sem turmas: mensagens correctas)
 Pendente (verificação interna Ologa)
 - [ ] Percurso completo no navegador com turma, presenças, exame e certificado reais — exige questões e exame activos
-- [ ] Sincronização com o GitHub: não verificável a partir daqui; confirmar no repositório
+- [x] Sincronização com o GitHub: não verificável a partir daqui; confirmar no repositório — concluído (fichas limpas; exame/certificado por inscrição; GitHub confirmado no commit eb787061)
+
+## 30/09/2026 — Discussão pedagógica por turma
+Implementado
+- [x] Base (migração 0037): dúvidas e respostas por turma; acesso só para formandos inscritos (não desistentes), formador principal da turma e coordenação do programa; nome e papel do autor definidos pela base; sem eliminação — a moderação oculta com motivo obrigatório; auditoria de todas as acções
+- [x] Ecrãs «Discussão das turmas» e discussão de cada turma: colocar dúvida, responder, marcar como resolvida/reabrir, filtros, moderação; estados vazios
+- [x] Acesso em «As minhas turmas» («Dúvidas da turma») e no painel (atalho da Administração Geral e ligação nos restantes papéis)
+- [x] FAQ e pedidos de suporte preservados, sem duplicação (a discussão remete para Ajuda em questões técnicas)
+Testado automaticamente
+- [x] Base temporária: 30/30 (separação entre turmas e formadores, inscrição anulada, sem sessão/anónimo, falsificação de autor/papel/turma, respostas e estados, moderação só pela coordenação, auditoria); ensaios anteriores 41/41, 21/21, 29/29; suite 327/327; tipos sem erros
+Visto no navegador (conta da Administradora Geral, só leitura)
+- [x] Lista vazia, turma inexistente sem acesso, atalho no painel, «As minhas turmas»
+Pendente
+- [ ] Publicar dúvidas/respostas pelo ecrã com turmas reais — fase de verificação interna Ologa (sem dados fictícios na base partilhada)
+- [ ] Migração 0036 ficou vazia (apenas comentário, aplicada por engano); a 0037 contém o esquema
