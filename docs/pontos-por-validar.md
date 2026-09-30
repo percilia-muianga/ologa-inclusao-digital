@@ -289,3 +289,9 @@ Registado a 22 de Setembro de 2026.
 - Por autorizar: `docs/migracoes-por-autorizar/bancos-sc-governo-redes.sql` — seis funções `rpc_estado_banco_{sc,tdg,redes}()` e `rpc_importar_banco_{sc,tdg,redes}(jsonb,text)`, réplica da função de IA em uso. Não requer nova política: a escrita usa a regra existente «banco_escrever_gestao».
 - Simulação em base temporária descartável (`scripts/teste-bancos/correr.sh`): 80/80 verificações.
 - Pendentes: autorização do SQL; validação pedagógica Ologa/ATDI dos três bancos; decisão sobre prova e configuração de exame (não configurada).
+
+## Bancos SC / Governo / Redes — funções aplicadas (30/09/2026)
+- Aplicado por autorização expressa: `docs/migracoes-por-autorizar/bancos-sc-governo-redes.sql` → migração `0029_bancos_sc_governo_redes.sql` (cópia byte a byte, sha256 8ce16d6c…).
+- Seis funções existem: SECURITY INVOKER, search_path=public, EXECUTE só authenticated (+ contas internas); anónimo recusado (42501, verificado).
+- Contagens após aplicação: SC 0, Governo 0, Redes 0; TD 158, Nuvem 140, IA 90 (rascunho); 0 configurações de exame.
+- Pendente: importação pela Administradora Geral em «Conteúdos preparados»; validação pedagógica Ologa/ATDI antes de activar.
