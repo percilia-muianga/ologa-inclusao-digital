@@ -23,7 +23,7 @@ site publicado, que partilham a base real.
 ```
 bash scripts/teste-envio-real/gerar-ficheiros.sh
 AMBIENTE_ISOLADO=sim BASE_URL=<endereço do ambiente isolado> \
-SESSAO_ADMIN=<ficheiro de sessão admin> SESSAO_FORMANDO=<ficheiro de sessão formando> \
+SESSAO_ADMIN=<sessão admin> SESSAO_FORMANDO=<sessão formando> URL_LICAO=<endereço da 1.ª lição> \
 python3 scripts/teste-envio-real/e2e.py
 ```
 Os ficheiros de sessão têm o formato gerado por `lovable auth-session --json`.
