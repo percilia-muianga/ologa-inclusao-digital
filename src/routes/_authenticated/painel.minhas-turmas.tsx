@@ -245,7 +245,7 @@ function Percurso({ inscricaoId }: { inscricaoId: string }) {
           <Link to="/avaliacao/exame" className="font-semibold underline">Ir para o exame e certificado</Link>
         ) : null}
         {p.certificadoCodigo ? (
-          <Link to="/verificar" search={{ codigo: p.certificadoCodigo } as never} className="font-semibold underline">Ver certificado</Link>
+          <Link to="/verificar" className="font-semibold underline">Ver certificado</Link>
         ) : null}
       </div>
     </div>
