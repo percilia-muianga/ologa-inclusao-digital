@@ -32,7 +32,7 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Sessões com data, horas, duração, tema e formador; verificação da soma contra a carga horária do curso
 - [x] Lista com filtros por província, curso, estado e formador
 - [x] Soma por província: turmas e formandos inscritos (embrião do Painel Nacional)
-- [ ] Ecrãs de criação/edição de turmas e sessões (por fazer — não adiar por acessos, regra 14)
+- [x] Ecrãs de criação/edição de turmas e sessões (implementados; ver ronda de 30/09 — gestão de turmas)
 
 ## Correcções do Termo de Referência — fases A a G (concluídas)
 - [x] A — Cargas horárias: IA 16 h (8 lições), Redes 120 h (60 lições); total 115 lições por fornecer
@@ -90,7 +90,7 @@ Decisão da cliente: construir a plataforma inteira, visível e navegável, e s�
 - [x] Leitura de exames, presenças e certificados restringida à equipa de formação (migração 0008)
 - [x] `docs/matriz-tdr.md` com implementado/testado/pendente
 - [x] 14 testes automáticos (79/80 %, 59/60 %, prazo 30/31 dias, estados de sessão)
-- [ ] Questões reais do banco — por fornecer pela Ologa (Segurança Cibernética e Governo Digital: rascunhos privados 80+10 preparados, não importados; Redes por escrever)
+- [x] Bancos de Segurança Cibernética, Governo Digital e Redes importados (90 cada, rascunho e inactivos)
 - [ ] Revisão pedagógica da distribuição curricular
 - [ ] Restantes recomendações de segurança fora de exames e presenças
 
@@ -199,3 +199,21 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [ ] Verificação automática de disponibilidade (99,5%) por implementar
 - [x] Ensaio real de materiais preparado (scripts/teste-envio-real): ficheiros de ensaio gerados; recusa a base partilhada
 - [ ] Executar o ensaio real: falta um ambiente isolado com armazenamento real
+
+## 30/09/2026 — Gestão de turmas e sessões
+Implementado:
+- [x] Criar/editar turma (curso, formadores, local, datas, computadores, estado), código gerado na base
+- [x] Sessões com soma contra a carga horária; inscrição com recusa acima de 30
+- [x] Novo: lista de formandos inscritos na ficha da turma (nome, email, estado, data)
+Verificado:
+- [x] Base isolada efémera (scripts/teste-integracao): coordenador cria turma, 2 sessões = 10 h, código legível, inscrito, limite 30, auditoria; formando e anónimo recusados (41/41)
+- [x] Navegador: /turmas e /turmas/nova abrem com sessão de Administradora Geral
+Por concluir:
+- [ ] Gravação pelos ecrãs no navegador: exige ambiente isolado com contas próprias (não usada a base partilhada)
+- [ ] Limite de 30 só na função de servidor; sem regra na base contra inscrições simultâneas
+- [ ] Auto-inscrição do formando pelo código (próxima funcionalidade)
+
+## Pendências actuais
+- [ ] FAQ: revisão e publicação; plano de entrega: 7 decisões com Ologa/ATDI
+- [ ] Monitorização de disponibilidade 99,5 %; ensaio real de materiais (ambiente isolado)
+- [ ] Validação pedagógica e activação dos bancos/exames (externa)
