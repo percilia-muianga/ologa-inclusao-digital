@@ -65,7 +65,6 @@ import { Route as AvaliacaoExameTentativaRouteImport } from './routes/avaliacao.
 import { Route as AuthenticatedPainelUtilizadoresRouteImport } from './routes/_authenticated/painel.utilizadores'
 import { Route as AuthenticatedPainelPermissoesRouteImport } from './routes/_authenticated/painel.permissoes'
 import { Route as AuthenticatedPainelParticipacaoRouteImport } from './routes/_authenticated/painel.participacao'
-import { Route as AuthenticatedPainelMinhasTurmasRouteImport } from './routes/_authenticated/painel.minhas-turmas'
 import { Route as AuthenticatedPainelLicoesRouteImport } from './routes/_authenticated/painel.licoes'
 import { Route as AuthenticatedPainelExamesRouteImport } from './routes/_authenticated/painel.exames'
 import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
@@ -360,12 +359,6 @@ const AuthenticatedPainelParticipacaoRoute =
     path: '/participacao',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
-const AuthenticatedPainelMinhasTurmasRoute =
-  AuthenticatedPainelMinhasTurmasRouteImport.update({
-    id: '/minhas-turmas',
-    path: '/minhas-turmas',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
 const AuthenticatedPainelLicoesRoute =
   AuthenticatedPainelLicoesRouteImport.update({
     id: '/licoes',
@@ -459,7 +452,6 @@ export interface FileRoutesByFullPath {
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/exames': typeof AuthenticatedPainelExamesRoute
   '/painel/licoes': typeof AuthenticatedPainelLicoesRoute
-  '/painel/minhas-turmas': typeof AuthenticatedPainelMinhasTurmasRoute
   '/painel/participacao': typeof AuthenticatedPainelParticipacaoRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -515,7 +507,6 @@ export interface FileRoutesByTo {
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/painel/exames': typeof AuthenticatedPainelExamesRoute
   '/painel/licoes': typeof AuthenticatedPainelLicoesRoute
-  '/painel/minhas-turmas': typeof AuthenticatedPainelMinhasTurmasRoute
   '/painel/participacao': typeof AuthenticatedPainelParticipacaoRoute
   '/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -583,7 +574,6 @@ export interface FileRoutesById {
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
   '/_authenticated/painel/exames': typeof AuthenticatedPainelExamesRoute
   '/_authenticated/painel/licoes': typeof AuthenticatedPainelLicoesRoute
-  '/_authenticated/painel/minhas-turmas': typeof AuthenticatedPainelMinhasTurmasRoute
   '/_authenticated/painel/participacao': typeof AuthenticatedPainelParticipacaoRoute
   '/_authenticated/painel/permissoes': typeof AuthenticatedPainelPermissoesRoute
   '/_authenticated/painel/utilizadores': typeof AuthenticatedPainelUtilizadoresRoute
@@ -651,7 +641,6 @@ export interface FileRouteTypes {
     | '/painel/equipa'
     | '/painel/exames'
     | '/painel/licoes'
-    | '/painel/minhas-turmas'
     | '/painel/participacao'
     | '/painel/permissoes'
     | '/painel/utilizadores'
@@ -707,7 +696,6 @@ export interface FileRouteTypes {
     | '/painel/equipa'
     | '/painel/exames'
     | '/painel/licoes'
-    | '/painel/minhas-turmas'
     | '/painel/participacao'
     | '/painel/permissoes'
     | '/painel/utilizadores'
@@ -774,7 +762,6 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/equipa'
     | '/_authenticated/painel/exames'
     | '/_authenticated/painel/licoes'
-    | '/_authenticated/painel/minhas-turmas'
     | '/_authenticated/painel/participacao'
     | '/_authenticated/painel/permissoes'
     | '/_authenticated/painel/utilizadores'
@@ -1217,13 +1204,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelParticipacaoRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
-    '/_authenticated/painel/minhas-turmas': {
-      id: '/_authenticated/painel/minhas-turmas'
-      path: '/minhas-turmas'
-      fullPath: '/painel/minhas-turmas'
-      preLoaderRoute: typeof AuthenticatedPainelMinhasTurmasRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
     '/_authenticated/painel/licoes': {
       id: '/_authenticated/painel/licoes'
       path: '/licoes'
@@ -1290,7 +1270,6 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelEquipaRoute: typeof AuthenticatedPainelEquipaRoute
   AuthenticatedPainelExamesRoute: typeof AuthenticatedPainelExamesRoute
   AuthenticatedPainelLicoesRoute: typeof AuthenticatedPainelLicoesRoute
-  AuthenticatedPainelMinhasTurmasRoute: typeof AuthenticatedPainelMinhasTurmasRoute
   AuthenticatedPainelParticipacaoRoute: typeof AuthenticatedPainelParticipacaoRoute
   AuthenticatedPainelPermissoesRoute: typeof AuthenticatedPainelPermissoesRoute
   AuthenticatedPainelUtilizadoresRoute: typeof AuthenticatedPainelUtilizadoresRoute
@@ -1304,7 +1283,6 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelEquipaRoute: AuthenticatedPainelEquipaRoute,
   AuthenticatedPainelExamesRoute: AuthenticatedPainelExamesRoute,
   AuthenticatedPainelLicoesRoute: AuthenticatedPainelLicoesRoute,
-  AuthenticatedPainelMinhasTurmasRoute: AuthenticatedPainelMinhasTurmasRoute,
   AuthenticatedPainelParticipacaoRoute: AuthenticatedPainelParticipacaoRoute,
   AuthenticatedPainelPermissoesRoute: AuthenticatedPainelPermissoesRoute,
   AuthenticatedPainelUtilizadoresRoute: AuthenticatedPainelUtilizadoresRoute,
