@@ -24,6 +24,7 @@ const ADMIN_GERAL: LigacaoPainel[] = [
   { to: "/painel/equipa", rotulo: "Equipa e testes" },
   { to: "/painel/conteudos", rotulo: "Conteúdos preparados" },
   { to: "/painel/licoes", rotulo: "Editar lições" },
+  { to: "/painel/participacao", rotulo: "Participação" },
   { to: "/painel/permissoes", rotulo: "Permissões" },
   { to: "/painel/auditoria", rotulo: "Registo de actividade" },
   { to: "/formacao", rotulo: "Cursos" },

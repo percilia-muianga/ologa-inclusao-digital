@@ -70,6 +70,7 @@ const ATALHOS_ADMIN_GERAL: Atalho[] = [
   { to: "/presencas", titulo: "Presenças", texto: "Marcação por sessão, também sem ligação, e folha imprimível." },
   { to: "/avaliacao/banco", titulo: "Banco de questões", texto: "Consulta e revisão das questões por curso e módulo. Nenhum exame é activado aqui." },
   { to: "/workshops", titulo: "Workshops", texto: "Workshops provinciais e distritais e registo de participantes." },
+  { to: "/painel/participacao", titulo: "Participação por formando", texto: "Nome e conclusão das aulas de cada formando, exportável em CSV e XLS." },
   { to: "/painel-nacional", titulo: "Painel Nacional", texto: "Indicadores de desempenho, satisfação, eficácia e workshops, com exportação." },
   { to: "/relatorios-mensais", titulo: "Relatórios mensais", texto: "Incidentes, reclamações, medidas correctivas e acessibilidade." },
   { to: "/certificados", titulo: "Certificados", texto: "Certificados emitidos e verificação pública." },
