@@ -230,3 +230,10 @@ Por concluir:
 - [ ] FAQ: revisão e publicação; plano de entrega: 7 decisões com Ologa/ATDI
 - [ ] Monitorização de disponibilidade 99,5 %; ensaio real de materiais (ambiente isolado)
 - [ ] Validação pedagógica e activação dos bancos/exames (externa)
+
+## 2026-09-30 — Ensaio isolado e testes de sorteio
+- Ambiente separado: rascunho criado, mas partilha a base, ficheiros e contas da plataforma publicada; ensaio parado antes de qualquer gravação. PENDENTE: Remix do projecto com Lovable Cloud (acção da utilizadora) para ensaio no navegador (inscrição) e materiais reais.
+- Verificações no navegador: nenhuma nova nesta ronda.
+- Ensaios na base: nenhum novo nesta ronda.
+- Testes de sorteio IA/SC: 58/58 isolados (1,5 s e 1,1 s); suite completa 319/319 (5,4 s). Falha anterior não reproduzida e sem registo de erro guardado; causa não confirmada.
+- Questões e exames continuam inactivos.
