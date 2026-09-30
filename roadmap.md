@@ -191,6 +191,11 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [x] Gestão de materiais por lição (anexar, substituir, ordenar, disponibilizar, pré-visualizar, avisos)
 - [x] Materiais disponíveis na página da lição (ordem, abrir/descarregar, vídeo com legendas); ensaio isolado 25/25
 - [x] FAQ (pública, gerida pela Administradora Geral) e pedidos de suporte com resposta; ensaio isolado 15/15
-- [ ] FAQ: textos das perguntas e respostas a fornecer pela Ologa (nenhum inventado)
-- [ ] Plano de entrega, suporte e transferência (TdR sec. 17): por acordar com Ologa/ATDI
-- [ ] Ensaio de carregamento real de ficheiros no armazenamento: sem ambiente isolado de armazenamento
+- [x] FAQ: 19 perguntas em rascunho (por publicar) gravadas, baseadas no funcionamento real (docs/faq-rascunho.sql)
+- [ ] FAQ: revisão e publicação no Painel → FAQ e suporte
+- [x] Erro de montagem em /formacao corrigido e confirmado no navegador (com e sem sessão)
+- [x] Plano de entrega, suporte e transferência: parte técnica (docs/plano-entrega-suporte-transferencia.md); o TdR não tem secção 17, baseado em 3.7, 9.1 e 11
+- [ ] Plano de entrega: 7 decisões [ACORDO] com Ologa/ATDI
+- [ ] Verificação automática de disponibilidade (99,5%) por implementar
+- [x] Ensaio real de materiais preparado (scripts/teste-envio-real): ficheiros de ensaio gerados; recusa a base partilhada
+- [ ] Executar o ensaio real: falta um ambiente isolado com armazenamento real
