@@ -242,3 +242,12 @@ Por concluir:
 - [x] Avaliação: vista de gestão (estado do banco, mínimo exigido, arquivadas) só para perfis autorizados; formandos vêem só disponibilidade e orientações. Resumo do banco passou a exigir sessão e permissão no servidor.
 - [x] Curso, turmas, exame, Painel Nacional: referências a TdR/equipa/validação retiradas; notas em docs/notas-internas-retiradas-da-interface.md.
 - [ ] Fichas dos seis cursos na base ainda contêm notas internas — aguarda autorização para editar dados.
+
+## 30/09/2026 — Continuidade do percurso do formando
+- [x] «O meu percurso» em «As minhas turmas»: lições concluídas na matrícula, presenças e assiduidade (taxa do curso), estado do exame, tentativas, melhor nota, certificado e próximo passo com ligação
+- [x] Titularidade confirmada pelas regras da base antes de ler presenças/resultados; só leitura, só a própria matrícula
+- [x] Exame indicado como «ainda não disponível» enquanto não houver configuração guardada e banco activo com o triplo exigido (questões e exames continuam inactivos)
+- [x] Testes da regra do próximo passo (8)
+- [ ] Verificação no navegador com turma e presenças reais — fase de verificação interna da Ologa
+- [ ] Revisão de textos: fichas dos seis cursos na base aguardam autorização
+- [ ] Próxima: ligar o exame/certificado do curso à matrícula (hoje identificado pelo token pessoal e nome, não pela inscrição)
