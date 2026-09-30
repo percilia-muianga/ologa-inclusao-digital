@@ -253,6 +253,13 @@
       "when": 1790764945148,
       "tag": "0035_tentativas_por_formando_e_curso",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1790765781036,
+      "tag": "0036_discussao_por_turma",
+      "breakpoints": true
     }
   ]
 }
