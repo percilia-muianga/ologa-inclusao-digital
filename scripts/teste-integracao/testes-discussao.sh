@@ -26,17 +26,17 @@ SQL
 }
 recusa() { grep -Eqi "violates row-level|DISCUSSAO_|permission denied|ERROR" <<<"$1" && echo recusado || echo aceite; }
 
-$P <<SQL
+$P <<SQL >/dev/null
 INSERT INTO auth.users(id,email) VALUES ('$FA','fa@t.local'),('$FB','fb@t.local'),('$FX','fx@t.local'),('$PA','pa@t.local'),('$PB','pb@t.local');
 INSERT INTO public.perfis(id,nome,email) VALUES ('$FA','Formando A','fa@t.local'),('$FB','Formando B','fb@t.local'),('$FX','Formando X','fx@t.local'),('$PA','Formador A','pa@t.local'),('$PB','Formador B','pb@t.local');
 INSERT INTO public.utilizador_papeis(utilizador_id,papel) VALUES ('$PA','formador'),('$PB','formador');
-INSERT INTO public.turmas(id,curso_id,designacao,codigo_inscricao,provincia,distrito,modalidade,estado,formador_principal_id)
+SQL
+como "$COORD" "INSERT INTO public.turmas(id,curso_id,designacao,codigo_inscricao,provincia,distrito,modalidade,estado,formador_principal_id)
   VALUES ('$TA','00000000-0000-0000-0000-00000000c001','Turma A','DDDA2345','Niassa','Lichinga','presencial','a_decorrer','$PA'),
          ('$TB','00000000-0000-0000-0000-00000000c001','Turma B','DDDB2345','Tete','Tete','presencial','a_decorrer','$PB');
 INSERT INTO public.turma_inscricoes(turma_id,perfil_id,nome,email,estado) VALUES
   ('$TA','$FA','Formando A','fa@t.local','inscrito'),('$TB','$FB','Formando B','fb@t.local','inscrito'),
-  ('$TA','$FX','Formando X','fx@t.local','desistiu');
-SQL
+  ('$TA','$FX','Formando X','fx@t.local','desistiu');" >/dev/null
 
 echo "— acesso por turma —"
 verifica "formando A cria dúvida na sua turma" "$(recusa "$(como $FA "INSERT INTO public.discussao_topicos(turma_id,autor_id,titulo,mensagem) VALUES ('$TA','$FA','Dúvida sobre sub-redes','Como calcular a máscara /26?');")")" "aceite"
