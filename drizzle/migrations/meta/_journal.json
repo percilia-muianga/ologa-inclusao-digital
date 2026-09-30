@@ -232,6 +232,13 @@
       "when": 1790749280594,
       "tag": "0032_faq_e_suporte",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1790757484084,
+      "tag": "0033_inscricao_por_codigo_vagas_atomicas",
+      "breakpoints": true
     }
   ]
 }

@@ -367,11 +367,25 @@ export const inscreverFormando = createServerFn({ method: "POST" })
       };
     }
 
+    // A contagem acima serve só para a mensagem. A garantia do limite está na
+    // base: a escrita bloqueia a turma e recusa com TURMA_CHEIA, mesmo com
+    // pedidos simultâneos.
     const { error } = await db.from("turma_inscricoes").insert({
       turma_id: data.turmaId,
       nome: data.nome.trim(),
       email: data.email,
     });
-    if (error) throw error;
+    if (error) {
+      if (String(error.message).includes("TURMA_CHEIA")) {
+        return {
+          ok: false as const,
+          motivo: `A turma está cheia: o limite é de ${turmaRes.data.limite_formandos} formandos. Não é possível inscrever mais ninguém nesta turma.`,
+        };
+      }
+      if ((error as { code?: string }).code === "23505") {
+        return { ok: false as const, motivo: "Esta pessoa já está inscrita nesta turma." };
+      }
+      throw error;
+    }
     return { ok: true as const, inscritos: activos + 1 };
   });
