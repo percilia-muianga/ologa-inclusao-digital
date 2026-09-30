@@ -237,3 +237,8 @@ Por concluir:
 - Ensaios na base: nenhum novo nesta ronda.
 - Testes de sorteio IA/SC: 58/58 isolados (1,5 s e 1,1 s); suite completa 319/319 (5,4 s). Falha anterior não reproduzida e sem registo de erro guardado; causa não confirmada.
 - Questões e exames continuam inactivos.
+
+## Revisão de textos visíveis (30/09/2026)
+- [x] Avaliação: vista de gestão (estado do banco, mínimo exigido, arquivadas) só para perfis autorizados; formandos vêem só disponibilidade e orientações. Resumo do banco passou a exigir sessão e permissão no servidor.
+- [x] Curso, turmas, exame, Painel Nacional: referências a TdR/equipa/validação retiradas; notas em docs/notas-internas-retiradas-da-interface.md.
+- [ ] Fichas dos seis cursos na base ainda contêm notas internas — aguarda autorização para editar dados.
