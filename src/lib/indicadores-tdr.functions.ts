@@ -37,7 +37,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     basesRes,
   ] = await Promise.all([
     supabaseAdmin.from("turmas").select("id,provincia,distrito,curso_id,estado"),
-    supabaseAdmin.from("turma_inscricoes").select("id,turma_id,nome,estado"),
+    supabaseAdmin.from("turma_inscricoes").select("id,turma_id,nome,estado,perfil_id"),
     supabaseAdmin.from("certificados").select("id", { count: "exact", head: true }),
     supabaseAdmin
       .from("avaliacoes_conhecimento")
@@ -45,7 +45,7 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     supabaseAdmin.from("questionarios_satisfacao").select("pontuacao,provincia"),
     supabaseAdmin.from("inqueritos_eficacia").select("aplica_competencias,provincia"),
     supabaseAdmin.from("workshops").select("id,tipo,provincia,distrito,estado"),
-    supabaseAdmin.from("workshop_participantes").select("workshop_id,provincia"),
+    supabaseAdmin.from("workshop_participantes").select("workshop_id,provincia,genero"),
     supabaseAdmin.from("configuracoes_programa").select("chave,valor"),
     supabaseAdmin.from("locais_formacao").select("ordem,provincia,local").order("ordem"),
     supabaseAdmin
@@ -122,6 +122,24 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
 
 
   const inscritos = inscricoes.length;
+
+  // Vista por género: só contagens agregadas; grupos de 1 a 4 pessoas são
+  // suprimidos (null) para não identificar ninguém.
+  const idsPerfis = [...new Set(inscricoes.map((i) => i.perfil_id).filter(Boolean))] as string[];
+  const generoPerfil = new Map<string, string | null>();
+  if (idsPerfis.length > 0) {
+    const { data: ps, error: eP } = await supabaseAdmin.from("perfis").select("id,genero").in("id", idsPerfis);
+    if (eP) throw eP;
+    for (const p of ps ?? []) generoPerfil.set(p.id, p.genero);
+  }
+  const GENEROS = ["feminino", "masculino", "outro", "prefere_nao_indicar", "sem_registo"] as const;
+  const suprimir = (n: number) => (n > 0 && n < LIMITE_DIVULGACAO ? null : n);
+  const participantesW = participantesRes.data ?? [];
+  const porGenero = GENEROS.map((g) => {
+    const insc = inscricoes.filter((i) => ((i.perfil_id && generoPerfil.get(i.perfil_id)) || "sem_registo") === g).length;
+    const part = participantesW.filter((w) => (w.genero ?? "sem_registo") === g).length;
+    return { genero: g, inscritos: suprimir(insc), participantesWorkshops: suprimir(part) };
+  });
   const certificados = certificadosRes.count ?? 0;
   const concluidos = certificados;
 
@@ -243,5 +261,6 @@ export const obterIndicadoresTdr = createServerFn({ method: "GET" }).handler(asy
     },
     porProvincia,
     porDistrito,
+    porGenero,
   };
 });

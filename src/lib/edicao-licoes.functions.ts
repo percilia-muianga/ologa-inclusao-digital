@@ -4,8 +4,8 @@
  * - Não alarga permissões: escreve com o cliente da própria sessão, logo a
  *   política RLS existente `licoes_update_admin` (is_admin) decide sempre.
  * - Cada alteração fica no registo de auditoria pelo gatilho já existente.
- * - Protecção contra sobrescrita: o cliente envia os valores que viu; se a
- *   lição mudou entretanto, a gravação é recusada (CONFLITO).
+ * - Protecção contra sobrescrita atómica: o cliente envia os valores que viu;
+ *   a função da base compara e grava na mesma transacção com a linha bloqueada.
  * - Não toca em bancos de questões nem em exames.
  */
 import { createServerFn } from "@tanstack/react-start";
@@ -104,25 +104,31 @@ export const guardarLicao = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await exigirAdministradorGeral(context as Contexto);
-    const { data: actual, error } = await context.supabase
-      .from("licoes")
-      .select("titulo, duracao_minutos, estado_conteudo, conteudo_elearning, guiao_formador")
-      .eq("id", data.id)
-      .maybeSingle();
+    // Comparação e actualização numa só transacção, com a linha bloqueada
+    // (rpc_guardar_licao, SECURITY INVOKER: as regras de acesso decidem).
+    const { data: r, error } = await context.supabase.rpc("rpc_guardar_licao", {
+      _id: data.id,
+      _anterior: data.anterior,
+      _novo: data.novo,
+    });
     if (error) throw new Error(error.message);
-    if (!actual) throw new Error("LICAO_INEXISTENTE");
-    const chaves = Object.keys(data.novo) as (keyof CamposLicao)[];
-    const mudouEntretanto = chaves.some((k) => (actual as any)[k] !== data.anterior[k]);
-    if (mudouEntretanto) return { estado: "conflito" as const };
-    const alteracoes: Partial<CamposLicao> = {};
-    for (const k of chaves) if ((actual as any)[k] !== data.novo[k]) (alteracoes as any)[k] = data.novo[k];
-    if (Object.keys(alteracoes).length === 0) return { estado: "sem_alteracoes" as const };
-    const { data: gravadas, error: e2 } = await context.supabase
-      .from("licoes")
-      .update(alteracoes)
-      .eq("id", data.id)
-      .select("id");
-    if (e2) throw new Error(e2.message);
-    if (!gravadas || gravadas.length !== 1) throw new Error("SEM_PERMISSAO_ESCRITA");
-    return { estado: "gravado" as const, campos: Object.keys(alteracoes) };
+    const res = r as { estado: string; campos?: string[] };
+    if (res.estado === "inexistente") throw new Error("LICAO_INEXISTENTE");
+    if (res.estado === "conflito") return { estado: "conflito" as const };
+    if (res.estado === "sem_alteracoes") return { estado: "sem_alteracoes" as const };
+    return { estado: "gravado" as const, campos: res.campos ?? [] };
+  });
+
+/** Distribuição curricular gravada (curso_modulos), incluindo o transversal. */
+export const obterDistribuicaoCurso = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ cursoId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await exigirAdministradorGeral(context as Contexto);
+    const { data: cm, error } = await context.supabase
+      .from("curso_modulos")
+      .select("modulo_id, carga_horaria_minutos, transversal")
+      .eq("curso_id", data.cursoId);
+    if (error) throw new Error(error.message);
+    return (cm ?? []) as { modulo_id: string; carga_horaria_minutos: number; transversal: boolean }[];
   });

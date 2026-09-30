@@ -178,3 +178,10 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [ ] Configuração de exame por curso (ecrã), mantendo exames inactivos
 - [ ] Materiais multimédia (PDF, apresentações, vídeo) por lição; fórum/FAQ/suporte (TdR 9.1)
 - [ ] Ensaio técnico do percurso completo com dados de demonstração
+
+## Ronda de 30/09/2026
+- [x] Editor: horas = módulos + transversal + avaliação, comparadas com a carga do curso (Redes 76 + 2 + 2 = 80 h)
+- [x] Gravação de lições atómica (rpc_guardar_licao, SECURITY INVOKER; conflito testado em base isolada)
+- [x] Relatório de participação por formando, CSV e XLS (/painel/participacao)
+- [x] Vista por género no Painel Nacional, com supressão de grupos < 5, incluída nas exportações
+- [ ] Verificar relatório e vista por género com dados reais de turmas (ainda sem inscrições na base)

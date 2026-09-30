@@ -65,7 +65,19 @@ function celulaCsv(valor: string | number | null) {
 
 function PainelNacionalPage() {
   const dados = Route.useLoaderData();
-  const { desempenho, satisfacao, eficacia, workshops, porProvincia, porDistrito } = dados;
+  const { desempenho, satisfacao, eficacia, workshops, porProvincia, porDistrito, porGenero } = dados;
+  const ROTULO_GENERO: Record<string, string> = {
+    feminino: "Feminino",
+    masculino: "Masculino",
+    outro: "Outro",
+    prefere_nao_indicar: "Prefere não indicar",
+    sem_registo: "Sem registo",
+  };
+  const contagem = (n: number | null) => (n === null ? "Menos de 5" : n);
+  const generos = [
+    ["Género", "Formandos inscritos", "Participantes nos workshops"],
+    ...porGenero.map((g) => [ROTULO_GENERO[g.genero], contagem(g.inscritos), contagem(g.participantesWorkshops)]),
+  ];
 
   const indicadores = [
     ["Indicador", "Valor", "Nota"],
@@ -152,6 +164,9 @@ function PainelNacionalPage() {
       [],
       ["Workshops por distrito"],
       ...distritos,
+      [],
+      ["Por género"],
+      ...generos,
     ];
     const csv = `\uFEFF${linhas.map((linha) => linha.map((v) => celulaCsv(v ?? "")).join(";")).join("\r\n")}`;
     descarregar(csv, "text/csv;charset=utf-8", "painel-nacional.csv");
@@ -163,6 +178,7 @@ function PainelNacionalPage() {
     XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(indicadores), "Indicadores");
     XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(provincias), "Por província");
     XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(distritos), "Por distrito");
+    XLSX.utils.book_append_sheet(livro, XLSX.utils.aoa_to_sheet(generos), "Por género");
     XLSX.writeFile(livro, "painel-nacional.xls", { bookType: "biff8" });
   }
 
@@ -291,6 +307,39 @@ function PainelNacionalPage() {
                   <td className="px-3 py-2 text-navy-2">
                     {p.workshopsDistritaisRealizados} de {p.workshopsDistritaisPlaneados}
                   </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="genero" className="mt-10">
+        <h2 id="genero" className="text-xl font-bold text-navy">
+          Por género
+        </h2>
+        <p className="mt-2 max-w-3xl text-base text-navy-2">
+          Género indicado pela própria pessoa na conta (formandos) ou no registo do workshop.
+          Grupos com menos de cinco pessoas não são mostrados, para ninguém ser identificado.
+        </p>
+        <div className="mt-4 overflow-x-auto rounded-md border border-line">
+          <table className="min-w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Formandos e participantes nos workshops por género</caption>
+            <thead className="bg-page text-navy">
+              <tr>
+                {generos[0].map((h) => (
+                  <th key={String(h)} scope="col" className="px-3 py-2 text-xs font-bold uppercase tracking-wide">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {generos.slice(1).map((linha) => (
+                <tr key={String(linha[0])} className="border-t border-line">
+                  <th scope="row" className="px-3 py-2 text-left font-semibold text-navy">{linha[0]}</th>
+                  <td className="px-3 py-2 text-navy-2">{linha[1]}</td>
+                  <td className="px-3 py-2 text-navy-2">{linha[2]}</td>
                 </tr>
               ))}
             </tbody>

@@ -6,6 +6,7 @@ import {
   guardarLicao,
   listarCursosEdicao,
   listarLicoesCurso,
+  obterDistribuicaoCurso,
   type CamposLicao,
   type LicaoEditavel,
 } from "@/lib/edicao-licoes.functions";
@@ -49,7 +50,18 @@ function EditarLicoes() {
   });
   const lista = licoes.data ?? [];
   const curso = cursos.data?.find((c) => c.id === cursoId);
-  const somaMin = lista.reduce((s, l) => s + (l.duracao_minutos ?? 0), 0);
+  const fDist = useServerFn(obterDistribuicaoCurso);
+  const dist = useQuery({
+    queryKey: ["edicao-distribuicao", cursoId],
+    queryFn: () => fDist({ data: { cursoId } }),
+    enabled: !!cursoId,
+  });
+  const transversais = new Set((dist.data ?? []).filter((m) => m.transversal).map((m) => m.modulo_id));
+  const regulares = lista.filter((l) => !transversais.has(l.modulo_id));
+  const somaLicoesMin = regulares.reduce((s, l) => s + (l.duracao_minutos ?? 0), 0);
+  const modulosRegMin = (dist.data ?? []).filter((m) => !m.transversal).reduce((s, m) => s + m.carga_horaria_minutos, 0);
+  const transversalMin = (dist.data ?? []).filter((m) => m.transversal).reduce((s, m) => s + m.carga_horaria_minutos, 0);
+  const h = (min: number) => `${Number((min / 60).toFixed(1))} h`;
   const licao = lista.find((l) => l.id === licaoId);
 
   return (
@@ -77,14 +89,38 @@ function EditarLicoes() {
         </select>
       </div>
 
-      {curso ? (
-        <p className="mt-4 text-base text-navy-2">
-          {lista.length} lições · {lista.filter((l) => l.estado_conteudo === "disponivel").length} disponíveis ·{" "}
-          {lista.filter((l) => l.proposta_por_validar).length} propostas por validar · soma das lições{" "}
-          {(somaMin / 60).toFixed(1)} h + avaliação e orientação {(curso.minutos_avaliacao_orientacao / 60).toFixed(1)} h
-          (carga do curso: {curso.carga_horaria} h)
-        </p>
-      ) : null}
+      {curso && dist.data ? (() => {
+        const aval = curso.minutos_avaliacao_orientacao;
+        const total = modulosRegMin + transversalMin + aval;
+        const alvo = curso.carga_horaria * 60;
+        return (
+          <div className="mt-4 max-w-3xl text-base text-navy-2">
+            <p>
+              {lista.length} lições · {lista.filter((l) => l.estado_conteudo === "disponivel").length} disponíveis ·{" "}
+              {lista.filter((l) => l.proposta_por_validar).length} propostas por validar
+            </p>
+            <table className="mt-3 w-full border-collapse text-left text-sm">
+              <caption className="sr-only">Distribuição das horas do curso</caption>
+              <tbody>
+                <tr className="border-t border-line"><th scope="row" className="py-1 pr-3 font-semibold text-navy">Módulos do curso</th><td>{h(modulosRegMin)}</td></tr>
+                <tr className="border-t border-line"><th scope="row" className="py-1 pr-3 font-semibold text-navy">Módulo transversal (Governo Digital Inclusivo e Acessibilidade)</th><td>{h(transversalMin)}</td></tr>
+                <tr className="border-t border-line"><th scope="row" className="py-1 pr-3 font-semibold text-navy">Avaliação e orientação</th><td>{h(aval)}</td></tr>
+                <tr className="border-t border-line"><th scope="row" className="py-1 pr-3 font-bold text-navy">Total</th><td className="font-bold">{h(total)} de {curso.carga_horaria} h</td></tr>
+              </tbody>
+            </table>
+            {total !== alvo ? (
+              <p role="alert" className="mt-2 font-semibold text-brand">A distribuição gravada soma {h(total)}, diferente da carga do curso ({curso.carga_horaria} h).</p>
+            ) : null}
+            {somaLicoesMin !== modulosRegMin ? (
+              <p role="alert" className="mt-2 font-semibold text-brand">
+                As durações das lições dos módulos somam {h(somaLicoesMin)}, diferente dos {h(modulosRegMin)} previstos para os módulos.
+              </p>
+            ) : (
+              <p className="mt-2 text-sm">As durações das lições dos módulos coincidem com a distribuição curricular. As lições do transversal não têm duração própria; contam as horas do módulo.</p>
+            )}
+          </div>
+        );
+      })() : null}
 
       {cursoId && licoes.isLoading ? <p className="mt-4 text-base text-navy-2">A carregar as lições…</p> : null}
       {cursoId && !licoes.isLoading && lista.length === 0 ? (

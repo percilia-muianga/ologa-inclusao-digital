@@ -2129,6 +2129,10 @@ export type Database = {
           form_token: string
         }[]
       }
+      rpc_guardar_licao: {
+        Args: { _anterior: Json; _id: string; _novo: Json }
+        Returns: Json
+      }
       rpc_importar_banco_ia: {
         Args: { _hash_estado: string; _payload: Json }
         Returns: Json
