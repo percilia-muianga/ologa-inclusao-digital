@@ -10,6 +10,7 @@ import {
   type TurmaPorCodigo,
 } from "@/lib/inscricao-turma.functions";
 import { rotuloEstadoTurma } from "@/lib/turmas.functions";
+import { percursoDaMatricula, type PercursoMatricula } from "@/lib/percurso.functions";
 
 export const Route = createFileRoute("/_authenticated/painel/minhas-turmas")({
   head: () => ({
@@ -166,15 +167,87 @@ function MinhasTurmas() {
                 {t.estado === "desistiu" ? (
                   <p className="mt-2 text-base text-navy">Inscrição anulada.</p>
                 ) : t.cursoSlug ? (
-                  <Link to="/cursos/$curso" params={{ curso: t.cursoSlug }} className="btn-brand btn-brand-hover mt-3 inline-flex min-h-11 items-center">
-                    Continuar para as lições
-                  </Link>
+                  <>
+                    <Percurso inscricaoId={t.inscricaoId} />
+                    <Link to="/cursos/$curso" params={{ curso: t.cursoSlug }} className="btn-brand btn-brand-hover mt-3 inline-flex min-h-11 items-center">
+                      Continuar para as lições
+                    </Link>
+                  </>
                 ) : null}
               </li>
             ))}
           </ul>
         )}
       </section>
+    </div>
+  );
+}
+
+const PROXIMO: Record<PercursoMatricula["etapa"], string> = {
+  licoes: "Próximo passo: concluir as lições do curso.",
+  presencas: "Próximo passo: participar nas sessões da turma. A assiduidade é registada pelo formador.",
+  avaliacao_indisponivel: "O exame final ainda não está disponível para este curso. Será avisado(a) pela equipa de formação.",
+  avaliacao: "Próximo passo: realizar o exame final.",
+  certificado_pronto: "Cumpre as condições. Pode pedir o certificado do curso.",
+  certificado_emitido: "Certificado emitido.",
+};
+
+function pct(v: number | null) {
+  return v === null ? "ainda sem sessões realizadas" : `${v.toLocaleString("pt-PT")} %`;
+}
+
+function Percurso({ inscricaoId }: { inscricaoId: string }) {
+  const obter = useServerFn(percursoDaMatricula);
+  const q = useQuery({
+    queryKey: ["percurso", inscricaoId],
+    queryFn: () => obter({ data: { inscricaoId } }),
+    retry: false,
+  });
+  if (q.isLoading) return <p className="mt-3 text-base text-navy-2">A carregar o percurso…</p>;
+  if (q.isError || !q.data)
+    return <p role="alert" className="mt-3 text-base text-navy">Não foi possível ler o seu percurso nesta turma.</p>;
+  const p = q.data;
+  const licPct = p.licoesTotal > 0 ? Math.round((p.licoesConcluidas / p.licoesTotal) * 100) : 0;
+  return (
+    <div className="mt-4 rounded-md border border-line bg-page p-4">
+      <h4 className="text-base font-extrabold text-navy">O meu percurso</h4>
+      <dl className="mt-2 grid gap-2 text-base text-navy-2">
+        <div>
+          <dt className="font-semibold text-navy">Lições</dt>
+          <dd>
+            {p.licoesConcluidas} de {p.licoesTotal} concluídas ({licPct} %)
+            <progress className="mt-1 block h-2 w-full" max={100} value={licPct} aria-label="Lições concluídas" />
+          </dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-navy">Presenças</dt>
+          <dd>
+            {p.presentes} presença(s) em {p.sessoesRealizadas} sessão(ões) realizada(s) de {p.sessoesTotal}
+            {p.justificadas > 0 ? `, ${p.justificadas} justificada(s)` : ""}. Assiduidade: {pct(p.assiduidadePct)} (mínimo {p.assiduidadeMinimaPct} %).
+          </dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-navy">Exame final</dt>
+          <dd>
+            {p.avaliacaoDisponivel ? "Disponível" : "Ainda não disponível"}
+            {p.tentativasFeitas > 0 ? ` · ${p.tentativasFeitas} de ${p.tentativasMax} tentativa(s)` : ""}
+            {p.melhorNotaPct !== null ? ` · melhor nota ${p.melhorNotaPct} % (mínimo ${p.notaMinimaPct} %)` : ""}
+          </dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-navy">Certificado</dt>
+          <dd>{p.certificadoCodigo ? `Emitido — código ${p.certificadoCodigo}` : "Ainda não emitido"}</dd>
+        </div>
+      </dl>
+      <p className="mt-3 text-base font-semibold text-navy">{PROXIMO[p.etapa]}</p>
+      <div className="mt-2 flex flex-wrap gap-3">
+        {p.etapa === "avaliacao" || p.etapa === "certificado_pronto" ? (
+          <Link to="/avaliacao/exame" className="font-semibold underline">Ir para o exame e certificado</Link>
+        ) : null}
+        {p.certificadoCodigo ? (
+          <Link to="/verificar" search={{ codigo: p.certificadoCodigo } as never} className="font-semibold underline">Ver certificado</Link>
+        ) : null}
+      </div>
     </div>
   );
 }
