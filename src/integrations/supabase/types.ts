@@ -966,6 +966,78 @@ export type Database = {
         }
         Relationships: []
       }
+      licao_materiais: {
+        Row: {
+          actualizado_em: string
+          criado_em: string
+          descricao_acessivel: string | null
+          disponivel: boolean
+          ficheiro_path: string
+          id: string
+          idioma: string
+          legenda_de: string | null
+          licao_id: string
+          mime: string
+          nome_original: string
+          ordem: number
+          tamanho_bytes: number
+          tipo: string
+          titulo: string
+          versao: number
+        }
+        Insert: {
+          actualizado_em?: string
+          criado_em?: string
+          descricao_acessivel?: string | null
+          disponivel?: boolean
+          ficheiro_path: string
+          id?: string
+          idioma?: string
+          legenda_de?: string | null
+          licao_id: string
+          mime: string
+          nome_original: string
+          ordem?: number
+          tamanho_bytes: number
+          tipo: string
+          titulo: string
+          versao?: number
+        }
+        Update: {
+          actualizado_em?: string
+          criado_em?: string
+          descricao_acessivel?: string | null
+          disponivel?: boolean
+          ficheiro_path?: string
+          id?: string
+          idioma?: string
+          legenda_de?: string | null
+          licao_id?: string
+          mime?: string
+          nome_original?: string
+          ordem?: number
+          tamanho_bytes?: number
+          tipo?: string
+          titulo?: string
+          versao?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licao_materiais_legenda_de_fkey"
+            columns: ["legenda_de"]
+            isOneToOne: false
+            referencedRelation: "licao_materiais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "licao_materiais_licao_id_fkey"
+            columns: ["licao_id"]
+            isOneToOne: false
+            referencedRelation: "licoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licoes: {
         Row: {
           conteudo_elearning: string | null
