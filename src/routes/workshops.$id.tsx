@@ -1,3 +1,4 @@
+import { exigirSessao } from "@/lib/exigir-sessao";
 import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import {
 
 export const Route = createFileRoute("/workshops/$id")({
   ssr: false,
+  beforeLoad: exigirSessao,
   errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: ({ params }) => obterWorkshop({ data: params.id }),
   head: () => ({

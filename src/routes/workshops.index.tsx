@@ -1,3 +1,4 @@
+import { exigirSessao } from "@/lib/exigir-sessao";
 import { ErroPermissao } from "@/components/erro-permissao";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -6,6 +7,7 @@ import { listarWorkshops, rotuloEstadoWorkshop } from "@/lib/workshops.functions
 
 export const Route = createFileRoute("/workshops/")({
   ssr: false,
+  beforeLoad: exigirSessao,
   errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: () => listarWorkshops(),
   head: () => ({

@@ -1,3 +1,4 @@
+import { exigirSessao } from "@/lib/exigir-sessao";
 import { ErroPermissao } from "@/components/erro-permissao";
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -13,6 +14,7 @@ import {
 
 export const Route = createFileRoute("/turmas/editar/$codigo")({
   ssr: false,
+  beforeLoad: exigirSessao,
   errorComponent: ({ error }) => <ErroPermissao erro={error} />,
   loader: async ({ params }) => {
     const [dados, referencias] = await Promise.all([

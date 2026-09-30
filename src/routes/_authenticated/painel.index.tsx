@@ -65,6 +65,7 @@ const ATALHOS_ADMIN_GERAL: Atalho[] = [
   ...ATALHOS_ADMIN,
   { to: "/painel/conteudos", titulo: "Conteúdos preparados", texto: "Estado e importação dos pacotes de lições e bancos de avaliação, sempre em rascunho e inactivos." },
   { to: "/painel/licoes", titulo: "Editar cursos e lições", texto: "Actualizar texto, guião, duração e estado de cada lição, com registo de actividade e protecção contra sobrescrita." },
+  { to: "/painel/pre-visualizar", titulo: "Pré-visualizar como formando", texto: "Ver curso, lições, materiais, percurso, exame e certificado como o formando os vê, sem gravar nada." },
   { to: "/cursos", titulo: "Cursos", texto: "Os seis cursos, módulos, lições e estado de cada conteúdo." },
   { to: "/painel/discussao", titulo: "Discussão das turmas", texto: "Dúvidas dos formandos e respostas dos formadores, com moderação e registo de actividade." },
   { to: "/turmas", titulo: "Turmas e cronogramas", texto: "Criar e editar turmas, sessões e inscrições por código." },
