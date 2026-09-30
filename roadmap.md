@@ -185,3 +185,8 @@ por executar; LSM, vídeo, legendagem e revisão por terceiros.
 - [x] Relatório de participação por formando, CSV e XLS (/painel/participacao)
 - [x] Vista por género no Painel Nacional, com supressão de grupos < 5, incluída nas exportações
 - [ ] Verificar relatório e vista por género com dados reais de turmas (ainda sem inscrições na base)
+
+- [x] Estado configuração exames (guardada/padrão) e «Mínimo exigido»
+- [x] Downloads participação verificados no navegador
+- [x] Gestão de materiais por lição (anexar, substituir, ordenar, disponibilizar, pré-visualizar, avisos)
+- [ ] Mostrar materiais disponíveis aos formandos na página da lição
