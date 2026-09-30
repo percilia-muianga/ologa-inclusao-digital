@@ -239,6 +239,20 @@
       "when": 1790757484084,
       "tag": "0033_inscricao_por_codigo_vagas_atomicas",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1790764686858,
+      "tag": "0034_exame_certificado_por_inscricao",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1790764945148,
+      "tag": "0035_tentativas_por_formando_e_curso",
+      "breakpoints": true
     }
   ]
 }

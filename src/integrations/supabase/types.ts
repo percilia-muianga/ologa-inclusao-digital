@@ -257,6 +257,7 @@ export type Database = {
           emitido_em: string
           formando_id: string
           id: string
+          inscricao_id: string | null
           nome_formando: string
           nota_final_pct: number
           provincia: string | null
@@ -278,6 +279,7 @@ export type Database = {
           emitido_em?: string
           formando_id: string
           id?: string
+          inscricao_id?: string | null
           nome_formando: string
           nota_final_pct: number
           provincia?: string | null
@@ -299,6 +301,7 @@ export type Database = {
           emitido_em?: string
           formando_id?: string
           id?: string
+          inscricao_id?: string | null
           nome_formando?: string
           nota_final_pct?: number
           provincia?: string | null
@@ -320,6 +323,13 @@ export type Database = {
             columns: ["formando_id"]
             isOneToOne: false
             referencedRelation: "formandos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificados_curso_inscricao_id_fkey"
+            columns: ["inscricao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_inscricoes"
             referencedColumns: ["id"]
           },
           {
@@ -454,6 +464,50 @@ export type Database = {
           titulo?: string
         }
         Relationships: []
+      }
+      cursos_fichas_versoes: {
+        Row: {
+          carga_horaria: number
+          curso_id: string
+          guardado_em: string
+          id: string
+          materiais: string | null
+          motivo: string
+          objectivos: string | null
+          pre_requisitos: string | null
+          publico_alvo: string | null
+        }
+        Insert: {
+          carga_horaria: number
+          curso_id: string
+          guardado_em?: string
+          id?: string
+          materiais?: string | null
+          motivo: string
+          objectivos?: string | null
+          pre_requisitos?: string | null
+          publico_alvo?: string | null
+        }
+        Update: {
+          carga_horaria?: number
+          curso_id?: string
+          guardado_em?: string
+          id?: string
+          materiais?: string | null
+          motivo?: string
+          objectivos?: string | null
+          pre_requisitos?: string | null
+          publico_alvo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cursos_fichas_versoes_curso_id_fkey"
+            columns: ["curso_id"]
+            isOneToOne: false
+            referencedRelation: "cursos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       distritos_tdr: {
         Row: {
@@ -603,6 +657,7 @@ export type Database = {
           formando_id: string
           id: string
           iniciado_em: string
+          inscricao_id: string | null
           limite_em: string
           nota_pct: number | null
           numero: number
@@ -618,6 +673,7 @@ export type Database = {
           formando_id: string
           id?: string
           iniciado_em?: string
+          inscricao_id?: string | null
           limite_em: string
           nota_pct?: number | null
           numero?: number
@@ -633,6 +689,7 @@ export type Database = {
           formando_id?: string
           id?: string
           iniciado_em?: string
+          inscricao_id?: string | null
           limite_em?: string
           nota_pct?: number | null
           numero?: number
@@ -654,6 +711,13 @@ export type Database = {
             columns: ["formando_id"]
             isOneToOne: false
             referencedRelation: "formandos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exame_tentativas_inscricao_id_fkey"
+            columns: ["inscricao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_inscricoes"
             referencedColumns: ["id"]
           },
           {
@@ -2200,6 +2264,22 @@ export type Database = {
           cert_emitido_em: string
         }[]
       }
+      rpc_certificado_curso_emitir_matricula: {
+        Args: {
+          _actor: string
+          _assiduidade_ajustada_pct: number
+          _assiduidade_estrita_pct: number
+          _assiduidade_pct: number
+          _base: Database["public"]["Enums"]["base_assiduidade"]
+          _codigo: string
+          _inscricao_id: string
+        }
+        Returns: {
+          cert_codigo: string
+          cert_emitido_em: string
+          cert_ja_existia: boolean
+        }[]
+      }
       rpc_certificado_modulo_emitir: {
         Args: {
           _actor: string
@@ -2252,6 +2332,19 @@ export type Database = {
           _turma_id: string
         }
         Returns: string
+      }
+      rpc_exame_tentativa_criar_matricula: {
+        Args: {
+          _actor: string
+          _inscricao_id: string
+          _limite_em: string
+          _questoes: Json
+          _total: number
+        }
+        Returns: {
+          tent_id: string
+          tent_retomada: boolean
+        }[]
       }
       rpc_exame_tentativa_submeter: {
         Args: {

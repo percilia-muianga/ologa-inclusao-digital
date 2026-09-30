@@ -700,29 +700,83 @@ async function carregarConfig(cursoId: string) {
   return data ?? { curso_id: cursoId, ...CONFIG_PADRAO };
 }
 
-async function formandoPorToken(token: string, perfilId: string) {
+type TurmaMatricula = {
+  id: string;
+  curso_id: string;
+  designacao: string;
+  provincia: string;
+  data_inicio: string | null;
+  data_fim: string | null;
+};
+
+/**
+ * Matrícula (inscrição na turma) do próprio utilizador. A identidade vem da
+ * sessão: nome e código pessoal nunca bastam. Devolve a inscrição, a turma,
+ * o curso e o registo de formando da conta, se já existir.
+ */
+async function matriculaDoUtilizador(inscricaoId: string, perfilId: string) {
   const s = await admin();
   const { data } = await s
-    .from("formandos")
-    .select("id, nome, token_pessoal, perfil_id")
-    .eq("token_pessoal", token)
+    .from("turma_inscricoes")
+    .select(
+      "id, perfil_id, nome, estado, turma_id, turmas(id, curso_id, designacao, provincia, data_inicio, data_fim)",
+    )
+    .eq("id", inscricaoId)
     .maybeSingle();
-  if (!data) throw new Error("TOKEN_INVALIDO");
-  // Conhecer o token nao e prova de titularidade: exige-se o vinculo com a
-  // conta autenticada (formandos.perfil_id).
-  if (!data.perfil_id || data.perfil_id !== perfilId) throw new Error("TOKEN_NAO_VINCULADO");
-  return data;
+  const linha = data as unknown as {
+    id: string;
+    perfil_id: string | null;
+    nome: string;
+    estado: string;
+    turma_id: string;
+    turmas: TurmaMatricula | null;
+  } | null;
+  if (!linha || !linha.perfil_id || linha.perfil_id !== perfilId || !linha.turmas)
+    throw new Error("MATRICULA_INVALIDA");
+  const { data: formando } = await s
+    .from("formandos")
+    .select("id, nome")
+    .eq("perfil_id", perfilId)
+    .order("criado_em")
+    .limit(1)
+    .maybeSingle();
+  return {
+    inscricao: { id: linha.id, nome: linha.nome, estado: linha.estado },
+    turma: linha.turmas,
+    cursoId: linha.turmas.curso_id,
+    formando: formando as { id: string; nome: string } | null,
+  };
+}
+
+/** Tentativa do próprio utilizador, confirmada pela inscrição a que pertence. */
+async function tentativaDoUtilizador(tentativaId: string, perfilId: string) {
+  const s = await admin();
+  const { data: tentativa } = await s
+    .from("exame_tentativas")
+    .select(
+      "id,formando_id,curso_id,inscricao_id,numero,estado,iniciado_em,limite_em,submetido_em,pontuacao,total,nota_pct",
+    )
+    .eq("id", tentativaId)
+    .maybeSingle();
+  if (!tentativa || !tentativa.inscricao_id) throw new Error("TENTATIVA_NAO_ENCONTRADA");
+  const { data: insc } = await s
+    .from("turma_inscricoes")
+    .select("perfil_id")
+    .eq("id", tentativa.inscricao_id)
+    .maybeSingle();
+  if (!insc || insc.perfil_id !== perfilId) throw new Error("TENTATIVA_NAO_ENCONTRADA");
+  return tentativa;
 }
 
 /**
- * Assiduidade real do formando na turma. Devolve sempre as duas taxas — a
+ * Assiduidade real da inscrição na turma. Devolve sempre as duas taxas — a
  * estrita e a ajustada — e diz qual delas vale para certificação, conforme a
  * configuração do curso. Só as sessões marcadas como realizadas contam.
  */
-async function assiduidadeDoFormando(
+async function assiduidadeDaInscricao(
   turmaId: string,
   cursoId: string,
-  nome: string,
+  inscricao: { id: string; nome: string },
 ): Promise<{
   estritaPct: number | null;
   ajustadaPct: number | null;
@@ -732,21 +786,15 @@ async function assiduidadeDoFormando(
 } | null> {
   const s = await admin();
   const { calcularAssiduidade } = await import("@/lib/presencas.server");
-  const [sessoesRes, inscricoesRes, presencasRes, cfgRes] = await Promise.all([
+  const [sessoesRes, presencasRes, cfgRes] = await Promise.all([
     s.from("turma_sessoes").select("id,data,estado").eq("turma_id", turmaId),
-    s.from("turma_inscricoes").select("id,nome,estado").eq("turma_id", turmaId),
-    s.from("presencas").select("*").eq("turma_id", turmaId),
+    s.from("presencas").select("*").eq("turma_id", turmaId).eq("inscricao_id", inscricao.id),
     s
       .from("presenca_configuracoes")
       .select("base_assiduidade")
       .eq("curso_id", cursoId)
       .maybeSingle(),
   ]);
-  const inscricao = (inscricoesRes.data ?? []).find(
-    (i: { nome: string; estado: string; id: string }) =>
-      normalizar(i.nome) === normalizar(nome) && i.estado !== "desistiu",
-  );
-  if (!inscricao) return null;
   const base = (cfgRes.data?.base_assiduidade ?? "estrita") as "estrita" | "ajustada";
   const linhas = calcularAssiduidade(
     (sessoesRes.data ?? []).map((x: { id: string; data: string; estado: string }) => ({
@@ -769,55 +817,35 @@ async function assiduidadeDoFormando(
   };
 }
 
-
-/** Última turma do formando para o curso, se existir inscrição registada. */
-async function turmaDoFormando(nome: string, cursoId: string) {
-  const s = await admin();
-  const { data: turmas } = await s
-    .from("turmas")
-    .select("id, designacao, provincia, data_inicio, data_fim")
-    .eq("curso_id", cursoId);
-  if (!turmas?.length) return null;
-  const { data: inscricoes } = await s
-    .from("turma_inscricoes")
-    .select("turma_id, nome")
-    .in(
-      "turma_id",
-      turmas.map((t: { id: string }) => t.id),
-    );
-  const minha = (inscricoes ?? []).find(
-    (i: { nome: string; turma_id: string }) => normalizar(i.nome) === normalizar(nome),
-  );
-  if (!minha) return null;
-  return turmas.find((t: { id: string }) => t.id === minha.turma_id) ?? null;
-}
+const entradaMatricula = (i: unknown) =>
+  z.object({ inscricaoId: z.string().uuid() }).parse(i);
 
 export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
-    z.object({ token: z.string().uuid(), cursoId: z.string().uuid() }).parse(i),
-  )
+  .inputValidator(entradaMatricula)
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const cfg = await carregarConfig(data.cursoId);
-    const turma = await turmaDoFormando(formando.nome, data.cursoId);
+    const m = await matriculaDoUtilizador(
+      data.inscricaoId,
+      (context as unknown as ContextoAutenticado).userId,
+    );
+    const cfg = await carregarConfig(m.cursoId);
+    const turma = m.turma;
 
+    // Só as tentativas e o certificado DESTA inscrição.
     const { data: tentativas } = await s
       .from("exame_tentativas")
       .select("id,numero,estado,iniciado_em,limite_em,submetido_em,pontuacao,total,nota_pct")
-      .eq("formando_id", formando.id)
-      .eq("curso_id", data.cursoId)
+      .eq("inscricao_id", m.inscricao.id)
       .order("numero");
 
     const { data: certificado } = await s
       .from("certificados_curso")
       .select("codigo_verificacao, emitido_em, nota_final_pct, assiduidade_pct")
-      .eq("formando_id", formando.id)
-      .eq("curso_id", data.cursoId)
+      .eq("inscricao_id", m.inscricao.id)
       .maybeSingle();
 
-    const fim = turma?.data_fim ? new Date(turma.data_fim) : null;
+    const fim = turma.data_fim ? new Date(turma.data_fim) : null;
     const prazoLimite = fim
       ? new Date(fim.getTime() + cfg.prazo_dias * 24 * 60 * 60 * 1000)
       : null;
@@ -829,9 +857,7 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       .filter((t) => t.estado === "submetida" && t.nota_pct !== null)
       .reduce<number | null>((max, t) => Math.max(max ?? 0, Number(t.nota_pct)), null);
 
-    const assiduidade = turma
-      ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
-      : null;
+    const assiduidade = await assiduidadeDaInscricao(turma.id, m.cursoId, m.inscricao);
 
     const condicoes = avaliarCondicoesCertificacao({
       assiduidadePct: assiduidade?.usadaPct ?? null,
@@ -848,7 +874,7 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       assiduidadeCumpre: condicoes.assiduidadeCumpre,
       notaCumpre: condicoes.notaCumpre,
       podeCertificar: condicoes.podeCertificar,
-      formando: { nome: formando.nome },
+      formando: { nome: m.inscricao.nome },
       turma,
       tentativas: tentativas ?? [],
       tentativasMax: cfg.tentativas_max,
@@ -859,8 +885,6 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       prazoLimite: prazoLimite?.toISOString() ?? null,
       diasRestantes,
       melhorNota,
-      // As duas taxas, sempre. A que vale para certificação é a indicada em
-      // baseAssiduidade, escolhida na configuração do curso.
       assiduidadePct: assiduidade?.usadaPct ?? null,
       assiduidadeEstritaPct: assiduidade?.estritaPct ?? null,
       assiduidadeAjustadaPct: assiduidade?.ajustadaPct ?? null,
@@ -868,51 +892,35 @@ export const estadoAvaliacaoFormando = createServerFn({ method: "GET" })
       baseAssiduidade: assiduidade?.base ?? "estrita",
       certificado,
     };
-
   });
 
 export const iniciarExame = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
-    z.object({ token: z.string().uuid(), cursoId: z.string().uuid() }).parse(i),
-  )
+  .inputValidator(entradaMatricula)
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const cfg = await carregarConfig(data.cursoId);
+    const userId = (context as unknown as ContextoAutenticado).userId;
+    const m = await matriculaDoUtilizador(data.inscricaoId, userId);
+    if (m.inscricao.estado === "desistiu") throw new Error("INSCRICAO_INACTIVA");
+    const cfg = await carregarConfig(m.cursoId);
 
-    const { data: existentes } = await s
+    // Retoma segura: tentativa em curso desta inscrição, dentro do tempo.
+    const { data: emCurso } = await s
       .from("exame_tentativas")
-      .select("id,numero,estado,limite_em")
-      .eq("formando_id", formando.id)
-      .eq("curso_id", data.cursoId)
-      .order("numero");
-
-    // retoma segura: tentativa em curso dentro do tempo
-    const emCurso = (existentes ?? []).find(
-      (t) => t.estado === "em_curso" && new Date(t.limite_em).getTime() > Date.now(),
-    );
+      .select("id,limite_em")
+      .eq("inscricao_id", m.inscricao.id)
+      .eq("estado", "em_curso")
+      .gt("limite_em", new Date().toISOString())
+      .limit(1)
+      .maybeSingle();
     if (emCurso) return { tentativaId: emCurso.id, retomada: true };
-
-    if ((existentes ?? []).length >= cfg.tentativas_max)
-      throw new Error("TENTATIVAS_ESGOTADAS");
-
-    const turmaDoExame = await turmaDoFormando(formando.nome, data.cursoId);
-    // Secção 12.1: o exame só pode ser feito até ao prazo, em dias de
-    // calendário, depois do fim da formação.
-    if (turmaDoExame?.data_fim) {
-      const limitePrazo = new Date(
-        new Date(turmaDoExame.data_fim).getTime() + cfg.prazo_dias * 24 * 60 * 60 * 1000,
-      );
-      if (Date.now() > limitePrazo.getTime()) throw new Error("PRAZO_EXPIRADO");
-    }
 
     const { data: questoesBanco, error } = await s
       .from("banco_questoes")
       .select(
         "id,modulo_id,tipologia,dificuldade,enunciado,conteudo,resposta,explicacao,cenario",
       )
-      .eq("curso_id", data.cursoId)
+      .eq("curso_id", m.cursoId)
       .eq("instrumento", "exame_final")
       .eq("estado_revisao", "em_uso")
       .eq("activa", true);
@@ -921,9 +929,7 @@ export const iniciarExame = createServerFn({ method: "POST" })
     // Secção 10: banco activo com pelo menos o triplo das questões do exame.
     if (banco.length < cfg.numero_questoes * 3) throw new Error("BANCO_INSUFICIENTE");
 
-    const seleccionadas = await seleccionarQuestoes(data.cursoId, banco, cfg);
-
-    const turma = turmaDoExame;
+    const seleccionadas = await seleccionarQuestoes(m.cursoId, banco, cfg);
     const limite = new Date(Date.now() + cfg.minutos * 60 * 1000).toISOString();
     const linhas = seleccionadas.map((q, i) => {
       const { apresentacao, respostaCorrecta } = apresentar(q)!;
@@ -940,38 +946,36 @@ export const iniciarExame = createServerFn({ method: "POST" })
       };
     });
 
-    // Abertura da tentativa e gravação das questões sorteadas numa só
-    // operação, com actor verificado e vínculo confirmado na base.
-    const { data: tentativaId, error: eT } = await s.rpc("rpc_exame_tentativa_criar", {
-      _actor: (context as unknown as ContextoAutenticado).userId,
-      _formando_id: formando.id,
-      _curso_id: data.cursoId,
-      _turma_id: turma?.id ?? null,
-      _numero: (existentes?.length ?? 0) + 1,
+    // A base decide numa só operação, com a inscrição bloqueada: titularidade,
+    // inscrição activa, configuração, banco, prazo e número de tentativas.
+    const { data: res, error: eT } = await s.rpc("rpc_exame_tentativa_criar_matricula", {
+      _actor: userId,
+      _inscricao_id: m.inscricao.id,
       _limite_em: limite,
       _total: seleccionadas.length,
       _questoes: linhas,
     } as never);
-    if (eT) throw eT;
-
-    return { tentativaId: tentativaId as unknown as string, retomada: false };
+    if (eT) throw new Error(codigoErro(eT.message));
+    const linha = (res as unknown as { tent_id: string; tent_retomada: boolean }[])[0];
+    if (!linha) throw new Error("TENTATIVA_NAO_CRIADA");
+    return { tentativaId: linha.tent_id, retomada: linha.tent_retomada };
   });
+
+/** Extrai o código de regra (ex.: TENTATIVAS_ESGOTADAS) da mensagem da base. */
+function codigoErro(msg: string): string {
+  const m = /[A-Z][A-Z_]{4,}/.exec(msg);
+  return m ? m[0] : "ERRO_INESPERADO";
+}
 
 export const obterTentativa = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
-    z.object({ token: z.string().uuid(), tentativaId: z.string().uuid() }).parse(i),
-  )
+  .inputValidator((i: unknown) => z.object({ tentativaId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const { data: tentativa } = await s
-      .from("exame_tentativas")
-      .select("id,formando_id,curso_id,numero,estado,iniciado_em,limite_em,submetido_em,pontuacao,total,nota_pct")
-      .eq("id", data.tentativaId)
-      .maybeSingle();
-    if (!tentativa || tentativa.formando_id !== formando.id)
-      throw new Error("TENTATIVA_NAO_ENCONTRADA");
+    const tentativa = await tentativaDoUtilizador(
+      data.tentativaId,
+      (context as unknown as ContextoAutenticado).userId,
+    );
 
     const { data: curso } = await s
       .from("cursos")
@@ -989,7 +993,7 @@ export const obterTentativa = createServerFn({ method: "GET" })
       .order("ordem");
 
     return {
-      tentativa,
+      tentativa: { ...tentativa, inscricao_id: tentativa.inscricao_id },
       curso,
       questoes: (questoes ?? []).map((q) => ({
         id: q.id,
@@ -1011,7 +1015,6 @@ export const guardarResposta = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) =>
     z
       .object({
-        token: z.string().uuid(),
         tentativaId: z.string().uuid(),
         questaoId: z.string().uuid(),
         resposta: z.unknown(),
@@ -1020,20 +1023,14 @@ export const guardarResposta = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const { data: tentativa } = await s
-      .from("exame_tentativas")
-      .select("id,formando_id,estado,limite_em")
-      .eq("id", data.tentativaId)
-      .maybeSingle();
-    if (!tentativa || tentativa.formando_id !== formando.id)
-      throw new Error("TENTATIVA_NAO_ENCONTRADA");
+    const userId = (context as unknown as ContextoAutenticado).userId;
+    const tentativa = await tentativaDoUtilizador(data.tentativaId, userId);
     if (tentativa.estado !== "em_curso") throw new Error("TENTATIVA_FECHADA");
     if (new Date(tentativa.limite_em).getTime() < Date.now())
       throw new Error("TEMPO_ESGOTADO");
 
     const { error } = await s.rpc("rpc_exame_resposta_guardar", {
-      _actor: (context as unknown as ContextoAutenticado).userId,
+      _actor: userId,
       _tentativa_id: tentativa.id,
       _questao_id: data.questaoId,
       _resposta: data.resposta,
@@ -1075,19 +1072,12 @@ function corrigir(
 
 export const submeterExame = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
-    z.object({ token: z.string().uuid(), tentativaId: z.string().uuid() }).parse(i),
-  )
+  .inputValidator((i: unknown) => z.object({ tentativaId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const { data: tentativa } = await s
-      .from("exame_tentativas")
-      .select("id,formando_id,estado,limite_em")
-      .eq("id", data.tentativaId)
-      .maybeSingle();
-    if (!tentativa || tentativa.formando_id !== formando.id)
-      throw new Error("TENTATIVA_NAO_ENCONTRADA");
+    const userId = (context as unknown as ContextoAutenticado).userId;
+    const tentativa = await tentativaDoUtilizador(data.tentativaId, userId);
+    if (tentativa.estado !== "em_curso") throw new Error("TENTATIVA_FECHADA");
 
     const { data: questoes } = await s
       .from("exame_tentativa_questoes")
@@ -1109,9 +1099,8 @@ export const submeterExame = createServerFn({ method: "POST" })
     const notaPct = total > 0 ? Math.round((pontuacao / total) * 1000) / 10 : 0;
     const expirou = new Date(tentativa.limite_em).getTime() < Date.now();
 
-    // Correcção e fecho numa só operação, com actor verificado.
     const { error } = await s.rpc("rpc_exame_tentativa_submeter", {
-      _actor: (context as unknown as ContextoAutenticado).userId,
+      _actor: userId,
       _tentativa_id: tentativa.id,
       _correccoes: correccoes,
       _pontuacao: pontuacao,
@@ -1124,91 +1113,71 @@ export const submeterExame = createServerFn({ method: "POST" })
     return { pontuacao, total, notaPct, expirou };
   });
 
-// ---------- certificação por curso ----------
+// ---------- certificação por curso, pela inscrição ----------
 
 export const emitirCertificadoCurso = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
-    z
-      .object({
-        token: z.string().uuid(),
-        cursoId: z.string().uuid(),
-      })
-      .parse(i),
-  )
+  .inputValidator(entradaMatricula)
   .handler(async ({ data, context }) => {
     const s = await admin();
-    const formando = await formandoPorToken(data.token, (context as unknown as ContextoAutenticado).userId);
-    const cfg = await carregarConfig(data.cursoId);
+    const userId = (context as unknown as ContextoAutenticado).userId;
+    const m = await matriculaDoUtilizador(data.inscricaoId, userId);
+    const cfg = await carregarConfig(m.cursoId);
 
     const { data: existente } = await s
       .from("certificados_curso")
       .select("codigo_verificacao, emitido_em")
-      .eq("formando_id", formando.id)
-      .eq("curso_id", data.cursoId)
+      .eq("inscricao_id", m.inscricao.id)
       .maybeSingle();
     if (existente) return { ...existente, jaExistia: true };
 
     const { data: tentativas } = await s
       .from("exame_tentativas")
-      .select("id, nota_pct, estado")
-      .eq("formando_id", formando.id)
-      .eq("curso_id", data.cursoId)
+      .select("nota_pct")
+      .eq("inscricao_id", m.inscricao.id)
       .eq("estado", "submetida");
-    const melhor = (tentativas ?? []).reduce<{ id: string; nota: number } | null>(
-      (max, t) =>
-        Number(t.nota_pct) > (max?.nota ?? -1) ? { id: t.id, nota: Number(t.nota_pct) } : max,
+    const melhor = (tentativas ?? []).reduce<number | null>(
+      (max, t) => (t.nota_pct === null ? max : Math.max(max ?? -1, Number(t.nota_pct))),
       null,
     );
-    const { data: curso } = await s
-      .from("cursos")
-      .select("titulo, carga_horaria")
-      .eq("id", data.cursoId)
-      .single();
-    const turma = await turmaDoFormando(formando.nome, data.cursoId);
 
-    // A assiduidade é sempre apurada no servidor, a partir das presenças
-    // marcadas — nunca aceite do lado de quem pede o certificado.
-    const assiduidade = turma
-      ? await assiduidadeDoFormando(turma.id, data.cursoId, formando.nome)
-      : null;
+    // Assiduidade sempre apurada no servidor, a partir das presenças desta inscrição.
+    const assiduidade = await assiduidadeDaInscricao(m.turma.id, m.cursoId, m.inscricao);
 
     // Condições cumulativas das secções 12 e 12.1: nota, assiduidade e prazo.
     const condicoes = avaliarCondicoesCertificacao({
       assiduidadePct: assiduidade?.usadaPct ?? null,
-      notaPct: melhor?.nota ?? null,
+      notaPct: melhor,
       minimoAssiduidadePct: cfg.assiduidade_minima_pct,
       minimoNotaPct: cfg.nota_minima_pct,
-      dataFim: turma?.data_fim ? new Date(turma.data_fim) : null,
+      dataFim: m.turma.data_fim ? new Date(m.turma.data_fim) : null,
       prazoDias: cfg.prazo_dias,
       agora: new Date(),
     });
-    if (!condicoes.podeCertificar || !melhor || !assiduidade || assiduidade.usadaPct === null)
+    if (!condicoes.podeCertificar || melhor === null || !assiduidade || assiduidade.usadaPct === null)
       throw new Error(condicoes.motivo ?? "SEM_EXAME_SUBMETIDO");
 
-    // Operação específica com actor verificado: o nome do formando, o título e
-    // a carga do curso e os dados da turma são lidos dentro da base. Só a nota
-    // e a assiduidade — ambas apuradas acima, no servidor — são passadas.
-    const { data: linhas, error } = await s.rpc("rpc_certificado_curso_emitir", {
-      _actor: (context as unknown as ContextoAutenticado).userId,
-      _formando_id: formando.id,
-      _curso_id: data.cursoId,
-      _turma_id: turma?.id ?? null,
-      _tentativa_id: melhor.id,
+    // A base volta a confirmar titularidade, nota da melhor tentativa desta
+    // inscrição e mínimos; não emite dois certificados (inscrição bloqueada).
+    const { data: linhas, error } = await s.rpc("rpc_certificado_curso_emitir_matricula", {
+      _actor: userId,
+      _inscricao_id: m.inscricao.id,
       _codigo: gerarCodigo(),
-      _nota_final_pct: melhor.nota,
       _assiduidade_pct: assiduidade.usadaPct,
       _base: assiduidade.base,
       _assiduidade_estrita_pct: assiduidade.estritaPct,
       _assiduidade_ajustada_pct: assiduidade.ajustadaPct,
     } as never);
-    if (error) throw error;
-    const cert = (linhas as unknown as { cert_codigo: string; cert_emitido_em: string }[])[0];
+    if (error) throw new Error(codigoErro(error.message));
+    const cert = (linhas as unknown as {
+      cert_codigo: string;
+      cert_emitido_em: string;
+      cert_ja_existia: boolean;
+    }[])[0];
     if (!cert) throw new Error("CERTIFICADO_NAO_EMITIDO");
     return {
       codigo_verificacao: cert.cert_codigo,
       emitido_em: cert.cert_emitido_em,
-      jaExistia: false,
+      jaExistia: cert.cert_ja_existia,
     };
   });
-

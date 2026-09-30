@@ -19,6 +19,8 @@ export type PercursoMatricula = {
   melhorNotaPct: number | null;
   notaMinimaPct: number;
   certificadoCodigo: string | null;
+  certificadoEmitidoEm: string | null;
+  tentativas: { numero: number; estado: string; notaPct: number | null; submetidoEm: string | null }[];
   etapa: EtapaPercurso;
 };
 
@@ -54,7 +56,7 @@ export const percursoDaMatricula = createServerFn({ method: "GET" })
     const { supabaseAdmin: s } = await import("@/integrations/supabase/client.server");
     const { calcularAssiduidade } = await import("@/lib/presencas.server");
 
-    const [rel, feitas, sessoes, presencas, cfgPres, cfgExame, activas, formando] =
+    const [rel, feitas, sessoes, presencas, cfgPres, cfgExame, activas, tent, cert] =
       await Promise.all([
         s.from("curso_modulos").select("modulo_id").eq("curso_id", cursoId),
         s.from("progresso_licoes_matricula").select("licao_id").eq("inscricao_id", linha.id),
@@ -66,7 +68,11 @@ export const percursoDaMatricula = createServerFn({ method: "GET" })
           .eq("curso_id", cursoId).maybeSingle(),
         s.from("banco_questoes").select("id", { count: "exact", head: true })
           .eq("curso_id", cursoId).eq("activa", true).eq("instrumento", "exame_final"),
-        s.from("formandos").select("id").eq("perfil_id", context.userId).maybeSingle(),
+        // Tentativas e certificado DESTA inscrição — nunca de outra turma.
+        s.from("exame_tentativas").select("numero, estado, nota_pct, submetido_em")
+          .eq("inscricao_id", linha.id).order("numero"),
+        s.from("certificados_curso").select("codigo_verificacao, emitido_em")
+          .eq("inscricao_id", linha.id).maybeSingle(),
       ]);
 
     const modulos = (rel.data ?? []).map((r) => r.modulo_id);
@@ -91,23 +97,20 @@ export const percursoDaMatricula = createServerFn({ method: "GET" })
     // Disponível só com configuração guardada e banco activo com o triplo exigido.
     const avaliacaoDisponivel = !!cfgExame.data && (activas.count ?? 0) >= numeroQuestoes * 3;
 
-    let tentativasFeitas = 0;
+    const tentativas = (tent.data ?? []).map((x) => ({
+      numero: x.numero,
+      estado: x.estado as string,
+      notaPct: x.nota_pct === null ? null : Number(x.nota_pct),
+      submetidoEm: x.submetido_em,
+    }));
+    const tentativasFeitas = tentativas.length;
     let melhorNotaPct: number | null = null;
-    let certificadoCodigo: string | null = null;
-    if (formando.data) {
-      const [t, c] = await Promise.all([
-        s.from("exame_tentativas").select("estado, nota_pct")
-          .eq("formando_id", formando.data.id).eq("curso_id", cursoId),
-        s.from("certificados_curso").select("codigo_verificacao")
-          .eq("formando_id", formando.data.id).eq("curso_id", cursoId).maybeSingle(),
-      ]);
-      tentativasFeitas = (t.data ?? []).length;
-      for (const x of t.data ?? []) {
-        if (x.estado === "submetida" && x.nota_pct !== null)
-          melhorNotaPct = Math.max(melhorNotaPct ?? 0, Number(x.nota_pct));
-      }
-      certificadoCodigo = c.data?.codigo_verificacao ?? null;
+    for (const x of tentativas) {
+      if (x.estado === "submetida" && x.notaPct !== null)
+        melhorNotaPct = Math.max(melhorNotaPct ?? 0, x.notaPct);
     }
+    const certificadoCodigo = cert.data?.codigo_verificacao ?? null;
+    const certificadoEmitidoEm = cert.data?.emitido_em ?? null;
 
     const resumo = {
       cursoId,
@@ -125,6 +128,8 @@ export const percursoDaMatricula = createServerFn({ method: "GET" })
       melhorNotaPct,
       notaMinimaPct,
       certificadoCodigo,
+      certificadoEmitidoEm,
+      tentativas,
     };
     return {
       ...resumo,

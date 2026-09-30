@@ -232,17 +232,41 @@ function Percurso({ inscricaoId }: { inscricaoId: string }) {
             {p.avaliacaoDisponivel ? "Disponível" : "Ainda não disponível"}
             {p.tentativasFeitas > 0 ? ` · ${p.tentativasFeitas} de ${p.tentativasMax} tentativa(s)` : ""}
             {p.melhorNotaPct !== null ? ` · melhor nota ${p.melhorNotaPct} % (mínimo ${p.notaMinimaPct} %)` : ""}
+            {p.tentativas.length > 0 ? (
+              <ul className="mt-1 list-disc pl-5">
+                {p.tentativas.map((t) => (
+                  <li key={t.numero}>
+                    Tentativa {t.numero}:{" "}
+                    {t.estado === "em_curso"
+                      ? "em curso"
+                      : t.estado === "expirada"
+                        ? "tempo esgotado"
+                        : `submetida${t.notaPct !== null ? `, ${t.notaPct} %` : ""}`}
+                    {t.submetidoEm ? ` (${new Date(t.submetidoEm).toLocaleDateString("pt-PT")})` : ""}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </dd>
         </div>
         <div>
           <dt className="font-semibold text-navy">Certificado</dt>
-          <dd>{p.certificadoCodigo ? `Emitido — código ${p.certificadoCodigo}` : "Ainda não emitido"}</dd>
+          <dd>
+            {p.certificadoCodigo
+              ? `Emitido${p.certificadoEmitidoEm ? ` em ${new Date(p.certificadoEmitidoEm).toLocaleDateString("pt-PT")}` : ""} — código ${p.certificadoCodigo}`
+              : "Ainda não emitido"}
+          </dd>
         </div>
       </dl>
       <p className="mt-3 text-base font-semibold text-navy">{PROXIMO[p.etapa]}</p>
       <div className="mt-2 flex flex-wrap gap-3">
         {p.etapa === "avaliacao" || p.etapa === "certificado_pronto" ? (
-          <Link to="/avaliacao/exame" className="font-semibold underline">Ir para o exame e certificado</Link>
+          <>
+            {p.etapa === "avaliacao" ? (
+              <Link to="/avaliacao/exame" search={{ inscricao: inscricaoId }} className="font-semibold underline">Ir para o exame final</Link>
+            ) : null}
+            <Link to="/certificados" className="font-semibold underline">Ver condições e certificado</Link>
+          </>
         ) : null}
         {p.certificadoCodigo ? (
           <Link to="/verificar" className="font-semibold underline">Ver certificado</Link>

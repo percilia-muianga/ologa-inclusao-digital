@@ -1,13 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import {
-  emitirCertificadoCurso,
-  estadoAvaliacaoFormando,
-  referenciasBanco,
-} from "@/lib/avaliacao.functions";
-import { formacaoStore } from "@/lib/formacao-store";
+import { useState } from "react";
+import { emitirCertificadoCurso, estadoAvaliacaoFormando } from "@/lib/avaliacao.functions";
+import { SeletorMatricula } from "@/components/seletor-matricula";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 
 export const Route = createFileRoute("/certificados")({
@@ -32,38 +28,38 @@ export const Route = createFileRoute("/certificados")({
   component: CertificadosPage,
 });
 
-const campo = "min-h-11 w-full rounded-md border border-line bg-white px-3 text-base text-navy";
+const ERROS_CERT: Record<string, string> = {
+  MATRICULA_INVALIDA: "Esta turma não está associada à sua conta.",
+  INSCRICAO_INACTIVA: "A sua inscrição nesta turma não está activa.",
+  SEM_EXAME_SUBMETIDO: "Ainda não tem nenhum exame final submetido nesta turma.",
+  NOTA_INSUFICIENTE: "A nota final ainda não atinge o limiar exigido.",
+  ASSIDUIDADE_INSUFICIENTE: "A assiduidade ainda não atinge o limiar exigido.",
+  EXAME_NAO_CONFIGURADO: "A avaliação final deste curso ainda não está disponível.",
+};
 
 function CertificadosPage() {
-  const carregarRefs = useServerFn(referenciasBanco);
   const carregarEstado = useServerFn(estadoAvaliacaoFormando);
   const emitir = useServerFn(emitirCertificadoCurso);
 
-  const [token, setToken] = useState("");
-  const [cursoId, setCursoId] = useState("");
+  const [inscricaoId, setInscricaoId] = useState("");
   const [mensagem, setMensagem] = useState<string | null>(null);
 
-  useEffect(() => {
-    const guardado = formacaoStore.token();
-    if (guardado) setToken(guardado);
-  }, []);
-
-  const refs = useQuery({ queryKey: ["refs-banco"], queryFn: () => carregarRefs() });
   const estado = useQuery({
-    queryKey: ["estado-avaliacao", token, cursoId],
-    enabled: token.length > 20 && cursoId.length > 0,
+    queryKey: ["estado-avaliacao", inscricaoId],
+    enabled: inscricaoId.length > 0,
     retry: false,
-    queryFn: () => carregarEstado({ data: { token, cursoId } }),
+    queryFn: () => carregarEstado({ data: { inscricaoId } }),
   });
 
   async function pedirCertificado() {
     setMensagem(null);
     try {
-      const r = await emitir({ data: { token, cursoId } });
+      const r = await emitir({ data: { inscricaoId } });
       setMensagem(`Certificado emitido. Código de verificação: ${r.codigo_verificacao}`);
       await estado.refetch();
     } catch (e) {
-      setMensagem(`Não foi possível emitir o certificado: ${(e as Error).message}`);
+      const m = (e as Error).message;
+      setMensagem(ERROS_CERT[m] ?? "Não foi possível emitir o certificado. Tente de novo mais tarde.");
     }
   }
 
@@ -74,51 +70,21 @@ function CertificadosPage() {
       titulo="Certificados"
       introducao="O certificado é individual, por formando e por curso. Exige duas condições cumulativas: assiduidade igual ou superior a 80 por cento e nota final igual ou superior a 60 por cento. As duas são sempre mostradas em separado, com o valor atingido e o limiar."
     >
-      <form className="mb-6 grid max-w-2xl gap-4 rounded-lg border border-line bg-white p-5">
-        <div>
-          <label className="block text-sm font-semibold text-navy-2" htmlFor="token">
-            O seu código pessoal de formando
-          </label>
-          <input
-            id="token"
-            className={campo}
-            value={token}
-            onChange={(e) => setToken(e.target.value.trim())}
-            autoComplete="off"
-            spellCheck={false}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-navy-2" htmlFor="curso">
-            Curso
-          </label>
-          <select
-            id="curso"
-            className={campo}
-            value={cursoId}
-            onChange={(e) => setCursoId(e.target.value)}
-          >
-            <option value="">Escolha o curso</option>
-            {(refs.data?.cursos ?? []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.titulo}
-              </option>
-            ))}
-          </select>
-        </div>
-      </form>
+      <div className="mb-6 grid max-w-2xl gap-4 rounded-lg border border-line bg-white p-5">
+        <SeletorMatricula valor={inscricaoId} aoMudar={setInscricaoId} />
+      </div>
 
       <div role="status" aria-live="polite" className="mb-6 text-base text-navy">
         {estado.isError ? (
-          <p>Não conseguimos confirmar o seu código pessoal. Verifique-o e tente de novo.</p>
+          <p>Não conseguimos confirmar esta turma na sua conta.</p>
         ) : null}
         {mensagem ? <p className="font-semibold">{mensagem}</p> : null}
       </div>
 
       {!d ? (
         <EstadoVazio
-          titulo="Escreva o seu código pessoal e escolha o curso"
-          descricao="Com esses dois dados mostramos a sua nota final, a sua assiduidade, os dias que faltam para o prazo e, se as duas condições estiverem cumpridas, emitimos o certificado."
+          titulo="Escolha a sua turma"
+          descricao="Mostramos a sua nota final, a sua assiduidade, os dias que faltam para o prazo e, se as duas condições estiverem cumpridas, emitimos o certificado."
           accao={
             <Link
               to="/verificar"
@@ -179,8 +145,8 @@ function CertificadosPage() {
           <section className="rounded-lg border border-line bg-white p-5">
             <h2 className="text-lg font-bold text-navy">Tentativas e prazo</h2>
             <p className="mt-2 text-base text-navy">
-              Tentativas utilizadas: {d.tentativas.length} de {d.tentativasMax}. É permitida uma
-              segunda tentativa, com exame novo gerado da mesma maneira.
+              Tentativas utilizadas nesta turma: {d.tentativas.length} de {d.tentativasMax}. Cada nova
+              tentativa gera um exame novo da mesma maneira.
             </p>
             <p className="mt-1 text-base text-navy">
               {d.diasRestantes === null
@@ -192,6 +158,7 @@ function CertificadosPage() {
             {d.tentativas.length < d.tentativasMax ? (
               <Link
                 to="/avaliacao/exame"
+                search={{ inscricao: inscricaoId }}
                 className="mt-3 inline-flex min-h-11 items-center rounded-md border border-line px-4 text-base font-semibold text-navy"
               >
                 Ir para o exame final

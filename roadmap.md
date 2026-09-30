@@ -251,3 +251,19 @@ Por concluir:
 - [ ] Verificação no navegador com turma e presenças reais — fase de verificação interna da Ologa
 - [ ] Revisão de textos: fichas dos seis cursos na base aguardam autorização
 - [ ] Próxima: ligar o exame/certificado do curso à matrícula (hoje identificado pelo token pessoal e nome, não pela inscrição)
+
+## Ronda de 30/09 — exame e certificado por inscrição; fichas dos cursos
+Implementado
+- [x] Tentativas e certificados ligados a formando + curso + turma + inscrição (migrações 0034 e 0035); exame, respostas, submissão e certificado pedidos pela inscrição da conta com sessão — o nome e o código pessoal deixaram de bastar
+- [x] Regras no servidor/base: titular da inscrição, inscrição activa, exame configurado, banco activo ≥ triplo, prazo após fim da turma, limite de tentativas por pessoa e curso (mudar de turma não dá tentativas extra), nota e assiduidade mínimas, certificado único e idempotente
+- [x] Registos antigos: associação só quando inequívoca (havia 0 tentativas e 0 certificados; nada associado)
+- [x] Verificação pública de certificados mantida, sem nota nem assiduidade
+- [x] «O meu percurso», Exame final e Certificados mostram as tentativas, a melhor nota e o certificado dessa turma
+- [x] Fichas dos seis cursos sem notas internas; versões anteriores guardadas em `cursos_fichas_versoes`; cargas horárias inalteradas
+Testado automaticamente
+- [x] Ensaio em base temporária: 29/29 (separação entre pessoas e turmas, tentativas, prazo, certificados duplicados e simultâneos), mais 41/41 e 21/21 anteriores; suite 327/327; guardas 19/19
+Visto no navegador
+- [x] Certificados sem sessão e Exame final / As minhas turmas com sessão (conta sem turmas: mensagens correctas)
+Pendente (verificação interna Ologa)
+- [ ] Percurso completo no navegador com turma, presenças, exame e certificado reais — exige questões e exame activos
+- [ ] Sincronização com o GitHub: não verificável a partir daqui; confirmar no repositório

@@ -367,25 +367,36 @@ describe("fluxos pessoais: sessão e titularidade", () => {
     ).rejects.toThrow();
   });
 
-  it("iniciarExame e submeterExame recusam token que não pertence à conta", async () => {
-    const { iniciarExame, submeterExame } = await import("@/lib/avaliacao.functions");
+  it("iniciarExame, submeterExame e emitirCertificadoCurso recusam inscrição de outra conta", async () => {
+    const { iniciarExame, submeterExame, emitirCertificadoCurso } = await import("@/lib/avaliacao.functions");
     const extra = {
-      // formando existe, mas está ligado a OUTRA conta
-      formandos: { data: { id: "f1", nome: "Ana", token_pessoal: "tok", perfil_id: "outra-conta" }, error: null },
+      // a inscrição e a tentativa existem, mas pertencem a OUTRA conta
+      turma_inscricoes: {
+        data: { id: "i1", perfil_id: "outra-conta", nome: "Ana", estado: "inscrito", turma_id: "t1",
+                turmas: { id: "t1", curso_id: "c1", designacao: "T", provincia: "Maputo", data_inicio: null, data_fim: null } },
+        error: null,
+      },
+      exame_tentativas: { data: { id: "x1", inscricao_id: "i1", formando_id: "f1", estado: "em_curso" }, error: null },
     };
     const { ctx } = contexto("formando", extra);
     await expect(
       (iniciarExame as any).__executar({
-        data: { token: "tok", cursoId: "11111111-1111-1111-1111-111111111111" },
+        data: { inscricaoId: "11111111-1111-1111-1111-111111111111" },
         context: ctx,
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow("MATRICULA_INVALIDA");
+    await expect(
+      (emitirCertificadoCurso as any).__executar({
+        data: { inscricaoId: "11111111-1111-1111-1111-111111111111" },
+        context: ctx,
+      }),
+    ).rejects.toThrow("MATRICULA_INVALIDA");
     await expect(
       (submeterExame as any).__executar({
-        data: { token: "tok", tentativaId: "33333333-3333-3333-3333-333333333333" },
+        data: { tentativaId: "33333333-3333-3333-3333-333333333333" },
         context: ctx,
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow("TENTATIVA_NAO_ENCONTRADA");
   });
 });
 
@@ -413,7 +424,7 @@ describe("inventário: nenhuma função mutadora fica sem sessão e sem guarda",
         if (publicasIntencionais.has(nome)) continue;
         const temSessao = /\.middleware\(\[/.test(bloco);
         const temGuarda =
-          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|exigirAdministrador\(|exigirAdministradorGeral\(|formandoPorToken\(|perfil_id|context\.userId/.test(bloco);
+          /exigirGestao\(|exigirGestaoBanco\(|clienteDeEscritaGestao\(|exigirAdministrador\(|exigirAdministradorGeral\(|exigirAdmin\(|matriculaDoUtilizador\(|tentativaDoUtilizador\(|context\.supabase|perfil_id|context\.userId/.test(bloco);
         if (!temSessao || !temGuarda) falhas.push(`${ficheiro}:${nome}`);
       }
     }
