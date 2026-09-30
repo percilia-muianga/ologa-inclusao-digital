@@ -130,3 +130,9 @@ CREATE OR REPLACE FUNCTION public.is_admin(_uid uuid) RETURNS boolean
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (SELECT 1 FROM public.perfis WHERE id = _uid AND papel = 'admin_ologa')
 $$;
+
+-- Armazenamento simulado (só o necessário para as políticas da migração 0031).
+CREATE SCHEMA IF NOT EXISTS storage; GRANT USAGE ON SCHEMA storage TO authenticated, anon, service_role;
+CREATE TABLE IF NOT EXISTS storage.buckets (id text PRIMARY KEY, name text, public boolean DEFAULT false, file_size_limit bigint, allowed_mime_types text[]);
+CREATE TABLE IF NOT EXISTS storage.objects (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), bucket_id text, name text, owner uuid);
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
