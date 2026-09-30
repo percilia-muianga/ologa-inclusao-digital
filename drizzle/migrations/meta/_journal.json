@@ -204,6 +204,13 @@
       "when": 1790599826273,
       "tag": "0028_politicas_redes",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1790728120205,
+      "tag": "0029_bancos_sc_governo_redes",
+      "breakpoints": true
     }
   ]
 }
