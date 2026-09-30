@@ -45,6 +45,7 @@ export const lerDiscussao = createServerFn({ method: "GET" })
     const { data: papel } = await s.rpc("discussao_papel", { _uid: context.userId, _turma: data.turmaId });
     if (!papel) return { acesso: false as const };
     const { data: turma } = await s.from("turmas").select("designacao, provincia, distrito, cursos(titulo)").eq("id", data.turmaId).maybeSingle();
+    if (!turma) return { acesso: false as const };
     const { data: tops, error } = await s.from("discussao_topicos")
       .select("id,autor_id,autor_nome,titulo,mensagem,estado,oculto,moderacao_motivo,criado_em,actualizado_em")
       .eq("turma_id", data.turmaId).order("criado_em", { ascending: false });

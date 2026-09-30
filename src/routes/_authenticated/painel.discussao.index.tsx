@@ -34,9 +34,9 @@ function ListaDiscussao() {
         : q.isError ? <p role="alert" className="mt-6 font-semibold text-brand">Não foi possível ler as suas turmas.</p>
         : (q.data ?? []).length === 0 ? (
           <div className="mt-6 rounded-lg border border-line bg-page p-5">
-            <h2 className="text-lg font-extrabold text-navy">Ainda não participa em nenhuma turma</h2>
+            <h2 className="text-lg font-extrabold text-navy">Sem turmas para mostrar</h2>
             <p className="mt-2 text-base text-navy-2">
-              A discussão fica disponível depois de se inscrever numa turma, ou quando for indicado(a) como formador(a) responsável.{" "}
+              A discussão fica disponível depois de se inscrever numa turma, quando for indicado(a) como formador(a) responsável ou, na coordenação, quando existirem turmas criadas.{" "}
               <Link to="/painel/minhas-turmas" className="font-semibold underline">Inscrever-me com um código</Link>.
             </p>
           </div>
