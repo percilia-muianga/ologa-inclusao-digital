@@ -211,6 +211,13 @@
       "when": 1790728120205,
       "tag": "0029_bancos_sc_governo_redes",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1790745014415,
+      "tag": "0030_guardar_licao_atomico",
+      "breakpoints": true
     }
   ]
 }
