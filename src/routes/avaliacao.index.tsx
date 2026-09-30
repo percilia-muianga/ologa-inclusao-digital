@@ -192,7 +192,7 @@ function AvaliacaoPage() {
                     <dd className="text-navy">
                       {curso.retiradas.total}
                       {curso.retiradas.total > 0
-                        ? ` (${curso.retiradas.exame} de exame, ${curso.retiradas.diagnostico} de diagnóstico; versões ${curso.retiradas.versoes.join(", ")})`
+                        ? ` (${curso.retiradas.exame} de exame, ${curso.retiradas.diagnostico} de diagnóstico)`
                         : ""}
                     </dd>
                   </div>
