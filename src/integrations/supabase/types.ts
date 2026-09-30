@@ -665,6 +665,42 @@ export type Database = {
           },
         ]
       }
+      faq_perguntas: {
+        Row: {
+          actualizado_em: string
+          categoria: string
+          criado_em: string
+          id: string
+          ordem: number
+          pergunta: string
+          publicada: boolean
+          resposta: string
+          versao: number
+        }
+        Insert: {
+          actualizado_em?: string
+          categoria?: string
+          criado_em?: string
+          id?: string
+          ordem?: number
+          pergunta: string
+          publicada?: boolean
+          resposta: string
+          versao?: number
+        }
+        Update: {
+          actualizado_em?: string
+          categoria?: string
+          criado_em?: string
+          id?: string
+          ordem?: number
+          pergunta?: string
+          publicada?: boolean
+          resposta?: string
+          versao?: number
+        }
+        Relationships: []
+      }
       formandos: {
         Row: {
           apoios_acessibilidade:
@@ -1185,6 +1221,50 @@ export type Database = {
           titulo?: string
         }
         Relationships: []
+      }
+      pedidos_suporte: {
+        Row: {
+          actualizado_em: string
+          assunto: string
+          autor_id: string
+          categoria: string
+          criado_em: string
+          estado: string
+          id: string
+          mensagem: string
+          resposta: string | null
+        }
+        Insert: {
+          actualizado_em?: string
+          assunto: string
+          autor_id?: string
+          categoria: string
+          criado_em?: string
+          estado?: string
+          id?: string
+          mensagem: string
+          resposta?: string | null
+        }
+        Update: {
+          actualizado_em?: string
+          assunto?: string
+          autor_id?: string
+          categoria?: string
+          criado_em?: string
+          estado?: string
+          id?: string
+          mensagem?: string
+          resposta?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedidos_suporte_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       perfis: {
         Row: {
