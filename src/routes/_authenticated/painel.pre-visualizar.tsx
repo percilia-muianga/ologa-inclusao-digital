@@ -40,7 +40,7 @@ function PreVisualizar() {
   return (
     <>
       <Faixa />
-      <main id="conteudo" className="wrap max-w-4xl py-8">
+      <div className="max-w-4xl py-4">
         <p><Link to="/painel" className="font-semibold underline">Voltar ao painel</Link></p>
         <h1 className="mt-3 text-3xl font-extrabold text-navy">Pré-visualizar como formando</h1>
         <label className="mt-6 block text-sm font-semibold text-navy" htmlFor="pv-curso">Curso</label>
@@ -50,7 +50,7 @@ function PreVisualizar() {
           {(cursos.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.titulo}</option>)}
         </select>
         {cursoId ? <VistaCurso cursoId={cursoId} licaoId={licaoId} onLicao={setLicaoId} /> : null}
-      </main>
+      </div>
     </>
   );
 }
