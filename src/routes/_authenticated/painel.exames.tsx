@@ -54,8 +54,11 @@ function CartaoCurso({ curso, podeEscrever }: { curso: Curso; podeEscrever: bool
   return (
     <section className="rounded-md border border-line p-5" aria-labelledby={`c-${curso.id}`}>
       <h2 id={`c-${curso.id}`} className="text-xl font-bold text-navy">{curso.titulo}</h2>
+      <p className={`mt-2 inline-block rounded-md border px-3 py-1 text-sm font-bold ${curso.configuracaoGuardada ? "border-navy text-navy" : "border-brand text-brand"}`}>
+        {curso.configuracaoGuardada ? "Configuração guardada" : "Valores padrão — configuração ainda não guardada"}
+      </p>
       <p className="mt-1 text-sm text-navy-2">
-        Banco do exame: {curso.total} questões ({curso.activas} activas, {curso.rascunhos} inactivas). Mínimo recomendado (triplo da prova): {cfg.numeroQuestoes * 3} activas.
+        Banco do exame: {curso.total} questões ({curso.activas} activas, {curso.rascunhos} inactivas). Mínimo exigido (triplo da prova): {cfg.numeroQuestoes * 3} activas.
       </p>
       <p className="mt-1 text-sm font-semibold text-navy">
         Estado do exame: {pronto ? "com questões activas suficientes" : "inactivo — sem questões activas suficientes"}.

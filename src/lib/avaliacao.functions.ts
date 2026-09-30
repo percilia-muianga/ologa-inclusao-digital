@@ -183,6 +183,8 @@ export const panoramaBanco = createServerFn({ method: "GET" }).handler(async () 
         dificil: doCurso.filter((q) => q.activa && q.dificuldade === "dificil").length,
       },
       porModulo,
+      // true só quando existe linha gravada em exame_configuracoes.
+      configuracaoGuardada: (configRes.data ?? []).some((c) => c.curso_id === curso.id),
       configuracao: {
         numeroQuestoes: cfg.numero_questoes,
         minutos: cfg.minutos,
