@@ -27,6 +27,7 @@ import { Route as CriarContaRouteImport } from './routes/criar-conta'
 import { Route as ConformidadeRouteImport } from './routes/conformidade'
 import { Route as CertificadosRouteImport } from './routes/certificados'
 import { Route as AvaliacaoRouteImport } from './routes/avaliacao'
+import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkshopsIndexRouteImport } from './routes/workshops.index'
@@ -69,6 +70,7 @@ import { Route as AuthenticatedPainelExamesRouteImport } from './routes/_authent
 import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authenticated/painel.equipa'
 import { Route as AuthenticatedPainelConteudosRouteImport } from './routes/_authenticated/painel.conteudos'
 import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_authenticated/painel.auditoria'
+import { Route as AuthenticatedPainelAjudaRouteImport } from './routes/_authenticated/painel.ajuda'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
 
@@ -160,6 +162,11 @@ const CertificadosRoute = CertificadosRouteImport.update({
 const AvaliacaoRoute = AvaliacaoRouteImport.update({
   id: '/avaliacao',
   path: '/avaliacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AjudaRoute = AjudaRouteImport.update({
+  id: '/ajuda',
+  path: '/ajuda',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -382,6 +389,12 @@ const AuthenticatedPainelAuditoriaRoute =
     path: '/auditoria',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelAjudaRoute =
+  AuthenticatedPainelAjudaRouteImport.update({
+    id: '/ajuda',
+    path: '/ajuda',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const FormacaoModuloLicaoLicaoRoute =
   FormacaoModuloLicaoLicaoRouteImport.update({
     id: '/licao/$licao',
@@ -397,6 +410,7 @@ const ApiPublicDocumentosTipoTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
   '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
@@ -432,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/presencas/': typeof PresencasIndexRoute
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
+  '/painel/ajuda': typeof AuthenticatedPainelAjudaRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
@@ -460,6 +475,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
   '/criar-conta': typeof CriarContaRoute
@@ -485,6 +501,7 @@ export interface FileRoutesByTo {
   '/presencas': typeof PresencasIndexRoute
   '/turmas': typeof TurmasIndexRoute
   '/workshops': typeof WorkshopsIndexRoute
+  '/painel/ajuda': typeof AuthenticatedPainelAjudaRoute
   '/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/painel/equipa': typeof AuthenticatedPainelEquipaRoute
@@ -515,6 +532,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/ajuda': typeof AjudaRoute
   '/avaliacao': typeof AvaliacaoRouteWithChildren
   '/certificados': typeof CertificadosRoute
   '/conformidade': typeof ConformidadeRoute
@@ -550,6 +568,7 @@ export interface FileRoutesById {
   '/presencas/': typeof PresencasIndexRoute
   '/turmas/': typeof TurmasIndexRoute
   '/workshops/': typeof WorkshopsIndexRoute
+  '/_authenticated/painel/ajuda': typeof AuthenticatedPainelAjudaRoute
   '/_authenticated/painel/auditoria': typeof AuthenticatedPainelAuditoriaRoute
   '/_authenticated/painel/conteudos': typeof AuthenticatedPainelConteudosRoute
   '/_authenticated/painel/equipa': typeof AuthenticatedPainelEquipaRoute
@@ -580,6 +599,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ajuda'
     | '/avaliacao'
     | '/certificados'
     | '/conformidade'
@@ -615,6 +635,7 @@ export interface FileRouteTypes {
     | '/presencas/'
     | '/turmas/'
     | '/workshops/'
+    | '/painel/ajuda'
     | '/painel/auditoria'
     | '/painel/conteudos'
     | '/painel/equipa'
@@ -643,6 +664,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ajuda'
     | '/certificados'
     | '/conformidade'
     | '/criar-conta'
@@ -668,6 +690,7 @@ export interface FileRouteTypes {
     | '/presencas'
     | '/turmas'
     | '/workshops'
+    | '/painel/ajuda'
     | '/painel/auditoria'
     | '/painel/conteudos'
     | '/painel/equipa'
@@ -697,6 +720,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/ajuda'
     | '/avaliacao'
     | '/certificados'
     | '/conformidade'
@@ -732,6 +756,7 @@ export interface FileRouteTypes {
     | '/presencas/'
     | '/turmas/'
     | '/workshops/'
+    | '/_authenticated/painel/ajuda'
     | '/_authenticated/painel/auditoria'
     | '/_authenticated/painel/conteudos'
     | '/_authenticated/painel/equipa'
@@ -762,6 +787,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AjudaRoute: typeof AjudaRoute
   AvaliacaoRoute: typeof AvaliacaoRouteWithChildren
   CertificadosRoute: typeof CertificadosRoute
   ConformidadeRoute: typeof ConformidadeRoute
@@ -910,6 +936,13 @@ declare module '@tanstack/react-router' {
       path: '/avaliacao'
       fullPath: '/avaliacao'
       preLoaderRoute: typeof AvaliacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ajuda': {
+      id: '/ajuda'
+      path: '/ajuda'
+      fullPath: '/ajuda'
+      preLoaderRoute: typeof AjudaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1206,6 +1239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelAuditoriaRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/painel/ajuda': {
+      id: '/_authenticated/painel/ajuda'
+      path: '/ajuda'
+      fullPath: '/painel/ajuda'
+      preLoaderRoute: typeof AuthenticatedPainelAjudaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/formacao/$modulo/licao/$licao': {
       id: '/formacao/$modulo/licao/$licao'
       path: '/licao/$licao'
@@ -1224,6 +1264,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedPainelRouteChildren {
+  AuthenticatedPainelAjudaRoute: typeof AuthenticatedPainelAjudaRoute
   AuthenticatedPainelAuditoriaRoute: typeof AuthenticatedPainelAuditoriaRoute
   AuthenticatedPainelConteudosRoute: typeof AuthenticatedPainelConteudosRoute
   AuthenticatedPainelEquipaRoute: typeof AuthenticatedPainelEquipaRoute
@@ -1236,6 +1277,7 @@ interface AuthenticatedPainelRouteChildren {
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
+  AuthenticatedPainelAjudaRoute: AuthenticatedPainelAjudaRoute,
   AuthenticatedPainelAuditoriaRoute: AuthenticatedPainelAuditoriaRoute,
   AuthenticatedPainelConteudosRoute: AuthenticatedPainelConteudosRoute,
   AuthenticatedPainelEquipaRoute: AuthenticatedPainelEquipaRoute,
@@ -1419,6 +1461,7 @@ const WorkshopsRouteWithChildren = WorkshopsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AjudaRoute: AjudaRoute,
   AvaliacaoRoute: AvaliacaoRouteWithChildren,
   CertificadosRoute: CertificadosRoute,
   ConformidadeRoute: ConformidadeRoute,
