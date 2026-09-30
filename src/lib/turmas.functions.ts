@@ -121,7 +121,11 @@ export const obterTurma = createServerFn({ method: "GET" })
         .select("id,ordem,data,hora_inicio,hora_fim,tema,formador_nome,modalidade")
         .eq("turma_id", turma.id)
         .order("ordem"),
-      supabaseAdmin.from("turma_inscricoes").select("id,estado").eq("turma_id", turma.id),
+      supabaseAdmin
+        .from("turma_inscricoes")
+        .select("id,nome,email,estado,criado_em")
+        .eq("turma_id", turma.id)
+        .order("criado_em"),
     ]);
     if (cursoRes.error) throw cursoRes.error;
     if (sessoesRes.error) throw sessoesRes.error;
@@ -140,6 +144,13 @@ export const obterTurma = createServerFn({ method: "GET" })
       curso: cursoRes.data,
       sessoes,
       inscritos: (inscricoesRes.data ?? []).filter((i: { estado: string }) => i.estado !== "desistiu").length,
+      listaInscritos: (inscricoesRes.data ?? []) as Array<{
+        id: string;
+        nome: string;
+        email: string | null;
+        estado: string;
+        criado_em: string;
+      }>,
       horasAgendadas: Math.round((minutos / 60) * 100) / 100,
       cargaHorariaCurso: cargaCurso,
       cargaConfere: cargaCurso > 0 && Math.abs(minutos / 60 - cargaCurso) < 0.01,
