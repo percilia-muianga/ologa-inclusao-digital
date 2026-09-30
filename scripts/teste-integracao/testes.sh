@@ -204,6 +204,7 @@ PERCURSO="INSERT INTO public.turmas(id, curso_id, designacao, provincia, distrit
   VALUES ('00000000-0000-0000-0000-0000000007a1',1,'2026-10-01','08:00','13:00','S1','presencial'),
          ('00000000-0000-0000-0000-0000000007a1',2,'2026-10-02','08:00','13:00','S2','presencial');
   INSERT INTO public.turma_inscricoes(turma_id, nome) VALUES ('00000000-0000-0000-0000-0000000007a1','Formando X');
+  RESET ROLE;
   DO \$\$ DECLARE c text; m int; n int; a int; BEGIN
     SELECT codigo_inscricao INTO c FROM public.turmas WHERE id='00000000-0000-0000-0000-0000000007a1';
     IF c !~ '^[A-HJKMNP-Z2-9]{4}-?[A-HJKMNP-Z2-9]{4}\$' THEN RAISE EXCEPTION 'codigo invalido %', c; END IF;
@@ -211,7 +212,7 @@ PERCURSO="INSERT INTO public.turmas(id, curso_id, designacao, provincia, distrit
     IF m <> 600 THEN RAISE EXCEPTION 'soma % != 600 (10 h)', m; END IF;
     SELECT count(*) INTO n FROM public.turma_inscricoes WHERE turma_id='00000000-0000-0000-0000-0000000007a1';
     IF n <> 1 THEN RAISE EXCEPTION 'inscritos %', n; END IF;
-    SELECT count(*) INTO a FROM public.registo_auditoria WHERE entidade IN ('turmas','turma_sessoes','turma_inscricoes');
+    SELECT count(*) INTO a FROM public.registo_auditoria WHERE entidade IN ('turmas','turma_sessoes','turma_inscricoes') AND utilizador_id='00000000-0000-0000-0000-0000000000c1';
     IF a < 4 THEN RAISE EXCEPTION 'auditoria %', a; END IF;
     IF (SELECT limite_formandos FROM public.turmas WHERE id='00000000-0000-0000-0000-0000000007a1') <> 30 THEN RAISE EXCEPTION 'limite'; END IF;
   END \$\$;"
