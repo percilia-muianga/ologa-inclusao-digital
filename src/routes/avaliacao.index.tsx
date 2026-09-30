@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { panoramaBanco } from "@/lib/avaliacao.functions";
+import { panoramaBanco, permissaoGestaoBanco, disponibilidadeAvaliacao } from "@/lib/avaliacao.functions";
 import { pendenciasCurriculares } from "@/lib/cursos.functions";
 import { PlataformaPagina, EstadoVazio } from "@/components/plataforma-pagina";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,74 @@ export const Route = createFileRoute("/avaliacao/")({
 });
 
 function AvaliacaoPage() {
+  const carregarPermissao = useServerFn(permissaoGestaoBanco);
+  const permissao = useQuery({
+    queryKey: ["permissao-banco"],
+    queryFn: () => carregarPermissao(),
+    retry: false,
+  });
+  if (permissao.isLoading) {
+    return (
+      <PlataformaPagina titulo="Avaliação" introducao="A carregar…">
+        <p role="status" className="text-base text-navy-2">A carregar…</p>
+      </PlataformaPagina>
+    );
+  }
+  return permissao.data?.podeLer ? <AvaliacaoGestao /> : <AvaliacaoFormando />;
+}
+
+function AvaliacaoFormando() {
+  const carregar = useServerFn(disponibilidadeAvaliacao);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["disponibilidade-avaliacao"],
+    queryFn: () => carregar(),
+    retry: false,
+  });
+  return (
+    <PlataformaPagina
+      titulo="Avaliação"
+      introducao="O exame final é gerado no momento em que o inicia, a partir das questões do seu curso."
+    >
+      <section className="rounded-lg border border-line bg-white p-5">
+        <h2 className="text-lg font-bold text-navy">Como funciona</h2>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-base text-navy-2">
+          <li>Precisa de ter sessão iniciada e estar inscrito numa turma do curso.</li>
+          <li>O acesso ao exame depende da assiduidade mínima definida para o curso.</li>
+          <li>O tempo do exame começa a contar quando o inicia.</li>
+        </ul>
+      </section>
+      <div role="status" aria-live="polite" className="mt-4">
+        {isLoading ? <p className="text-base text-navy-2">A carregar…</p> : null}
+        {isError ? (
+          <p className="text-base text-navy-2">Não foi possível mostrar a disponibilidade. Tente novamente mais tarde.</p>
+        ) : null}
+      </div>
+      {data ? (
+        <ul className="mt-4 space-y-2">
+          {data.map((c) => (
+            <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-white p-4">
+              <span className="font-semibold text-navy">{c.titulo}</span>
+              <span className="text-base text-navy-2">
+                {c.disponivel ? "Exame disponível" : "Exame ainda não disponível"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {data && data.some((c) => c.disponivel) ? (
+        <Link to="/avaliacao/exame" className="mt-6 inline-flex min-h-11 items-center rounded-md bg-navy px-4 text-base font-semibold text-navy-foreground">
+          Iniciar exame final
+        </Link>
+      ) : (
+        <p className="mt-6 text-base text-navy-2">
+          Os exames ficam disponíveis após a activação das questões e da configuração necessária.
+        </p>
+      )}
+    </PlataformaPagina>
+  );
+}
+
+function AvaliacaoGestao() {
   const carregar = useServerFn(panoramaBanco);
   const carregarPendencias = useServerFn(pendenciasCurriculares);
   const curriculo = useQuery({
@@ -33,7 +101,7 @@ function AvaliacaoPage() {
   return (
     <PlataformaPagina
       titulo="Avaliação"
-      introducao="Banco de questões por curso e módulo, com pelo menos o triplo das questões usadas em cada exame, e exame final gerado no momento em que o formando o inicia."
+      introducao="Estado do banco de questões por curso e módulo. O exame final é gerado no momento em que o formando o inicia."
     >
       <div className="mb-6 flex flex-wrap gap-3">
         <Link
@@ -59,9 +127,8 @@ function AvaliacaoPage() {
             Cargas horárias pendentes de revisão pedagógica
           </h2>
           <p className="mt-2 text-base text-navy-2">
-            A carga horária oficial de cada curso segue a secção 14 do Termo de Referência. A soma
-            dos módulos não coincide nos cursos abaixo. Nenhum módulo ou lição foi retirado para
-            acertar a conta: a distribuição curricular aguarda revisão da equipa Ologa.
+            Nos cursos abaixo, a soma dos módulos não coincide com a carga horária oficial. A
+            distribuição curricular está em revisão.
           </p>
           <ul className="mt-3 space-y-1 text-base text-navy-2">
             {curriculo.data
@@ -108,13 +175,10 @@ function AvaliacaoPage() {
             {data.totalRetiradas > 0 ? (
               <section className="rounded-lg border border-line bg-white p-5">
                 <h2 className="text-lg font-bold text-navy">
-                  Versões retiradas: {data.totalRetiradas} questões
+                  Questões arquivadas: {data.totalRetiradas}
                 </h2>
                 <p className="mt-2 text-base text-navy-2">
-                  Estas questões continuam guardadas, com as suas respostas e explicações, mas estão
-                  fora do sorteio e do rácio, e não podem ser activadas. Só contam como utilizáveis
-                  as questões em rascunho que não foram retiradas. A renovação do conteúdo entra como
-                  versão nova.
+                  Mantidas para histórico. Não são utilizadas nos exames.
                 </p>
               </section>
             ) : null}
@@ -123,24 +187,23 @@ function AvaliacaoPage() {
               <EstadoVazio
                 titulo={
                   data.totalRetiradas > 0
-                    ? "Sem questões utilizáveis: as que existiam foram retiradas"
+                    ? "Sem questões utilizáveis: as existentes estão arquivadas"
                     : "O banco de questões ainda está vazio"
                 }
                 descricao={
                   data.totalRetiradas > 0
-                    ? "As questões que existiam foram retiradas e continuam guardadas, mas não podem ser usadas nem activadas. É preciso escrever uma versão nova, que a Ologa/ATDI depois valida. Enquanto não houver questões utilizáveis, nenhum exame é gerado. Onde se lê «por fornecer» por curso ou por módulo, isso conta apenas as questões utilizáveis."
-                    : "Ainda não há nenhuma questão escrita. A estrutura está pronta e à espera das questões da Ologa. Abra «Gerir banco de questões» para as introduzir; a contagem em falta por curso e por módulo fica sempre visível."
+                    ? "As questões arquivadas são mantidas para histórico e não são utilizadas nos exames. Enquanto não houver questões utilizáveis, nenhum exame é gerado."
+                    : "Ainda não há questões. Abra «Gerir banco de questões» para as introduzir."
                 }
               />
             ) : data.totalActivas === 0 ? (
               <section className="rounded-lg border border-amber-300 bg-amber-50 p-5">
                 <h2 className="text-lg font-bold text-navy">
-                  Banco preparado, por validar e activar
+                  Estado do banco de questões
                 </h2>
                 <p className="mt-2 text-base text-navy-2">
-                  Já há questões escritas, mas nenhuma está activa. Enquanto assim for, nenhum exame
-                  é gerado e nenhum certificado é emitido. O rácio do Termo de Referência só conta
-                  questões activas.
+                  Os exames ficam disponíveis após a activação das questões e da configuração
+                  necessária. Neste momento nenhuma questão está activa.
                 </p>
                 <p className="mt-2 text-base text-navy-2">
                   Exame final: {data.totalEscritas} questões escritas, {data.totalActivas} activas,{" "}
@@ -168,10 +231,10 @@ function AvaliacaoPage() {
                     }
                   >
                     {curso.cumpreTriplo
-                      ? `Rácio cumprido: ${curso.activas} questões activas para ${curso.necessarias} do exame`
+                      ? `Mínimo atingido: ${curso.activas} questões activas para ${curso.necessarias} por exame`
                       : curso.total === 0
-                        ? `Sem questões escritas: faltam ${curso.minimoTdR} activas (o triplo de ${curso.necessarias})`
-                        : `Por validar e activar: ${curso.rascunhos} em rascunho, ${curso.activas} activas; faltam ${curso.emFalta} activas para o mínimo de ${curso.minimoTdR}`}
+                        ? `Sem questões: faltam ${curso.minimoTdR} activas`
+                        : `${curso.rascunhos} em rascunho, ${curso.activas} activas; faltam ${curso.emFalta} activas para o mínimo exigido de ${curso.minimoTdR}`}
                   </p>
                 </div>
                 <dl className="mt-4 grid gap-3 text-base sm:grid-cols-4">
@@ -184,11 +247,11 @@ function AvaliacaoPage() {
                     <dd className="text-navy">{curso.activas}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-navy-2">Em rascunho, por validar</dt>
+                    <dt className="font-semibold text-navy-2">Em rascunho</dt>
                     <dd className="text-navy">{curso.rascunhos}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-navy-2">Retiradas (fora do sorteio)</dt>
+                    <dt className="font-semibold text-navy-2">Arquivadas</dt>
                     <dd className="text-navy">
                       {curso.retiradas.total}
                       {curso.retiradas.total > 0
@@ -207,8 +270,8 @@ function AvaliacaoPage() {
                     <dd className="text-navy">{curso.necessarias}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-navy-2">Mínimo do Termo de Referência</dt>
-                    <dd className="text-navy">{curso.minimoTdR} (o triplo)</dd>
+                    <dt className="font-semibold text-navy-2">Mínimo exigido</dt>
+                    <dd className="text-navy">{curso.minimoTdR}</dd>
                   </div>
                 </dl>
                 <p className="mt-3 text-sm text-navy-2">
@@ -225,9 +288,9 @@ function AvaliacaoPage() {
                         {m.titulo}: {m.activas} activas
                         {m.rascunhos > 0 ? `, ${m.rascunhos} em rascunho` : ""}
                         {m.total === 0
-                          ? " — por fornecer"
+                          ? " — sem questões"
                           : m.activas === 0
-                            ? " — por validar e activar"
+                            ? " — sem questões activas"
                             : ""}
                       </li>
                     ))}
