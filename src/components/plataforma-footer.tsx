@@ -32,6 +32,9 @@ export function PlataformaFooter() {
           <Link to="/conformidade" className={link}>
             Conformidade
           </Link>
+          <Link to="/ajuda" className={link}>
+            Ajuda e suporte
+          </Link>
           <Link to="/entrar" className={link}>
             Entrar
           </Link>

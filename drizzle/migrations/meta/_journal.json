@@ -225,6 +225,13 @@
       "when": 1790748550713,
       "tag": "0031_materiais_licoes",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1790749280594,
+      "tag": "0032_faq_e_suporte",
+      "breakpoints": true
     }
   ]
 }
