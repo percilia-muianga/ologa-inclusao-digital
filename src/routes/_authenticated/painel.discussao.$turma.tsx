@@ -196,7 +196,7 @@ function Moderar({ tipo, id, oculto, turmaId }: { tipo: "topico" | "resposta"; i
   if (!aberto) return <button type="button" onClick={() => setAberto(true)} className="mt-2 min-h-11 rounded-md border border-line px-3 text-sm font-semibold text-navy">Ocultar (moderação)</button>;
   return (
     <form className="mt-2" onSubmit={(e) => { e.preventDefault(); setErro(null); m.mutate(true); }}>
-      <label className="block text-sm font-semibold text-navy">Motivo (visível para a turma)
+      <label className="block text-sm font-semibold text-navy">Motivo (visível para o autor e o formador)
         <input className={campo} value={motivo} onChange={(e) => setMotivo(e.target.value)} required minLength={3} maxLength={500} />
       </label>
       <div className="mt-2 flex gap-2">

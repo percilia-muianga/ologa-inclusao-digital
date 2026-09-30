@@ -172,6 +172,9 @@ function MinhasTurmas() {
                     <Link to="/cursos/$curso" params={{ curso: t.cursoSlug }} className="btn-brand btn-brand-hover mt-3 inline-flex min-h-11 items-center">
                       Continuar para as lições
                     </Link>
+                    <Link to="/painel/discussao/$turma" params={{ turma: t.turmaId }} className="ml-3 mt-3 inline-flex min-h-11 items-center font-semibold underline">
+                      Dúvidas da turma
+                    </Link>
                   </>
                 ) : null}
               </li>

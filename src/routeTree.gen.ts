@@ -72,7 +72,9 @@ import { Route as AuthenticatedPainelEquipaRouteImport } from './routes/_authent
 import { Route as AuthenticatedPainelConteudosRouteImport } from './routes/_authenticated/painel.conteudos'
 import { Route as AuthenticatedPainelAuditoriaRouteImport } from './routes/_authenticated/painel.auditoria'
 import { Route as AuthenticatedPainelAjudaRouteImport } from './routes/_authenticated/painel.ajuda'
+import { Route as AuthenticatedPainelDiscussaoIndexRouteImport } from './routes/_authenticated/painel.discussao.index'
 import { Route as FormacaoModuloLicaoLicaoRouteImport } from './routes/formacao.$modulo.licao.$licao'
+import { Route as AuthenticatedPainelDiscussaoTurmaRouteImport } from './routes/_authenticated/painel.discussao.$turma'
 import { Route as ApiPublicDocumentosTipoTokenRouteImport } from './routes/api/public/documentos.$tipo.$token'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
@@ -402,11 +404,23 @@ const AuthenticatedPainelAjudaRoute =
     path: '/ajuda',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelDiscussaoIndexRoute =
+  AuthenticatedPainelDiscussaoIndexRouteImport.update({
+    id: '/discussao/',
+    path: '/discussao/',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const FormacaoModuloLicaoLicaoRoute =
   FormacaoModuloLicaoLicaoRouteImport.update({
     id: '/licao/$licao',
     path: '/licao/$licao',
     getParentRoute: () => FormacaoModuloRoute,
+  } as any)
+const AuthenticatedPainelDiscussaoTurmaRoute =
+  AuthenticatedPainelDiscussaoTurmaRouteImport.update({
+    id: '/discussao/$turma',
+    path: '/discussao/$turma',
+    getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
 const ApiPublicDocumentosTipoTokenRoute =
   ApiPublicDocumentosTipoTokenRouteImport.update({
@@ -478,7 +492,9 @@ export interface FileRoutesByFullPath {
   '/avaliacao/exame/': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
+  '/painel/discussao/$turma': typeof AuthenticatedPainelDiscussaoTurmaRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/painel/discussao/': typeof AuthenticatedPainelDiscussaoIndexRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesByTo {
@@ -534,7 +550,9 @@ export interface FileRoutesByTo {
   '/avaliacao/exame': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes': typeof GestaoInstituicoesIndexRoute
+  '/painel/discussao/$turma': typeof AuthenticatedPainelDiscussaoTurmaRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/painel/discussao': typeof AuthenticatedPainelDiscussaoIndexRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRoutesById {
@@ -602,7 +620,9 @@ export interface FileRoutesById {
   '/avaliacao/exame/': typeof AvaliacaoExameIndexRoute
   '/formacao/$modulo/': typeof FormacaoModuloIndexRoute
   '/gestao/instituicoes/': typeof GestaoInstituicoesIndexRoute
+  '/_authenticated/painel/discussao/$turma': typeof AuthenticatedPainelDiscussaoTurmaRoute
   '/formacao/$modulo/licao/$licao': typeof FormacaoModuloLicaoLicaoRoute
+  '/_authenticated/painel/discussao/': typeof AuthenticatedPainelDiscussaoIndexRoute
   '/api/public/documentos/$tipo/$token': typeof ApiPublicDocumentosTipoTokenRoute
 }
 export interface FileRouteTypes {
@@ -670,7 +690,9 @@ export interface FileRouteTypes {
     | '/avaliacao/exame/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
+    | '/painel/discussao/$turma'
     | '/formacao/$modulo/licao/$licao'
+    | '/painel/discussao/'
     | '/api/public/documentos/$tipo/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -726,7 +748,9 @@ export interface FileRouteTypes {
     | '/avaliacao/exame'
     | '/formacao/$modulo'
     | '/gestao/instituicoes'
+    | '/painel/discussao/$turma'
     | '/formacao/$modulo/licao/$licao'
+    | '/painel/discussao'
     | '/api/public/documentos/$tipo/$token'
   id:
     | '__root__'
@@ -793,7 +817,9 @@ export interface FileRouteTypes {
     | '/avaliacao/exame/'
     | '/formacao/$modulo/'
     | '/gestao/instituicoes/'
+    | '/_authenticated/painel/discussao/$turma'
     | '/formacao/$modulo/licao/$licao'
+    | '/_authenticated/painel/discussao/'
     | '/api/public/documentos/$tipo/$token'
   fileRoutesById: FileRoutesById
 }
@@ -1266,12 +1292,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelAjudaRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/painel/discussao/': {
+      id: '/_authenticated/painel/discussao/'
+      path: '/discussao'
+      fullPath: '/painel/discussao/'
+      preLoaderRoute: typeof AuthenticatedPainelDiscussaoIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/formacao/$modulo/licao/$licao': {
       id: '/formacao/$modulo/licao/$licao'
       path: '/licao/$licao'
       fullPath: '/formacao/$modulo/licao/$licao'
       preLoaderRoute: typeof FormacaoModuloLicaoLicaoRouteImport
       parentRoute: typeof FormacaoModuloRoute
+    }
+    '/_authenticated/painel/discussao/$turma': {
+      id: '/_authenticated/painel/discussao/$turma'
+      path: '/discussao/$turma'
+      fullPath: '/painel/discussao/$turma'
+      preLoaderRoute: typeof AuthenticatedPainelDiscussaoTurmaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
     }
     '/api/public/documentos/$tipo/$token': {
       id: '/api/public/documentos/$tipo/$token'
@@ -1295,6 +1335,8 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelPermissoesRoute: typeof AuthenticatedPainelPermissoesRoute
   AuthenticatedPainelUtilizadoresRoute: typeof AuthenticatedPainelUtilizadoresRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
+  AuthenticatedPainelDiscussaoTurmaRoute: typeof AuthenticatedPainelDiscussaoTurmaRoute
+  AuthenticatedPainelDiscussaoIndexRoute: typeof AuthenticatedPainelDiscussaoIndexRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
@@ -1309,6 +1351,10 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelPermissoesRoute: AuthenticatedPainelPermissoesRoute,
   AuthenticatedPainelUtilizadoresRoute: AuthenticatedPainelUtilizadoresRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
+  AuthenticatedPainelDiscussaoTurmaRoute:
+    AuthenticatedPainelDiscussaoTurmaRoute,
+  AuthenticatedPainelDiscussaoIndexRoute:
+    AuthenticatedPainelDiscussaoIndexRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =

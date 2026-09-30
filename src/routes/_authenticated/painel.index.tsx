@@ -66,6 +66,7 @@ const ATALHOS_ADMIN_GERAL: Atalho[] = [
   { to: "/painel/conteudos", titulo: "Conteúdos preparados", texto: "Estado e importação dos pacotes de lições e bancos de avaliação, sempre em rascunho e inactivos." },
   { to: "/painel/licoes", titulo: "Editar cursos e lições", texto: "Actualizar texto, guião, duração e estado de cada lição, com registo de actividade e protecção contra sobrescrita." },
   { to: "/cursos", titulo: "Cursos", texto: "Os seis cursos, módulos, lições e estado de cada conteúdo." },
+  { to: "/painel/discussao", titulo: "Discussão das turmas", texto: "Dúvidas dos formandos e respostas dos formadores, com moderação e registo de actividade." },
   { to: "/turmas", titulo: "Turmas e cronogramas", texto: "Criar e editar turmas, sessões e inscrições por código." },
   { to: "/presencas", titulo: "Presenças", texto: "Marcação por sessão, também sem ligação, e folha imprimível." },
   { to: "/avaliacao/banco", titulo: "Banco de questões", texto: "Consulta e revisão das questões por curso e módulo. Nenhum exame é activado aqui." },
@@ -120,6 +121,13 @@ function PainelInicio() {
             As turmas, sessões, presenças, exames e certificados deste papel entram nas fases
             seguintes da plataforma. Nesta fase estão activos o acesso por papel, o registo de
             actividade e a verificação de permissões.
+          </p>
+          <p className="mt-3 text-base text-navy-2">
+            Dúvidas sobre as matérias?{" "}
+            <Link to="/painel/discussao" className="font-semibold underline">
+              Abrir a discussão das minhas turmas
+            </Link>
+            .
           </p>
           <p className="mt-3 text-base text-navy-2">
             Recebeu um código de turma?{" "}
