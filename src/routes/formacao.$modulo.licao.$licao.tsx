@@ -11,6 +11,7 @@ import {
   PAUSA_TITULO_MS,
   type Fala,
 } from "@/components/listen-button";
+import { MateriaisDisponiveis } from "@/components/MateriaisDisponiveis";
 
 const licaoQuery = (licaoId: string) =>
   queryOptions({
@@ -203,6 +204,7 @@ function LicaoView() {
             ) : null}
             <div dangerouslySetInnerHTML={{ __html: licao.conteudo_elearning ?? "" }} />
           </article>
+          <MateriaisDisponiveis licaoId={licaoId} />
         </section>
       ) : (
         <section

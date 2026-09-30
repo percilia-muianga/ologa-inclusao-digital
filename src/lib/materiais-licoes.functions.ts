@@ -132,3 +132,30 @@ export const reordenarMateriais = createServerFn({ method: "POST" })
     }
     return { estado: "gravado" as const };
   });
+
+/**
+ * Vista do formando: só materiais disponíveis (a regra de acesso já filtra) e
+ * cujo ficheiro existe. Links temporários (1 h) gerados com a sessão da pessoa.
+ */
+export const listarMateriaisDisponiveis = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ licaoId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const s = context.supabase;
+    const { data: rows, error } = await s.from("licao_materiais")
+      .select("id,tipo,titulo,descricao_acessivel,idioma,legenda_de,ficheiro_path,nome_original,mime,ordem")
+      .eq("licao_id", data.licaoId).eq("disponivel", true).order("ordem");
+    if (error) throw new Error(error.message);
+    const paths = (rows ?? []).map((r: any) => r.ficheiro_path);
+    if (!paths.length) return [];
+    const { data: su } = await s.storage.from(BUCKET_MATERIAIS).createSignedUrls(paths, 3600);
+    const urls = new Map<string, string>();
+    for (const u of su ?? []) if (u.signedUrl && u.path && !u.error) urls.set(u.path, u.signedUrl);
+    return (rows ?? []).filter((r: any) => urls.has(r.ficheiro_path)).map((r: any) => {
+      const { ficheiro_path, ...resto } = r;
+      return { ...resto, url: urls.get(ficheiro_path)! } as {
+        id: string; tipo: TipoMaterial; titulo: string; descricao_acessivel: string | null; idioma: string;
+        legenda_de: string | null; nome_original: string; mime: string; ordem: number; url: string;
+      };
+    });
+  });
