@@ -178,15 +178,14 @@ function TurmaPage() {
                   {excede ? (
                     <>
                       <strong>Atenção: o rácio de equipamento excede o máximo admitido.</strong> São{" "}
-                      {Math.round(racio * 100) / 100} formandos por computador e o Termo de
-                      Referência admite no máximo dois. Faltam{" "}
+                      {Math.round(racio * 100) / 100} formandos por computador e o Referência admite no máximo dois. Faltam{" "}
                       {Math.ceil(inscritos / 2) - turma.num_computadores} computadores.
                     </>
                   ) : (
                     <>
                       <strong>Rácio de equipamento conforme.</strong> São{" "}
                       {Math.round(racio * 100) / 100} formandos por computador, dentro do máximo de
-                      dois admitido pelo Termo de Referência.
+                      dois admitido.
                     </>
                   )}
                 </p>
@@ -195,8 +194,8 @@ function TurmaPage() {
           : null}
 
         <p className="mt-3 text-sm text-navy-2">
-          A turma mantém-se limitada a {turma.limite_formandos} formandos, conforme o Termo de
-          Referência.
+          A turma mantém-se limitada a {turma.limite_formandos} formandos, conforme as regras do
+          programa.
         </p>
       </section>
 

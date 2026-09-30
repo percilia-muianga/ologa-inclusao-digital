@@ -12,7 +12,7 @@ export const Route = createFileRoute("/painel-nacional")({
       {
         name: "description",
         content:
-          "Indicadores do Termo de Referência: desempenho da formação, satisfação, eficácia aos três meses e execução dos workshops por província e distrito.",
+          "Indicadores do programa: desempenho da formação, satisfação, eficácia aos três meses e execução dos workshops por província e distrito.",
       },
       { property: "og:title", content: "Painel Nacional — Programa de Capacitação Digital" },
       {
@@ -185,7 +185,7 @@ function PainelNacionalPage() {
   return (
     <PlataformaPagina
       titulo="Painel Nacional"
-      introducao="Indicadores organizados pelos tipos do Termo de Referência: desempenho da formação, satisfação e eficácia, mais a execução dos workshops. As contagens mostram o número, mesmo quando é zero; os rácios, médias e percentagens sem denominador mostram um traço."
+      introducao="Indicadores organizados por tipo: desempenho da formação, satisfação e eficácia, mais a execução dos workshops. As contagens mostram o número, mesmo quando é zero; os rácios, médias e percentagens sem denominador mostram um traço."
     >
       <div className="mb-8 flex flex-wrap gap-3 print:hidden" aria-label="Exportar esta vista">
         <Button type="button" size="lg" onClick={exportarCsv} className="min-h-11">
@@ -352,7 +352,7 @@ function PainelNacionalPage() {
           Workshops por distrito
         </h2>
         <p className="mt-2 max-w-3xl text-base text-navy-2">
-          Os setenta e sete distritos do Termo de Referência, agrupados por província. A última
+          Os setenta e sete distritos abrangidos pelo programa, agrupados por província. A última
           linha do documento reúne Maputo Cidade e Maputo Província com oito distritos; a lista é
           reproduzida fielmente.
         </p>
